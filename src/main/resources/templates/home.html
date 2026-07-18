@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{home.title}">Accueil</title>
+</head>
+<body>
+<nav>
+    <a th:href="@{/(lang='fr')}" th:text="#{lang.fr}">Français</a>
+    <a th:href="@{/(lang='nl')}" th:text="#{lang.nl}">Nederlands</a>
+    <a th:href="@{/(lang='en')}" th:text="#{lang.en}">English</a>
+</nav>
+
+<h1 th:text="#{home.title}">Accueil</h1>
+<p th:text="#{home.greeting(${#authentication.name})}">Bonjour</p>
+
+<form th:action="@{/logout}" method="post">
+    <button type="submit" th:text="#{home.logout}">Se déconnecter</button>
+</form>
+</body>
+</html>
