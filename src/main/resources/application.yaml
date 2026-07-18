@@ -1,6 +1,8 @@
 spring:
   application:
     name: asbl-club
+  messages:
+    fallback-to-system-locale: false
   jpa:
     hibernate:
       ddl-auto: validate
