@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title th:text="#{register.title}">Créer un compte</title>
+    <title th:text="#{register.title}">Create an account</title>
 </head>
 <body>
 <nav>
@@ -11,27 +11,27 @@
     <a th:href="@{/register(lang='en')}" th:text="#{lang.en}">English</a>
 </nav>
 
-<h1 th:text="#{register.title}">Créer un compte</h1>
+<h1 th:text="#{register.title}">Create an account</h1>
 
 <form th:action="@{/register}" th:object="${form}" method="post">
     <div>
-        <label for="name" th:text="#{register.name}">Nom</label>
+        <label for="name" th:text="#{register.name}">Name</label>
         <input type="text" id="name" th:field="*{name}">
         <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
     </div>
     <div>
-        <label for="email" th:text="#{register.email}">Adresse e-mail</label>
+        <label for="email" th:text="#{register.email}">Email address</label>
         <input type="email" id="email" th:field="*{email}">
         <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
     </div>
     <div>
-        <label for="password" th:text="#{register.password}">Mot de passe</label>
+        <label for="password" th:text="#{register.password}">Password</label>
         <input type="password" id="password" th:field="*{password}">
         <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
     </div>
-    <button type="submit" th:text="#{register.submit}">Créer le compte</button>
+    <button type="submit" th:text="#{register.submit}">Create account</button>
 </form>
 
-<p><a th:href="@{/login}" th:text="#{register.haveAccount}">J'ai déjà un compte</a></p>
+<p><a th:href="@{/login}" th:text="#{register.haveAccount}">I already have an account</a></p>
 </body>
 </html>

@@ -31,7 +31,7 @@ class RegistrationController {
         try {
             userService.register(form.name(), form.email(), form.password());
         } catch (EmailAlreadyUsedException e) {
-            bindingResult.rejectValue("email", "email.duplicate", "Cette adresse e-mail est déjà utilisée");
+            bindingResult.rejectValue("email", "email.duplicate", "This email address is already in use");
             return "register";
         }
         return "redirect:/login?registered";

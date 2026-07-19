@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title th:text="#{home.title}">Accueil</title>
+    <title th:text="#{home.title}">Home</title>
 </head>
 <body>
 <nav>
@@ -11,11 +11,11 @@
     <a th:href="@{/(lang='en')}" th:text="#{lang.en}">English</a>
 </nav>
 
-<h1 th:text="#{home.title}">Accueil</h1>
-<p th:text="#{home.greeting(${#authentication.name})}">Bonjour</p>
+<h1 th:text="#{home.title}">Home</h1>
+<p th:text="#{home.greeting(${#authentication.name})}">Hello</p>
 
 <form th:action="@{/logout}" method="post">
-    <button type="submit" th:text="#{home.logout}">Se déconnecter</button>
+    <button type="submit" th:text="#{home.logout}">Log out</button>
 </form>
 </body>
 </html>

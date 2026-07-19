@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title th:text="#{login.title}">Connexion</title>
+    <title th:text="#{login.title}">Log in</title>
 </head>
 <body>
 <nav>
@@ -11,24 +11,24 @@
     <a th:href="@{/login(lang='en')}" th:text="#{lang.en}">English</a>
 </nav>
 
-<h1 th:text="#{login.title}">Connexion</h1>
+<h1 th:text="#{login.title}">Log in</h1>
 
-<p th:if="${param.registered != null}" th:text="#{login.registered}">Compte créé</p>
-<p th:if="${param.error != null}" th:text="#{login.error}">Erreur</p>
-<p th:if="${param.logout != null}" th:text="#{login.logout}">Déconnecté</p>
+<p th:if="${param.registered != null}" th:text="#{login.registered}">Account created</p>
+<p th:if="${param.error != null}" th:text="#{login.error}">Error</p>
+<p th:if="${param.logout != null}" th:text="#{login.logout}">Logged out</p>
 
 <form th:action="@{/login}" method="post">
     <div>
-        <label for="username" th:text="#{login.email}">Adresse e-mail</label>
+        <label for="username" th:text="#{login.email}">Email address</label>
         <input type="email" id="username" name="username">
     </div>
     <div>
-        <label for="password" th:text="#{login.password}">Mot de passe</label>
+        <label for="password" th:text="#{login.password}">Password</label>
         <input type="password" id="password" name="password">
     </div>
-    <button type="submit" th:text="#{login.submit}">Se connecter</button>
+    <button type="submit" th:text="#{login.submit}">Log in</button>
 </form>
 
-<p><a th:href="@{/register}" th:text="#{login.noAccount}">Pas encore de compte</a></p>
+<p><a th:href="@{/register}" th:text="#{login.noAccount}">No account yet</a></p>
 </body>
 </html>
