@@ -16,6 +16,12 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Transactional(readOnly = true)
+    public User getByEmail(String email) {
+        return userRepository.findByEmail(email.trim().toLowerCase(Locale.ROOT))
+                .orElseThrow(() -> new IllegalStateException("No user found for email " + email));
+    }
+
     @Transactional
     public User register(String name, String email, String rawPassword) {
         String normalizedEmail = email.trim().toLowerCase(Locale.ROOT);
