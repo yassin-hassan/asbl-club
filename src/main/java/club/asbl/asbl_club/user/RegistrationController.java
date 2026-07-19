@@ -1,5 +1,7 @@
 package club.asbl.asbl_club.user;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,9 +14,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 class RegistrationController {
 
     private final UserService userService;
+    private final AutoLogin autoLogin;
 
-    RegistrationController(UserService userService) {
+    RegistrationController(UserService userService, AutoLogin autoLogin) {
         this.userService = userService;
+        this.autoLogin = autoLogin;
     }
 
     @GetMapping("/register")
@@ -24,7 +28,8 @@ class RegistrationController {
     }
 
     @PostMapping("/register")
-    String register(@Valid @ModelAttribute("form") RegistrationForm form, BindingResult bindingResult) {
+    String register(@Valid @ModelAttribute("form") RegistrationForm form, BindingResult bindingResult,
+            HttpServletRequest request, HttpServletResponse response) {
         if (bindingResult.hasErrors()) {
             return "register";
         }
@@ -34,6 +39,7 @@ class RegistrationController {
             bindingResult.rejectValue("email", "email.duplicate", "This email address is already in use");
             return "register";
         }
-        return "redirect:/login?registered";
+        autoLogin.login(form.email(), request, response);
+        return "redirect:/";
     }
 }
