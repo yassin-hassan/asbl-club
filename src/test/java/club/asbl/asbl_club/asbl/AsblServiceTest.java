@@ -8,10 +8,10 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import club.asbl.asbl_club.membership.MembershipService;
 import club.asbl.asbl_club.user.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -23,28 +23,23 @@ class AsblServiceTest {
     AsblRepository asblRepository;
 
     @Mock
-    MembershipRepository membershipRepository;
+    MembershipService membershipService;
 
     @InjectMocks
     AsblService asblService;
 
     @Test
-    void createAsbl_savesAsbl_andMakesCreatorAdmin() {
+    void createAsbl_savesAsbl_andDelegatesFoundingAdmin() {
         User creator = mock(User.class);
         when(asblRepository.existsBySlug("mon-club")).thenReturn(false);
         when(asblRepository.existsByBceNumber("0123.456.789")).thenReturn(false);
         when(asblRepository.save(any(Asbl.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        asblService.createAsbl(creator, "Mon Club", "0123.456.789", "mon-club", "fr");
+        Asbl created = asblService.createAsbl(creator, "Mon Club", "0123.456.789", "mon-club", "fr");
 
-        ArgumentCaptor<Membership> captor = ArgumentCaptor.forClass(Membership.class);
-        verify(membershipRepository).save(captor.capture());
-        Membership membership = captor.getValue();
-        assertThat(membership.getUser()).isSameAs(creator);
-        assertThat(membership.getRole()).isEqualTo("ADMIN");
-        assertThat(membership.getStatus()).isEqualTo("ACTIVE");
-        assertThat(membership.getAsbl().getDenomination()).isEqualTo("Mon Club");
-        assertThat(membership.getAsbl().getStatus()).isEqualTo("PENDING");
+        assertThat(created.getDenomination()).isEqualTo("Mon Club");
+        assertThat(created.getStatus()).isEqualTo("PENDING");
+        verify(membershipService).createFoundingAdmin(created, creator);
     }
 
     @Test
@@ -55,6 +50,6 @@ class AsblServiceTest {
         assertThatThrownBy(() -> asblService.createAsbl(creator, "X", "0123.456.789", "taken", "fr"))
                 .isInstanceOf(SlugAlreadyUsedException.class);
 
-        verify(membershipRepository, never()).save(any());
+        verify(membershipService, never()).createFoundingAdmin(any(), any());
     }
 }

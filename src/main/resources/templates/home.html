@@ -14,6 +14,15 @@
 <h1 th:text="#{home.title}">Home</h1>
 <p th:text="#{home.greeting(${#authentication.name})}">Hello</p>
 
+<h2 th:text="#{home.yourAsbls}">Your associations</h2>
+<p th:if="${asbls.isEmpty()}" th:text="#{home.noAsbls}">You have no associations yet</p>
+<ul th:unless="${asbls.isEmpty()}">
+    <li th:each="a : ${asbls}">
+        <span th:text="${a.denomination}">Name</span>
+        <span th:text="${a.role}">ROLE</span>
+    </li>
+</ul>
+
 <p><a th:href="@{/asbls/new}" th:text="#{home.createAsbl}">Create an ASBL</a></p>
 
 <form th:action="@{/logout}" method="post">

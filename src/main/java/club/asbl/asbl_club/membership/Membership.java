@@ -1,5 +1,6 @@
-package club.asbl.asbl_club.asbl;
+package club.asbl.asbl_club.membership;
 
+import club.asbl.asbl_club.asbl.Asbl;
 import club.asbl.asbl_club.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

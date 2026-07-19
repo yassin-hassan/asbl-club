@@ -1,7 +1,7 @@
 package club.asbl.asbl_club.asbl;
 
+import club.asbl.asbl_club.membership.MembershipService;
 import club.asbl.asbl_club.user.User;
-import java.time.LocalDate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,11 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class AsblService {
 
     private final AsblRepository asblRepository;
-    private final MembershipRepository membershipRepository;
+    private final MembershipService membershipService;
 
-    AsblService(AsblRepository asblRepository, MembershipRepository membershipRepository) {
+    AsblService(AsblRepository asblRepository, MembershipService membershipService) {
         this.asblRepository = asblRepository;
-        this.membershipRepository = membershipRepository;
+        this.membershipService = membershipService;
     }
 
     @Transactional
@@ -33,15 +33,7 @@ public class AsblService {
         asbl.setStatus("PENDING");
         asblRepository.save(asbl);
 
-        Membership membership = new Membership();
-        membership.setUser(creator);
-        membership.setAsbl(asbl);
-        membership.setRole("ADMIN");
-        membership.setCategory("FULL");
-        membership.setStatus("ACTIVE");
-        membership.setJoinedAt(LocalDate.now());
-        membershipRepository.save(membership);
-
+        membershipService.createFoundingAdmin(asbl, creator);
         return asbl;
     }
 }

@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import club.asbl.asbl_club.TestcontainersConfiguration;
+import club.asbl.asbl_club.membership.MembershipService;
 import club.asbl.asbl_club.user.User;
 import club.asbl.asbl_club.user.UserService;
 import java.util.List;
@@ -35,7 +36,7 @@ class CreateAsblIntegrationTest {
     AsblRepository asblRepository;
 
     @Autowired
-    MembershipRepository membershipRepository;
+    MembershipService membershipService;
 
     @Test
     @WithMockUser(username = "alice@club.test")
@@ -54,11 +55,10 @@ class CreateAsblIntegrationTest {
         assertThat(asbl.getStatus()).isEqualTo("PENDING");
 
         User creator = userService.getByEmail("alice@club.test");
-        List<Membership> memberships = membershipRepository.findByUser(creator);
+        List<AsblSummary> memberships = membershipService.membershipsOf(creator);
         assertThat(memberships).hasSize(1);
-        assertThat(memberships.get(0).getRole()).isEqualTo("ADMIN");
-        assertThat(memberships.get(0).getStatus()).isEqualTo("ACTIVE");
-        assertThat(memberships.get(0).getAsbl().getSlug()).isEqualTo("mon-club");
+        assertThat(memberships.get(0).role()).isEqualTo("ADMIN");
+        assertThat(memberships.get(0).slug()).isEqualTo("mon-club");
     }
 
     @Test
