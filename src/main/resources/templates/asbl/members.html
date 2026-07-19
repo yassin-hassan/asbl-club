@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{members.title}">Members</title>
+</head>
+<body>
+<nav>
+    <a th:href="@{/asbls/{slug}/members(slug=${asbl.slug},lang='fr')}" th:text="#{lang.fr}">Français</a>
+    <a th:href="@{/asbls/{slug}/members(slug=${asbl.slug},lang='nl')}" th:text="#{lang.nl}">Nederlands</a>
+    <a th:href="@{/asbls/{slug}/members(slug=${asbl.slug},lang='en')}" th:text="#{lang.en}">English</a>
+</nav>
+
+<h1 th:text="${asbl.denomination}">Association</h1>
+<h2 th:text="#{members.title}">Members</h2>
+
+<table>
+    <thead>
+    <tr>
+        <th th:text="#{members.name}">Name</th>
+        <th th:text="#{members.email}">Email</th>
+        <th th:text="#{members.role}">Role</th>
+        <th th:text="#{members.status}">Status</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="m : ${members}">
+        <td th:text="${m.name}">Name</td>
+        <td th:text="${m.email}">Email</td>
+        <td th:text="${m.role}">Role</td>
+        <td th:text="${m.status}">Status</td>
+    </tr>
+    </tbody>
+</table>
+
+<p><a th:href="@{/}" th:text="#{members.back}">Back to home</a></p>
+</body>
+</html>

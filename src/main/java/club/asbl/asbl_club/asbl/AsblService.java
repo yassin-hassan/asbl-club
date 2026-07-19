@@ -2,6 +2,7 @@ package club.asbl.asbl_club.asbl;
 
 import club.asbl.asbl_club.membership.MembershipService;
 import club.asbl.asbl_club.user.User;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,5 +36,10 @@ public class AsblService {
 
         membershipService.createFoundingAdmin(asbl, creator);
         return asbl;
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Asbl> findBySlug(String slug) {
+        return asblRepository.findBySlug(slug);
     }
 }

@@ -1,25 +1,31 @@
 package club.asbl.asbl_club.asbl;
 
+import club.asbl.asbl_club.membership.MembershipService;
 import club.asbl.asbl_club.user.User;
 import club.asbl.asbl_club.user.UserService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.server.ResponseStatusException;
 
 @Controller
 class AsblController {
 
     private final AsblService asblService;
     private final UserService userService;
+    private final MembershipService membershipService;
 
-    AsblController(AsblService asblService, UserService userService) {
+    AsblController(AsblService asblService, UserService userService, MembershipService membershipService) {
         this.asblService = asblService;
         this.userService = userService;
+        this.membershipService = membershipService;
     }
 
     @GetMapping("/asbls/new")
@@ -45,5 +51,18 @@ class AsblController {
             return "asbl/create";
         }
         return "redirect:/";
+    }
+
+    @GetMapping("/asbls/{slug}/members")
+    String members(@PathVariable String slug, Model model, Authentication authentication) {
+        User user = userService.getByEmail(authentication.getName());
+        Asbl asbl = asblService.findBySlug(slug)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        if (!membershipService.isMember(user, asbl)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        model.addAttribute("asbl", asbl);
+        model.addAttribute("members", membershipService.membersOf(asbl));
+        return "asbl/members";
     }
 }

@@ -36,4 +36,16 @@ public class MembershipService {
                         m.getAsbl().getSlug(), m.getRole()))
                 .toList();
     }
+
+    @Transactional(readOnly = true)
+    public boolean isMember(User user, Asbl asbl) {
+        return membershipRepository.existsByUserAndAsbl(user, asbl);
+    }
+
+    @Transactional(readOnly = true)
+    public List<MemberView> membersOf(Asbl asbl) {
+        return membershipRepository.findByAsbl(asbl).stream()
+                .map(m -> new MemberView(m.getUser().getName(), m.getUser().getEmail(), m.getRole(), m.getStatus()))
+                .toList();
+    }
 }

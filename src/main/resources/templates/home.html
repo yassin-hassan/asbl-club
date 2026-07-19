@@ -18,7 +18,7 @@
 <p th:if="${asbls.isEmpty()}" th:text="#{home.noAsbls}">You have no associations yet</p>
 <ul th:unless="${asbls.isEmpty()}">
     <li th:each="a : ${asbls}">
-        <span th:text="${a.denomination}">Name</span>
+        <a th:href="@{/asbls/{slug}/members(slug=${a.slug})}" th:text="${a.denomination}">Name</a>
         <span th:text="${a.role}">ROLE</span>
     </li>
 </ul>
