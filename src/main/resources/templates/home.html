@@ -14,6 +14,8 @@
 <h1 th:text="#{home.title}">Home</h1>
 <p th:text="#{home.greeting(${#authentication.name})}">Hello</p>
 
+<p><a th:href="@{/asbls/new}" th:text="#{home.createAsbl}">Create an ASBL</a></p>
+
 <form th:action="@{/logout}" method="post">
     <button type="submit" th:text="#{home.logout}">Log out</button>
 </form>

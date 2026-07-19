@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{asbl.create.title}">Create an ASBL</title>
+</head>
+<body>
+<nav>
+    <a th:href="@{/asbls/new(lang='fr')}" th:text="#{lang.fr}">Français</a>
+    <a th:href="@{/asbls/new(lang='nl')}" th:text="#{lang.nl}">Nederlands</a>
+    <a th:href="@{/asbls/new(lang='en')}" th:text="#{lang.en}">English</a>
+</nav>
+
+<h1 th:text="#{asbl.create.title}">Create an ASBL</h1>
+
+<form th:action="@{/asbls}" th:object="${form}" method="post">
+    <div>
+        <label for="denomination" th:text="#{asbl.denomination}">Name</label>
+        <input type="text" id="denomination" th:field="*{denomination}">
+        <span th:if="${#fields.hasErrors('denomination')}" th:errors="*{denomination}"></span>
+    </div>
+    <div>
+        <label for="bceNumber" th:text="#{asbl.bceNumber}">BCE number</label>
+        <input type="text" id="bceNumber" th:field="*{bceNumber}" placeholder="0123.456.789">
+        <span th:if="${#fields.hasErrors('bceNumber')}" th:errors="*{bceNumber}"></span>
+    </div>
+    <div>
+        <label for="slug" th:text="#{asbl.slug}">URL identifier</label>
+        <input type="text" id="slug" th:field="*{slug}" placeholder="mon-club">
+        <span th:if="${#fields.hasErrors('slug')}" th:errors="*{slug}"></span>
+    </div>
+    <div>
+        <label for="defaultLanguage" th:text="#{asbl.language}">Main language</label>
+        <select id="defaultLanguage" th:field="*{defaultLanguage}">
+            <option value="fr" th:text="#{lang.fr}">Français</option>
+            <option value="nl" th:text="#{lang.nl}">Nederlands</option>
+            <option value="en" th:text="#{lang.en}">English</option>
+        </select>
+        <span th:if="${#fields.hasErrors('defaultLanguage')}" th:errors="*{defaultLanguage}"></span>
+    </div>
+    <button type="submit" th:text="#{asbl.submit}">Create ASBL</button>
+</form>
+</body>
+</html>
