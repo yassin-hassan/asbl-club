@@ -2,6 +2,7 @@ package club.asbl.asbl_club.membership;
 
 import club.asbl.asbl_club.asbl.Asbl;
 import club.asbl.asbl_club.asbl.AsblSummary;
+import club.asbl.asbl_club.tenant.TenantFilter;
 import club.asbl.asbl_club.user.User;
 import java.time.LocalDate;
 import java.util.List;
@@ -12,9 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class MembershipService {
 
     private final MembershipRepository membershipRepository;
+    private final TenantFilter tenantFilter;
 
-    MembershipService(MembershipRepository membershipRepository) {
+    MembershipService(MembershipRepository membershipRepository, TenantFilter tenantFilter) {
         this.membershipRepository = membershipRepository;
+        this.tenantFilter = tenantFilter;
     }
 
     @Transactional
@@ -44,6 +47,7 @@ public class MembershipService {
 
     @Transactional(readOnly = true)
     public List<MemberView> membersOf(Asbl asbl) {
+        tenantFilter.enable();
         return membershipRepository.findByAsbl(asbl).stream()
                 .map(m -> new MemberView(m.getUser().getName(), m.getUser().getEmail(), m.getRole(), m.getStatus()))
                 .toList();
