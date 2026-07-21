@@ -1,7 +1,6 @@
 package club.asbl.asbl_club.asbl;
 
 import club.asbl.asbl_club.membership.MembershipService;
-import club.asbl.asbl_club.tenant.TenantContext;
 import club.asbl.asbl_club.user.User;
 import club.asbl.asbl_club.user.UserService;
 import jakarta.validation.Valid;
@@ -62,13 +61,8 @@ class AsblController {
         if (!membershipService.isMember(user, asbl)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        TenantContext.set(asbl.getId());
-        try {
-            model.addAttribute("asbl", asbl);
-            model.addAttribute("members", membershipService.membersOf(asbl));
-            return "asbl/members";
-        } finally {
-            TenantContext.clear();
-        }
+        model.addAttribute("asbl", asbl);
+        model.addAttribute("members", membershipService.membersOf(asbl));
+        return "asbl/members";
     }
 }
