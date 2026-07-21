@@ -42,4 +42,9 @@ public class AsblService {
     public Optional<Asbl> findBySlug(String slug) {
         return asblRepository.findBySlug(slug);
     }
+
+    @Transactional(readOnly = true)
+    public long count() {
+        return asblRepository.count();
+    }
 }
