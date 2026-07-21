@@ -12,9 +12,14 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 
 @Entity
 @Table(name = "memberships")
+@FilterDef(name = "asblFilter", parameters = @ParamDef(name = "asblId", type = Long.class))
+@Filter(name = "asblFilter", condition = "asbl_id = :asblId")
 public class Membership {
 
     @Id
