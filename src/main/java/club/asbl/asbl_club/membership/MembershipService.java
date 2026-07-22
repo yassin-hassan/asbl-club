@@ -43,6 +43,11 @@ public class MembershipService {
     }
 
     @Transactional(readOnly = true)
+    public boolean isAdmin(User user, Asbl asbl) {
+        return membershipRepository.existsByUserAndAsblAndRole(user, asbl, "ADMIN");
+    }
+
+    @Transactional(readOnly = true)
     public List<MemberView> membersOf(Asbl asbl) {
         return membershipRepository.findByAsbl(asbl).stream()
                 .map(m -> new MemberView(m.getUser().getName(), m.getUser().getEmail(), m.getRole(), m.getStatus()))
