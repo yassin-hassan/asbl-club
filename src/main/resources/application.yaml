@@ -6,6 +6,9 @@ spring:
     name: asbl-club
   messages:
     fallback-to-system-locale: false
+  devtools:
+    restart:
+      exclude: db/migration/**
   jpa:
     hibernate:
       ddl-auto: validate
