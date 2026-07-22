@@ -22,3 +22,13 @@ management:
   endpoint:
     health:
       show-details: always
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    name: ASBL Club
+    description: Management portal for associations
+    version: 1.0.0
+
