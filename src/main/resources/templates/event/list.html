@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{events.title}">Events</title>
+</head>
+<body>
+<nav>
+    <a th:href="@{/asbls/{slug}/events(slug=${asbl.slug},lang='fr')}" th:text="#{lang.fr}">Français</a>
+    <a th:href="@{/asbls/{slug}/events(slug=${asbl.slug},lang='nl')}" th:text="#{lang.nl}">Nederlands</a>
+    <a th:href="@{/asbls/{slug}/events(slug=${asbl.slug},lang='en')}" th:text="#{lang.en}">English</a>
+</nav>
+
+<h1 th:text="${asbl.denomination}">Association</h1>
+<h2 th:text="#{events.title}">Events</h2>
+
+<p th:if="${isAdmin}">
+    <a th:href="@{/asbls/{slug}/events/new(slug=${asbl.slug})}" th:text="#{events.create}">Create an event</a>
+</p>
+
+<p th:if="${events.isEmpty()}" th:text="#{events.none}">No events yet</p>
+<table th:unless="${events.isEmpty()}">
+    <thead>
+    <tr>
+        <th th:text="#{event.title}">Title</th>
+        <th th:text="#{event.startsAt}">Start</th>
+        <th th:text="#{event.status}">Status</th>
+        <th th:text="#{event.visibility}">Visibility</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="e : ${events}">
+        <td th:text="${e.title}">Title</td>
+        <td th:text="${e.startsAt}">Start</td>
+        <td th:text="${e.status}">Status</td>
+        <td th:text="${e.visibility}">Visibility</td>
+    </tr>
+    </tbody>
+</table>
+
+<p><a th:href="@{/asbls/{slug}/members(slug=${asbl.slug})}" th:text="#{events.members}">Members</a></p>
+</body>
+</html>

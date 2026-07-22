@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{events.create}">Create an event</title>
+</head>
+<body>
+<nav>
+    <a th:href="@{/asbls/{slug}/events/new(slug=${asbl.slug},lang='fr')}" th:text="#{lang.fr}">Français</a>
+    <a th:href="@{/asbls/{slug}/events/new(slug=${asbl.slug},lang='nl')}" th:text="#{lang.nl}">Nederlands</a>
+    <a th:href="@{/asbls/{slug}/events/new(slug=${asbl.slug},lang='en')}" th:text="#{lang.en}">English</a>
+</nav>
+
+<h1 th:text="${asbl.denomination}">Association</h1>
+<h2 th:text="#{events.create}">Create an event</h2>
+
+<form th:action="@{/asbls/{slug}/events(slug=${asbl.slug})}" th:object="${form}" method="post">
+    <div>
+        <label for="title" th:text="#{event.title}">Title</label>
+        <input type="text" id="title" th:field="*{title}">
+        <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></span>
+    </div>
+    <div>
+        <label for="description" th:text="#{event.description}">Description</label>
+        <textarea id="description" th:field="*{description}"></textarea>
+        <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></span>
+    </div>
+    <div>
+        <label for="startsAt" th:text="#{event.startsAt}">Start</label>
+        <input type="datetime-local" id="startsAt" th:field="*{startsAt}">
+        <span th:if="${#fields.hasErrors('startsAt')}" th:errors="*{startsAt}"></span>
+    </div>
+    <div>
+        <label for="location" th:text="#{event.location}">Location</label>
+        <input type="text" id="location" th:field="*{location}">
+        <span th:if="${#fields.hasErrors('location')}" th:errors="*{location}"></span>
+    </div>
+    <div>
+        <label for="visibility" th:text="#{event.visibility}">Visibility</label>
+        <select id="visibility" th:field="*{visibility}">
+            <option value="PUBLIC" th:text="#{event.visibility.public}">Public</option>
+            <option value="MEMBERS" th:text="#{event.visibility.members}">Members</option>
+        </select>
+        <span th:if="${#fields.hasErrors('visibility')}" th:errors="*{visibility}"></span>
+    </div>
+    <button type="submit" th:text="#{event.submit}">Create event</button>
+</form>
+
+<p><a th:href="@{/asbls/{slug}/events(slug=${asbl.slug})}" th:text="#{events.title}">Events</a></p>
+</body>
+</html>
