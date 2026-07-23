@@ -12,6 +12,7 @@ import club.asbl.asbl_club.asbl.Asbl;
 import club.asbl.asbl_club.asbl.AsblService;
 import club.asbl.asbl_club.user.User;
 import club.asbl.asbl_club.user.UserService;
+import java.time.Instant;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -66,5 +67,23 @@ class EventControllerIntegrationTest {
 
         mockMvc.perform(get("/asbls/club-a/events/new"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(username = "alice@club.test")
+    void adminAddsATicketCategory() throws Exception {
+        User alice = userService.register("Alice", "alice@club.test", "password123");
+        Asbl club = asblService.createAsbl(alice, "Club A", "0111.111.111", "club-a", "fr");
+        Event event = eventService.createEvent(club, "Concert", "Une soirée",
+                Instant.parse("2026-09-01T18:00:00Z"), "Salle A", "PUBLIC");
+
+        mockMvc.perform(post("/asbls/club-a/events/" + event.getId() + "/tickets").with(csrf())
+                        .param("label", "Normal")
+                        .param("price", "15.00")
+                        .param("totalSeats", "100"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/asbls/club-a/events/" + event.getId()));
+
+        assertThat(eventService.ticketCategoriesOf(event)).hasSize(1);
     }
 }
