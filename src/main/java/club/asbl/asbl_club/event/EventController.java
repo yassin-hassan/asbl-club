@@ -68,6 +68,39 @@ class EventController {
         return "redirect:/asbls/" + slug + "/events";
     }
 
+    @GetMapping("/asbls/{slug}/events/{eventId}")
+    String detail(@PathVariable String slug, @PathVariable Long eventId, Model model, Authentication authentication) {
+        User user = userService.getByEmail(authentication.getName());
+        Asbl asbl = resolveForMember(slug, user);
+        Event event = eventService.findEvent(asbl, eventId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        model.addAttribute("asbl", asbl);
+        model.addAttribute("event", event);
+        model.addAttribute("tickets", eventService.ticketCategoriesOf(event));
+        model.addAttribute("isAdmin", membershipService.isAdmin(user, asbl));
+        model.addAttribute("ticketForm", new AddTicketCategoryForm("", null, null));
+        return "event/detail";
+    }
+
+    @PostMapping("/asbls/{slug}/events/{eventId}/tickets")
+    String addTicket(@PathVariable String slug, @PathVariable Long eventId,
+            @Valid @ModelAttribute("ticketForm") AddTicketCategoryForm ticketForm, BindingResult bindingResult,
+            Model model, Authentication authentication) {
+        User user = userService.getByEmail(authentication.getName());
+        Asbl asbl = resolveForAdmin(slug, user);
+        Event event = eventService.findEvent(asbl, eventId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("asbl", asbl);
+            model.addAttribute("event", event);
+            model.addAttribute("tickets", eventService.ticketCategoriesOf(event));
+            model.addAttribute("isAdmin", true);
+            return "event/detail";
+        }
+        eventService.addTicketCategory(event, ticketForm.label(), ticketForm.price(), ticketForm.totalSeats());
+        return "redirect:/asbls/" + slug + "/events/" + eventId;
+    }
+
     private Asbl resolveForMember(String slug, User user) {
         Asbl asbl = asblService.findBySlug(slug)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
