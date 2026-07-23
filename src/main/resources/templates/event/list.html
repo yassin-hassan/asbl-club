@@ -30,7 +30,10 @@
     </thead>
     <tbody>
     <tr th:each="e : ${events}">
-        <td th:text="${e.title}">Title</td>
+        <td>
+            <a th:href="@{/asbls/{slug}/events/{eventId}(slug=${asbl.slug},eventId=${e.id})}"
+               th:text="${e.title}">Title</a>
+        </td>
         <td th:text="${e.startsAt}">Start</td>
         <td th:text="${e.status}">Status</td>
         <td th:text="${e.visibility}">Visibility</td>
