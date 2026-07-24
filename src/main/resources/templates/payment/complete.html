@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{payment.title}">Payment</title>
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+<h1 th:text="#{payment.title}">Payment</h1>
+<p id="message" th:text="#{payment.checking}">Checking payment…</p>
+
+<script th:inline="javascript">
+    const publishableKey = /*[[${publishableKey}]]*/ '';
+    const stripeAccount = /*[[${stripeAccount}]]*/ '';
+    const receivedMessage = /*[[#{payment.received}]]*/ 'Payment received';
+    const statusLabel = /*[[#{payment.status}]]*/ 'Payment status';
+
+    const stripe = Stripe(publishableKey, {stripeAccount: stripeAccount});
+    const clientSecret = new URLSearchParams(window.location.search).get('payment_intent_client_secret');
+    const message = document.getElementById('message');
+
+    if (clientSecret) {
+        stripe.retrievePaymentIntent(clientSecret).then(({paymentIntent}) => {
+            if (paymentIntent.status === 'succeeded') {
+                message.textContent = receivedMessage;
+            } else {
+                message.textContent = statusLabel + ' ' + paymentIntent.status;
+            }
+        });
+    }
+</script>
+</body>
+</html>

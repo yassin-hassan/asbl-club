@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{payment.title}">Payment</title>
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+<nav>
+    <a th:href="@{/pay/{id}(id=${registrationId},lang='fr')}" th:text="#{lang.fr}">Français</a>
+    <a th:href="@{/pay/{id}(id=${registrationId},lang='nl')}" th:text="#{lang.nl}">Nederlands</a>
+    <a th:href="@{/pay/{id}(id=${registrationId},lang='en')}" th:text="#{lang.en}">English</a>
+</nav>
+
+<h1 th:text="#{payment.title}">Payment</h1>
+<p><span th:text="#{payment.amount}">Amount</span> <span th:text="${amount}">0.00</span> EUR</p>
+
+<form id="payment-form">
+    <div id="payment-element"></div>
+    <button id="submit" type="submit" th:text="#{payment.pay}">Pay</button>
+    <p id="message"></p>
+</form>
+
+<script th:inline="javascript">
+    const publishableKey = /*[[${publishableKey}]]*/ '';
+    const stripeAccount = /*[[${stripeAccount}]]*/ '';
+    const clientSecret = /*[[${clientSecret}]]*/ '';
+    const registrationId = /*[[${registrationId}]]*/ '';
+
+    const stripe = Stripe(publishableKey, {stripeAccount: stripeAccount});
+    const elements = stripe.elements({clientSecret: clientSecret});
+    const paymentElement = elements.create('payment');
+    paymentElement.mount('#payment-element');
+
+    const form = document.getElementById('payment-form');
+    const message = document.getElementById('message');
+
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const {error} = await stripe.confirmPayment({
+            elements,
+            confirmParams: {
+                return_url: window.location.origin + '/pay/' + registrationId + '/complete'
+            }
+        });
+        if (error) {
+            message.textContent = error.message;
+        }
+    });
+</script>
+</body>
+</html>
