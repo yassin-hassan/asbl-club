@@ -36,6 +36,9 @@ public class Asbl {
     @Column(nullable = false, length = 20)
     private String status;
 
+    @Column(name = "stripe_account_id", length = 255)
+    private String stripeAccountId;
+
     protected Asbl() {
     }
 
@@ -97,5 +100,13 @@ public class Asbl {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getStripeAccountId() {
+        return stripeAccountId;
+    }
+
+    public void setStripeAccountId(String stripeAccountId) {
+        this.stripeAccountId = stripeAccountId;
     }
 }
