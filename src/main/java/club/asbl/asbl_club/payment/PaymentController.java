@@ -31,7 +31,7 @@ class PaymentController {
     @GetMapping("/pay/{registrationId}")
     String checkout(@PathVariable Long registrationId, Model model, Authentication authentication)
             throws StripeException {
-        Registration registration = registrationRepository.findById(registrationId)
+        Registration registration = registrationRepository.findByIdWithEventAndAsbl(registrationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         Asbl asbl = registration.getEvent().getAsbl();
         User user = userService.getByEmail(authentication.getName());
@@ -49,7 +49,7 @@ class PaymentController {
 
     @GetMapping("/pay/{registrationId}/complete")
     String complete(@PathVariable Long registrationId, Model model) {
-        Registration registration = registrationRepository.findById(registrationId)
+        Registration registration = registrationRepository.findByIdWithEventAndAsbl(registrationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         Asbl asbl = registration.getEvent().getAsbl();
         model.addAttribute("publishableKey", stripeProperties.publishableKey());
