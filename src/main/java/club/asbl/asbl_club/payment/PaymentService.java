@@ -31,7 +31,7 @@ public class PaymentService {
     public PaymentInitiation initiate(Payable payable, Asbl asbl, String payerName, String payerEmail, User user)
             throws StripeException {
         if (asbl.getStripeAccountId() == null) {
-            throw new IllegalStateException("L'ASBL n'a pas encore relié son compte Stripe.");
+            throw new IllegalStateException("The ASBL has not linked its Stripe account yet.");
         }
 
         RequestOptions connectedAccount = RequestOptions.builder()
