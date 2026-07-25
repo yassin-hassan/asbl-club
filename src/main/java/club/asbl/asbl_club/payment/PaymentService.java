@@ -23,10 +23,13 @@ public class PaymentService {
 
     private final StripeClient stripe;
     private final PaymentRepository paymentRepository;
+    private final RegistrationRepository registrationRepository;
 
-    public PaymentService(StripeClient stripe, PaymentRepository paymentRepository) {
+    public PaymentService(StripeClient stripe, PaymentRepository paymentRepository,
+            RegistrationRepository registrationRepository) {
         this.stripe = stripe;
         this.paymentRepository = paymentRepository;
+        this.registrationRepository = registrationRepository;
     }
 
     @Transactional
@@ -92,10 +95,10 @@ public class PaymentService {
             }
             payment.setStatus("SUCCEEDED");
             payment.setPaidAt(Instant.now());
-            if (payment.getPayable() instanceof Registration registration) {
+            registrationRepository.findById(payment.getPayable().getId()).ifPresent(registration -> {
                 registration.setStatus("PAID");
                 registration.setQrToken(UUID.randomUUID().toString().replace("-", ""));
-            }
+            });
         });
     }
 
