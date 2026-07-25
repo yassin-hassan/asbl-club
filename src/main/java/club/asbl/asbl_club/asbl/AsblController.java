@@ -63,6 +63,7 @@ class AsblController {
         }
         model.addAttribute("asbl", asbl);
         model.addAttribute("members", membershipService.membersOf(asbl));
+        model.addAttribute("isAdmin", membershipService.isAdmin(user, asbl));
         return "asbl/members";
     }
 }

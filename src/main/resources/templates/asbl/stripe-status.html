@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{stripe.title}">Stripe</title>
+</head>
+<body>
+<h1 th:text="${asbl.denomination}">Association</h1>
+<h2 th:text="#{stripe.title}">Stripe payments</h2>
+
+<p th:if="${ready}" th:text="#{stripe.ready}">The account is ready.</p>
+
+<div th:unless="${ready}">
+    <p th:text="#{stripe.pending}">The connection is not complete.</p>
+    <p><a th:href="@{/asbls/{slug}/stripe/connect(slug=${asbl.slug})}" th:text="#{stripe.continue}">Continue</a></p>
+</div>
+
+<p><a th:href="@{/asbls/{slug}/members(slug=${asbl.slug})}" th:text="#{members.title}">Members</a></p>
+</body>
+</html>
