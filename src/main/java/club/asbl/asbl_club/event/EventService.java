@@ -56,6 +56,16 @@ public class EventService {
         ticketCategoryRepository.save(category);
     }
 
+    @Transactional
+    public TicketCategory reserveSeat(Long ticketCategoryId) {
+        TicketCategory category = ticketCategoryRepository.findById(ticketCategoryId)
+                .orElseThrow(() -> new IllegalArgumentException("Unknown ticket category " + ticketCategoryId));
+        if (ticketCategoryRepository.reserveOneSeat(ticketCategoryId) == 0) {
+            throw new TicketSoldOutException(ticketCategoryId);
+        }
+        return category;
+    }
+
     @Transactional(readOnly = true)
     public List<TicketCategorySummary> ticketCategoriesOf(Event event) {
         return ticketCategoryRepository.findByEvent(event).stream()

@@ -3,6 +3,8 @@ package club.asbl.asbl_club.event;
 import club.asbl.asbl_club.asbl.Asbl;
 import club.asbl.asbl_club.asbl.AsblService;
 import club.asbl.asbl_club.membership.MembershipService;
+import club.asbl.asbl_club.payment.Registration;
+import club.asbl.asbl_club.payment.ReservationService;
 import club.asbl.asbl_club.user.User;
 import club.asbl.asbl_club.user.UserService;
 import jakarta.validation.Valid;
@@ -26,13 +28,15 @@ class EventController {
     private final AsblService asblService;
     private final UserService userService;
     private final MembershipService membershipService;
+    private final ReservationService reservationService;
 
     EventController(EventService eventService, AsblService asblService, UserService userService,
-            MembershipService membershipService) {
+            MembershipService membershipService, ReservationService reservationService) {
         this.eventService = eventService;
         this.asblService = asblService;
         this.userService = userService;
         this.membershipService = membershipService;
+        this.reservationService = reservationService;
     }
 
     @GetMapping("/asbls/{slug}/events")
@@ -99,6 +103,21 @@ class EventController {
         }
         eventService.addTicketCategory(event, ticketForm.label(), ticketForm.price(), ticketForm.totalSeats());
         return "redirect:/asbls/" + slug + "/events/" + eventId;
+    }
+
+    @PostMapping("/asbls/{slug}/events/{eventId}/tickets/{ticketId}/reserve")
+    String reserve(@PathVariable String slug, @PathVariable Long eventId, @PathVariable Long ticketId,
+            Authentication authentication) {
+        User user = userService.getByEmail(authentication.getName());
+        Asbl asbl = resolveForMember(slug, user);
+        eventService.findEvent(asbl, eventId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        try {
+            Registration registration = reservationService.reserve(ticketId, user);
+            return "redirect:/pay/" + registration.getId();
+        } catch (TicketSoldOutException e) {
+            return "redirect:/asbls/" + slug + "/events/" + eventId + "?soldout";
+        }
     }
 
     private Asbl resolveForMember(String slug, User user) {

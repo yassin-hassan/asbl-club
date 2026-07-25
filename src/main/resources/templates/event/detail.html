@@ -19,6 +19,7 @@
 <p><span th:text="#{event.status}">Status</span> <span th:text="${event.status}">…</span></p>
 
 <h2 th:text="#{tickets.title}">Ticket categories</h2>
+<p th:if="${param.soldout != null}" th:text="#{tickets.soldout}">This category is sold out</p>
 <p th:if="${tickets.isEmpty()}" th:text="#{tickets.none}">No ticket categories yet</p>
 <table th:unless="${tickets.isEmpty()}">
     <thead>
@@ -26,6 +27,7 @@
         <th th:text="#{ticket.label}">Label</th>
         <th th:text="#{ticket.price}">Price</th>
         <th th:text="#{ticket.seats}">Seats</th>
+        <th></th>
     </tr>
     </thead>
     <tbody>
@@ -33,6 +35,13 @@
         <td th:text="${t.label}">Label</td>
         <td th:text="${t.price}">Price</td>
         <td th:text="|${t.soldSeats} / ${t.totalSeats}|">0 / 100</td>
+        <td>
+            <form th:if="${t.soldSeats < t.totalSeats}" method="post"
+                  th:action="@{/asbls/{slug}/events/{eventId}/tickets/{ticketId}/reserve(slug=${asbl.slug},eventId=${event.id},ticketId=${t.id})}">
+                <button type="submit" th:text="#{ticket.reserve}">Reserve</button>
+            </form>
+            <span th:unless="${t.soldSeats < t.totalSeats}" th:text="#{ticket.full}">Full</span>
+        </td>
     </tr>
     </tbody>
 </table>
