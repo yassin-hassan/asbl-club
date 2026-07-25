@@ -14,9 +14,11 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register", "/css/**", "/js/**", "/images/**", "/actuator/**")
+                        .requestMatchers("/login", "/register", "/webhooks/**", "/error", "/css/**", "/js/**",
+                                "/images/**", "/actuator/**")
                         .permitAll()
                         .anyRequest().authenticated())
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/webhooks/**"))
                 .formLogin(form -> form
                         .loginPage("/login")
                         .permitAll())
