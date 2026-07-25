@@ -9,7 +9,9 @@ import com.stripe.net.RequestOptions;
 import com.stripe.param.PaymentIntentCreateParams;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Instant;
 import java.util.Optional;
+import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -80,6 +82,30 @@ public class PaymentService {
         paymentRepository.save(payment);
 
         return new PaymentInitiation(payment.getId(), intent.getClientSecret());
+    }
+
+    @Transactional
+    public void handleSucceeded(String paymentIntentId) {
+        paymentRepository.findByStripePaymentIntentId(paymentIntentId).ifPresent(payment -> {
+            if (!"INITIATED".equals(payment.getStatus())) {
+                return;
+            }
+            payment.setStatus("SUCCEEDED");
+            payment.setPaidAt(Instant.now());
+            if (payment.getPayable() instanceof Registration registration) {
+                registration.setStatus("PAID");
+                registration.setQrToken(UUID.randomUUID().toString().replace("-", ""));
+            }
+        });
+    }
+
+    @Transactional
+    public void handleFailed(String paymentIntentId) {
+        paymentRepository.findByStripePaymentIntentId(paymentIntentId).ifPresent(payment -> {
+            if ("INITIATED".equals(payment.getStatus())) {
+                payment.setStatus("FAILED");
+            }
+        });
     }
 
     private static BigDecimal commissionFor(BigDecimal amount) {
