@@ -7,3 +7,13 @@ services:
       - 'POSTGRES_USER=myuser'
     ports:
       - '5432:5432'
+  stripe-cli:
+    image: 'stripe/stripe-cli:latest'
+    command: >
+      listen
+      --forward-to host.docker.internal:8080/webhooks/stripe
+      --forward-connect-to host.docker.internal:8080/webhooks/stripe
+    environment:
+      - 'STRIPE_API_KEY=${STRIPE_SECRET_KEY}'
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
