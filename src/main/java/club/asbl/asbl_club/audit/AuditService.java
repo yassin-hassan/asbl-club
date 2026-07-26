@@ -4,6 +4,7 @@ import club.asbl.asbl_club.asbl.Asbl;
 import club.asbl.asbl_club.user.User;
 import club.asbl.asbl_club.user.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Map;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -33,6 +34,19 @@ public class AuditService {
     @Transactional
     public void record(String action, Asbl asbl) {
         record(action, asbl, null, null, null);
+    }
+
+    @Transactional(readOnly = true)
+    public List<AuditLogView> journalOf(Asbl asbl) {
+        return auditLogRepository.findByAsblIdOrderByCreatedAtDesc(asbl.getId()).stream()
+                .map(this::toView)
+                .toList();
+    }
+
+    private AuditLogView toView(AuditLog log) {
+        String actorEmail = log.getUser() == null ? null : log.getUser().getEmail();
+        return new AuditLogView(log.getCreatedAt(), actorEmail, log.getAction(),
+                log.getEntityType(), log.getEntityId(), log.getIp());
     }
 
     private User currentUser() {
