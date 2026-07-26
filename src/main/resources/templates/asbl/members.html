@@ -36,6 +36,7 @@
 <p><a th:href="@{/asbls/{slug}/events(slug=${asbl.slug})}" th:text="#{events.title}">Events</a></p>
 
 <div th:if="${isAdmin}">
+    <p><a th:href="@{/asbls/{slug}/audit(slug=${asbl.slug})}" th:text="#{audit.title}">Audit log</a></p>
     <p th:if="${asbl.stripeAccountId == null}">
         <a th:href="@{/asbls/{slug}/stripe/connect(slug=${asbl.slug})}" th:text="#{stripe.connect}">Connect Stripe</a>
     </p>
