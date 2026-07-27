@@ -120,6 +120,14 @@ public class PaymentService {
         });
     }
 
+    @Transactional
+    public void anonymizePaymentsOf(User user) {
+        paymentRepository.findByUser(user).forEach(payment -> {
+            payment.setPayerName("Deleted account");
+            payment.setPayerEmail("deleted-" + user.getId() + "@deleted.asbl.club");
+        });
+    }
+
     @Transactional(readOnly = true)
     public List<PaymentExport> exportPaymentsOf(User user) {
         return paymentRepository.findByUser(user).stream()
