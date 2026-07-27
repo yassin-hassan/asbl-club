@@ -10,4 +10,8 @@ interface EventRepository extends JpaRepository<Event, Long> {
     List<Event> findByAsbl(Asbl asbl);
 
     Optional<Event> findByIdAndAsbl(Long id, Asbl asbl);
+
+    List<Event> findByVisibilityAndStatusOrderByStartsAtDesc(String visibility, String status);
+
+    List<Event> findByAsblAndVisibilityAndStatusOrderByStartsAtDesc(Asbl asbl, String visibility, String status);
 }

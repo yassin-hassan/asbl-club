@@ -51,6 +51,24 @@ public class EventService {
                 .filter(event -> "PUBLIC".equals(event.getVisibility()) && "PUBLISHED".equals(event.getStatus()));
     }
 
+    @Transactional(readOnly = true)
+    public List<EventFeedItem> publicFeed() {
+        return eventRepository.findByVisibilityAndStatusOrderByStartsAtDesc("PUBLIC", "PUBLISHED").stream()
+                .map(this::toFeedItem)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<EventFeedItem> publicFeedOf(Asbl asbl) {
+        return eventRepository.findByAsblAndVisibilityAndStatusOrderByStartsAtDesc(asbl, "PUBLIC", "PUBLISHED").stream()
+                .map(this::toFeedItem)
+                .toList();
+    }
+
+    private EventFeedItem toFeedItem(Event event) {
+        return new EventFeedItem(event.getId(), event.getTitle(), event.getDescription(), event.getStartsAt());
+    }
+
     @Transactional
     public void addTicketCategory(Event event, String label, BigDecimal price, int totalSeats) {
         TicketCategory category = new TicketCategory();
