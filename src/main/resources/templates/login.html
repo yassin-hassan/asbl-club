@@ -16,6 +16,7 @@
 <p th:if="${param.registered != null}" th:text="#{login.registered}">Account created</p>
 <p th:if="${param.error != null}" th:text="#{login.error}">Error</p>
 <p th:if="${param.logout != null}" th:text="#{login.logout}">Logged out</p>
+<p th:if="${param.deleted != null}" th:text="#{login.deleted}">Account deleted</p>
 
 <form th:action="@{/login}" method="post">
     <div>

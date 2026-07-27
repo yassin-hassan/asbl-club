@@ -24,6 +24,11 @@ class AccountController {
         this.accountService = accountService;
     }
 
+    @GetMapping("/account")
+    String account() {
+        return "account/index";
+    }
+
     @GetMapping("/account/export")
     @ResponseBody
     ResponseEntity<AccountExport> export(Authentication authentication) {
