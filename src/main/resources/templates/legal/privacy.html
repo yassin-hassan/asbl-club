@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{legal.privacy.title}">Privacy policy</title>
+</head>
+<body>
+<nav>
+    <a th:href="@{/privacy(lang='fr')}" th:text="#{lang.fr}">Français</a>
+    <a th:href="@{/privacy(lang='nl')}" th:text="#{lang.nl}">Nederlands</a>
+    <a th:href="@{/privacy(lang='en')}" th:text="#{lang.en}">English</a>
+</nav>
+
+<h1 th:text="#{legal.privacy.title}">Privacy policy</h1>
+<p th:text="#{legal.privacy.body}">Provisional content.</p>
+
+<p><a th:href="@{/}" th:text="#{account.back}">Back to home</a></p>
+</body>
+</html>

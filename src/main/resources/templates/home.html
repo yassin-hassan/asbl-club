@@ -29,5 +29,11 @@
 <form th:action="@{/logout}" method="post">
     <button type="submit" th:text="#{home.logout}">Log out</button>
 </form>
+
+<footer>
+    <a th:href="@{/legal}" th:text="#{legal.notice.title}">Legal notice</a>
+    <a th:href="@{/privacy}" th:text="#{legal.privacy.title}">Privacy policy</a>
+    <a th:href="@{/cookies}" th:text="#{legal.cookies.title}">Cookie policy</a>
+</footer>
 </body>
 </html>
