@@ -37,6 +37,9 @@ public class User {
     @Column(name = "super_admin", nullable = false)
     private boolean superAdmin;
 
+    @Column(name = "deleted_at")
+    private Instant deletedAt;
+
     protected User() {
     }
 
@@ -98,5 +101,13 @@ public class User {
 
     public void setSuperAdmin(boolean superAdmin) {
         this.superAdmin = superAdmin;
+    }
+
+    public Instant getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(Instant deletedAt) {
+        this.deletedAt = deletedAt;
     }
 }

@@ -23,6 +23,9 @@ class CustomUserDetailsService implements UserDetailsService {
         String normalizedEmail = email.trim().toLowerCase(Locale.ROOT);
         User user = userRepository.findByEmail(normalizedEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("No user with email " + normalizedEmail));
+        if (user.getDeletedAt() != null) {
+            throw new UsernameNotFoundException("Account closed: " + normalizedEmail);
+        }
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
         if (user.isSuperAdmin()) {

@@ -1,7 +1,9 @@
 package club.asbl.asbl_club.user;
 
+import java.time.Instant;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.UUID;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,5 +49,15 @@ public class UserService {
         User user = register(name, email, rawPassword);
         user.setSuperAdmin(true);
         return userRepository.save(user);
+    }
+
+    @Transactional
+    public void anonymizeAndClose(User user) {
+        user.setName("Deleted account");
+        user.setEmail("deleted-" + user.getId() + "@deleted.asbl.club");
+        user.setPhotoPath(null);
+        user.setPassword(passwordEncoder.encode(UUID.randomUUID().toString()));
+        user.setDeletedAt(Instant.now());
+        userRepository.save(user);
     }
 }
