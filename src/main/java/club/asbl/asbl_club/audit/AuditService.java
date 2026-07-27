@@ -55,9 +55,17 @@ public class AuditService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public List<AuditLogView> journalAll() {
+        return auditLogRepository.findTop200ByOrderByCreatedAtDesc().stream()
+                .map(this::toView)
+                .toList();
+    }
+
     private AuditLogView toView(AuditLog log) {
         String actorEmail = log.getUser() == null ? null : log.getUser().getEmail();
-        return new AuditLogView(log.getCreatedAt(), actorEmail, log.getAction(),
+        String asbl = log.getAsbl() == null ? null : log.getAsbl().getDenomination();
+        return new AuditLogView(log.getCreatedAt(), asbl, actorEmail, log.getAction(),
                 log.getEntityType(), log.getEntityId(), log.getIp());
     }
 

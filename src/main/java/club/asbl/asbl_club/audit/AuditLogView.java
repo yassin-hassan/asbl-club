@@ -4,6 +4,7 @@ import java.time.Instant;
 
 public record AuditLogView(
         Instant createdAt,
+        String asbl,
         String actorEmail,
         String action,
         String entityType,

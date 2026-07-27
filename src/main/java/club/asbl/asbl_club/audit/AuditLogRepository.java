@@ -11,6 +11,8 @@ interface AuditLogRepository extends Repository<AuditLog, Long> {
 
     List<AuditLog> findByAsblIdOrderByCreatedAtDesc(Long asblId);
 
+    List<AuditLog> findTop200ByOrderByCreatedAtDesc();
+
     // Only age-based deletion, never a targeted row. The 3-year boundary must
     // stay in sync with the trigger in V8__protect_audit_logs.sql.
     @Modifying
