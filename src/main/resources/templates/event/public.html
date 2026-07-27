@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${event.title}">Event</title>
+</head>
+<body>
+<nav>
+    <a th:href="@{/events/{id}(id=${event.id},lang='fr')}" th:text="#{lang.fr}">Français</a>
+    <a th:href="@{/events/{id}(id=${event.id},lang='nl')}" th:text="#{lang.nl}">Nederlands</a>
+    <a th:href="@{/events/{id}(id=${event.id},lang='en')}" th:text="#{lang.en}">English</a>
+</nav>
+
+<h1 th:text="${event.title}">Event title</h1>
+<p th:text="${event.asbl.denomination}">Association</p>
+<p th:text="${event.startsAt}">2026-01-01</p>
+<p th:if="${event.location}" th:text="${event.location}">Location</p>
+<p th:if="${event.description}" th:text="${event.description}">Description</p>
+
+<h2 th:text="#{tickets.title}">Ticket categories</h2>
+<p th:if="${tickets.isEmpty()}" th:text="#{tickets.none}">No ticket categories yet</p>
+<table th:unless="${tickets.isEmpty()}">
+    <thead>
+    <tr>
+        <th th:text="#{ticket.label}">Label</th>
+        <th th:text="#{ticket.price}">Price</th>
+        <th th:text="#{ticket.seats}">Seats</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="t : ${tickets}">
+        <td th:text="${t.label}">Label</td>
+        <td th:text="${t.price}">Price</td>
+        <td th:text="${t.totalSeats - t.soldSeats}">Seats</td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

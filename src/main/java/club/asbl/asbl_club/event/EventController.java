@@ -72,6 +72,15 @@ class EventController {
         return "redirect:/asbls/" + slug + "/events";
     }
 
+    @GetMapping("/events/{eventId}")
+    String publicEvent(@PathVariable Long eventId, Model model) {
+        Event event = eventService.findPublicEvent(eventId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        model.addAttribute("event", event);
+        model.addAttribute("tickets", eventService.ticketCategoriesOf(event));
+        return "event/public";
+    }
+
     @GetMapping("/asbls/{slug}/events/{eventId}")
     String detail(@PathVariable String slug, @PathVariable Long eventId, Model model, Authentication authentication) {
         User user = userService.getByEmail(authentication.getName());
