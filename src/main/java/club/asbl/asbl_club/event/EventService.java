@@ -45,6 +45,12 @@ public class EventService {
         return eventRepository.findByIdAndAsbl(eventId, asbl);
     }
 
+    @Transactional(readOnly = true)
+    public Optional<Event> findPublicEvent(Long eventId) {
+        return eventRepository.findById(eventId)
+                .filter(event -> "PUBLIC".equals(event.getVisibility()) && "PUBLISHED".equals(event.getStatus()));
+    }
+
     @Transactional
     public void addTicketCategory(Event event, String label, BigDecimal price, int totalSeats) {
         TicketCategory category = new TicketCategory();
