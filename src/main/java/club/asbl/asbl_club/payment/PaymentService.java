@@ -1,6 +1,7 @@
 package club.asbl.asbl_club.payment;
 
 import club.asbl.asbl_club.asbl.Asbl;
+import club.asbl.asbl_club.audit.AuditService;
 import club.asbl.asbl_club.user.User;
 import com.stripe.StripeClient;
 import com.stripe.exception.StripeException;
@@ -10,6 +11,7 @@ import com.stripe.param.PaymentIntentCreateParams;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
@@ -24,12 +26,14 @@ public class PaymentService {
     private final StripeClient stripe;
     private final PaymentRepository paymentRepository;
     private final RegistrationRepository registrationRepository;
+    private final AuditService auditService;
 
     public PaymentService(StripeClient stripe, PaymentRepository paymentRepository,
-            RegistrationRepository registrationRepository) {
+            RegistrationRepository registrationRepository, AuditService auditService) {
         this.stripe = stripe;
         this.paymentRepository = paymentRepository;
         this.registrationRepository = registrationRepository;
+        this.auditService = auditService;
     }
 
     @Transactional
@@ -99,6 +103,8 @@ public class PaymentService {
                 registration.setStatus("PAID");
                 registration.setQrToken(UUID.randomUUID().toString().replace("-", ""));
             });
+            auditService.recordSystem("PAYMENT_SUCCEEDED", payment.getAsbl(), "Payment", payment.getId(),
+                    Map.of("paymentIntentId", paymentIntentId, "amount", payment.getAmount()));
         });
     }
 
@@ -107,6 +113,8 @@ public class PaymentService {
         paymentRepository.findByStripePaymentIntentId(paymentIntentId).ifPresent(payment -> {
             if ("INITIATED".equals(payment.getStatus())) {
                 payment.setStatus("FAILED");
+                auditService.recordSystem("PAYMENT_FAILED", payment.getAsbl(), "Payment", payment.getId(),
+                        Map.of("paymentIntentId", paymentIntentId));
             }
         });
     }

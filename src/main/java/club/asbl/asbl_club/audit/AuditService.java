@@ -36,6 +36,18 @@ public class AuditService {
         record(action, asbl, null, null, null);
     }
 
+    @Transactional
+    public void recordSystem(String action, Asbl asbl, String entityType, Long entityId, Map<String, Object> payload) {
+        auditLogRepository.save(new AuditLog(action, null, null, asbl, entityType, entityId, payload));
+    }
+
+    @Transactional
+    public void recordLogin(String action, String email, String ip) {
+        User user = email == null ? null : userService.findByEmail(email).orElse(null);
+        Map<String, Object> payload = email == null ? null : Map.of("email", email);
+        auditLogRepository.save(new AuditLog(action, user, ip, null, null, null, payload));
+    }
+
     @Transactional(readOnly = true)
     public List<AuditLogView> journalOf(Asbl asbl) {
         return auditLogRepository.findByAsblIdOrderByCreatedAtDesc(asbl.getId()).stream()
