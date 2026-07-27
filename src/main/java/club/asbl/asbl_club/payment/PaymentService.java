@@ -11,6 +11,7 @@ import com.stripe.param.PaymentIntentCreateParams;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -117,6 +118,13 @@ public class PaymentService {
                         Map.of("paymentIntentId", paymentIntentId));
             }
         });
+    }
+
+    @Transactional(readOnly = true)
+    public List<PaymentExport> exportPaymentsOf(User user) {
+        return paymentRepository.findByUser(user).stream()
+                .map(payment -> new PaymentExport(payment.getAmount(), payment.getStatus(), payment.getPaidAt()))
+                .toList();
     }
 
     private static BigDecimal commissionFor(BigDecimal amount) {
