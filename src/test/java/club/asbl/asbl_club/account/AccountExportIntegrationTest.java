@@ -32,6 +32,14 @@ class AccountExportIntegrationTest {
 
     @Test
     @WithMockUser(username = "alice@club.test")
+    void member_seesTheAccountPage() throws Exception {
+        mockMvc.perform(get("/account"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("/account/export")));
+    }
+
+    @Test
+    @WithMockUser(username = "alice@club.test")
     void member_downloadsTheirPersonalData() throws Exception {
         userService.register("Alice", "alice@club.test", "password123");
         mockMvc.perform(post("/asbls").with(csrf())
