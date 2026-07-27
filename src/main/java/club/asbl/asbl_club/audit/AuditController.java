@@ -41,4 +41,10 @@ class AuditController {
         model.addAttribute("entries", auditService.journalOf(asbl));
         return "audit/journal";
     }
+
+    @GetMapping("/admin/audit")
+    String adminJournal(Model model) {
+        model.addAttribute("entries", auditService.journalAll());
+        return "audit/admin-journal";
+    }
 }
