@@ -53,4 +53,9 @@ public class MembershipService {
                 .map(m -> new MemberView(m.getUser().getName(), m.getUser().getEmail(), m.getRole(), m.getStatus()))
                 .toList();
     }
+
+    @Transactional
+    public void removeAllFor(User user) {
+        membershipRepository.deleteAll(membershipRepository.findByUser(user));
+    }
 }
