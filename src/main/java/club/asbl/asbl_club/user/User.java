@@ -34,6 +34,9 @@ public class User {
     @Column(name = "photo_path", length = 2048)
     private String photoPath;
 
+    @Column(name = "super_admin", nullable = false)
+    private boolean superAdmin;
+
     protected User() {
     }
 
@@ -87,5 +90,13 @@ public class User {
 
     public void setPhotoPath(String photoPath) {
         this.photoPath = photoPath;
+    }
+
+    public boolean isSuperAdmin() {
+        return superAdmin;
+    }
+
+    public void setSuperAdmin(boolean superAdmin) {
+        this.superAdmin = superAdmin;
     }
 }
