@@ -41,4 +41,11 @@ public class UserService {
         user.setLanguage("fr");
         return userRepository.save(user);
     }
+
+    @Transactional
+    public User registerSuperAdmin(String name, String email, String rawPassword) {
+        User user = register(name, email, rawPassword);
+        user.setSuperAdmin(true);
+        return userRepository.save(user);
+    }
 }

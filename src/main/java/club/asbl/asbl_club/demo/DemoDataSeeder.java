@@ -37,6 +37,8 @@ class DemoDataSeeder implements ApplicationRunner {
             return;
         }
         log.info("Seeding {} demo users, associations and memberships", COUNT);
+        userService.registerSuperAdmin("Super Admin", "admin@demo.asbl.club", "password123");
+        log.info("Seeded a super administrator, admin@demo.asbl.club");
         for (int i = 1; i <= COUNT; i++) {
             User founder = userService.register("Membre " + i, "membre" + i + "@demo.asbl.club", "password123");
             asblService.createAsbl(founder, "Association " + i, String.format("0%03d.000.000", i),
