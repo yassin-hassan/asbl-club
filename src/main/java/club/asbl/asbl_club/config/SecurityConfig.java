@@ -17,6 +17,7 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/register", "/webhooks/**", "/error", "/css/**", "/js/**",
                                 "/images/**", "/actuator/**")
                         .permitAll()
+                        .requestMatchers("/admin/**").hasRole("SUPERADMIN")
                         .anyRequest().authenticated())
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/webhooks/**"))
                 .formLogin(form -> form

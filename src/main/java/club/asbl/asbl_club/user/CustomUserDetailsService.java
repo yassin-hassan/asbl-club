@@ -1,5 +1,7 @@
 package club.asbl.asbl_club.user;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,10 +23,15 @@ class CustomUserDetailsService implements UserDetailsService {
         String normalizedEmail = email.trim().toLowerCase(Locale.ROOT);
         User user = userRepository.findByEmail(normalizedEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("No user with email " + normalizedEmail));
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        if (user.isSuperAdmin()) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_SUPERADMIN"));
+        }
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getEmail())
                 .password(user.getPassword())
-                .authorities(new SimpleGrantedAuthority("ROLE_USER"))
+                .authorities(authorities)
                 .build();
     }
 }
