@@ -16,7 +16,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/register", "/webhooks/**", "/error", "/css/**", "/js/**",
                                 "/images/**", "/actuator/**",
-                                "/legal", "/privacy", "/cookies", "/events/**")
+                                "/legal", "/privacy", "/cookies", "/events/**",
+                                "/asbls/*/events/rss")
                         .permitAll()
                         .requestMatchers("/admin/**").hasRole("SUPERADMIN")
                         .anyRequest().authenticated())
