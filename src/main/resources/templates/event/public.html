@@ -36,7 +36,7 @@
     <tr th:each="t : ${tickets}">
         <td th:text="${t.label}">Label</td>
         <td th:text="${t.price}">Price</td>
-        <td th:text="${t.totalSeats - t.soldSeats}">Seats</td>
+        <td th:id="'seats-' + ${t.id}" th:text="${t.totalSeats - t.soldSeats}">Seats</td>
     </tr>
     </tbody>
 </table>
@@ -46,5 +46,21 @@
     <a th:href="'https://wa.me/?text=' + ${canonicalUrl}" target="_blank" rel="noopener">WhatsApp</a>
     <a th:href="'mailto:?body=' + ${canonicalUrl}">Email</a>
 </p>
+
+<script th:inline="javascript">
+    const eventId = /*[[${event.id}]]*/ 0;
+    function refreshSeats() {
+        fetch('/events/' + eventId + '/availability')
+            .then(response => response.json())
+            .then(categories => categories.forEach(function (category) {
+                const cell = document.getElementById('seats-' + category.categoryId);
+                if (cell) {
+                    cell.textContent = category.remaining;
+                }
+            }));
+    }
+    refreshSeats();
+    setInterval(refreshSeats, 5000);
+</script>
 </body>
 </html>
