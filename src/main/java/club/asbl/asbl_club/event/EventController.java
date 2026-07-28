@@ -10,6 +10,7 @@ import club.asbl.asbl_club.user.UserService;
 import jakarta.validation.Valid;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -81,6 +83,16 @@ class EventController {
         model.addAttribute("tickets", eventService.ticketCategoriesOf(event));
         model.addAttribute("canonicalUrl", ServletUriComponentsBuilder.fromCurrentRequestUri().toUriString());
         return "event/public";
+    }
+
+    @GetMapping("/events/{eventId}/availability")
+    @ResponseBody
+    List<SeatAvailability> availability(@PathVariable Long eventId) {
+        Event event = eventService.findPublicEvent(eventId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return eventService.ticketCategoriesOf(event).stream()
+                .map(t -> new SeatAvailability(t.id(), t.totalSeats() - t.soldSeats()))
+                .toList();
     }
 
     @GetMapping("/asbls/{slug}/events/{eventId}")
