@@ -49,7 +49,9 @@ class PublicEventPageIntegrationTest {
 
         mockMvc.perform(get("/events/" + published.getId()))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Concert")));
+                .andExpect(content().string(containsString("Concert")))
+                .andExpect(content().string(containsString("og:title")))
+                .andExpect(content().string(containsString("og:url")));
 
         mockMvc.perform(get("/events/" + members.getId()))
                 .andExpect(status().isNotFound());
