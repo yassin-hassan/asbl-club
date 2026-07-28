@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Controller
 class EventController {
@@ -78,6 +79,7 @@ class EventController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         model.addAttribute("event", event);
         model.addAttribute("tickets", eventService.ticketCategoriesOf(event));
+        model.addAttribute("canonicalUrl", ServletUriComponentsBuilder.fromCurrentRequestUri().toUriString());
         return "event/public";
     }
 

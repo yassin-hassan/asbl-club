@@ -3,6 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="${event.title}">Event</title>
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="asbl.club">
+    <meta property="og:title" th:attr="content=${event.title}">
+    <meta property="og:description" th:if="${event.description}" th:attr="content=${event.description}">
+    <meta property="og:url" th:attr="content=${canonicalUrl}">
 </head>
 <body>
 <nav>
@@ -35,5 +40,11 @@
     </tr>
     </tbody>
 </table>
+
+<h2 th:text="#{share.title}">Share</h2>
+<p>
+    <a th:href="'https://wa.me/?text=' + ${canonicalUrl}" target="_blank" rel="noopener">WhatsApp</a>
+    <a th:href="'mailto:?body=' + ${canonicalUrl}">Email</a>
+</p>
 </body>
 </html>
