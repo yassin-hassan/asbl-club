@@ -52,6 +52,11 @@ public class EventService {
     }
 
     @Transactional(readOnly = true)
+    public Optional<EventFeedItem> publicEvent(Long eventId) {
+        return findPublicEvent(eventId).map(this::toFeedItem);
+    }
+
+    @Transactional(readOnly = true)
     public List<EventFeedItem> publicFeed() {
         return eventRepository.findByVisibilityAndStatusOrderByStartsAtDesc("PUBLIC", "PUBLISHED").stream()
                 .map(this::toFeedItem)

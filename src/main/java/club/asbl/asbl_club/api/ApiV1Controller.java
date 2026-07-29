@@ -24,10 +24,23 @@ class ApiV1Controller {
         this.eventService = eventService;
     }
 
+    @GetMapping("/asbls/{slug}")
+    AsblResource asbl(@PathVariable String slug) {
+        Asbl asbl = asblService.findBySlug(slug)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return new AsblResource(asbl.getSlug(), asbl.getDenomination());
+    }
+
     @GetMapping("/asbls/{slug}/events")
     List<EventFeedItem> events(@PathVariable String slug) {
         Asbl asbl = asblService.findBySlug(slug)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         return eventService.publicFeedOf(asbl);
+    }
+
+    @GetMapping("/events/{eventId}")
+    EventFeedItem event(@PathVariable Long eventId) {
+        return eventService.publicEvent(eventId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 }
