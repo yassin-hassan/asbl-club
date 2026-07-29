@@ -1,6 +1,8 @@
 package club.asbl.asbl_club.api;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -48,35 +50,44 @@ class ApiIntegrationTest {
     }
 
     @Test
-    void events_withValidBearerToken_returnPublicEventsAsJson() throws Exception {
+    void publicEvents_areReadableWithoutToken() throws Exception {
         seedPublishedEvent();
 
-        mockMvc.perform(get("/api/v1/asbls/mon-club/events").header("Authorization", "Bearer demo-secret-key"))
+        mockMvc.perform(get("/api/v1/asbls/mon-club/events"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].title").value("Concert"));
     }
 
     @Test
-    void eventDetail_withValidBearerToken_returnsTheEvent() throws Exception {
+    void eventDetail_isReadableWithoutToken() throws Exception {
         Event published = seedPublishedEvent();
 
-        mockMvc.perform(get("/api/v1/events/" + published.getId()).header("Authorization", "Bearer demo-secret-key"))
+        mockMvc.perform(get("/api/v1/events/" + published.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Concert"));
     }
 
     @Test
-    void asblDetail_withValidBearerToken_returnsTheAsbl() throws Exception {
+    void asblDetail_isReadableWithoutToken() throws Exception {
         seedPublishedEvent();
 
-        mockMvc.perform(get("/api/v1/asbls/mon-club").header("Authorization", "Bearer demo-secret-key"))
+        mockMvc.perform(get("/api/v1/asbls/mon-club"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.denomination").value("Mon Club"));
     }
 
     @Test
-    void events_withoutToken_areUnauthorized() throws Exception {
-        mockMvc.perform(get("/api/v1/asbls/mon-club/events"))
+    void crossOriginRead_carriesCorsHeader() throws Exception {
+        seedPublishedEvent();
+
+        mockMvc.perform(get("/api/v1/asbls/mon-club/events").header("Origin", "https://tennis-wavre.be"))
+                .andExpect(status().isOk())
+                .andExpect(header().exists("Access-Control-Allow-Origin"));
+    }
+
+    @Test
+    void write_withoutToken_isUnauthorized() throws Exception {
+        mockMvc.perform(post("/api/v1/asbls/mon-club/events"))
                 .andExpect(status().isUnauthorized());
     }
 }
