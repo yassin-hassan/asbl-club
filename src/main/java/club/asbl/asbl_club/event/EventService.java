@@ -47,7 +47,7 @@ public class EventService {
 
     @Transactional(readOnly = true)
     public Optional<Event> findPublicEvent(Long eventId) {
-        return eventRepository.findById(eventId)
+        return eventRepository.findByIdFetchingAsbl(eventId)
                 .filter(event -> "PUBLIC".equals(event.getVisibility()) && "PUBLISHED".equals(event.getStatus()));
     }
 
