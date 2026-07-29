@@ -38,17 +38,40 @@ class ApiIntegrationTest {
     @Autowired
     EventService eventService;
 
-    @Test
-    void events_withValidBearerToken_returnPublicEventsAsJson() throws Exception {
+    private Event seedPublishedEvent() {
         User alice = userService.register("Alice", "alice@club.test", "password123");
         Asbl asbl = asblService.createAsbl(alice, "Mon Club", "0123.456.789", "mon-club", "fr");
         Event published = eventService.createEvent(asbl, "Concert", "A public concert",
                 Instant.now().plusSeconds(3600), "Hall", "PUBLIC");
         published.setStatus("PUBLISHED");
+        return published;
+    }
+
+    @Test
+    void events_withValidBearerToken_returnPublicEventsAsJson() throws Exception {
+        seedPublishedEvent();
 
         mockMvc.perform(get("/api/v1/asbls/mon-club/events").header("Authorization", "Bearer demo-secret-key"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].title").value("Concert"));
+    }
+
+    @Test
+    void eventDetail_withValidBearerToken_returnsTheEvent() throws Exception {
+        Event published = seedPublishedEvent();
+
+        mockMvc.perform(get("/api/v1/events/" + published.getId()).header("Authorization", "Bearer demo-secret-key"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("Concert"));
+    }
+
+    @Test
+    void asblDetail_withValidBearerToken_returnsTheAsbl() throws Exception {
+        seedPublishedEvent();
+
+        mockMvc.perform(get("/api/v1/asbls/mon-club").header("Authorization", "Bearer demo-secret-key"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.denomination").value("Mon Club"));
     }
 
     @Test
