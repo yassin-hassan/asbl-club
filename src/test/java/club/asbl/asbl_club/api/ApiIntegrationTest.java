@@ -1,7 +1,9 @@
 package club.asbl.asbl_club.api;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -89,5 +91,13 @@ class ApiIntegrationTest {
     void write_withoutToken_isUnauthorized() throws Exception {
         mockMvc.perform(post("/api/v1/asbls/mon-club/events"))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void openApiDocument_isPublicAndDescribesTheApi() throws Exception {
+        mockMvc.perform(get("/v3/api-docs"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("openapi")))
+                .andExpect(content().string(containsString("/api/v1/asbls/{slug}/events")));
     }
 }
