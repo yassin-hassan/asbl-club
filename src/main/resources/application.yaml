@@ -40,3 +40,6 @@ stripe:
 api:
   key: ${API_KEY:demo-secret-key}
 
+springdoc:
+  paths-to-match: /api/**
+

@@ -58,7 +58,8 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/register", "/webhooks/**", "/error", "/css/**", "/js/**",
                                 "/images/**", "/actuator/**",
                                 "/legal", "/privacy", "/cookies", "/events/**",
-                                "/asbls/*/events/rss")
+                                "/asbls/*/events/rss",
+                                "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
                         .permitAll()
                         .requestMatchers("/admin/**").hasRole("SUPERADMIN")
                         .anyRequest().authenticated())
