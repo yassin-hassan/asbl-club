@@ -171,6 +171,18 @@ section.blk{padding:56px 0}
 .auth-alt{text-align:center;font-size:14px;color:var(--slate-600);margin-top:20px}
 .auth-alt a{color:var(--indigo-700);font-weight:600}
 
+/* ---------- Content pages (settings, forms) ---------- */
+.page{max-width:760px;margin:0 auto;padding:40px 32px}
+.page > h1{font-size:30px;font-weight:700;color:var(--indigo-900);margin-bottom:6px}
+.page .muted{color:var(--slate-600);font-size:15px}
+.box{border:1px solid var(--slate-200);border-radius:var(--radius-lg);padding:24px;background:#fff;margin-top:20px}
+.box h2{font-size:18px;font-weight:600;color:var(--indigo-900);margin-bottom:8px}
+.box p{color:var(--slate-600);font-size:14px;margin-bottom:14px}
+.box.danger{border-color:#FCA5A5}
+.box.danger h2{color:var(--red-700)}
+.btn-danger{background:var(--red-700);color:#fff}
+.btn-danger:hover{background:#991B1B}
+
 /* ---------- Legal / prose pages ---------- */
 .legal-page{max-width:760px;margin:0 auto;padding:48px 32px}
 .legal-page h1{font-size:30px;font-weight:700;color:var(--indigo-900);margin-bottom:16px}

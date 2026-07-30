@@ -1,27 +1,29 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title th:text="#{account.title}">My account</title>
-</head>
+<head th:replace="~{fragments/layout :: head(#{account.title})}"></head>
 <body>
-<nav>
-    <a th:href="@{/account(lang='fr')}" th:text="#{lang.fr}">Français</a>
-    <a th:href="@{/account(lang='nl')}" th:text="#{lang.nl}">Nederlands</a>
-    <a th:href="@{/account(lang='en')}" th:text="#{lang.en}">English</a>
-</nav>
+<header th:replace="~{fragments/layout :: header}"></header>
 
-<h1 th:text="#{account.title}">My account</h1>
-<p th:text="${#authentication.name}">email</p>
+<main class="page">
+    <h1 th:text="#{account.title}">Mon compte</h1>
+    <p class="muted" th:text="${#authentication.name}">email</p>
 
-<p><a th:href="@{/account/export}" th:text="#{account.export}">Export my data</a></p>
+    <div class="box">
+        <h2 th:text="#{account.export}">Exporter mes données</h2>
+        <a th:href="@{/account/export}" class="btn btn-secondary" th:text="#{account.export}">Exporter mes données</a>
+    </div>
 
-<h2 th:text="#{account.deleteTitle}">Delete my account</h2>
-<p th:text="#{account.deleteWarning}">This action is irreversible.</p>
-<form th:action="@{/account/delete}" method="post">
-    <button type="submit" th:text="#{account.delete}">Delete permanently</button>
-</form>
+    <div class="box danger">
+        <h2 th:text="#{account.deleteTitle}">Supprimer mon compte</h2>
+        <p th:text="#{account.deleteWarning}">Cette action est irréversible.</p>
+        <form th:action="@{/account/delete}" method="post">
+            <button type="submit" class="btn btn-danger" th:text="#{account.delete}">Supprimer définitivement</button>
+        </form>
+    </div>
 
-<p><a th:href="@{/}" th:text="#{account.back}">Back to home</a></p>
+    <a class="back-link" th:href="@{/}" th:text="#{account.back}">Retour à l'accueil</a>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
 </body>
 </html>
