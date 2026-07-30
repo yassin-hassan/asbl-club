@@ -1,19 +1,15 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title th:text="#{legal.cookies.title}">Cookie policy</title>
-</head>
+<head th:replace="~{fragments/layout :: head(#{legal.cookies.title})}"></head>
 <body>
-<nav>
-    <a th:href="@{/cookies(lang='fr')}" th:text="#{lang.fr}">Français</a>
-    <a th:href="@{/cookies(lang='nl')}" th:text="#{lang.nl}">Nederlands</a>
-    <a th:href="@{/cookies(lang='en')}" th:text="#{lang.en}">English</a>
-</nav>
+<header th:replace="~{fragments/layout :: header}"></header>
 
-<h1 th:text="#{legal.cookies.title}">Cookie policy</h1>
-<p th:text="#{legal.cookies.body}">Cookie information.</p>
+<main class="legal-page">
+    <h1 th:text="#{legal.cookies.title}">Cookies</h1>
+    <p th:text="#{legal.cookies.body}">Cookie information.</p>
+    <a class="back-link" th:href="@{/}" th:text="#{account.back}">Retour à l'accueil</a>
+</main>
 
-<p><a th:href="@{/}" th:text="#{account.back}">Back to home</a></p>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
 </body>
 </html>
