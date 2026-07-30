@@ -1,39 +1,33 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title th:text="#{home.title}">Home</title>
-</head>
+<head th:replace="~{fragments/layout :: head(#{home.title})}"></head>
 <body>
-<nav>
-    <a th:href="@{/(lang='fr')}" th:text="#{lang.fr}">Français</a>
-    <a th:href="@{/(lang='nl')}" th:text="#{lang.nl}">Nederlands</a>
-    <a th:href="@{/(lang='en')}" th:text="#{lang.en}">English</a>
-</nav>
+<header th:replace="~{fragments/layout :: header}"></header>
 
-<h1 th:text="#{home.title}">Home</h1>
-<p th:text="#{home.greeting(${#authentication.name})}">Hello</p>
+<main class="wrap dash">
+    <h1 th:text="#{home.yourAsbls}">Vos associations</h1>
+    <p class="hello" th:text="#{home.greeting(${#authentication.name})}">Bonjour</p>
 
-<h2 th:text="#{home.yourAsbls}">Your associations</h2>
-<p th:if="${asbls.isEmpty()}" th:text="#{home.noAsbls}">You have no associations yet</p>
-<ul th:unless="${asbls.isEmpty()}">
-    <li th:each="a : ${asbls}">
-        <a th:href="@{/asbls/{slug}/members(slug=${a.slug})}" th:text="${a.denomination}">Name</a>
-        <span th:text="${a.role}">ROLE</span>
-    </li>
-</ul>
+    <div th:if="${asbls.isEmpty()}" class="empty">
+        <p th:text="#{home.noAsbls}">Vous n'avez encore aucune association</p>
+        <p style="margin-top:14px">
+            <a th:href="@{/asbls/new}" class="btn btn-primary" th:text="#{home.createAsbl}">Créer une ASBL</a>
+        </p>
+    </div>
 
-<p><a th:href="@{/asbls/new}" th:text="#{home.createAsbl}">Create an ASBL</a></p>
-<p><a th:href="@{/account}" th:text="#{home.account}">My account</a></p>
+    <div th:unless="${asbls.isEmpty()}">
+        <div class="asbl-list">
+            <a th:each="a : ${asbls}" th:href="@{/asbls/{slug}/members(slug=${a.slug})}" class="asbl-item">
+                <span class="name" th:text="${a.denomination}">Nom</span>
+                <span class="role-tag" th:text="${a.role}">RÔLE</span>
+            </a>
+        </div>
+        <p style="margin-top:20px">
+            <a th:href="@{/asbls/new}" class="btn btn-primary" th:text="#{home.createAsbl}">Créer une ASBL</a>
+        </p>
+    </div>
+</main>
 
-<form th:action="@{/logout}" method="post">
-    <button type="submit" th:text="#{home.logout}">Log out</button>
-</form>
-
-<footer>
-    <a th:href="@{/legal}" th:text="#{legal.notice.title}">Legal notice</a>
-    <a th:href="@{/privacy}" th:text="#{legal.privacy.title}">Privacy policy</a>
-    <a th:href="@{/cookies}" th:text="#{legal.cookies.title}">Cookie policy</a>
-</footer>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
 </body>
 </html>
