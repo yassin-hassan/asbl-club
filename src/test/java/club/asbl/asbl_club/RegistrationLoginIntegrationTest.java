@@ -1,9 +1,11 @@
 package club.asbl.asbl_club;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -35,6 +37,20 @@ class RegistrationLoginIntegrationTest {
     void loginPageIsPubliclyAccessible() throws Exception {
         mockMvc.perform(get("/login"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void languageSwitchKeepsTheCurrentPage() throws Exception {
+        mockMvc.perform(get("/login"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("/login?lang=nl")));
+    }
+
+    @Test
+    void loginPageRendersInTheChosenLanguage() throws Exception {
+        mockMvc.perform(get("/login").param("lang", "en"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Log in")));
     }
 
     @Test
