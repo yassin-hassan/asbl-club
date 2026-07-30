@@ -33,6 +33,12 @@ public class EventService {
         return eventRepository.save(event);
     }
 
+    @Transactional
+    public void publish(Event event) {
+        event.setStatus("PUBLISHED");
+        eventRepository.save(event);
+    }
+
     @Transactional(readOnly = true)
     public List<EventSummary> eventsOf(Asbl asbl) {
         return eventRepository.findByAsbl(asbl).stream()

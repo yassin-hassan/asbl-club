@@ -15,6 +15,16 @@
         <div><span class="k" th:text="#{event.status}">Statut</span><span class="v" th:text="${event.status}">…</span></div>
     </div>
 
+    <div class="toolbar" th:if="${isAdmin}">
+        <form th:if="${event.status == 'DRAFT'}" method="post"
+              th:action="@{/asbls/{slug}/events/{eventId}/publish(slug=${asbl.slug},eventId=${event.id})}">
+            <button type="submit" class="btn btn-primary" th:text="#{event.publish}">Publier</button>
+        </form>
+        <a th:if="${event.status == 'PUBLISHED' and event.visibility == 'PUBLIC'}"
+           th:href="@{/events/{id}(id=${event.id})}" target="_blank" rel="noopener"
+           class="btn btn-secondary" th:text="#{event.viewPublic}">Voir la page publique</a>
+    </div>
+
     <h2 style="font-size:20px;color:var(--indigo-900);margin:28px 0 8px" th:text="#{tickets.title}">Catégories tarifaires</h2>
 
     <div th:if="${param.soldout != null}" class="alert alert-error" th:text="#{tickets.soldout}">Cette catégorie est complète</div>

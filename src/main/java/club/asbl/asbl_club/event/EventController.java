@@ -128,6 +128,16 @@ class EventController {
         return "redirect:/asbls/" + slug + "/events/" + eventId;
     }
 
+    @PostMapping("/asbls/{slug}/events/{eventId}/publish")
+    String publish(@PathVariable String slug, @PathVariable Long eventId, Authentication authentication) {
+        User user = userService.getByEmail(authentication.getName());
+        Asbl asbl = resolveForAdmin(slug, user);
+        Event event = eventService.findEvent(asbl, eventId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        eventService.publish(event);
+        return "redirect:/asbls/" + slug + "/events/" + eventId;
+    }
+
     @PostMapping("/asbls/{slug}/events/{eventId}/tickets/{ticketId}/reserve")
     String reserve(@PathVariable String slug, @PathVariable Long eventId, @PathVariable Long ticketId,
             Authentication authentication) {
