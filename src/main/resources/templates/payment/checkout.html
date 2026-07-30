@@ -2,24 +2,33 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title th:text="#{payment.title}">Payment</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="#{payment.title}">Paiement</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
     <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
-<nav>
-    <a th:href="@{/pay/{id}(id=${registrationId},lang='fr')}" th:text="#{lang.fr}">Français</a>
-    <a th:href="@{/pay/{id}(id=${registrationId},lang='nl')}" th:text="#{lang.nl}">Nederlands</a>
-    <a th:href="@{/pay/{id}(id=${registrationId},lang='en')}" th:text="#{lang.en}">English</a>
-</nav>
+<header th:replace="~{fragments/layout :: header}"></header>
 
-<h1 th:text="#{payment.title}">Payment</h1>
-<p><span th:text="#{payment.amount}">Amount</span> <span th:text="${amount}">0.00</span> EUR</p>
+<main class="page" style="max-width:480px">
+    <h1 th:text="#{payment.title}">Paiement</h1>
+    <div class="pay-amount">
+        <span th:text="${amount}">0.00</span> EUR
+    </div>
 
-<form id="payment-form">
-    <div id="payment-element"></div>
-    <button id="submit" type="submit" th:text="#{payment.pay}">Pay</button>
-    <p id="message"></p>
-</form>
+    <div class="box">
+        <form id="payment-form">
+            <div id="payment-element"></div>
+            <button id="submit" type="submit" class="btn btn-primary" style="width:100%;margin-top:16px" th:text="#{payment.pay}">Payer</button>
+            <p id="message" class="pay-message"></p>
+        </form>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
 
 <script th:inline="javascript">
     const publishableKey = /*[[${publishableKey}]]*/ '';

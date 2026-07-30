@@ -171,6 +171,12 @@ section.blk{padding:56px 0}
 .auth-alt{text-align:center;font-size:14px;color:var(--slate-600);margin-top:20px}
 .auth-alt a{color:var(--indigo-700);font-weight:600}
 
+/* ---------- Payment ---------- */
+.pay-amount{font-family:'Poppins',sans-serif;font-weight:700;font-size:26px;color:var(--indigo-900);margin:2px 0 20px}
+.pay-message{margin-top:12px;font-size:14px;color:var(--red-700)}
+.pay-status{font-size:16px;color:var(--slate-600)}
+#payment-element{margin-bottom:8px}
+
 /* ---------- Error page ---------- */
 .error-page{max-width:560px;margin:0 auto;padding:80px 32px;text-align:center}
 .error-code{font-family:'Poppins',sans-serif;font-weight:700;font-size:64px;color:var(--indigo-600);line-height:1}

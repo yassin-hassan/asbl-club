@@ -2,12 +2,26 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title th:text="#{payment.title}">Payment</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="#{payment.title}">Paiement</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
     <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
-<h1 th:text="#{payment.title}">Payment</h1>
-<p id="message" th:text="#{payment.checking}">Checking payment…</p>
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="page" style="max-width:480px">
+    <h1 th:text="#{payment.title}">Paiement</h1>
+    <div class="box">
+        <p id="message" class="pay-status" th:text="#{payment.checking}">Vérification du paiement…</p>
+        <a class="back-link" th:href="@{/}" th:text="#{account.back}">Retour à l'accueil</a>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
 
 <script th:inline="javascript">
     const publishableKey = /*[[${publishableKey}]]*/ '';
