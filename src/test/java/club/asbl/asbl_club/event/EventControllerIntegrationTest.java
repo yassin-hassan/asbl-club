@@ -71,6 +71,26 @@ class EventControllerIntegrationTest {
 
     @Test
     @WithMockUser(username = "alice@club.test")
+    void publishingMakesTheEventReachablePublicly() throws Exception {
+        User alice = userService.register("Alice", "alice@club.test", "password123");
+        Asbl club = asblService.createAsbl(alice, "Club A", "0111.111.111", "club-a", "fr");
+        Event event = eventService.createEvent(club, "Concert", "Une soirée",
+                Instant.parse("2026-09-01T18:00:00Z"), "Salle A", "PUBLIC");
+
+        // A draft public event is not yet served on the public page.
+        mockMvc.perform(get("/events/" + event.getId()))
+                .andExpect(status().isNotFound());
+
+        mockMvc.perform(post("/asbls/club-a/events/" + event.getId() + "/publish").with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/asbls/club-a/events/" + event.getId()));
+
+        mockMvc.perform(get("/events/" + event.getId()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(username = "alice@club.test")
     void adminAddsATicketCategory() throws Exception {
         User alice = userService.register("Alice", "alice@club.test", "password123");
         Asbl club = asblService.createAsbl(alice, "Club A", "0111.111.111", "club-a", "fr");
