@@ -25,9 +25,9 @@
         </a>
         <div class="navright">
             <span class="lang">
-                <a th:href="@{/(lang='fr')}">FR</a> ·
-                <a th:href="@{/(lang='nl')}">NL</a> ·
-                <a th:href="@{/(lang='en')}">EN</a>
+                <a th:href="@{${currentPath}(lang='fr')}" th:classappend="${#locale.language == 'fr'} ? 'on'">FR</a> ·
+                <a th:href="@{${currentPath}(lang='nl')}" th:classappend="${#locale.language == 'nl'} ? 'on'">NL</a> ·
+                <a th:href="@{${currentPath}(lang='en')}" th:classappend="${#locale.language == 'en'} ? 'on'">EN</a>
             </span>
             <span sec:authorize="!isAuthenticated()">
                 <a th:href="@{/login}" class="btn btn-ghost" th:text="#{nav.login}">Se connecter</a>
