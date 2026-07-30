@@ -1,46 +1,46 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title th:text="#{events.title}">Events</title>
-</head>
+<head th:replace="~{fragments/layout :: head(#{events.title})}"></head>
 <body>
-<nav>
-    <a th:href="@{/asbls/{slug}/events(slug=${asbl.slug},lang='fr')}" th:text="#{lang.fr}">Français</a>
-    <a th:href="@{/asbls/{slug}/events(slug=${asbl.slug},lang='nl')}" th:text="#{lang.nl}">Nederlands</a>
-    <a th:href="@{/asbls/{slug}/events(slug=${asbl.slug},lang='en')}" th:text="#{lang.en}">English</a>
-</nav>
+<header th:replace="~{fragments/layout :: header}"></header>
 
-<h1 th:text="${asbl.denomination}">Association</h1>
-<h2 th:text="#{events.title}">Events</h2>
+<main class="page">
+    <div class="page-head">
+        <div>
+            <h1 th:text="${asbl.denomination}">Association</h1>
+            <p class="muted" th:text="#{events.title}">Événements</p>
+        </div>
+        <a th:if="${isAdmin}" th:href="@{/asbls/{slug}/events/new(slug=${asbl.slug})}" class="btn btn-primary" th:text="#{events.create}">Créer un événement</a>
+    </div>
 
-<p th:if="${isAdmin}">
-    <a th:href="@{/asbls/{slug}/events/new(slug=${asbl.slug})}" th:text="#{events.create}">Create an event</a>
-</p>
+    <div th:if="${events.isEmpty()}" class="empty" th:text="#{events.none}">Aucun événement pour l'instant</div>
 
-<p th:if="${events.isEmpty()}" th:text="#{events.none}">No events yet</p>
-<table th:unless="${events.isEmpty()}">
-    <thead>
-    <tr>
-        <th th:text="#{event.title}">Title</th>
-        <th th:text="#{event.startsAt}">Start</th>
-        <th th:text="#{event.status}">Status</th>
-        <th th:text="#{event.visibility}">Visibility</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="e : ${events}">
-        <td>
-            <a th:href="@{/asbls/{slug}/events/{eventId}(slug=${asbl.slug},eventId=${e.id})}"
-               th:text="${e.title}">Title</a>
-        </td>
-        <td th:text="${e.startsAt}">Start</td>
-        <td th:text="${e.status}">Status</td>
-        <td th:text="${e.visibility}">Visibility</td>
-    </tr>
-    </tbody>
-</table>
+    <div th:unless="${events.isEmpty()}" class="table-wrap">
+        <table class="data">
+            <thead>
+            <tr>
+                <th th:text="#{event.title}">Titre</th>
+                <th th:text="#{event.startsAt}">Début</th>
+                <th th:text="#{event.status}">Statut</th>
+                <th th:text="#{event.visibility}">Visibilité</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="e : ${events}">
+                <td>
+                    <a class="link" th:href="@{/asbls/{slug}/events/{eventId}(slug=${asbl.slug},eventId=${e.id})}" th:text="${e.title}">Titre</a>
+                </td>
+                <td th:text="${e.startsAt}">Début</td>
+                <td th:text="${e.status}">Statut</td>
+                <td th:text="${e.visibility}">Visibilité</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 
-<p><a th:href="@{/asbls/{slug}/members(slug=${asbl.slug})}" th:text="#{events.members}">Members</a></p>
+    <a class="back-link" th:href="@{/asbls/{slug}/members(slug=${asbl.slug})}" th:text="#{events.members}">Membres</a>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
 </body>
 </html>

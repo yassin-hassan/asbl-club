@@ -1,74 +1,78 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title th:text="${event.title}">Event</title>
-</head>
+<head th:replace="~{fragments/layout :: head(${event.title})}"></head>
 <body>
-<nav>
-    <a th:href="@{/asbls/{slug}/events/{eventId}(slug=${asbl.slug},eventId=${event.id},lang='fr')}" th:text="#{lang.fr}">Français</a>
-    <a th:href="@{/asbls/{slug}/events/{eventId}(slug=${asbl.slug},eventId=${event.id},lang='nl')}" th:text="#{lang.nl}">Nederlands</a>
-    <a th:href="@{/asbls/{slug}/events/{eventId}(slug=${asbl.slug},eventId=${event.id},lang='en')}" th:text="#{lang.en}">English</a>
-</nav>
+<header th:replace="~{fragments/layout :: header}"></header>
 
-<h1 th:text="${event.title}">Event</h1>
-<p th:text="${event.description}">Description</p>
-<p><span th:text="#{event.startsAt}">Start</span> <span th:text="${event.startsAt}">…</span></p>
-<p><span th:text="#{event.location}">Location</span> <span th:text="${event.location}">…</span></p>
-<p><span th:text="#{event.visibility}">Visibility</span> <span th:text="${event.visibility}">…</span></p>
-<p><span th:text="#{event.status}">Status</span> <span th:text="${event.status}">…</span></p>
+<main class="page">
+    <h1 th:text="${event.title}">Événement</h1>
+    <p class="muted" th:if="${event.description}" th:text="${event.description}">Description</p>
 
-<h2 th:text="#{tickets.title}">Ticket categories</h2>
-<p th:if="${param.soldout != null}" th:text="#{tickets.soldout}">This category is sold out</p>
-<p th:if="${tickets.isEmpty()}" th:text="#{tickets.none}">No ticket categories yet</p>
-<table th:unless="${tickets.isEmpty()}">
-    <thead>
-    <tr>
-        <th th:text="#{ticket.label}">Label</th>
-        <th th:text="#{ticket.price}">Price</th>
-        <th th:text="#{ticket.seats}">Seats</th>
-        <th></th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="t : ${tickets}">
-        <td th:text="${t.label}">Label</td>
-        <td th:text="${t.price}">Price</td>
-        <td th:text="|${t.soldSeats} / ${t.totalSeats}|">0 / 100</td>
-        <td>
-            <form th:if="${t.soldSeats < t.totalSeats}" method="post"
-                  th:action="@{/asbls/{slug}/events/{eventId}/tickets/{ticketId}/reserve(slug=${asbl.slug},eventId=${event.id},ticketId=${t.id})}">
-                <button type="submit" th:text="#{ticket.reserve}">Reserve</button>
-            </form>
-            <span th:unless="${t.soldSeats < t.totalSeats}" th:text="#{ticket.full}">Full</span>
-        </td>
-    </tr>
-    </tbody>
-</table>
+    <div class="meta">
+        <div><span class="k" th:text="#{event.startsAt}">Début</span><span class="v" th:text="${event.startsAt}">…</span></div>
+        <div th:if="${event.location}"><span class="k" th:text="#{event.location}">Lieu</span><span class="v" th:text="${event.location}">…</span></div>
+        <div><span class="k" th:text="#{event.visibility}">Visibilité</span><span class="v" th:text="${event.visibility}">…</span></div>
+        <div><span class="k" th:text="#{event.status}">Statut</span><span class="v" th:text="${event.status}">…</span></div>
+    </div>
 
-<div th:if="${isAdmin}">
-    <h3 th:text="#{tickets.add}">Add a ticket category</h3>
-    <form th:action="@{/asbls/{slug}/events/{eventId}/tickets(slug=${asbl.slug},eventId=${event.id})}"
-          th:object="${ticketForm}" method="post">
-        <div>
-            <label for="label" th:text="#{ticket.label}">Label</label>
-            <input type="text" id="label" th:field="*{label}">
-            <span th:if="${#fields.hasErrors('label')}" th:errors="*{label}"></span>
-        </div>
-        <div>
-            <label for="price" th:text="#{ticket.price}">Price</label>
-            <input type="number" step="0.01" id="price" th:field="*{price}">
-            <span th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></span>
-        </div>
-        <div>
-            <label for="totalSeats" th:text="#{ticket.seats}">Seats</label>
-            <input type="number" id="totalSeats" th:field="*{totalSeats}">
-            <span th:if="${#fields.hasErrors('totalSeats')}" th:errors="*{totalSeats}"></span>
-        </div>
-        <button type="submit" th:text="#{tickets.add}">Add</button>
-    </form>
-</div>
+    <h2 style="font-size:20px;color:var(--indigo-900);margin:28px 0 8px" th:text="#{tickets.title}">Catégories tarifaires</h2>
 
-<p><a th:href="@{/asbls/{slug}/events(slug=${asbl.slug})}" th:text="#{events.title}">Events</a></p>
+    <div th:if="${param.soldout != null}" class="alert alert-error" th:text="#{tickets.soldout}">Cette catégorie est complète</div>
+    <div th:if="${tickets.isEmpty()}" class="empty" th:text="#{tickets.none}">Aucune catégorie pour l'instant</div>
+
+    <div th:unless="${tickets.isEmpty()}" class="table-wrap">
+        <table class="data">
+            <thead>
+            <tr>
+                <th th:text="#{ticket.label}">Libellé</th>
+                <th th:text="#{ticket.price}">Prix</th>
+                <th th:text="#{ticket.seats}">Places</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="t : ${tickets}">
+                <td th:text="${t.label}">Libellé</td>
+                <td th:text="${t.price}">Prix</td>
+                <td th:text="|${t.soldSeats} / ${t.totalSeats}|">0 / 100</td>
+                <td>
+                    <form th:if="${t.soldSeats < t.totalSeats}" method="post"
+                          th:action="@{/asbls/{slug}/events/{eventId}/tickets/{ticketId}/reserve(slug=${asbl.slug},eventId=${event.id},ticketId=${t.id})}">
+                        <button type="submit" class="btn btn-primary btn-sm" th:text="#{ticket.reserve}">Réserver</button>
+                    </form>
+                    <span th:unless="${t.soldSeats < t.totalSeats}" class="role-tag" th:text="#{ticket.full}">Complet</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:if="${isAdmin}" class="box">
+        <h2 th:text="#{tickets.add}">Ajouter une catégorie</h2>
+        <form th:action="@{/asbls/{slug}/events/{eventId}/tickets(slug=${asbl.slug},eventId=${event.id})}"
+              th:object="${ticketForm}" method="post">
+            <div class="field">
+                <label for="label" th:text="#{ticket.label}">Libellé</label>
+                <input type="text" id="label" th:field="*{label}">
+                <span class="field-error" th:if="${#fields.hasErrors('label')}" th:errors="*{label}"></span>
+            </div>
+            <div class="field">
+                <label for="price" th:text="#{ticket.price}">Prix</label>
+                <input type="number" step="0.01" id="price" th:field="*{price}">
+                <span class="field-error" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></span>
+            </div>
+            <div class="field">
+                <label for="totalSeats" th:text="#{ticket.seats}">Places</label>
+                <input type="number" id="totalSeats" th:field="*{totalSeats}">
+                <span class="field-error" th:if="${#fields.hasErrors('totalSeats')}" th:errors="*{totalSeats}"></span>
+            </div>
+            <button type="submit" class="btn btn-primary" th:text="#{tickets.add}">Ajouter</button>
+        </form>
+    </div>
+
+    <a class="back-link" th:href="@{/asbls/{slug}/events(slug=${asbl.slug})}" th:text="#{events.title}">Événements</a>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
 </body>
 </html>

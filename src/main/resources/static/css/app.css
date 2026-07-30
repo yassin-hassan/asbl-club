@@ -184,6 +184,17 @@ table.data th{text-align:left;font-size:12px;text-transform:uppercase;letter-spa
 table.data td{padding:12px 16px;border-bottom:1px solid var(--slate-100);color:var(--slate-900)}
 table.data tr:last-child td{border-bottom:none}
 .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.btn-sm{padding:7px 14px;font-size:14px}
+
+/* ---------- Key/value meta list ---------- */
+.meta{border:1px solid var(--slate-200);border-radius:var(--radius-lg);overflow:hidden;margin-top:16px}
+.meta div{display:flex;gap:12px;padding:12px 16px;font-size:14px;border-bottom:1px solid var(--slate-100)}
+.meta div:last-child{border-bottom:none}
+.meta .k{color:var(--slate-600);min-width:130px;flex:none}
+.meta .v{color:var(--slate-900);font-weight:500}
+
+/* ---------- Page header row (title + action) ---------- */
+.page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
 
 /* ---------- Content pages (settings, forms) ---------- */
 .page{max-width:760px;margin:0 auto;padding:40px 32px}

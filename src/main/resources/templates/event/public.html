@@ -2,50 +2,61 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title th:text="${event.title}">Event</title>
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="asbl.club">
     <meta property="og:title" th:attr="content=${event.title}">
     <meta property="og:description" th:if="${event.description}" th:attr="content=${event.description}">
     <meta property="og:url" th:attr="content=${canonicalUrl}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
-<nav>
-    <a th:href="@{/events/{id}(id=${event.id},lang='fr')}" th:text="#{lang.fr}">Français</a>
-    <a th:href="@{/events/{id}(id=${event.id},lang='nl')}" th:text="#{lang.nl}">Nederlands</a>
-    <a th:href="@{/events/{id}(id=${event.id},lang='en')}" th:text="#{lang.en}">English</a>
-</nav>
+<header th:replace="~{fragments/layout :: header}"></header>
 
-<h1 th:text="${event.title}">Event title</h1>
-<p th:text="${event.asbl.denomination}">Association</p>
-<p><span th:text="#{event.startsAt}">Start</span> <span th:text="${event.startsAt}">2026-01-01</span></p>
-<p th:if="${event.location}"><span th:text="#{event.location}">Location</span> <span th:text="${event.location}">Location</span></p>
-<p th:if="${event.description}" th:text="${event.description}">Description</p>
+<main class="page">
+    <h1 th:text="${event.title}">Titre de l'événement</h1>
+    <p class="muted" th:text="${event.asbl.denomination}">Association</p>
 
-<h2 th:text="#{tickets.title}">Ticket categories</h2>
-<p th:if="${tickets.isEmpty()}" th:text="#{tickets.none}">No ticket categories yet</p>
-<table th:unless="${tickets.isEmpty()}">
-    <thead>
-    <tr>
-        <th th:text="#{ticket.label}">Label</th>
-        <th th:text="#{ticket.price}">Price</th>
-        <th th:text="#{ticket.seats}">Seats</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="t : ${tickets}">
-        <td th:text="${t.label}">Label</td>
-        <td th:text="${t.price}">Price</td>
-        <td th:id="'seats-' + ${t.id}" th:text="${t.totalSeats - t.soldSeats}">Seats</td>
-    </tr>
-    </tbody>
-</table>
+    <div class="meta">
+        <div><span class="k" th:text="#{event.startsAt}">Début</span><span class="v" th:text="${event.startsAt}">2026-01-01</span></div>
+        <div th:if="${event.location}"><span class="k" th:text="#{event.location}">Lieu</span><span class="v" th:text="${event.location}">Lieu</span></div>
+    </div>
 
-<h2 th:text="#{share.title}">Share</h2>
-<p>
-    <a th:href="'https://wa.me/?text=' + ${canonicalUrl}" target="_blank" rel="noopener">WhatsApp</a>
-    <a th:href="'mailto:?body=' + ${canonicalUrl}">Email</a>
-</p>
+    <p th:if="${event.description}" style="margin-top:20px;color:var(--slate-600)" th:text="${event.description}">Description</p>
+
+    <h2 style="font-size:20px;color:var(--indigo-900);margin:28px 0 8px" th:text="#{tickets.title}">Catégories tarifaires</h2>
+    <div th:if="${tickets.isEmpty()}" class="empty" th:text="#{tickets.none}">Aucune catégorie pour l'instant</div>
+    <div th:unless="${tickets.isEmpty()}" class="table-wrap">
+        <table class="data">
+            <thead>
+            <tr>
+                <th th:text="#{ticket.label}">Libellé</th>
+                <th th:text="#{ticket.price}">Prix</th>
+                <th th:text="#{ticket.seats}">Places</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="t : ${tickets}">
+                <td th:text="${t.label}">Libellé</td>
+                <td th:text="${t.price}">Prix</td>
+                <td th:id="'seats-' + ${t.id}" th:text="${t.totalSeats - t.soldSeats}">Places</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2 style="font-size:20px;color:var(--indigo-900);margin:28px 0 8px" th:text="#{share.title}">Partager</h2>
+    <div class="toolbar" style="margin-top:0">
+        <a th:href="'https://wa.me/?text=' + ${canonicalUrl}" target="_blank" rel="noopener" class="btn btn-secondary btn-sm">WhatsApp</a>
+        <a th:href="'mailto:?body=' + ${canonicalUrl}" class="btn btn-secondary btn-sm">Email</a>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
 
 <script th:inline="javascript">
     const eventId = /*[[${event.id}]]*/ 0;
