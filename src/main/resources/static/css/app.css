@@ -145,6 +145,32 @@ section.blk{padding:56px 0}
 .role-tag{font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--indigo-100);color:var(--indigo-700)}
 .empty{border:1px dashed var(--slate-200);border-radius:var(--radius-lg);padding:28px;text-align:center;color:var(--slate-600);margin-top:20px}
 
+/* ---------- Forms ---------- */
+.field{margin-bottom:16px}
+.field label{display:block;font-size:14px;font-weight:600;color:var(--slate-900);margin-bottom:6px}
+.field input,.field select,.field textarea{
+  width:100%;font-family:'Inter',sans-serif;font-size:15px;color:var(--slate-900);
+  padding:10px 12px;border:1.5px solid var(--slate-200);border-radius:var(--radius);background:#fff;
+}
+.field input:hover,.field select:hover,.field textarea:hover{border-color:var(--slate-400)}
+.field-error{display:block;font-size:13px;color:var(--red-700);margin-top:6px}
+.field-note{font-size:13px;color:var(--slate-600);margin-top:6px}
+
+/* ---------- Alerts ---------- */
+.alert{font-size:14px;padding:11px 14px;border-radius:var(--radius);margin-bottom:16px}
+.alert-success{background:#DCFCE7;color:var(--green-700)}
+.alert-error{background:#FEE2E2;color:var(--red-700)}
+.alert-info{background:var(--indigo-50);color:var(--indigo-700)}
+
+/* ---------- Auth pages ---------- */
+.auth-page{min-height:calc(100vh - 73px);display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,var(--slate-50),#fff);padding:40px 20px}
+.auth-card{width:100%;max-width:420px;background:#fff;border:1px solid var(--slate-200);border-radius:20px;box-shadow:0 24px 60px -20px rgba(49,46,129,.20);padding:32px}
+.auth-card h1{font-size:24px;font-weight:700;color:var(--indigo-900);margin-bottom:4px}
+.auth-card .intro{font-size:14px;color:var(--slate-600);margin-bottom:22px}
+.auth-card .btn{width:100%;margin-top:4px}
+.auth-alt{text-align:center;font-size:14px;color:var(--slate-600);margin-top:20px}
+.auth-alt a{color:var(--indigo-700);font-weight:600}
+
 /* ---------- Responsive ---------- */
 @media (max-width:860px){
   .hero-grid{grid-template-columns:1fr;gap:28px}

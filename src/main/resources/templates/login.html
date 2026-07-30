@@ -1,41 +1,36 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title th:text="#{login.title}">Log in</title>
-</head>
+<head th:replace="~{fragments/layout :: head(#{login.title})}"></head>
 <body>
-<nav>
-    <a th:href="@{/login(lang='fr')}" th:text="#{lang.fr}">Français</a>
-    <a th:href="@{/login(lang='nl')}" th:text="#{lang.nl}">Nederlands</a>
-    <a th:href="@{/login(lang='en')}" th:text="#{lang.en}">English</a>
-</nav>
+<header th:replace="~{fragments/layout :: header}"></header>
 
-<h1 th:text="#{login.title}">Log in</h1>
+<main class="auth-page">
+    <div class="auth-card">
+        <h1 th:text="#{login.title}">Connexion</h1>
 
-<p th:if="${param.registered != null}" th:text="#{login.registered}">Account created</p>
-<p th:if="${param.error != null}" th:text="#{login.error}">Error</p>
-<p th:if="${param.logout != null}" th:text="#{login.logout}">Logged out</p>
-<p th:if="${param.deleted != null}" th:text="#{login.deleted}">Account deleted</p>
+        <div th:if="${param.registered != null}" class="alert alert-success" th:text="#{login.registered}">Compte créé</div>
+        <div th:if="${param.error != null}" class="alert alert-error" th:text="#{login.error}">Erreur</div>
+        <div th:if="${param.logout != null}" class="alert alert-info" th:text="#{login.logout}">Déconnecté</div>
+        <div th:if="${param.deleted != null}" class="alert alert-info" th:text="#{login.deleted}">Compte supprimé</div>
 
-<form th:action="@{/login}" method="post">
-    <div>
-        <label for="username" th:text="#{login.email}">Email address</label>
-        <input type="email" id="username" name="username">
+        <form th:action="@{/login}" method="post">
+            <div class="field">
+                <label for="username" th:text="#{login.email}">Adresse e-mail</label>
+                <input type="email" id="username" name="username" autocomplete="email">
+            </div>
+            <div class="field">
+                <label for="password" th:text="#{login.password}">Mot de passe</label>
+                <input type="password" id="password" name="password" autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn btn-primary" th:text="#{login.submit}">Se connecter</button>
+        </form>
+
+        <p class="auth-alt">
+            <a th:href="@{/register}" th:text="#{login.noAccount}">Pas encore de compte</a>
+        </p>
     </div>
-    <div>
-        <label for="password" th:text="#{login.password}">Password</label>
-        <input type="password" id="password" name="password">
-    </div>
-    <button type="submit" th:text="#{login.submit}">Log in</button>
-</form>
+</main>
 
-<p><a th:href="@{/register}" th:text="#{login.noAccount}">No account yet</a></p>
-
-<footer>
-    <a th:href="@{/legal}" th:text="#{legal.notice.title}">Legal notice</a>
-    <a th:href="@{/privacy}" th:text="#{legal.privacy.title}">Privacy policy</a>
-    <a th:href="@{/cookies}" th:text="#{legal.cookies.title}">Cookie policy</a>
-</footer>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
 </body>
 </html>
