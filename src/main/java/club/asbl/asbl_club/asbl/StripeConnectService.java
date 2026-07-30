@@ -31,6 +31,9 @@ public class StripeConnectService {
                             .setCardPayments(AccountCreateParams.Capabilities.CardPayments.builder()
                                     .setRequested(true)
                                     .build())
+                            .setTransfers(AccountCreateParams.Capabilities.Transfers.builder()
+                                    .setRequested(true)
+                                    .build())
                             .build())
                     .build());
             asbl.setStripeAccountId(account.getId());
