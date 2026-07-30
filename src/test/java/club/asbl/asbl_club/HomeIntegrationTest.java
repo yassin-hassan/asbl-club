@@ -53,4 +53,12 @@ class HomeIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("aucune")));
     }
+
+    @Test
+    void anonymousVisitorSeesPublicLanding() throws Exception {
+        mockMvc.perform(get("/"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Créer mon ASBL")))
+                .andExpect(content().string(containsString("Comment ça marche")));
+    }
 }
