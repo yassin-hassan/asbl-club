@@ -1,0 +1,160 @@
+/* =====================================================================
+   asbl.club — stylesheet
+   Design system from the "Conception graphique" chapter. Colour tokens,
+   typography and components come from the design-system board
+   (travaux/design/systeme.html) and the high-fidelity mockups.
+   ===================================================================== */
+
+:root{
+  --indigo-50:#EEF2FF; --indigo-100:#E0E7FF; --indigo-500:#6366F1;
+  --indigo-600:#4F46E5; --indigo-700:#4338CA; --indigo-900:#312E81;
+  --amber-500:#F59E0B; --amber-100:#FEF3C7;
+  --slate-900:#0F172A; --slate-600:#475569; --slate-400:#94A3B8;
+  --slate-200:#E2E8F0; --slate-100:#F1F5F9; --slate-50:#F8FAFC;
+  --green-700:#15803D; --red-700:#B91C1C;
+  --radius:10px; --radius-lg:16px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  color:var(--slate-900);
+  background:#fff;
+  line-height:1.5;
+}
+
+h1,h2,h3,h4,.poppins{font-family:'Poppins',sans-serif}
+a{text-decoration:none;color:inherit}
+
+/* Keyboard focus ring, WCAG AA requirement */
+a:focus-visible,button:focus-visible,input:focus-visible,
+select:focus-visible,textarea:focus-visible{
+  outline:none;
+  box-shadow:0 0 0 3px var(--indigo-100),0 0 0 5px var(--indigo-500);
+  border-radius:6px;
+}
+
+.wrap{max-width:1120px;margin:0 auto;padding:0 32px}
+
+/* ---------- Buttons ---------- */
+.btn{
+  font-family:'Inter',sans-serif;font-weight:600;font-size:15px;
+  padding:11px 20px;border-radius:var(--radius);
+  border:1.5px solid transparent;cursor:pointer;
+  display:inline-block;line-height:1;text-align:center;
+  transition:background .12s ease;
+}
+.btn-primary{background:var(--indigo-600);color:#fff}
+.btn-primary:hover{background:var(--indigo-700)}
+.btn-secondary{background:#fff;color:var(--indigo-700);border-color:var(--indigo-600)}
+.btn-secondary:hover{background:var(--indigo-50)}
+.btn-ghost{background:transparent;color:var(--slate-900);font-weight:600}
+.btn-ghost:hover{color:var(--indigo-700)}
+.btn-accent{background:var(--amber-500);color:#1f1300}
+.btn-accent:hover{background:#e08e08}
+.btn-tertiary{background:transparent;color:var(--indigo-700);padding:11px 8px}
+.btn:disabled,.btn-disabled{background:var(--slate-200);color:var(--slate-400);cursor:not-allowed}
+.btn-lg{padding:14px 26px;font-size:16px}
+
+/* ---------- Logo ---------- */
+.logo{display:flex;align-items:center;gap:11px}
+.logo .mark{width:40px;height:40px;border-radius:12px;background:var(--indigo-600);position:relative;flex:none}
+.logo .mark span{position:absolute;border-radius:999px}
+.logo .mark .d1{width:10px;height:10px;background:#fff;top:10px;left:10px}
+.logo .mark .d2{width:10px;height:10px;background:var(--amber-500);top:10px;left:21px}
+.logo .mark .d3{width:10px;height:10px;background:var(--indigo-100);top:21px;left:15px}
+.logo .word{font-family:'Poppins',sans-serif;font-weight:700;font-size:24px;color:var(--indigo-900);letter-spacing:-.02em}
+.logo .word b{color:var(--amber-500);font-weight:700}
+
+/* ---------- Navigation bar ---------- */
+.site-nav{border-bottom:1px solid var(--slate-100)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 32px;max-width:1120px;margin:0 auto}
+.navright{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.lang{font-size:13px;color:var(--slate-400);font-weight:600}
+.lang a{padding:2px 3px}
+.lang a.on{color:var(--indigo-700)}
+
+/* ---------- Hero ---------- */
+.hero{background:linear-gradient(180deg,var(--slate-50),#fff);padding:64px 0 56px}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
+.pill{display:inline-block;background:var(--amber-100);color:#92600a;font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px;margin-bottom:18px}
+.hero h1{font-size:46px;line-height:1.08;font-weight:700;color:var(--indigo-900);letter-spacing:-.02em}
+.hero h1 b{color:var(--indigo-600)}
+.lead{font-size:18px;color:var(--slate-600);margin:18px 0 26px;max-width:520px}
+.cta{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
+.trust{font-size:14px;color:var(--slate-600);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.dot{width:5px;height:5px;border-radius:99px;background:var(--slate-400);display:inline-block}
+
+/* ---------- Panel (dashboard-style card) ---------- */
+.panel{background:#fff;border:1px solid var(--slate-200);border-radius:20px;box-shadow:0 24px 60px -20px rgba(49,46,129,.28);padding:20px}
+.panel-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.panel-h .t{font-family:'Poppins',sans-serif;font-weight:600;font-size:15px}
+.badge{font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;background:#DCFCE7;color:var(--green-700)}
+.row{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--slate-100)}
+.av{width:34px;height:34px;border-radius:99px;flex:none;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;background:var(--indigo-600)}
+.row .nm{font-weight:600;font-size:14px}
+.row .sub{font-size:12px;color:var(--slate-400)}
+.row .amt{margin-left:auto;font-weight:700;font-size:14px;font-variant-numeric:tabular-nums}
+.paid{color:var(--green-700);font-size:12px;font-weight:600}
+
+/* ---------- Sections ---------- */
+section.blk{padding:56px 0}
+.eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--indigo-600);font-weight:700;text-align:center}
+.blk h2{font-size:32px;font-weight:600;color:var(--indigo-900);text-align:center;margin:8px 0}
+.sub-c{text-align:center;color:var(--slate-600);font-size:16px;max-width:620px;margin:0 auto 36px}
+
+/* ---------- Feature grid ---------- */
+.feats{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.feat{border:1px solid var(--slate-200);border-radius:var(--radius-lg);padding:22px;background:#fff}
+.feat .ic{width:46px;height:46px;border-radius:12px;background:var(--indigo-100);display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.feat .ic svg{width:24px;height:24px;stroke:var(--indigo-700);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.feat h3{font-size:17px;font-weight:600;margin-bottom:7px}
+.feat p{font-size:14px;color:var(--slate-600)}
+
+/* ---------- Steps ---------- */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+.step{text-align:center;padding:0 10px}
+.step .n{width:44px;height:44px;border-radius:99px;background:var(--indigo-600);color:#fff;font-family:'Poppins',sans-serif;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:18px}
+.step h3{font-size:17px;font-weight:600;margin-bottom:6px}
+.step p{font-size:14px;color:var(--slate-600)}
+
+/* ---------- Call-to-action band ---------- */
+.ctaband{background:var(--indigo-700);border-radius:24px;padding:48px;text-align:center;color:#fff;margin:8px 0}
+.ctaband h2{color:#fff;margin-bottom:10px}
+.ctaband p{color:var(--indigo-100);margin-bottom:24px;font-size:16px}
+
+/* ---------- Footer ---------- */
+.site-footer{background:var(--slate-900);color:#cbd5e1;margin-top:56px;padding:48px 0 28px}
+.fgrid{display:grid;grid-template-columns:1.6fr 1fr;gap:32px}
+.site-footer .logo .word{color:#fff}
+.site-footer h4{color:#fff;font-size:14px;font-weight:600;margin-bottom:12px}
+.site-footer ul{list-style:none}
+.site-footer li{font-size:14px;margin-bottom:8px}
+.site-footer a:hover{color:#fff}
+.ftag{font-size:13.5px;color:var(--slate-400);margin-top:12px;max-width:280px}
+.fbar{border-top:1px solid #1e293b;margin-top:32px;padding-top:18px;font-size:13px;color:#64748b;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+
+/* ---------- Member dashboard ---------- */
+.dash{padding:40px 0 8px}
+.dash h1{font-size:30px;font-weight:700;color:var(--indigo-900)}
+.dash .hello{color:var(--slate-600);margin-top:4px}
+.asbl-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:20px}
+.asbl-item{border:1px solid var(--slate-200);border-radius:var(--radius-lg);padding:18px;background:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.asbl-item .name{font-family:'Poppins',sans-serif;font-weight:600;color:var(--indigo-900)}
+.role-tag{font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--indigo-100);color:var(--indigo-700)}
+.empty{border:1px dashed var(--slate-200);border-radius:var(--radius-lg);padding:28px;text-align:center;color:var(--slate-600);margin-top:20px}
+
+/* ---------- Responsive ---------- */
+@media (max-width:860px){
+  .hero-grid{grid-template-columns:1fr;gap:28px}
+  .hero h1{font-size:34px}
+  .feats{grid-template-columns:1fr 1fr}
+  .steps{grid-template-columns:1fr}
+  .fgrid{grid-template-columns:1fr}
+}
+@media (max-width:520px){
+  .wrap{padding:0 20px}
+  .nav-inner{padding:14px 20px}
+  .feats{grid-template-columns:1fr}
+}
