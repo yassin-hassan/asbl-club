@@ -25,8 +25,8 @@ class RegistrationLoginIntegrationTest {
     MockMvc mockMvc;
 
     @Test
-    void anonymousUserIsRedirectedToLogin() throws Exception {
-        mockMvc.perform(get("/"))
+    void anonymousUserOnProtectedPageIsRedirectedToLogin() throws Exception {
+        mockMvc.perform(get("/account"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/login"));
     }
