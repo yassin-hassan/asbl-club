@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head th:replace="~{fragments/layout :: head(#{landing.title})}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<section class="hero">
+    <div class="wrap hero-grid">
+        <div>
+            <span class="pill" th:text="#{landing.hero.badge}">Gratuit pour les associations</span>
+            <h1 th:utext="#{landing.hero.title}">Gérez votre ASBL, <b>simplement et gratuitement.</b></h1>
+            <p class="lead" th:text="#{landing.hero.lead}">Registre des membres, cotisations, événements, billetterie et dons.</p>
+            <div class="cta">
+                <a th:href="@{/register}" class="btn btn-primary btn-lg" th:text="#{landing.hero.ctaPrimary}">Créer mon ASBL gratuitement</a>
+                <a th:href="@{/login}" class="btn btn-secondary btn-lg" th:text="#{landing.hero.ctaSecondary}">Se connecter</a>
+            </div>
+            <p class="trust" th:text="#{landing.hero.trust}">Paiements via Stripe et Bancontact. Aucun frais fixe.</p>
+        </div>
+        <div class="panel">
+            <div class="panel-h">
+                <span class="t" th:text="#{landing.panel.title}">Cotisations 2026</span>
+                <span class="badge">28 / 30</span>
+            </div>
+            <div class="row"><span class="av" style="background:#4F46E5">ML</span><span><span class="nm">Marie Laurent</span><br><span class="sub">Membre effectif</span></span><span class="amt">30,00 €</span></div>
+            <div class="row"><span class="av" style="background:#F59E0B">TD</span><span><span class="nm">Thomas De Vries</span><br><span class="sub">Cotisation annuelle</span></span><span class="amt paid">Payé ✓</span></div>
+            <div class="row"><span class="av" style="background:#15803D">SK</span><span><span class="nm">Sofie Klein</span><br><span class="sub">Étudiant</span></span><span class="amt">15,00 €</span></div>
+            <div class="row"><span class="av" style="background:#312E81">AB</span><span><span class="nm">Ahmed Bensaïd</span><br><span class="sub">Membre effectif</span></span><span class="amt paid">Payé ✓</span></div>
+        </div>
+    </div>
+</section>
+
+<section class="blk wrap">
+    <div class="eyebrow" th:text="#{landing.features.eyebrow}">Tout-en-un</div>
+    <h2 th:text="#{landing.features.title}">Une plateforme pensée pour les bénévoles</h2>
+    <p class="sub-c" th:text="#{landing.features.sub}">asbl.club remplace les fichiers Excel et les rapprochements bancaires manuels.</p>
+    <div class="feats">
+        <div class="feat">
+            <div class="ic"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20a6 6 0 0 1 11 0"/><path d="M16 5.5a3 3 0 0 1 0 5.5"/><path d="M20.5 20a6 6 0 0 0-4-5.3"/></svg></div>
+            <h3 th:text="#{landing.feature1.title}">Membres et cotisations</h3>
+            <p th:text="#{landing.feature1.desc}">Registre à jour, paiement en ligne et reçus PDF.</p>
+        </div>
+        <div class="feat">
+            <div class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></div>
+            <h3 th:text="#{landing.feature2.title}">Événements et billetterie</h3>
+            <p th:text="#{landing.feature2.desc}">Billets, catégories tarifaires et contrôle des présences.</p>
+        </div>
+        <div class="feat">
+            <div class="ic"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.3-7-9a3.6 3.6 0 0 1 7-1.3A3.6 3.6 0 0 1 19 11c0 4.7-7 9-7 9Z"/></svg></div>
+            <h3 th:text="#{landing.feature3.title}">Dons et reçus</h3>
+            <p th:text="#{landing.feature3.desc}">Page de don personnalisée et attestations fiscales.</p>
+        </div>
+        <div class="feat">
+            <div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6Z"/><path d="m9 12 2 2 4-4"/></svg></div>
+            <h3 th:text="#{landing.feature4.title}">Sécurité et audit</h3>
+            <p th:text="#{landing.feature4.desc}">Back-office sécurisé, journal d'audit et conformité RGPD.</p>
+        </div>
+    </div>
+</section>
+
+<section class="blk" style="background:var(--slate-50)">
+    <div class="wrap">
+        <div class="eyebrow" th:text="#{landing.steps.eyebrow}">Simple</div>
+        <h2 th:text="#{landing.steps.title}">Comment ça marche ?</h2>
+        <div class="steps" style="margin-top:24px">
+            <div class="step"><div class="n">1</div><h3 th:text="#{landing.step1.title}">Créez votre ASBL</h3><p th:text="#{landing.step1.desc}">Renseignez vos infos légales et connectez votre compte via Stripe.</p></div>
+            <div class="step"><div class="n">2</div><h3 th:text="#{landing.step2.title}">Invitez vos membres</h3><p th:text="#{landing.step2.desc}">Importez votre liste ou envoyez des invitations par e-mail.</p></div>
+            <div class="step"><div class="n">3</div><h3 th:text="#{landing.step3.title}">Encaissez en ligne</h3><p th:text="#{landing.step3.desc}">Cotisations, billets et dons arrivent sur votre compte.</p></div>
+        </div>
+    </div>
+</section>
+
+<section class="wrap">
+    <div class="ctaband">
+        <h2 th:text="#{landing.cta.title}">Prêt à simplifier la gestion de votre association ?</h2>
+        <p th:text="#{landing.cta.sub}">Gratuit, sans engagement. Vous ne payez qu'une commission sur les paiements traités.</p>
+        <a th:href="@{/register}" class="btn btn-accent btn-lg" th:text="#{landing.cta.button}">Créer mon ASBL gratuitement</a>
+    </div>
+</section>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

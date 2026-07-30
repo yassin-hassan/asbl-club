@@ -3,6 +3,7 @@ package club.asbl.asbl_club.home;
 import club.asbl.asbl_club.membership.MembershipService;
 import club.asbl.asbl_club.user.User;
 import club.asbl.asbl_club.user.UserService;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +22,9 @@ class HomeController {
 
     @GetMapping("/")
     String home(Model model, Authentication authentication) {
+        if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
+            return "landing";
+        }
         User user = userService.getByEmail(authentication.getName());
         model.addAttribute("asbls", membershipService.membershipsOf(user));
         return "home";
