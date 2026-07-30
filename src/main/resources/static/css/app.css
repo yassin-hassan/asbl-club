@@ -171,6 +171,12 @@ section.blk{padding:56px 0}
 .auth-alt{text-align:center;font-size:14px;color:var(--slate-600);margin-top:20px}
 .auth-alt a{color:var(--indigo-700);font-weight:600}
 
+/* ---------- Error page ---------- */
+.error-page{max-width:560px;margin:0 auto;padding:80px 32px;text-align:center}
+.error-code{font-family:'Poppins',sans-serif;font-weight:700;font-size:64px;color:var(--indigo-600);line-height:1}
+.error-page h1{font-size:26px;color:var(--indigo-900);margin:8px 0 12px}
+.error-page p{color:var(--slate-600);margin-bottom:24px}
+
 /* ---------- Data tables ---------- */
 .table-wrap{overflow-x:auto;border:1px solid var(--slate-200);border-radius:var(--radius-lg);margin-top:16px}
 table.data{width:100%;border-collapse:collapse;font-size:14px}

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head th:replace="~{fragments/layout :: head(#{error.title})}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="error-page">
+    <div class="error-code" th:text="${status}">500</div>
+    <h1 th:if="${status == 404}" th:text="#{error.404.title}">Page introuvable</h1>
+    <h1 th:unless="${status == 404}" th:text="#{error.500.title}">Une erreur est survenue</h1>
+    <p th:if="${status == 404}" th:text="#{error.404.body}">La page n'existe pas.</p>
+    <p th:unless="${status == 404}" th:text="#{error.500.body}">Un problème inattendu s'est produit.</p>
+    <a class="btn btn-primary" th:href="@{/}" th:text="#{account.back}">Retour à l'accueil</a>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>
