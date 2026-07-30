@@ -1,8 +1,11 @@
 package club.asbl.asbl_club.asbl;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -69,7 +72,9 @@ class CreateAsblIntegrationTest {
                         .param("bceNumber", "not-a-bce")
                         .param("slug", "autre-club")
                         .param("defaultLanguage", "fr"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("au format 0123.456.789")))
+                .andExpect(content().string(not(containsString("d{4}"))));
 
         assertThat(asblRepository.findBySlug("autre-club")).isEmpty();
     }
