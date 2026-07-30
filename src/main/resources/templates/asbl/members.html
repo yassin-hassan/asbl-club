@@ -1,50 +1,44 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title th:text="#{members.title}">Members</title>
-</head>
+<head th:replace="~{fragments/layout :: head(#{members.title})}"></head>
 <body>
-<nav>
-    <a th:href="@{/asbls/{slug}/members(slug=${asbl.slug},lang='fr')}" th:text="#{lang.fr}">Français</a>
-    <a th:href="@{/asbls/{slug}/members(slug=${asbl.slug},lang='nl')}" th:text="#{lang.nl}">Nederlands</a>
-    <a th:href="@{/asbls/{slug}/members(slug=${asbl.slug},lang='en')}" th:text="#{lang.en}">English</a>
-</nav>
+<header th:replace="~{fragments/layout :: header}"></header>
 
-<h1 th:text="${asbl.denomination}">Association</h1>
-<h2 th:text="#{members.title}">Members</h2>
+<main class="page">
+    <h1 th:text="${asbl.denomination}">Association</h1>
+    <p class="muted" th:text="#{members.title}">Membres</p>
 
-<table>
-    <thead>
-    <tr>
-        <th th:text="#{members.name}">Name</th>
-        <th th:text="#{members.email}">Email</th>
-        <th th:text="#{members.role}">Role</th>
-        <th th:text="#{members.status}">Status</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="m : ${members}">
-        <td th:text="${m.name}">Name</td>
-        <td th:text="${m.email}">Email</td>
-        <td th:text="${m.role}">Role</td>
-        <td th:text="${m.status}">Status</td>
-    </tr>
-    </tbody>
-</table>
+    <div class="table-wrap">
+        <table class="data">
+            <thead>
+            <tr>
+                <th th:text="#{members.name}">Nom</th>
+                <th th:text="#{members.email}">Adresse e-mail</th>
+                <th th:text="#{members.role}">Rôle</th>
+                <th th:text="#{members.status}">Statut</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="m : ${members}">
+                <td th:text="${m.name}">Nom</td>
+                <td th:text="${m.email}">Adresse e-mail</td>
+                <td><span class="role-tag" th:text="${m.role}">RÔLE</span></td>
+                <td th:text="${m.status}">Statut</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 
-<p><a th:href="@{/asbls/{slug}/events(slug=${asbl.slug})}" th:text="#{events.title}">Events</a></p>
+    <div class="toolbar">
+        <a th:href="@{/asbls/{slug}/events(slug=${asbl.slug})}" class="btn btn-secondary" th:text="#{events.title}">Événements</a>
+        <a th:if="${isAdmin}" th:href="@{/asbls/{slug}/audit(slug=${asbl.slug})}" class="btn btn-secondary" th:text="#{audit.title}">Journal d'audit</a>
+        <a th:if="${isAdmin and asbl.stripeAccountId == null}" th:href="@{/asbls/{slug}/stripe/connect(slug=${asbl.slug})}" class="btn btn-primary" th:text="#{stripe.connect}">Connecter Stripe</a>
+        <a th:if="${isAdmin and asbl.stripeAccountId != null}" th:href="@{/asbls/{slug}/stripe/return(slug=${asbl.slug})}" class="btn btn-secondary" th:text="#{stripe.linked}">Compte Stripe connecté</a>
+    </div>
 
-<div th:if="${isAdmin}">
-    <p><a th:href="@{/asbls/{slug}/audit(slug=${asbl.slug})}" th:text="#{audit.title}">Audit log</a></p>
-    <p th:if="${asbl.stripeAccountId == null}">
-        <a th:href="@{/asbls/{slug}/stripe/connect(slug=${asbl.slug})}" th:text="#{stripe.connect}">Connect Stripe</a>
-    </p>
-    <p th:unless="${asbl.stripeAccountId == null}">
-        <a th:href="@{/asbls/{slug}/stripe/return(slug=${asbl.slug})}" th:text="#{stripe.linked}">Stripe linked</a>
-    </p>
-</div>
+    <a class="back-link" th:href="@{/}" th:text="#{members.back}">Retour à l'accueil</a>
+</main>
 
-<p><a th:href="@{/}" th:text="#{members.back}">Back to home</a></p>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
 </body>
 </html>

@@ -1,20 +1,23 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title th:text="#{stripe.title}">Stripe</title>
-</head>
+<head th:replace="~{fragments/layout :: head(#{stripe.title})}"></head>
 <body>
-<h1 th:text="${asbl.denomination}">Association</h1>
-<h2 th:text="#{stripe.title}">Stripe payments</h2>
+<header th:replace="~{fragments/layout :: header}"></header>
 
-<p th:if="${ready}" th:text="#{stripe.ready}">The account is ready.</p>
+<main class="page">
+    <h1 th:text="${asbl.denomination}">Association</h1>
+    <p class="muted" th:text="#{stripe.title}">Paiements Stripe</p>
 
-<div th:unless="${ready}">
-    <p th:text="#{stripe.pending}">The connection is not complete.</p>
-    <p><a th:href="@{/asbls/{slug}/stripe/connect(slug=${asbl.slug})}" th:text="#{stripe.continue}">Continue</a></p>
-</div>
+    <div th:if="${ready}" class="alert alert-success" th:text="#{stripe.ready}">Le compte est prêt.</div>
 
-<p><a th:href="@{/asbls/{slug}/members(slug=${asbl.slug})}" th:text="#{members.title}">Members</a></p>
+    <div th:unless="${ready}" class="box">
+        <p th:text="#{stripe.pending}">La connexion n'est pas terminée.</p>
+        <a th:href="@{/asbls/{slug}/stripe/connect(slug=${asbl.slug})}" class="btn btn-primary" th:text="#{stripe.continue}">Continuer</a>
+    </div>
+
+    <a class="back-link" th:href="@{/asbls/{slug}/members(slug=${asbl.slug})}" th:text="#{members.title}">Membres</a>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
 </body>
 </html>
