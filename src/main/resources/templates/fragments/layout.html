@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="fr">
+<!--
+  Shared shell. Native Thymeleaf fragments, no dependency.
+  Each page pulls in head(title), header and footer with th:replace.
+-->
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title}">asbl.club</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+
+<header th:fragment="header" class="site-nav">
+    <div class="nav-inner">
+        <a th:href="@{/}" class="logo">
+            <span class="mark"><span class="d1"></span><span class="d2"></span><span class="d3"></span></span>
+            <span class="word">asbl<b>.club</b></span>
+        </a>
+        <div class="navright">
+            <span class="lang">
+                <a th:href="@{/(lang='fr')}">FR</a> ·
+                <a th:href="@{/(lang='nl')}">NL</a> ·
+                <a th:href="@{/(lang='en')}">EN</a>
+            </span>
+            <span sec:authorize="!isAuthenticated()">
+                <a th:href="@{/login}" class="btn btn-ghost" th:text="#{nav.login}">Se connecter</a>
+                <a th:href="@{/register}" class="btn btn-primary" th:text="#{nav.createAsbl}">Créer mon ASBL</a>
+            </span>
+            <span sec:authorize="isAuthenticated()">
+                <a th:href="@{/account}" class="btn btn-ghost" th:text="#{nav.account}">Mon compte</a>
+                <form th:action="@{/logout}" method="post" style="display:inline">
+                    <button type="submit" class="btn btn-secondary" th:text="#{nav.logout}">Se déconnecter</button>
+                </form>
+            </span>
+        </div>
+    </div>
+</header>
+
+<footer th:fragment="footer" class="site-footer">
+    <div class="wrap">
+        <div class="fgrid">
+            <div>
+                <span class="logo">
+                    <span class="mark"><span class="d1"></span><span class="d2"></span><span class="d3"></span></span>
+                    <span class="word">asbl<b>.club</b></span>
+                </span>
+                <p class="ftag" th:text="#{footer.tagline}">La plateforme gratuite de gestion pour les ASBL et clubs belges.</p>
+            </div>
+            <div>
+                <h4 th:text="#{footer.legal}">Légal</h4>
+                <ul>
+                    <li><a th:href="@{/legal}" th:text="#{legal.notice.title}">Mentions légales</a></li>
+                    <li><a th:href="@{/privacy}" th:text="#{legal.privacy.title}">Confidentialité</a></li>
+                    <li><a th:href="@{/cookies}" th:text="#{legal.cookies.title}">Cookies</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="fbar">
+            <span>© 2026 asbl.club — Belgique</span>
+            <span>FR · NL · EN</span>
+        </div>
+    </div>
+</footer>
+</body>
+</html>
