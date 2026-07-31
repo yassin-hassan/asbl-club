@@ -24,10 +24,10 @@
             <span class="word">asbl<b>.club</b></span>
         </a>
         <div class="navright">
-            <span class="lang">
-                <a th:href="@{${currentPath}(lang='fr')}" th:classappend="${#locale.language == 'fr'} ? 'on'">FR</a> ·
-                <a th:href="@{${currentPath}(lang='nl')}" th:classappend="${#locale.language == 'nl'} ? 'on'">NL</a> ·
-                <a th:href="@{${currentPath}(lang='en')}" th:classappend="${#locale.language == 'en'} ? 'on'">EN</a>
+            <span class="lang" th:with="path=${currentPath != null ? currentPath : '/'}">
+                <a th:href="@{${path}(lang='fr')}" th:classappend="${#locale.language == 'fr'} ? 'on'">FR</a> ·
+                <a th:href="@{${path}(lang='nl')}" th:classappend="${#locale.language == 'nl'} ? 'on'">NL</a> ·
+                <a th:href="@{${path}(lang='en')}" th:classappend="${#locale.language == 'en'} ? 'on'">EN</a>
             </span>
             <span sec:authorize="!isAuthenticated()">
                 <a th:href="@{/login}" class="btn btn-ghost" th:text="#{nav.login}">Se connecter</a>
