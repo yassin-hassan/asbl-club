@@ -221,6 +221,14 @@ table.data tr:last-child td{border-bottom:none}
 .legal-page h2{font-size:20px;font-weight:600;color:var(--indigo-900);margin:24px 0 8px}
 .back-link{display:inline-block;margin-top:16px;color:var(--indigo-700);font-weight:600}
 
+/* ---------- Confirmation modal ---------- */
+.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,.5);display:none;align-items:center;justify-content:center;padding:20px;z-index:50}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:20px;padding:28px;max-width:440px;width:100%;box-shadow:0 24px 60px -20px rgba(15,23,42,.35)}
+.modal h2{font-size:20px;font-weight:600;color:var(--indigo-900);margin-bottom:8px}
+.modal p{color:var(--slate-600);font-size:14px;margin-bottom:22px}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+
 /* ---------- Responsive ---------- */
 @media (max-width:860px){
   .hero-grid{grid-template-columns:1fr;gap:28px}

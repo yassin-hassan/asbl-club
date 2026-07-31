@@ -16,14 +16,37 @@
     <div class="box danger">
         <h2 th:text="#{account.deleteTitle}">Supprimer mon compte</h2>
         <p th:text="#{account.deleteWarning}">Cette action est irréversible.</p>
-        <form th:action="@{/account/delete}" method="post">
-            <button type="submit" class="btn btn-danger" th:text="#{account.delete}">Supprimer définitivement</button>
-        </form>
+        <button type="button" class="btn btn-danger" data-open-modal="delete-modal" th:text="#{account.delete}">Supprimer définitivement</button>
     </div>
 
     <a class="back-link" th:href="@{/}" th:text="#{account.back}">Retour à l'accueil</a>
 </main>
 
+<div class="modal-overlay" id="delete-modal">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title">
+        <h2 id="delete-modal-title" th:text="#{account.deleteTitle}">Supprimer mon compte</h2>
+        <p th:text="#{account.deleteConfirm}">Êtes-vous sûr ?</p>
+        <div class="modal-actions">
+            <button type="button" class="btn btn-tertiary" data-close-modal th:text="#{account.cancel}">Annuler</button>
+            <form th:action="@{/account/delete}" method="post">
+                <button type="submit" class="btn btn-danger" th:text="#{account.delete}">Supprimer définitivement</button>
+            </form>
+        </div>
+    </div>
+</div>
+
 <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+<script>
+    (function () {
+        const modal = document.getElementById('delete-modal');
+        const open = () => modal.classList.add('open');
+        const close = () => modal.classList.remove('open');
+        document.querySelector('[data-open-modal="delete-modal"]').addEventListener('click', open);
+        modal.querySelectorAll('[data-close-modal]').forEach(el => el.addEventListener('click', close));
+        modal.addEventListener('click', e => { if (e.target === modal) close(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+    })();
+</script>
 </body>
 </html>
