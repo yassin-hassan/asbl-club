@@ -15,27 +15,19 @@
 
     <div th:if="${events.isEmpty()}" class="empty" th:text="#{events.none}">Aucun événement pour l'instant</div>
 
-    <div th:unless="${events.isEmpty()}" class="table-wrap">
-        <table class="data">
-            <thead>
-            <tr>
-                <th th:text="#{event.title}">Titre</th>
-                <th th:text="#{event.startsAt}">Début</th>
-                <th th:text="#{event.status}">Statut</th>
-                <th th:text="#{event.visibility}">Visibilité</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="e : ${events}">
-                <td>
-                    <a class="link" th:href="@{/asbls/{slug}/events/{eventId}(slug=${asbl.slug},eventId=${e.id})}" th:text="${e.title}">Titre</a>
-                </td>
-                <td th:text="${e.startsAt}">Début</td>
-                <td th:text="${e.status}">Statut</td>
-                <td th:text="${e.visibility}">Visibilité</td>
-            </tr>
-            </tbody>
-        </table>
+    <div th:unless="${events.isEmpty()}" class="event-list">
+        <a th:each="e : ${events}" class="event-row"
+           th:href="@{/asbls/{slug}/events/{eventId}(slug=${asbl.slug},eventId=${e.id})}">
+            <span class="ev-main">
+                <span class="ev-title" th:text="${e.title}">Titre</span>
+                <span class="ev-meta">
+                    <span th:text="${e.startsAt}">Début</span>
+                    <span class="tag" th:text="${e.status}">Statut</span>
+                    <span class="tag" th:text="${e.visibility}">Visibilité</span>
+                </span>
+            </span>
+            <span class="ev-go" aria-hidden="true">→</span>
+        </a>
     </div>
 
     <a class="back-link" th:href="@{/asbls/{slug}/members(slug=${asbl.slug})}" th:text="#{events.members}">Membres</a>

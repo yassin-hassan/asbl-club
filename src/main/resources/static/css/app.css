@@ -221,6 +221,16 @@ table.data tr:last-child td{border-bottom:none}
 .legal-page h2{font-size:20px;font-weight:600;color:var(--indigo-900);margin:24px 0 8px}
 .back-link{display:inline-block;margin-top:16px;color:var(--indigo-700);font-weight:600}
 
+/* ---------- Clickable event rows ---------- */
+.event-list{display:flex;flex-direction:column;gap:12px;margin-top:16px}
+.event-row{display:flex;align-items:center;gap:16px;justify-content:space-between;border:1px solid var(--slate-200);border-radius:var(--radius-lg);padding:16px 20px;background:#fff;transition:border-color .12s ease,box-shadow .12s ease}
+.event-row:hover{border-color:var(--indigo-600);box-shadow:0 10px 26px -14px rgba(49,46,129,.28)}
+.event-row .ev-main{min-width:0}
+.event-row .ev-title{display:block;font-family:'Poppins',sans-serif;font-weight:600;font-size:17px;color:var(--indigo-900)}
+.event-row .ev-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;color:var(--slate-600);margin-top:6px}
+.event-row .ev-go{color:var(--indigo-600);font-size:22px;line-height:1;flex:none;transition:transform .12s ease}
+.event-row:hover .ev-go{transform:translateX(4px)}
+
 /* ---------- Confirmation modal ---------- */
 .modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,.5);display:none;align-items:center;justify-content:center;padding:20px;z-index:50}
 .modal-overlay.open{display:flex}
