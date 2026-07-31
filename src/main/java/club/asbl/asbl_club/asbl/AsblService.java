@@ -45,6 +45,12 @@ public class AsblService {
         return asbl;
     }
 
+    @Transactional
+    public void linkStripeAccount(Asbl asbl, String stripeAccountId) {
+        asbl.setStripeAccountId(stripeAccountId);
+        asblRepository.save(asbl);
+    }
+
     @Transactional(readOnly = true)
     public Optional<Asbl> findBySlug(String slug) {
         return asblRepository.findBySlug(slug);
