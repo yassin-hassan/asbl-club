@@ -8,6 +8,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import club.asbl.asbl_club.audit.AuditService;
 import club.asbl.asbl_club.membership.MembershipService;
 import club.asbl.asbl_club.user.User;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,9 @@ class AsblServiceTest {
 
     @Mock
     MembershipService membershipService;
+
+    @Mock
+    AuditService auditService;
 
     @InjectMocks
     AsblService asblService;
