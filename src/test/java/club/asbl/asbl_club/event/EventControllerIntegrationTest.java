@@ -1,9 +1,11 @@
 package club.asbl.asbl_club.event;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -56,6 +58,20 @@ class EventControllerIntegrationTest {
                 .andExpect(redirectedUrl("/asbls/club-a/events"));
 
         assertThat(eventService.eventsOf(club)).hasSize(1);
+    }
+
+    @Test
+    @WithMockUser(username = "alice@club.test")
+    void eventListShowsEventsAsClickableRows() throws Exception {
+        User alice = userService.register("Alice", "alice@club.test", "password123");
+        Asbl club = asblService.createAsbl(alice, "Club A", "0111.111.111", "club-a", "fr");
+        eventService.createEvent(club, "Concert", "Une soirée",
+                Instant.parse("2026-09-01T18:00:00Z"), "Salle A", "PUBLIC");
+
+        mockMvc.perform(get("/asbls/club-a/events"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Concert")))
+                .andExpect(content().string(containsString("event-row")));
     }
 
     @Test
