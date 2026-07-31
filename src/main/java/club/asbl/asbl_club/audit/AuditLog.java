@@ -13,12 +13,12 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.Instant;
 import java.util.Map;
-import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.generator.EventType;
 import org.hibernate.type.SqlTypes;
 
 @Entity
+@Immutable
 @Table(name = "audit_logs")
 public class AuditLog {
 
@@ -49,8 +49,7 @@ public class AuditLog {
     @Column(length = 45)
     private String ip;
 
-    @Generated(event = EventType.INSERT)
-    @Column(name = "created_at")
+    @Column(name = "created_at", updatable = false)
     private Instant createdAt;
 
     protected AuditLog() {
@@ -65,6 +64,7 @@ public class AuditLog {
         this.entityType = entityType;
         this.entityId = entityId;
         this.payload = payload;
+        this.createdAt = Instant.now();
     }
 
     public Long getId() {
