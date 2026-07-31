@@ -1,45 +1,44 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title th:text="#{audit.title}">Audit log</title>
-</head>
+<head th:replace="~{fragments/layout :: head(#{audit.title})}"></head>
 <body>
-<nav>
-    <a th:href="@{/asbls/{slug}/audit(slug=${asbl.slug},lang='fr')}" th:text="#{lang.fr}">Français</a>
-    <a th:href="@{/asbls/{slug}/audit(slug=${asbl.slug},lang='nl')}" th:text="#{lang.nl}">Nederlands</a>
-    <a th:href="@{/asbls/{slug}/audit(slug=${asbl.slug},lang='en')}" th:text="#{lang.en}">English</a>
-</nav>
+<header th:replace="~{fragments/layout :: header}"></header>
 
-<h1 th:text="${asbl.denomination}">Association</h1>
-<h2 th:text="#{audit.title}">Audit log</h2>
+<main class="page">
+    <h1 th:text="${asbl.denomination}">Association</h1>
+    <p class="muted" th:text="#{audit.title}">Journal d'audit</p>
 
-<p th:if="${entries.isEmpty()}" th:text="#{audit.none}">No entry yet</p>
+    <div th:if="${entries.isEmpty()}" class="empty" th:text="#{audit.none}">Aucune entrée pour l'instant</div>
 
-<table th:unless="${entries.isEmpty()}">
-    <thead>
-    <tr>
-        <th th:text="#{audit.when}">When</th>
-        <th th:text="#{audit.actor}">Actor</th>
-        <th th:text="#{audit.action}">Action</th>
-        <th th:text="#{audit.entity}">Object</th>
-        <th th:text="#{audit.ip}">IP address</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="e : ${entries}">
-        <td th:text="${e.createdAt}">2026-01-01</td>
-        <td>
-            <span th:if="${e.actorEmail}" th:text="${e.actorEmail}">alice@club.test</span>
-            <span th:unless="${e.actorEmail}" th:text="#{audit.system}">System</span>
-        </td>
-        <td th:text="${e.action}">ACTION</td>
-        <td th:text="${e.entityType != null ? e.entityType + ' #' + e.entityId : ''}">Asbl #1</td>
-        <td th:text="${e.ip}">127.0.0.1</td>
-    </tr>
-    </tbody>
-</table>
+    <div th:unless="${entries.isEmpty()}" class="table-wrap">
+        <table class="data">
+            <thead>
+            <tr>
+                <th th:text="#{audit.when}">Date</th>
+                <th th:text="#{audit.actor}">Auteur</th>
+                <th th:text="#{audit.action}">Action</th>
+                <th th:text="#{audit.entity}">Objet</th>
+                <th th:text="#{audit.ip}">Adresse IP</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="e : ${entries}">
+                <td th:text="${e.createdAt}">2026-01-01</td>
+                <td>
+                    <span th:if="${e.actorEmail}" th:text="${e.actorEmail}">alice@club.test</span>
+                    <span th:unless="${e.actorEmail}" class="muted" th:text="#{audit.system}">Système</span>
+                </td>
+                <td><span class="role-tag" th:text="${e.action}">ACTION</span></td>
+                <td th:text="${e.entityType != null ? e.entityType + ' #' + e.entityId : ''}">Asbl #1</td>
+                <td th:text="${e.ip}">127.0.0.1</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 
-<p><a th:href="@{/asbls/{slug}/members(slug=${asbl.slug})}" th:text="#{audit.back}">Back</a></p>
+    <a class="back-link" th:href="@{/asbls/{slug}/members(slug=${asbl.slug})}" th:text="#{audit.back}">Retour aux membres</a>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
 </body>
 </html>
