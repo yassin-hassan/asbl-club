@@ -8,6 +8,7 @@ import com.stripe.net.Webhook;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,11 +42,15 @@ class WebhookController {
             return ResponseEntity.badRequest().body("Invalid signature");
         }
         log.info("Received Stripe webhook: {} ({})", event.getType(), event.getId());
-        switch (event.getType()) {
-            case "payment_intent.succeeded" -> paymentIntentId(event).ifPresent(paymentService::handleSucceeded);
-            case "payment_intent.payment_failed" -> paymentIntentId(event).ifPresent(paymentService::handleFailed);
-            default -> {
+        try {
+            switch (event.getType()) {
+                case "payment_intent.succeeded" -> paymentIntentId(event).ifPresent(paymentService::handleSucceeded);
+                case "payment_intent.payment_failed" -> paymentIntentId(event).ifPresent(paymentService::handleFailed);
+                default -> {
+                }
             }
+        } catch (OptimisticLockingFailureException e) {
+            log.info("Concurrent duplicate delivery for event {}, already handled by another delivery", event.getId());
         }
         return ResponseEntity.ok("ok");
     }

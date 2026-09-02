@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import java.math.BigDecimal;
 import java.time.Instant;
 
@@ -57,6 +58,10 @@ public class Payment {
 
     @Column(name = "paid_at")
     private Instant paidAt;
+
+    @Version
+    @Column(nullable = false)
+    private long version;
 
     protected Payment() {
     }
@@ -151,5 +156,9 @@ public class Payment {
 
     public void setPaidAt(Instant paidAt) {
         this.paidAt = paidAt;
+    }
+
+    public long getVersion() {
+        return version;
     }
 }
