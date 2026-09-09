@@ -28,21 +28,22 @@ public class EventService {
         event.setDescription(description);
         event.setStartsAt(startsAt);
         event.setLocation(location);
-        event.setVisibility(visibility);
-        event.setStatus("DRAFT");
+        event.setVisibility(EventVisibility.valueOf(visibility));
+        event.setStatus(EventStatus.DRAFT);
         return eventRepository.save(event);
     }
 
     @Transactional
     public void publish(Event event) {
-        event.setStatus("PUBLISHED");
+        event.setStatus(EventStatus.PUBLISHED);
         eventRepository.save(event);
     }
 
     @Transactional(readOnly = true)
     public List<EventSummary> eventsOf(Asbl asbl) {
         return eventRepository.findByAsbl(asbl).stream()
-                .map(e -> new EventSummary(e.getId(), e.getTitle(), e.getStartsAt(), e.getStatus(), e.getVisibility()))
+                .map(e -> new EventSummary(e.getId(), e.getTitle(), e.getStartsAt(),
+                        e.getStatus().name(), e.getVisibility().name()))
                 .toList();
     }
 
@@ -54,7 +55,8 @@ public class EventService {
     @Transactional(readOnly = true)
     public Optional<Event> findPublicEvent(Long eventId) {
         return eventRepository.findByIdFetchingAsbl(eventId)
-                .filter(event -> "PUBLIC".equals(event.getVisibility()) && "PUBLISHED".equals(event.getStatus()));
+                .filter(event -> event.getVisibility() == EventVisibility.PUBLIC
+                        && event.getStatus() == EventStatus.PUBLISHED);
     }
 
     @Transactional(readOnly = true)
@@ -64,14 +66,16 @@ public class EventService {
 
     @Transactional(readOnly = true)
     public List<EventFeedItem> publicFeed() {
-        return eventRepository.findByVisibilityAndStatusOrderByStartsAtDesc("PUBLIC", "PUBLISHED").stream()
+        return eventRepository.findByVisibilityAndStatusOrderByStartsAtDesc(
+                EventVisibility.PUBLIC, EventStatus.PUBLISHED).stream()
                 .map(this::toFeedItem)
                 .toList();
     }
 
     @Transactional(readOnly = true)
     public List<EventFeedItem> publicFeedOf(Asbl asbl) {
-        return eventRepository.findByAsblAndVisibilityAndStatusOrderByStartsAtDesc(asbl, "PUBLIC", "PUBLISHED").stream()
+        return eventRepository.findByAsblAndVisibilityAndStatusOrderByStartsAtDesc(
+                asbl, EventVisibility.PUBLIC, EventStatus.PUBLISHED).stream()
                 .map(this::toFeedItem)
                 .toList();
     }

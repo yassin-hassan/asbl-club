@@ -2,6 +2,8 @@ package club.asbl.asbl_club.asbl;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -33,8 +35,9 @@ public class Asbl {
     @Column(name = "default_language", nullable = false, length = 5)
     private String defaultLanguage;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private String status;
+    private AsblStatus status;
 
     @Column(name = "stripe_account_id", length = 255)
     private String stripeAccountId;
@@ -94,11 +97,11 @@ public class Asbl {
         this.defaultLanguage = defaultLanguage;
     }
 
-    public String getStatus() {
+    public AsblStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(AsblStatus status) {
         this.status = status;
     }
 

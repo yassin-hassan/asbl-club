@@ -6,6 +6,8 @@ import club.asbl.asbl_club.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -32,8 +34,9 @@ public class Registration extends Payable {
     @Column(name = "guest_email")
     private String guestEmail;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private String status;
+    private RegistrationStatus status;
 
     @Column(name = "qr_token", length = 64)
     private String qrToken;
@@ -79,11 +82,11 @@ public class Registration extends Payable {
         this.guestEmail = guestEmail;
     }
 
-    public String getStatus() {
+    public RegistrationStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(RegistrationStatus status) {
         this.status = status;
     }
 

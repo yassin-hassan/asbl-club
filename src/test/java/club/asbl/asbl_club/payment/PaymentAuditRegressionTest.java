@@ -68,7 +68,7 @@ class PaymentAuditRegressionTest {
         payment.setIdempotencyKey("payable-" + registration.getId());
         payment.setAmount(new BigDecimal("15.00"));
         payment.setCommission(new BigDecimal("0.75"));
-        payment.setStatus("INITIATED");
+        payment.setStatus(PaymentStatus.INITIATED);
         paymentRepository.save(payment);
 
         paymentService.handleSucceeded("pi_regression_1");
@@ -76,9 +76,9 @@ class PaymentAuditRegressionTest {
         paymentRepository.flush();
 
         assertThat(paymentRepository.findByStripePaymentIntentId("pi_regression_1").orElseThrow().getStatus())
-                .isEqualTo("SUCCEEDED");
+                .isEqualTo(PaymentStatus.SUCCEEDED);
         assertThat(registrationRepository.findById(registration.getId()).orElseThrow().getStatus())
-                .isEqualTo("PAID");
+                .isEqualTo(RegistrationStatus.PAID);
 
         List<AuditLogView> journal = auditService.journalOf(club);
         assertThat(journal).anyMatch(entry -> "PAYMENT_SUCCEEDED".equals(entry.action()));

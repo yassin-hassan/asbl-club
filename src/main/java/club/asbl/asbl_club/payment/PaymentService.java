@@ -86,7 +86,7 @@ public class PaymentService {
         payment.setIdempotencyKey("payable-" + payable.getId());
         payment.setAmount(payable.getAmount());
         payment.setCommission(commission);
-        payment.setStatus("INITIATED");
+        payment.setStatus(PaymentStatus.INITIATED);
         paymentRepository.save(payment);
 
         return new PaymentInitiation(payment.getId(), intent.getClientSecret());
@@ -95,13 +95,13 @@ public class PaymentService {
     @Transactional
     public void handleSucceeded(String paymentIntentId) {
         paymentRepository.findByStripePaymentIntentId(paymentIntentId).ifPresent(payment -> {
-            if (!"INITIATED".equals(payment.getStatus())) {
+            if (payment.getStatus() != PaymentStatus.INITIATED) {
                 return;
             }
-            payment.setStatus("SUCCEEDED");
+            payment.setStatus(PaymentStatus.SUCCEEDED);
             payment.setPaidAt(Instant.now());
             registrationRepository.findById(payment.getPayable().getId()).ifPresent(registration -> {
-                registration.setStatus("PAID");
+                registration.setStatus(RegistrationStatus.PAID);
                 registration.setQrToken(UUID.randomUUID().toString().replace("-", ""));
             });
             auditService.recordSystem("PAYMENT_SUCCEEDED", payment.getAsbl(), "Payment", payment.getId(),
@@ -112,8 +112,8 @@ public class PaymentService {
     @Transactional
     public void handleFailed(String paymentIntentId) {
         paymentRepository.findByStripePaymentIntentId(paymentIntentId).ifPresent(payment -> {
-            if ("INITIATED".equals(payment.getStatus())) {
-                payment.setStatus("FAILED");
+            if (payment.getStatus() == PaymentStatus.INITIATED) {
+                payment.setStatus(PaymentStatus.FAILED);
                 auditService.recordSystem("PAYMENT_FAILED", payment.getAsbl(), "Payment", payment.getId(),
                         Map.of("paymentIntentId", paymentIntentId));
             }
@@ -131,7 +131,7 @@ public class PaymentService {
     @Transactional(readOnly = true)
     public List<PaymentExport> exportPaymentsOf(User user) {
         return paymentRepository.findByUser(user).stream()
-                .map(payment -> new PaymentExport(payment.getAmount(), payment.getStatus(), payment.getPaidAt()))
+                .map(payment -> new PaymentExport(payment.getAmount(), payment.getStatus().name(), payment.getPaidAt()))
                 .toList();
     }
 

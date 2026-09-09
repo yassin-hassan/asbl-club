@@ -26,7 +26,7 @@ public class ReservationService {
         registration.setEvent(category.getEvent());
         registration.setTicketCategory(category);
         registration.setUser(user);
-        registration.setStatus("RESERVED");
+        registration.setStatus(RegistrationStatus.RESERVED);
         registration.setRegisteredAt(Instant.now());
         registration.setAmount(category.getPrice());
         registration.setCurrency("EUR");

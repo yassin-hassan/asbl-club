@@ -16,5 +16,5 @@ interface MembershipRepository extends JpaRepository<Membership, Long> {
 
     boolean existsByUserAndAsbl(User user, Asbl asbl);
 
-    boolean existsByUserAndAsblAndRole(User user, Asbl asbl, String role);
+    boolean existsByUserAndAsblAndRole(User user, Asbl asbl, MembershipRole role);
 }

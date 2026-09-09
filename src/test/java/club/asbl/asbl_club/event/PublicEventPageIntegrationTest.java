@@ -45,7 +45,7 @@ class PublicEventPageIntegrationTest {
         Asbl asbl = asblService.createAsbl(alice, "Mon Club", "0123.456.789", "mon-club", "fr");
         Event published = eventService.createEvent(asbl, "Concert", "A public concert",
                 Instant.now().plusSeconds(3600), "Hall", "PUBLIC");
-        published.setStatus("PUBLISHED");
+        published.setStatus(EventStatus.PUBLISHED);
         Event members = eventService.createEvent(asbl, "Members only", "Reserved",
                 Instant.now().plusSeconds(3600), "Room", "MEMBERS");
 
@@ -65,7 +65,7 @@ class PublicEventPageIntegrationTest {
         Asbl asbl = asblService.createAsbl(alice, "Mon Club", "0123.456.789", "mon-club", "fr");
         Event published = eventService.createEvent(asbl, "Concert", "A public concert",
                 Instant.now().plusSeconds(3600), "Hall", "PUBLIC");
-        published.setStatus("PUBLISHED");
+        published.setStatus(EventStatus.PUBLISHED);
         eventService.addTicketCategory(published, "Standard", new BigDecimal("10.00"), 100);
 
         mockMvc.perform(get("/events/" + published.getId() + "/availability"))

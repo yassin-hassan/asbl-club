@@ -55,7 +55,7 @@ class CreateAsblIntegrationTest {
                 .andExpect(redirectedUrl("/"));
 
         Asbl asbl = asblRepository.findBySlug("mon-club").orElseThrow();
-        assertThat(asbl.getStatus()).isEqualTo("PENDING");
+        assertThat(asbl.getStatus()).isEqualTo(AsblStatus.PENDING);
 
         User creator = userService.getByEmail("alice@club.test");
         List<AsblSummary> memberships = membershipService.membershipsOf(creator);

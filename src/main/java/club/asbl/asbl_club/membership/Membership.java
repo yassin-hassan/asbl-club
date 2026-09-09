@@ -4,6 +4,8 @@ import club.asbl.asbl_club.asbl.Asbl;
 import club.asbl.asbl_club.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -29,14 +31,17 @@ public class Membership {
     @JoinColumn(name = "asbl_id", nullable = false)
     private Asbl asbl;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private String role;
+    private MembershipRole role;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private String category;
+    private MembershipCategory category;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private String status;
+    private MembershipStatus status;
 
     @Column(name = "joined_at")
     private LocalDate joinedAt;
@@ -67,27 +72,27 @@ public class Membership {
         this.asbl = asbl;
     }
 
-    public String getRole() {
+    public MembershipRole getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(MembershipRole role) {
         this.role = role;
     }
 
-    public String getCategory() {
+    public MembershipCategory getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(MembershipCategory category) {
         this.category = category;
     }
 
-    public String getStatus() {
+    public MembershipStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(MembershipStatus status) {
         this.status = status;
     }
 

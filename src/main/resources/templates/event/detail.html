@@ -16,11 +16,11 @@
     </div>
 
     <div class="toolbar" th:if="${isAdmin}">
-        <form th:if="${event.status == 'DRAFT'}" method="post"
+        <form th:if="${event.status.name() == 'DRAFT'}" method="post"
               th:action="@{/asbls/{slug}/events/{eventId}/publish(slug=${asbl.slug},eventId=${event.id})}">
             <button type="submit" class="btn btn-primary" th:text="#{event.publish}">Publier</button>
         </form>
-        <a th:if="${event.status == 'PUBLISHED' and event.visibility == 'PUBLIC'}"
+        <a th:if="${event.status.name() == 'PUBLISHED' and event.visibility.name() == 'PUBLIC'}"
            th:href="@{/events/{id}(id=${event.id})}" target="_blank" rel="noopener"
            class="btn btn-secondary" th:text="#{event.viewPublic}">Voir la page publique</a>
     </div>

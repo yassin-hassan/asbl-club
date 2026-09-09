@@ -42,7 +42,7 @@ class AsblServiceTest {
         Asbl created = asblService.createAsbl(creator, "Mon Club", "0123.456.789", "mon-club", "fr");
 
         assertThat(created.getDenomination()).isEqualTo("Mon Club");
-        assertThat(created.getStatus()).isEqualTo("PENDING");
+        assertThat(created.getStatus()).isEqualTo(AsblStatus.PENDING);
         verify(membershipService).createFoundingAdmin(created, creator);
     }
 

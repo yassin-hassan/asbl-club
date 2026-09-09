@@ -64,9 +64,9 @@ class AuthorizationBoundariesIntegrationTest {
         Membership membership = new Membership();
         membership.setUser(member);
         membership.setAsbl(club);
-        membership.setRole("MEMBER");
-        membership.setCategory("FULL");
-        membership.setStatus("ACTIVE");
+        membership.setRole(MembershipRole.MEMBER);
+        membership.setCategory(MembershipCategory.FULL);
+        membership.setStatus(MembershipStatus.ACTIVE);
         membership.setJoinedAt(LocalDate.now());
         membershipRepository.save(membership);
 

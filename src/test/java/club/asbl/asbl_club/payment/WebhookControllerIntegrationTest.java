@@ -59,7 +59,7 @@ class WebhookControllerIntegrationTest {
                 .andExpect(status().isOk());
 
         assertThat(paymentRepository.findByStripePaymentIntentId(intentId).orElseThrow().getStatus())
-                .isEqualTo("SUCCEEDED");
+                .isEqualTo(PaymentStatus.SUCCEEDED);
     }
 
     @Test
@@ -71,7 +71,7 @@ class WebhookControllerIntegrationTest {
                 .andExpect(status().isOk());
 
         assertThat(paymentRepository.findByStripePaymentIntentId(intentId).orElseThrow().getStatus())
-                .isEqualTo("FAILED");
+                .isEqualTo(PaymentStatus.FAILED);
     }
 
     @Test
@@ -105,7 +105,7 @@ class WebhookControllerIntegrationTest {
         payment.setIdempotencyKey("payable-" + registration.getId());
         payment.setAmount(new BigDecimal("12.00"));
         payment.setCommission(new BigDecimal("0.66"));
-        payment.setStatus("INITIATED");
+        payment.setStatus(PaymentStatus.INITIATED);
         return paymentRepository.save(payment);
     }
 

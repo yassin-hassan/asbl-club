@@ -15,7 +15,8 @@ interface EventRepository extends JpaRepository<Event, Long> {
     @Query("select e from Event e join fetch e.asbl where e.id = :id")
     Optional<Event> findByIdFetchingAsbl(Long id);
 
-    List<Event> findByVisibilityAndStatusOrderByStartsAtDesc(String visibility, String status);
+    List<Event> findByVisibilityAndStatusOrderByStartsAtDesc(EventVisibility visibility, EventStatus status);
 
-    List<Event> findByAsblAndVisibilityAndStatusOrderByStartsAtDesc(Asbl asbl, String visibility, String status);
+    List<Event> findByAsblAndVisibilityAndStatusOrderByStartsAtDesc(
+            Asbl asbl, EventVisibility visibility, EventStatus status);
 }

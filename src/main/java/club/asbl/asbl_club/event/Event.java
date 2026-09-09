@@ -3,6 +3,8 @@ package club.asbl.asbl_club.event;
 import club.asbl.asbl_club.asbl.Asbl;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -36,11 +38,13 @@ public class Event {
     @Column(length = 255)
     private String location;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private String visibility;
+    private EventVisibility visibility;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private String status;
+    private EventStatus status;
 
     protected Event() {
     }
@@ -89,19 +93,19 @@ public class Event {
         this.location = location;
     }
 
-    public String getVisibility() {
+    public EventVisibility getVisibility() {
         return visibility;
     }
 
-    public void setVisibility(String visibility) {
+    public void setVisibility(EventVisibility visibility) {
         this.visibility = visibility;
     }
 
-    public String getStatus() {
+    public EventStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(EventStatus status) {
         this.status = status;
     }
 }

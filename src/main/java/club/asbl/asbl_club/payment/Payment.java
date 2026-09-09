@@ -4,6 +4,8 @@ import club.asbl.asbl_club.asbl.Asbl;
 import club.asbl.asbl_club.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -53,8 +55,9 @@ public class Payment {
     @Column(nullable = false, precision = 8, scale = 2)
     private BigDecimal commission;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private String status;
+    private PaymentStatus status;
 
     @Column(name = "paid_at")
     private Instant paidAt;
@@ -142,11 +145,11 @@ public class Payment {
         this.commission = commission;
     }
 
-    public String getStatus() {
+    public PaymentStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(PaymentStatus status) {
         this.status = status;
     }
 

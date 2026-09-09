@@ -42,7 +42,7 @@ class PaymentServiceTest {
 
     private Payment initiatedPayment() {
         Payment payment = new Payment();
-        payment.setStatus("INITIATED");
+        payment.setStatus(PaymentStatus.INITIATED);
         payment.setAmount(new BigDecimal("10.00"));
         payment.setAsbl(mock(Asbl.class));
         payment.setPayable(mock(Payable.class));
@@ -56,14 +56,14 @@ class PaymentServiceTest {
 
         paymentService.handleSucceeded("pi_x");
 
-        assertThat(payment.getStatus()).isEqualTo("SUCCEEDED");
+        assertThat(payment.getStatus()).isEqualTo(PaymentStatus.SUCCEEDED);
         verify(auditService).recordSystem(eq("PAYMENT_SUCCEEDED"), any(), eq("Payment"), any(), anyMap());
     }
 
     @Test
     void handleSucceeded_isIdempotent_andDoesNotAuditTwice() {
         Payment payment = initiatedPayment();
-        payment.setStatus("SUCCEEDED");
+        payment.setStatus(PaymentStatus.SUCCEEDED);
         when(paymentRepository.findByStripePaymentIntentId("pi_x")).thenReturn(Optional.of(payment));
 
         paymentService.handleSucceeded("pi_x");
@@ -78,7 +78,7 @@ class PaymentServiceTest {
 
         paymentService.handleFailed("pi_x");
 
-        assertThat(payment.getStatus()).isEqualTo("FAILED");
+        assertThat(payment.getStatus()).isEqualTo(PaymentStatus.FAILED);
         verify(auditService).recordSystem(eq("PAYMENT_FAILED"), any(), eq("Payment"), any(), anyMap());
     }
 

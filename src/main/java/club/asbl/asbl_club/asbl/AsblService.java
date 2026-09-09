@@ -35,7 +35,7 @@ public class AsblService {
         asbl.setBceNumber(bceNumber);
         asbl.setSlug(slug);
         asbl.setDefaultLanguage(defaultLanguage);
-        asbl.setStatus("PENDING");
+        asbl.setStatus(AsblStatus.PENDING);
         asblRepository.save(asbl);
 
         membershipService.createFoundingAdmin(asbl, creator);

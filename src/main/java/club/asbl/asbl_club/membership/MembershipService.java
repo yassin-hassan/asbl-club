@@ -22,9 +22,9 @@ public class MembershipService {
         Membership membership = new Membership();
         membership.setUser(creator);
         membership.setAsbl(asbl);
-        membership.setRole("ADMIN");
-        membership.setCategory("FULL");
-        membership.setStatus("ACTIVE");
+        membership.setRole(MembershipRole.ADMIN);
+        membership.setCategory(MembershipCategory.FULL);
+        membership.setStatus(MembershipStatus.ACTIVE);
         membership.setJoinedAt(LocalDate.now());
         membershipRepository.save(membership);
     }
@@ -33,7 +33,7 @@ public class MembershipService {
     public List<AsblSummary> membershipsOf(User user) {
         return membershipRepository.findByUser(user).stream()
                 .map(m -> new AsblSummary(m.getAsbl().getId(), m.getAsbl().getDenomination(),
-                        m.getAsbl().getSlug(), m.getRole()))
+                        m.getAsbl().getSlug(), m.getRole().name()))
                 .toList();
     }
 
@@ -44,13 +44,14 @@ public class MembershipService {
 
     @Transactional(readOnly = true)
     public boolean isAdmin(User user, Asbl asbl) {
-        return membershipRepository.existsByUserAndAsblAndRole(user, asbl, "ADMIN");
+        return membershipRepository.existsByUserAndAsblAndRole(user, asbl, MembershipRole.ADMIN);
     }
 
     @Transactional(readOnly = true)
     public List<MemberView> membersOf(Asbl asbl) {
         return membershipRepository.findByAsbl(asbl).stream()
-                .map(m -> new MemberView(m.getUser().getName(), m.getUser().getEmail(), m.getRole(), m.getStatus()))
+                .map(m -> new MemberView(m.getUser().getName(), m.getUser().getEmail(),
+                        m.getRole().name(), m.getStatus().name()))
                 .toList();
     }
 

@@ -33,8 +33,8 @@ class EventServiceTest {
 
         assertThat(created.getAsbl()).isSameAs(asbl);
         assertThat(created.getTitle()).isEqualTo("Concert");
-        assertThat(created.getStatus()).isEqualTo("DRAFT");
-        assertThat(created.getVisibility()).isEqualTo("PUBLIC");
+        assertThat(created.getStatus()).isEqualTo(EventStatus.DRAFT);
+        assertThat(created.getVisibility()).isEqualTo(EventVisibility.PUBLIC);
         verify(eventRepository).save(created);
     }
 }

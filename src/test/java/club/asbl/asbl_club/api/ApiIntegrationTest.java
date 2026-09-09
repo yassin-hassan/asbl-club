@@ -13,6 +13,7 @@ import club.asbl.asbl_club.asbl.Asbl;
 import club.asbl.asbl_club.asbl.AsblService;
 import club.asbl.asbl_club.event.Event;
 import club.asbl.asbl_club.event.EventService;
+import club.asbl.asbl_club.event.EventStatus;
 import club.asbl.asbl_club.user.User;
 import club.asbl.asbl_club.user.UserService;
 import java.time.Instant;
@@ -47,7 +48,7 @@ class ApiIntegrationTest {
         Asbl asbl = asblService.createAsbl(alice, "Mon Club", "0123.456.789", "mon-club", "fr");
         Event published = eventService.createEvent(asbl, "Concert", "A public concert",
                 Instant.now().plusSeconds(3600), "Hall", "PUBLIC");
-        published.setStatus("PUBLISHED");
+        published.setStatus(EventStatus.PUBLISHED);
         return published;
     }
 

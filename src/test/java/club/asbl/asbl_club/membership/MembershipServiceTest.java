@@ -34,9 +34,9 @@ class MembershipServiceTest {
         Membership membership = captor.getValue();
         assertThat(membership.getUser()).isSameAs(creator);
         assertThat(membership.getAsbl()).isSameAs(asbl);
-        assertThat(membership.getRole()).isEqualTo("ADMIN");
-        assertThat(membership.getCategory()).isEqualTo("FULL");
-        assertThat(membership.getStatus()).isEqualTo("ACTIVE");
+        assertThat(membership.getRole()).isEqualTo(MembershipRole.ADMIN);
+        assertThat(membership.getCategory()).isEqualTo(MembershipCategory.FULL);
+        assertThat(membership.getStatus()).isEqualTo(MembershipStatus.ACTIVE);
         assertThat(membership.getJoinedAt()).isNotNull();
     }
 }
