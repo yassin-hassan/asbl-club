@@ -56,11 +56,12 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/login", "/register", "/webhooks/**", "/error", "/css/**", "/js/**",
-                                "/images/**", "/actuator/**",
+                                "/images/**", "/actuator/health", "/actuator/health/**",
                                 "/legal", "/privacy", "/cookies", "/events/**",
                                 "/asbls/*/events/rss",
                                 "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
                         .permitAll()
+                        .requestMatchers("/actuator/**").hasRole("SUPERADMIN")
                         .requestMatchers("/admin/**").hasRole("SUPERADMIN")
                         .anyRequest().authenticated())
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/webhooks/**"))
