@@ -23,7 +23,7 @@
 
 <footer th:replace="~{fragments/layout :: footer}"></footer>
 
-<script th:inline="javascript">
+<script th:inline="javascript" th:attr="nonce=${cspNonce}">
     const publishableKey = /*[[${publishableKey}]]*/ '';
     const stripeAccount = /*[[${stripeAccount}]]*/ '';
     const receivedMessage = /*[[#{payment.received}]]*/ 'Payment received';

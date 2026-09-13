@@ -58,7 +58,7 @@
 
 <footer th:replace="~{fragments/layout :: footer}"></footer>
 
-<script th:inline="javascript">
+<script th:inline="javascript" th:attr="nonce=${cspNonce}">
     const eventId = /*[[${event.id}]]*/ 0;
     function refreshSeats() {
         fetch('/events/' + eventId + '/availability')

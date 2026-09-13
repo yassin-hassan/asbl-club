@@ -37,7 +37,7 @@
 
 <footer th:replace="~{fragments/layout :: footer}"></footer>
 
-<script>
+<script th:attr="nonce=${cspNonce}">
     (function () {
         const modal = document.getElementById('delete-modal');
         const open = () => modal.classList.add('open');
