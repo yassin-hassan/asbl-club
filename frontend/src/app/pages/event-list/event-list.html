@@ -1,0 +1,19 @@
+<p><a routerLink="/">← home</a></p>
+<h1>Events for "{{ slug }}"</h1>
+
+@if (loading()) {
+  <p>Loading…</p>
+} @else if (error()) {
+  <p class="error">{{ error() }}</p>
+} @else if (events()!.length === 0) {
+  <p>No public events.</p>
+} @else {
+  <ul>
+    @for (ev of events(); track ev.id) {
+      <li>
+        <a [routerLink]="['/events', ev.id]">{{ ev.title }}</a>
+        — {{ ev.startsAt | date: 'medium' }}
+      </li>
+    }
+  </ul>
+}

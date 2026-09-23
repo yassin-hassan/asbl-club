@@ -9,6 +9,15 @@ updates:
     labels:
       - dependencies
 
+  # npm dependencies (Angular frontend)
+  - package-ecosystem: npm
+    directory: "/frontend"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    labels:
+      - dependencies
+
   # The GitHub Actions used by our CI workflows
   - package-ecosystem: github-actions
     directory: "/"
