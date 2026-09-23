@@ -1,0 +1,11 @@
+<h1>ASBL Club — events</h1>
+<p>Enter an association slug to view its public events.</p>
+
+<p>
+  <input
+    [value]="slug()"
+    (input)="slug.set($any($event.target).value)"
+    placeholder="association slug"
+  />
+  <a [routerLink]="['/asbls', slug(), 'events']">View events →</a>
+</p>

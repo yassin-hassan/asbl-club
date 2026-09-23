@@ -1,0 +1,22 @@
+<p><a routerLink="/">← home</a></p>
+
+@if (loading()) {
+  <p>Loading…</p>
+} @else if (error()) {
+  <p class="error">{{ error() }}</p>
+} @else {
+  <h1>{{ event()!.title }}</h1>
+  <p><em>{{ event()!.startsAt | date: 'full' }}</em></p>
+  <p>{{ event()!.description }}</p>
+
+  <h2>Seat availability <small>(auto-refreshes every 5s)</small></h2>
+  @if (availability().length === 0) {
+    <p>No ticket categories, or none remaining.</p>
+  } @else {
+    <ul>
+      @for (a of availability(); track a.categoryId) {
+        <li>Category {{ a.categoryId }}: {{ a.remaining }} left</li>
+      }
+    </ul>
+  }
+}
