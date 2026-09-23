@@ -35,6 +35,6 @@ jobs:
       # Fails the pull request if it introduces a dependency with a known
       # high-severity vulnerability — the dependency audit in CI.
       - name: Review dependencies
-        uses: actions/dependency-review-action@v4
+        uses: actions/dependency-review-action@v5
         with:
           fail-on-severity: high
