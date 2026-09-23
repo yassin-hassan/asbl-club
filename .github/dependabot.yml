@@ -2,7 +2,7 @@ version: 2
 updates:
   # Maven dependencies (Spring Boot, Stripe SDK, Hibernate, …)
   - package-ecosystem: maven
-    directory: "/"
+    directory: "/backend"
     schedule:
       interval: weekly
     open-pull-requests-limit: 10

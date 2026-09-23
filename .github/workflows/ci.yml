@@ -7,9 +7,12 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
-    name: Build and test
+  backend:
+    name: Backend build and test
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
     steps:
       - uses: actions/checkout@v4
 
