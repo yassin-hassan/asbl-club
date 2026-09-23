@@ -8,6 +8,15 @@ updates:
     open-pull-requests-limit: 10
     labels:
       - dependencies
+    groups:
+      # All backend minor/patch bumps arrive as a single PR.
+      # Major bumps stay as individual PRs so they can be reviewed one at a time.
+      backend-minor-and-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
 
   # npm dependencies (Angular frontend)
   - package-ecosystem: npm
@@ -17,6 +26,26 @@ updates:
     open-pull-requests-limit: 10
     labels:
       - dependencies
+    groups:
+      # Angular packages are version-locked to each other and must upgrade
+      # together — including TypeScript, whose supported range Angular dictates.
+      # Grouping them means one coordinated PR instead of ~9 separate ones.
+      angular:
+        patterns:
+          - "@angular/*"
+          - "@angular-devkit/*"
+          - "typescript"
+      # Everything else on the frontend, minor/patch only, as one PR.
+      frontend-minor-and-patch:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "@angular/*"
+          - "@angular-devkit/*"
+          - "typescript"
+        update-types:
+          - "minor"
+          - "patch"
 
   # The GitHub Actions used by our CI workflows
   - package-ecosystem: github-actions
@@ -25,3 +54,8 @@ updates:
       interval: weekly
     labels:
       - dependencies
+    groups:
+      # Action bumps are low-risk; batch them all (incl. majors) into one PR.
+      github-actions:
+        patterns:
+          - "*"
