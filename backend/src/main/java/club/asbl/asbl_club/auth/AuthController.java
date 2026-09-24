@@ -51,6 +51,6 @@ class AuthController {
         }
         // The password check only gives us the email; the token needs the user's public ID.
         User user = userService.getByEmail(authentication.getName());
-        return tokenService.issueAccessToken(user);
+        return tokenService.issueAccessToken(user, authentication.getAuthorities());
     }
 }

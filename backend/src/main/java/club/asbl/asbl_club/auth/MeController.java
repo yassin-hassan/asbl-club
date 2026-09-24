@@ -1,5 +1,6 @@
 package club.asbl.asbl_club.auth;
 
+import club.asbl.asbl_club.config.JwtConfig;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,6 +18,7 @@ class MeController {
             security = @SecurityRequirement(name = "bearer"))
     @GetMapping("/api/v1/me")
     MeResponse me(@AuthenticationPrincipal Jwt jwt) {
-        return new MeResponse(UUID.fromString(jwt.getSubject()), jwt.getClaimAsString("email"));
+        return new MeResponse(UUID.fromString(jwt.getSubject()), jwt.getClaimAsString("email"),
+                jwt.getClaimAsStringList(JwtConfig.ROLES_CLAIM));
     }
 }

@@ -1,5 +1,6 @@
 package club.asbl.asbl_club.auth;
 
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.startsWith;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
@@ -58,7 +59,8 @@ class MeControllerIntegrationTest {
         mockMvc.perform(get("/api/v1/me").header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(alice.getPublicId().toString()))
-                .andExpect(jsonPath("$.email").value("alice@club.test"));
+                .andExpect(jsonPath("$.email").value("alice@club.test"))
+                .andExpect(jsonPath("$.roles").value(contains("USER")));
     }
 
     @Test
