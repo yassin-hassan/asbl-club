@@ -8,12 +8,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 
 @Component({
-  selector: 'app-home',
+  selector: 'app-event-search',
   imports: [RouterLink, TranslocoPipe, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule],
-  templateUrl: './home.html',
+  templateUrl: './event-search.html',
   styles: '.row { display: flex; gap: 16px; align-items: baseline; } .grow { flex: 1; }',
 })
-export class Home {
+// Find an association's public events by its short name (used on the landing page).
+export class EventSearch {
   // Defaults to the seeded demo association (DemoDataSeeder -> "club-demo").
   readonly slug = signal('club-demo');
 }

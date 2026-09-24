@@ -1,6 +1,16 @@
 {
-  "lang": { "fr": "Français", "nl": "Nederlands", "en": "English", "choose": "Language" },
-  "nav": { "login": "Log in", "account": "My account", "logout": "Log out" },
+  "lang": {
+    "fr": "Français",
+    "nl": "Nederlands",
+    "en": "English",
+    "choose": "Language"
+  },
+  "nav": {
+    "main": "Main navigation",
+    "login": "Log in",
+    "account": "My account",
+    "logout": "Log out"
+  },
   "home": {
     "title": "Public events",
     "subtitle": "Enter an association's short name to see its public events.",
@@ -17,7 +27,11 @@
     "passwordRequired": "Enter your password.",
     "error": "Invalid email or password"
   },
-  "account": { "title": "My account", "id": "ID", "roles": "Roles" },
+  "account": {
+    "title": "My account",
+    "id": "ID",
+    "roles": "Roles"
+  },
   "events": {
     "back": "Home",
     "title": "Events for \"{{ slug }}\"",
@@ -38,5 +52,85 @@
     "notFound": "Not found.",
     "forbidden": "You don't have access to this.",
     "tooManyRequests": "Too many attempts. Try again in a moment."
+  },
+  "error": {
+    "404": {
+      "title": "Page not found",
+      "body": "The page you are looking for does not exist or has been moved."
+    }
+  },
+  "footer": {
+    "tagline": "The free management platform for Belgian non-profits and clubs.",
+    "legal": "Legal"
+  },
+  "legal": {
+    "notice": {
+      "title": "Legal notice",
+      "body": "asbl.club is a management platform for Belgian non-profit associations. This site is published as part of a final-year student project and is a prototype. The final publication details and the identity of the publisher and the host will be specified before any production release."
+    },
+    "privacy": {
+      "title": "Privacy (GDPR)",
+      "body": "asbl.club processes personal data in accordance with the General Data Protection Regulation. The data collected is used solely to manage accounts, memberships and payments. You have the right to access, correct and delete your data, which you can exercise from your account area or on request."
+    },
+    "cookies": {
+      "title": "Cookies",
+      "body": "asbl.club uses only technical cookies necessary for the site to function, in particular to keep your session and remember your language. No advertising tracking cookies are placed without your consent."
+    }
+  },
+  "landing": {
+    "title": "asbl.club, the platform for Belgian non-profits",
+    "hero": {
+      "badge": "Free for non-profits, no subscription",
+      "title": "Manage your non-profit,<br><b>simply and for free.</b>",
+      "lead": "Member registry, online dues, events, ticketing and donations, from a secure back-office in French, Dutch and English.",
+      "ctaPrimary": "Create my ASBL for free",
+      "ctaSecondary": "Log in",
+      "trust": "Payments via Stripe and Bancontact, no fixed fees"
+    },
+    "panel": {
+      "title": "Dues 2026"
+    },
+    "features": {
+      "eyebrow": "All-in-one",
+      "title": "A platform designed for volunteers",
+      "sub": "No need to be tech-savvy, asbl.club replaces Excel files and manual bank reconciliations."
+    },
+    "feature1": {
+      "title": "Members and dues",
+      "desc": "Up-to-date registry, online payment, automatic reminders and PDF receipts."
+    },
+    "feature2": {
+      "title": "Events and ticketing",
+      "desc": "Tickets, price categories and attendance control."
+    },
+    "feature3": {
+      "title": "Donations and receipts",
+      "desc": "Custom donation page, anonymous donations and tax receipts."
+    },
+    "feature4": {
+      "title": "Security and audit",
+      "desc": "Secure back-office, audit log and GDPR compliance."
+    },
+    "steps": {
+      "eyebrow": "Simple",
+      "title": "How does it work?"
+    },
+    "step1": {
+      "title": "Create your ASBL",
+      "desc": "Enter your legal details and connect your account via Stripe."
+    },
+    "step2": {
+      "title": "Invite your members",
+      "desc": "Import your list or send invitations by e-mail."
+    },
+    "step3": {
+      "title": "Collect online",
+      "desc": "Dues, tickets and donations arrive directly in your account."
+    },
+    "cta": {
+      "title": "Ready to simplify managing your association?",
+      "sub": "Free, no commitment. You only pay a commission on processed payments.",
+      "button": "Create my ASBL for free"
+    }
   }
 }
