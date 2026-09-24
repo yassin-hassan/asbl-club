@@ -1,0 +1,42 @@
+{
+  "lang": { "fr": "Français", "nl": "Nederlands", "en": "English", "choose": "Taal" },
+  "nav": { "login": "Aanmelden", "account": "Mijn account", "logout": "Afmelden" },
+  "home": {
+    "title": "Openbare evenementen",
+    "subtitle": "Geef de korte naam van een vereniging in om haar openbare evenementen te zien.",
+    "association": "Vereniging",
+    "viewEvents": "Evenementen bekijken"
+  },
+  "login": {
+    "title": "Aanmelden",
+    "email": "E-mailadres",
+    "password": "Wachtwoord",
+    "submit": "Aanmelden",
+    "submitting": "Aanmelden…",
+    "invalidEmail": "Geef een geldig e-mailadres in.",
+    "passwordRequired": "Geef je wachtwoord in.",
+    "error": "Ongeldig e-mailadres of wachtwoord"
+  },
+  "account": { "title": "Mijn account", "id": "ID", "roles": "Rollen" },
+  "events": {
+    "back": "Home",
+    "title": "Evenementen van \"{{ slug }}\"",
+    "none": "Geen openbare evenementen.",
+    "loadError": "De evenementen konden niet geladen worden."
+  },
+  "event": {
+    "loadError": "Dit evenement kon niet geladen worden.",
+    "availability": "Beschikbare plaatsen",
+    "refreshHint": "Wordt elke 5 seconden bijgewerkt.",
+    "noTickets": "Geen ticketcategorieën, of geen plaatsen meer.",
+    "category": "Categorie {{ id }}",
+    "left": "nog {{ count }}"
+  },
+  "errors": {
+    "generic": "Er ging iets mis. Probeer het opnieuw.",
+    "unreachable": "De server is niet bereikbaar. Controleer je verbinding en probeer het opnieuw.",
+    "notFound": "Niet gevonden.",
+    "forbidden": "Je hebt hier geen toegang toe.",
+    "tooManyRequests": "Te veel pogingen. Probeer het zo meteen opnieuw."
+  }
+}

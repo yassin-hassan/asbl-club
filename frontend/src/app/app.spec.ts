@@ -4,11 +4,12 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 import { App } from './app';
 import { provideApi } from './api/generated';
+import { translationsForTests } from './i18n/translations.testing';
 
 describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [App],
+      imports: [App, translationsForTests()],
       providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([]), provideApi('')],
     }).compileComponents();
   });

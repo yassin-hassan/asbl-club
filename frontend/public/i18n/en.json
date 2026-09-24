@@ -1,0 +1,42 @@
+{
+  "lang": { "fr": "Français", "nl": "Nederlands", "en": "English", "choose": "Language" },
+  "nav": { "login": "Log in", "account": "My account", "logout": "Log out" },
+  "home": {
+    "title": "Public events",
+    "subtitle": "Enter an association's short name to see its public events.",
+    "association": "Association",
+    "viewEvents": "View events"
+  },
+  "login": {
+    "title": "Log in",
+    "email": "Email address",
+    "password": "Password",
+    "submit": "Log in",
+    "submitting": "Logging in…",
+    "invalidEmail": "Enter a valid email address.",
+    "passwordRequired": "Enter your password.",
+    "error": "Invalid email or password"
+  },
+  "account": { "title": "My account", "id": "ID", "roles": "Roles" },
+  "events": {
+    "back": "Home",
+    "title": "Events for \"{{ slug }}\"",
+    "none": "No public events.",
+    "loadError": "Could not load events."
+  },
+  "event": {
+    "loadError": "Could not load this event.",
+    "availability": "Seat availability",
+    "refreshHint": "Updates every 5 seconds.",
+    "noTickets": "No ticket categories, or none remaining.",
+    "category": "Category {{ id }}",
+    "left": "{{ count }} left"
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "unreachable": "Can't reach the server. Check your connection and try again.",
+    "notFound": "Not found.",
+    "forbidden": "You don't have access to this.",
+    "tooManyRequests": "Too many attempts. Try again in a moment."
+  }
+}

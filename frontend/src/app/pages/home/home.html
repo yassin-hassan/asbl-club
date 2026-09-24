@@ -1,16 +1,16 @@
 <mat-card appearance="outlined">
   <mat-card-header>
-    <mat-card-title>Public events</mat-card-title>
-    <mat-card-subtitle>Enter an association's short name to see its public events.</mat-card-subtitle>
+    <mat-card-title>{{ 'home.title' | transloco }}</mat-card-title>
+    <mat-card-subtitle>{{ 'home.subtitle' | transloco }}</mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
     <div class="row">
       <mat-form-field appearance="outline" class="grow">
-        <mat-label>Association</mat-label>
+        <mat-label>{{ 'home.association' | transloco }}</mat-label>
         <input matInput [value]="slug()" (input)="slug.set($any($event.target).value)" />
       </mat-form-field>
       <a mat-flat-button [routerLink]="['/asbls', slug(), 'events']" [disabled]="!slug()">
-        View events
+        {{ 'home.viewEvents' | transloco }}
         <mat-icon iconPositionEnd>arrow_forward</mat-icon>
       </a>
     </div>

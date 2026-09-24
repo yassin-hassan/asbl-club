@@ -7,7 +7,7 @@ export interface Problem {
   status?: number;
   detail?: string;
   instance?: string;
-  errors?: Record<string, string>; // validation errors: field -> message
+  errors?: Record<string, string>; // validation errors: field -> message, in the request's language
 }
 
 export function problemOf(error: unknown): Problem | null {
@@ -17,11 +17,22 @@ export function problemOf(error: unknown): Problem | null {
   return null;
 }
 
-// A message fit to show a person, whatever went wrong.
-export function errorMessage(error: unknown, fallback = 'Something went wrong. Please try again.'): string {
-  if (error instanceof HttpErrorResponse && error.status === 0) {
-    return "Can't reach the server. Check your connection and try again.";
+// The translation key of a message fit to show a person, chosen by what went wrong. The server's own
+// "detail" text is for developers (and English only), so it isn't shown as is.
+export function errorMessageKey(error: unknown, fallbackKey = 'errors.generic'): string {
+  if (!(error instanceof HttpErrorResponse)) {
+    return fallbackKey;
   }
-  const problem = problemOf(error);
-  return problem?.detail ?? problem?.title ?? fallback;
+  switch (error.status) {
+    case 0:
+      return 'errors.unreachable';
+    case 403:
+      return 'errors.forbidden';
+    case 404:
+      return 'errors.notFound';
+    case 429:
+      return 'errors.tooManyRequests';
+    default:
+      return fallbackKey;
+  }
 }

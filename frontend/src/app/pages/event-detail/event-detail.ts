@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -9,17 +10,19 @@ import { MatCardModule } from '@angular/material/card';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { catchError, interval, of, startWith, switchMap } from 'rxjs';
 import { EventFeedItem, PublicService, SeatAvailability } from '../../api/generated';
-import { errorMessage } from '../../services/problem';
+import { errorMessageKey } from '../../services/problem';
+import { LanguageService } from '../../i18n/language';
 
 @Component({
   selector: 'app-event-detail',
-  imports: [RouterLink, DatePipe, MatButtonModule, MatCardModule, MatIconModule, MatListModule, MatProgressSpinnerModule],
+  imports: [RouterLink, DatePipe, TranslocoPipe, MatButtonModule, MatCardModule, MatIconModule, MatListModule, MatProgressSpinnerModule],
   templateUrl: './event-detail.html',
   styles: '.hint { color: var(--mat-sys-on-surface-variant); }',
 })
 export class EventDetail {
   private route = inject(ActivatedRoute);
   private api = inject(PublicService);
+  readonly lang = inject(LanguageService).active;
 
   readonly eventId = Number(this.route.snapshot.paramMap.get('id'));
 
@@ -46,7 +49,7 @@ export class EventDetail {
   constructor() {
     this.api.getEvent(this.eventId).subscribe({
       next: (e) => this.event.set(e),
-      error: (err) => this.error.set(errorMessage(err, 'Could not load this event.')),
+      error: (err) => this.error.set(errorMessageKey(err, 'event.loadError')),
     });
   }
 }

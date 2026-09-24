@@ -7,11 +7,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../services/auth';
-import { errorMessage } from '../../services/problem';
+import { errorMessageKey } from '../../services/problem';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule],
+  imports: [ReactiveFormsModule, TranslocoPipe, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule],
   templateUrl: './login.html',
   styles: '.narrow { max-width: 420px; margin: 0 auto; }',
 })
@@ -45,7 +46,7 @@ export class Login {
       error: (err: HttpErrorResponse) => {
         this.submitting.set(false);
         // 401 gets our own wording: the API deliberately doesn't say whether the email or the password was wrong.
-        this.error.set(err.status === 401 ? 'Email or password is incorrect.' : errorMessage(err));
+        this.error.set(err.status === 401 ? 'login.error' : errorMessageKey(err));
       },
     });
   }
