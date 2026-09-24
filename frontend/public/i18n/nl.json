@@ -25,7 +25,9 @@
     "submitting": "Aanmelden…",
     "invalidEmail": "Geef een geldig e-mailadres in.",
     "passwordRequired": "Geef je wachtwoord in.",
-    "error": "Ongeldig e-mailadres of wachtwoord"
+    "error": "Ongeldig e-mailadres of wachtwoord",
+    "noAccount": "Nog geen account",
+    "createOne": "Een account aanmaken"
   },
   "account": {
     "title": "Mijn account",
@@ -138,5 +140,18 @@
       "sub": "Gratis, zonder verplichting. U betaalt enkel een commissie op verwerkte betalingen.",
       "button": "Mijn vzw gratis aanmaken"
     }
+  },
+  "register": {
+    "title": "Een account aanmaken",
+    "name": "Naam",
+    "email": "E-mailadres",
+    "password": "Wachtwoord",
+    "submit": "Account aanmaken",
+    "haveAccount": "Ik heb al een account",
+    "emailTaken": "Dit e-mailadres is al in gebruik",
+    "passwordHint": "Minstens 8 tekens.",
+    "nameRequired": "Geef je naam in.",
+    "passwordTooShort": "Minstens 8 tekens.",
+    "submitting": "Aanmaken…"
   }
 }

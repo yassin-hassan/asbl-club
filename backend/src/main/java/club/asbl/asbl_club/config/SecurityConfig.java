@@ -39,7 +39,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/api/v1/asbls/**", "/api/v1/events/**").permitAll()
                         .requestMatchers(HttpMethod.POST,
-                                "/api/v1/auth/login", "/api/v1/auth/refresh", "/api/v1/auth/logout").permitAll()
+                                "/api/v1/auth/login", "/api/v1/auth/register", "/api/v1/auth/refresh", "/api/v1/auth/logout")
+                        .permitAll()
                         .requestMatchers("/api/v1/admin/**").hasRole("SUPERADMIN")
                         .anyRequest().authenticated())
                 // Reads "Authorization: Bearer <jwt>" and verifies it with the JwtDecoder bean (JwtConfig),

@@ -1,16 +1,24 @@
 package club.asbl.asbl_club.auth;
 
+import club.asbl.asbl_club.user.EmailAlreadyUsedException;
 import club.asbl.asbl_club.user.User;
 import club.asbl.asbl_club.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.time.Duration;
+import java.util.Map;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,6 +31,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.ErrorResponseException;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
@@ -36,22 +45,49 @@ class AuthController {
     private final TokenService tokenService;
     private final UserService userService;
     private final RefreshTokenService refreshTokenService;
+    private final MessageSource messageSource;
     private final WebAuthenticationDetailsSource detailsSource = new WebAuthenticationDetailsSource();
 
     AuthController(AuthenticationManager authenticationManager, TokenService tokenService, UserService userService,
-            RefreshTokenService refreshTokenService) {
+            RefreshTokenService refreshTokenService, MessageSource messageSource) {
         this.authenticationManager = authenticationManager;
         this.tokenService = tokenService;
         this.userService = userService;
         this.refreshTokenService = refreshTokenService;
+        this.messageSource = messageSource;
     }
 
     @Operation(operationId = "login", summary = "Log in with email and password, get a short-lived access token "
             + "(body) and a long-lived refresh token (HttpOnly cookie)")
     @PostMapping("/login")
     ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest request, HttpServletRequest httpRequest) {
-        UsernamePasswordAuthenticationToken attempt =
-                UsernamePasswordAuthenticationToken.unauthenticated(request.email(), request.password());
+        return logInAndIssueTokens(request.email(), request.password(), httpRequest, HttpStatus.OK);
+    }
+
+    // No email verification yet (the app can't send email), so a taken address is reported (409) rather than
+    // hidden behind "check your inbox"; the rate limiter keeps this from being used to test many addresses.
+    @Operation(operationId = "register", summary = "Create an account and log straight in (same tokens as login)")
+    @ApiResponse(responseCode = "201", description = "Account created; logged in",
+            content = @Content(schema = @Schema(implementation = TokenResponse.class)))
+    @ApiResponse(responseCode = "409", description = "An account with this email already exists",
+            content = @Content(mediaType = "application/problem+json"))
+    @PostMapping("/register")
+    ResponseEntity<TokenResponse> register(@Valid @RequestBody RegisterRequest request, HttpServletRequest httpRequest) {
+        try {
+            userService.register(request.name(), request.email(), request.password());
+        } catch (EmailAlreadyUsedException e) {
+            String message = messageSource.getMessage("email.duplicate", null, LocaleContextHolder.getLocale());
+            ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, message);
+            problem.setProperty("errors", Map.of("email", message));
+            throw new ErrorResponseException(HttpStatus.CONFLICT, problem, e);
+        }
+        // Log in through the same password check as the login endpoint: same rules, same audit trail.
+        return logInAndIssueTokens(request.email(), request.password(), httpRequest, HttpStatus.CREATED);
+    }
+
+    private ResponseEntity<TokenResponse> logInAndIssueTokens(String email, String password,
+            HttpServletRequest httpRequest, HttpStatus successStatus) {
+        UsernamePasswordAuthenticationToken attempt = UsernamePasswordAuthenticationToken.unauthenticated(email, password);
         // Carries the client IP, which the login audit log records.
         attempt.setDetails(detailsSource.buildDetails(httpRequest));
         Authentication authentication;
@@ -66,7 +102,7 @@ class AuthController {
         User user = userService.getByEmail(authentication.getName());
         TokenResponse accessToken = tokenService.issueAccessToken(user, authentication.getAuthorities());
         String refreshToken = refreshTokenService.issue(user);
-        return ResponseEntity.ok()
+        return ResponseEntity.status(successStatus)
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie(refreshToken).toString())
                 .body(accessToken);
     }

@@ -25,7 +25,9 @@
     "submitting": "Connexion…",
     "invalidEmail": "Entrez une adresse e-mail valide.",
     "passwordRequired": "Entrez votre mot de passe.",
-    "error": "Adresse e-mail ou mot de passe invalide"
+    "error": "Adresse e-mail ou mot de passe invalide",
+    "noAccount": "Pas encore de compte",
+    "createOne": "Créer un compte"
   },
   "account": {
     "title": "Mon compte",
@@ -138,5 +140,18 @@
       "sub": "Gratuit, sans engagement. Vous ne payez qu'une commission sur les paiements traités.",
       "button": "Créer mon ASBL gratuitement"
     }
+  },
+  "register": {
+    "title": "Créer un compte",
+    "name": "Nom",
+    "email": "Adresse e-mail",
+    "password": "Mot de passe",
+    "submit": "Créer le compte",
+    "haveAccount": "J'ai déjà un compte",
+    "emailTaken": "Cette adresse e-mail est déjà utilisée",
+    "passwordHint": "Au moins 8 caractères.",
+    "nameRequired": "Entrez votre nom.",
+    "passwordTooShort": "Au moins 8 caractères.",
+    "submitting": "Création…"
   }
 }

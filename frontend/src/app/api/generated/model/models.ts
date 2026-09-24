@@ -4,5 +4,6 @@ export * from './loginRequest';
 export * from './meResponse';
 export * from './publicEvent';
 export * from './publicTicket';
+export * from './registerRequest';
 export * from './seatAvailability';
 export * from './tokenResponse';

@@ -52,6 +52,20 @@ describe('AuthService', () => {
     });
   });
 
+  describe('register', () => {
+    it('creates the account and logs straight in', () => {
+      auth.register('Alice', 'alice@club.test', 'password123').subscribe();
+
+      const register = http.expectOne('/api/v1/auth/register');
+      expect(register.request.body).toEqual({ name: 'Alice', email: 'alice@club.test', password: 'password123' });
+      register.flush(tokenResponse('token-new'), { status: 201, statusText: 'Created' });
+      http.expectOne('/api/v1/me').flush(alice);
+
+      expect(auth.accessToken()).toBe('token-new');
+      expect(auth.user()).toEqual(alice);
+    });
+  });
+
   describe('restoreSession (app start)', () => {
     it('logs the user back in when the refresh cookie is still valid', () => {
       auth.restoreSession().subscribe();
