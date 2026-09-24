@@ -59,7 +59,7 @@ public class SecurityConfig {
                         .requestMatchers("/", "/login", "/register", "/webhooks/**", "/error", "/css/**", "/js/**",
                                 "/images/**", "/actuator/health", "/actuator/health/**",
                                 "/legal", "/privacy", "/cookies", "/events/**",
-                                "/asbls/*/events/rss",
+                                "/asbls/*/events/rss", "/.well-known/jwks.json",
                                 "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
                         .permitAll()
                         .requestMatchers("/actuator/**").hasRole("SUPERADMIN")

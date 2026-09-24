@@ -41,6 +41,10 @@ stripe:
   publishable-key: ${STRIPE_PUBLISHABLE_KEY:}
   webhook-secret: ${STRIPE_WEBHOOK_SECRET:}
 
+jwt:
+  # PKCS#8 PEM private key (a secret: SSM Parameter Store in production). Empty = temporary key (dev/tests).
+  signing-key: ${JWT_SIGNING_KEY:}
+
 rate-limit:
   enabled: ${RATE_LIMIT_ENABLED:true}
 
