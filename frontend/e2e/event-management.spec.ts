@@ -39,7 +39,7 @@ test('an administrator creates a draft event, adds tickets, publishes it, and th
   await expect(page.getByText('Draft: hidden from the public')).toBeHidden();
 
   await page.getByRole('link', { name: 'View the public page' }).click();
-  await expect(page).toHaveURL(/\/events\/\d+$/); // both pages show the same title and ticket row
+  await expect(page).toHaveURL(/:\d+\/events\/\d+$/); // the public page, not /asbls/…/manage/events/… (same title and ticket row)
   await expect(page.getByRole('heading', { name: 'Spring gala' })).toBeVisible();
   await expect(page.getByRole('row', { name: /Adult/ })).toContainText('€12.50');
 

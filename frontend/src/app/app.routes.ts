@@ -6,6 +6,7 @@ import { authGuard, whenLoggedIn } from './services/auth.guard';
 // Paths match the server-rendered pages they replace, so switching a path from Thymeleaf to Angular is
 // only a routing change in front of the app.
 const legal = () => import('./pages/legal/legal').then((m) => m.Legal);
+const auditJournal = () => import('./pages/audit-journal/audit-journal').then((m) => m.AuditJournalPage);
 
 export const routes: Routes = [
   // Same URL as the server-rendered site: "/" is the dashboard when logged in, the landing page otherwise.
@@ -40,6 +41,16 @@ export const routes: Routes = [
     path: 'asbls/:slug/manage/payments',
     canActivate: [authGuard],
     loadComponent: () => import('./pages/payment-setup/payment-setup').then((m) => m.PaymentSetup),
+  },
+  {
+    path: 'asbls/:slug/manage/audit',
+    canActivate: [authGuard],
+    loadComponent: auditJournal,
+  },
+  {
+    path: 'admin/audit',
+    canActivate: [authGuard],
+    loadComponent: auditJournal,
   },
   {
     path: 'asbls/:slug/events',

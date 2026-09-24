@@ -5,6 +5,9 @@ import club.asbl.asbl_club.user.User;
 import club.asbl.asbl_club.user.UserService;
 import java.util.List;
 import java.util.Map;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -65,6 +68,19 @@ public class AuditService {
         return auditLogRepository.findTop200ByOrderByCreatedAtDesc().stream()
                 .map(this::toView)
                 .toList();
+    }
+
+    // Newest first; the ID breaks ties between entries written in the same instant, so pages never overlap.
+    private static final Sort NEWEST_FIRST = Sort.by(Sort.Direction.DESC, "createdAt", "id");
+
+    @Transactional(readOnly = true)
+    public Page<AuditLogView> journalOf(Asbl asbl, int page, int size) {
+        return auditLogRepository.findByAsblId(asbl.getId(), PageRequest.of(page, size, NEWEST_FIRST)).map(this::toView);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<AuditLogView> journalAll(int page, int size) {
+        return auditLogRepository.findAllBy(PageRequest.of(page, size, NEWEST_FIRST)).map(this::toView);
     }
 
     private AuditLogView toView(AuditLog log) {

@@ -19,6 +19,9 @@
     "name" : "Account",
     "description" : "The logged-in user's own account"
   }, {
+    "name" : "Audit",
+    "description" : "Audit journals (administrators)"
+  }, {
     "name" : "Authentication",
     "description" : "Exchange credentials for tokens"
   }, {
@@ -755,6 +758,46 @@
         } ]
       }
     },
+    "/api/v1/asbls/{slug}/manage/audit" : {
+      "get" : {
+        "tags" : [ "Audit" ],
+        "summary" : "What happened in the association (administrators)",
+        "operationId" : "getAsblAuditJournal",
+        "parameters" : [ {
+          "name" : "slug",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "description" : "0-based page number",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AuditJournal"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      }
+    },
     "/api/v1/asbls/{slug}/events" : {
       "get" : {
         "tags" : [ "Public" ],
@@ -783,6 +826,39 @@
             }
           }
         }
+      }
+    },
+    "/api/v1/admin/audit" : {
+      "get" : {
+        "tags" : [ "Audit" ],
+        "summary" : "Everything that happened on the platform (super-administrators)",
+        "operationId" : "getPlatformAuditJournal",
+        "parameters" : [ {
+          "name" : "page",
+          "in" : "query",
+          "description" : "0-based page number",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AuditJournal"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
       }
     }
   },
@@ -1348,6 +1424,68 @@
             "items" : {
               "$ref" : "#/components/schemas/ManagedEventItem"
             }
+          }
+        }
+      },
+      "AuditEntry" : {
+        "required" : [ "action", "createdAt" ],
+        "type" : "object",
+        "properties" : {
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "action" : {
+            "type" : "string",
+            "example" : "EVENT_PUBLISHED"
+          },
+          "actorEmail" : {
+            "type" : "string",
+            "description" : "Absent for actions done by the system (e.g. a Stripe webhook)"
+          },
+          "asbl" : {
+            "type" : "string",
+            "description" : "Association concerned, if any"
+          },
+          "entityType" : {
+            "type" : "string"
+          },
+          "entityId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "ip" : {
+            "type" : "string",
+            "description" : "Platform journal only: an IP address is personal data an association doesn't need"
+          }
+        }
+      },
+      "AuditJournal" : {
+        "required" : [ "entries", "page", "totalEntries", "totalPages" ],
+        "type" : "object",
+        "properties" : {
+          "denomination" : {
+            "type" : "string",
+            "description" : "The association's name; absent in the platform journal"
+          },
+          "entries" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/AuditEntry"
+            }
+          },
+          "page" : {
+            "type" : "integer",
+            "description" : "0-based",
+            "format" : "int32"
+          },
+          "totalPages" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "totalEntries" : {
+            "type" : "integer",
+            "format" : "int64"
           }
         }
       },

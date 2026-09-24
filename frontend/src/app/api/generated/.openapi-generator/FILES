@@ -3,6 +3,7 @@ api.module.ts
 api/account.service.ts
 api/api.ts
 api/associations.service.ts
+api/audit.service.ts
 api/authentication.service.ts
 api/eventManagement.service.ts
 api/paymentSetup.service.ts
@@ -17,6 +18,8 @@ model/asblMember.ts
 model/asblMembers.ts
 model/asblResource.ts
 model/asblSummary.ts
+model/auditEntry.ts
+model/auditJournal.ts
 model/bookRequest.ts
 model/checkout.ts
 model/createAsblRequest.ts
