@@ -1,7 +1,12 @@
 <div class="page">
   <div class="page-head">
     <h1>{{ 'dashboard.title' | transloco }}</h1>
-    <a mat-flat-button routerLink="/asbls/new">{{ 'dashboard.createAsbl' | transloco }}</a>
+    <div class="toolbar">
+      @if (superAdmin()) {
+        <a mat-stroked-button routerLink="/admin/audit">{{ 'audit.platformLink' | transloco }}</a>
+      }
+      <a mat-flat-button routerLink="/asbls/new">{{ 'dashboard.createAsbl' | transloco }}</a>
+    </div>
   </div>
 
   @if (error(); as error) {

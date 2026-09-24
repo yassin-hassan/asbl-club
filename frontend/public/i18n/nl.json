@@ -288,5 +288,24 @@
     "adminsOnly": "Alleen beheerders van de vereniging beheren de betalingen.",
     "back": "Terug naar de vereniging",
     "link": "Betalingen"
+  },
+  "audit": {
+    "title": "Auditlogboek",
+    "platformTitle": "Logboek van het platform",
+    "when": "Datum",
+    "actor": "Auteur",
+    "action": "Actie",
+    "entity": "Object",
+    "ip": "IP-adres",
+    "asbl": "Vereniging",
+    "system": "Systeem",
+    "none": "Nog geen vermeldingen",
+    "back": "Terug naar leden",
+    "previous": "Vorige",
+    "next": "Volgende",
+    "pageOf": "Pagina {{ page }} van {{ total }}",
+    "link": "Logboek",
+    "platformLink": "Logboek van het platform",
+    "adminsOnly": "Alleen beheerders kunnen dit logboek raadplegen."
   }
 }

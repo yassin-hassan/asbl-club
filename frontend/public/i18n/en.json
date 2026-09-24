@@ -288,5 +288,24 @@
     "adminsOnly": "Only the association's administrators manage payments.",
     "back": "Back to the association",
     "link": "Payments"
+  },
+  "audit": {
+    "title": "Audit log",
+    "platformTitle": "Platform audit log",
+    "when": "When",
+    "actor": "Actor",
+    "action": "Action",
+    "entity": "Object",
+    "ip": "IP address",
+    "asbl": "Association",
+    "system": "System",
+    "none": "No entry yet",
+    "back": "Back to members",
+    "previous": "Previous",
+    "next": "Next",
+    "pageOf": "Page {{ page }} of {{ total }}",
+    "link": "Audit log",
+    "platformLink": "Platform audit log",
+    "adminsOnly": "Only administrators can read this log."
   }
 }

@@ -288,5 +288,24 @@
     "adminsOnly": "Seuls les administrateurs de l'association gèrent les paiements.",
     "back": "Retour à l'association",
     "link": "Paiements"
+  },
+  "audit": {
+    "title": "Journal d'audit",
+    "platformTitle": "Journal de la plateforme",
+    "when": "Date",
+    "actor": "Auteur",
+    "action": "Action",
+    "entity": "Objet",
+    "ip": "Adresse IP",
+    "asbl": "Association",
+    "system": "Système",
+    "none": "Aucune entrée pour l'instant",
+    "back": "Retour aux membres",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "pageOf": "Page {{ page }} sur {{ total }}",
+    "link": "Journal",
+    "platformLink": "Journal de la plateforme",
+    "adminsOnly": "Seuls les administrateurs peuvent consulter ce journal."
   }
 }

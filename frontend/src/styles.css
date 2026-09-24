@@ -30,6 +30,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   margin: 0 auto;
   padding: 40px 32px;
 }
+.page.wide {
+  max-width: 1120px;
+}
 .page h1, .page-title {
   font-size: 30px;
   font-weight: 700;
@@ -92,7 +95,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .data-table {
   border: 1px solid var(--asbl-slate-200);
   border-radius: var(--asbl-radius-lg);
-  overflow: hidden;
+  overflow-x: auto; /* wide tables scroll sideways on small screens instead of being cut off */
 }
 .data-table .mat-mdc-header-cell {
   background: var(--asbl-slate-50);
@@ -122,9 +125,14 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 
 .toolbar {
   display: flex;
+  align-items: center;
   gap: 10px;
   flex-wrap: wrap;
   margin-top: 20px;
+}
+
+.page-head .toolbar {
+  margin-top: 0;
 }
 
 .back {

@@ -32,6 +32,7 @@
       <a mat-stroked-button [routerLink]="['/asbls', asbl.slug, 'manage', 'events']">{{ 'manage.eventsTitle' | transloco }}</a>
       @if (asbl.myRole === 'ADMIN') {
         <a mat-stroked-button [routerLink]="['/asbls', asbl.slug, 'manage', 'payments']">{{ 'payments.link' | transloco }}</a>
+        <a mat-stroked-button [routerLink]="['/asbls', asbl.slug, 'manage', 'audit']">{{ 'audit.link' | transloco }}</a>
       }
     </div>
     <a class="back" routerLink="/">{{ 'members.back' | transloco }}</a>
