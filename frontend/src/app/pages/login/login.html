@@ -1,9 +1,8 @@
-<mat-card class="narrow" appearance="outlined">
-  <mat-card-header>
-    <h1 matCardTitle>{{ 'login.title' | transloco }}</h1>
-  </mat-card-header>
+<div class="auth-page">
+<div class="auth-card">
+    <h1>{{ 'login.title' | transloco }}</h1>
 
-  <mat-card-content>
+  <div>
     @if (accountDeleted) {
       <p role="status">{{ 'login.deleted' | transloco }}</p>
     }
@@ -36,5 +35,6 @@
         <a routerLink="/register">{{ 'login.createOne' | transloco }}</a>
       </p>
     </form>
-  </mat-card-content>
-</mat-card>
+  </div>
+</div>
+</div>

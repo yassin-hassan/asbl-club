@@ -1,18 +1,11 @@
-<mat-card appearance="outlined">
-  <mat-card-header>
-    <h2 matCardTitle>{{ 'home.title' | transloco }}</h2>
-    <mat-card-subtitle>{{ 'home.subtitle' | transloco }}</mat-card-subtitle>
-  </mat-card-header>
-  <mat-card-content>
-    <div class="row">
-      <mat-form-field appearance="outline" class="grow">
-        <mat-label>{{ 'home.association' | transloco }}</mat-label>
-        <input matInput [value]="slug()" (input)="slug.set($any($event.target).value)" />
-      </mat-form-field>
-      <a mat-flat-button [routerLink]="['/asbls', slug(), 'events']" [disabled]="!slug()">
-        {{ 'home.viewEvents' | transloco }}
-        <mat-icon iconPositionEnd>arrow_forward</mat-icon>
-      </a>
-    </div>
-  </mat-card-content>
-</mat-card>
+<div class="search">
+  <mat-form-field appearance="outline" class="grow" subscriptSizing="dynamic">
+    <mat-label>{{ 'home.association' | transloco }}</mat-label>
+    <input matInput [value]="slug()" (input)="slug.set($any($event.target).value)" />
+    <mat-hint>{{ 'home.subtitle' | transloco }}</mat-hint>
+  </mat-form-field>
+  <a mat-flat-button [routerLink]="['/asbls', slug(), 'events']" [disabled]="!slug()">
+    {{ 'home.viewEvents' | transloco }}
+    <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+  </a>
+</div>

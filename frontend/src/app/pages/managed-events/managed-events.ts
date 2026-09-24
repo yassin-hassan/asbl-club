@@ -3,9 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
-import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { EventManagementService, ManagedEventList } from '../../api/generated';
@@ -15,7 +13,7 @@ import { errorMessageKey } from '../../services/problem';
 // An association's events as its members see them: drafts included. Administrators can create more.
 @Component({
   selector: 'app-managed-events',
-  imports: [RouterLink, DatePipe, TranslocoPipe, MatButtonModule, MatChipsModule, MatIconModule, MatListModule, MatProgressSpinnerModule],
+  imports: [RouterLink, DatePipe, TranslocoPipe, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
   templateUrl: './managed-events.html',
 })
 export class ManagedEvents {

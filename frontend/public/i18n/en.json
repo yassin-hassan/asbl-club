@@ -9,7 +9,8 @@
     "main": "Main navigation",
     "login": "Log in",
     "account": "My account",
-    "logout": "Log out"
+    "logout": "Log out",
+    "createAsbl": "Create my ASBL"
   },
   "home": {
     "title": "Public events",
@@ -32,14 +33,13 @@
   },
   "account": {
     "title": "My account",
-    "id": "ID",
-    "roles": "Roles",
     "export": "Export my data",
     "deleteTitle": "Delete my account",
     "deleteWarning": "This action is irreversible, your account will be closed and your personal data anonymised.",
     "deleteConfirm": "Are you sure you want to permanently delete your account? This action cannot be undone.",
     "cancel": "Cancel",
-    "delete": "Delete permanently"
+    "delete": "Delete permanently",
+    "back": "Back to home"
   },
   "events": {
     "back": "Home",
@@ -76,7 +76,8 @@
   },
   "footer": {
     "tagline": "The free management platform for Belgian non-profits and clubs.",
-    "legal": "Legal"
+    "legal": "Legal",
+    "country": "Belgium"
   },
   "legal": {
     "notice": {
@@ -103,7 +104,11 @@
       "trust": "Payments via Stripe and Bancontact, no fixed fees"
     },
     "panel": {
-      "title": "Dues 2026"
+      "title": "Dues 2026",
+      "effective": "Full member",
+      "annualFee": "Annual fee",
+      "student": "Student",
+      "paid": "Paid"
     },
     "features": {
       "eyebrow": "All-in-one",
@@ -146,6 +151,10 @@
       "title": "Ready to simplify managing your association?",
       "sub": "Free, no commitment. You only pay a commission on processed payments.",
       "button": "Create my ASBL for free"
+    },
+    "directory": {
+      "eyebrow": "Public directory",
+      "title": "Discover associations"
     }
   },
   "register": {
@@ -193,7 +202,8 @@
     "email": "Email address",
     "role": "Role",
     "status": "Status",
-    "noAccess": "You're not a member of this association."
+    "noAccess": "You're not a member of this association.",
+    "back": "Back to home"
   },
   "statuses": {
     "PENDING": "Pending",

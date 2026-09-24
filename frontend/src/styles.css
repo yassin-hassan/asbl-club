@@ -1,9 +1,42 @@
-/* Global layout only. Colours, typography and components come from the Material theme
-   (material-theme.scss); pages use Material components rather than custom CSS. */
+/* Global building blocks of the asbl.club design system. Colours and shapes live in material-theme.scss as
+   --asbl-* tokens; pages combine Material components with these few classes. */
+
+h1, h2, h3, h4 {
+  font-family: var(--asbl-heading-font);
+  color: var(--asbl-indigo-900);
+  letter-spacing: -0.01em;
+}
+
+a {
+  color: var(--asbl-indigo-700);
+}
+
+/* Visible keyboard focus everywhere (WCAG 2.1 AA). */
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--asbl-indigo-100), 0 0 0 5px var(--asbl-indigo-500);
+  border-radius: 6px;
+}
+
+.wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+/* Standard content page: title + content, readable width. */
 .page {
-  max-width: 960px;
-  margin: 24px auto;
-  padding: 0 16px;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 40px 32px;
+}
+.page h1, .page-title {
+  font-size: 30px;
+  font-weight: 700;
+  margin: 8px 0 6px;
+}
+.muted, .hint {
+  color: var(--asbl-slate-600);
 }
 
 .stack {
@@ -13,9 +46,222 @@
 }
 
 .error {
-  color: var(--mat-sys-error);
+  color: var(--asbl-red-700);
 }
 
-a {
-  color: var(--mat-sys-primary);
+.eyebrow {
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--asbl-indigo-600);
+  font-weight: 700;
+  margin: 0;
+}
+
+/* Warm call-to-action button (amber, dark text — 7:1 contrast). */
+.mat-mdc-unelevated-button.accent {
+  --mat-button-filled-container-color: var(--asbl-amber-500);
+  --mat-button-filled-label-text-color: #1f1300;
+}
+
+/* Login, sign-up: a centred card on a soft gradient. */
+.auth-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px;
+  background: linear-gradient(180deg, var(--asbl-slate-50), #fff);
+  min-height: calc(100vh - 200px);
+}
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  border: 1px solid var(--asbl-slate-200);
+  border-radius: 20px;
+  box-shadow: 0 24px 60px -20px rgba(49, 46, 129, 0.2);
+  padding: 32px;
+}
+.auth-card h1 {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 20px;
+}
+
+/* Bordered, rounded tables with a quiet header row. */
+.data-table {
+  border: 1px solid var(--asbl-slate-200);
+  border-radius: var(--asbl-radius-lg);
+  overflow: hidden;
+}
+.data-table .mat-mdc-header-cell {
+  background: var(--asbl-slate-50);
+  color: var(--asbl-slate-600);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.tag {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--asbl-indigo-100);
+  color: var(--asbl-indigo-700);
+}
+.tag.warm {
+  background: var(--asbl-amber-100);
+  color: #92600a;
+}
+.tag.ok {
+  background: #dcfce7;
+  color: var(--asbl-green-700);
+}
+
+.toolbar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.back {
+  display: inline-block;
+  margin-top: 16px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.row-link .meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Key / value facts (date, place, status…) in a bordered box. */
+.facts {
+  border: 1px solid var(--asbl-slate-200);
+  border-radius: var(--asbl-radius-lg);
+  overflow: hidden;
+  margin: 16px 0;
+}
+.facts > div {
+  display: flex;
+  gap: 12px;
+  padding: 12px 16px;
+  font-size: 14px;
+  border-bottom: 1px solid var(--asbl-slate-100);
+}
+.facts > div:last-child {
+  border-bottom: none;
+}
+.facts dt {
+  color: var(--asbl-slate-600);
+  min-width: 130px;
+  flex: none;
+}
+.facts dd {
+  margin: 0;
+  font-weight: 500;
+}
+
+/* A bordered section of a page; "danger" for irreversible actions. */
+.box {
+  border: 1px solid var(--asbl-slate-200);
+  border-radius: var(--asbl-radius-lg);
+  padding: 24px;
+  background: #fff;
+  margin-top: 20px;
+}
+.box h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+.box p {
+  color: var(--asbl-slate-600);
+  font-size: 14px;
+  margin: 0 0 14px;
+}
+.box.danger {
+  border-color: #fca5a5;
+}
+.box.danger h2 {
+  color: var(--asbl-red-700);
+}
+.mat-mdc-unelevated-button.danger {
+  --mat-button-filled-container-color: var(--asbl-red-700);
+  --mat-button-filled-label-text-color: #fff;
+}
+
+h2.section {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 28px 0 8px;
+}
+
+.empty {
+  border: 1px dashed var(--asbl-slate-200);
+  border-radius: var(--asbl-radius-lg);
+  padding: 28px;
+  text-align: center;
+  color: var(--asbl-slate-600);
+}
+
+/* Clickable rows (associations, events): a card that lifts on hover. */
+.row-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border: 1px solid var(--asbl-slate-200);
+  border-radius: var(--asbl-radius-lg);
+  padding: 16px 20px;
+  background: #fff;
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+.row-link:hover {
+  border-color: var(--asbl-indigo-600);
+  box-shadow: 0 10px 26px -14px rgba(49, 46, 129, 0.28);
+}
+.row-link .title {
+  font-family: var(--asbl-heading-font);
+  font-weight: 600;
+  font-size: 17px;
+  color: var(--asbl-indigo-900);
+}
+.row-link .meta {
+  font-size: 13px;
+  color: var(--asbl-slate-600);
+  margin-top: 4px;
+}
+.row-link .go {
+  color: var(--asbl-indigo-600);
+}
+/* Title on the left, main action on the right. */
+.page-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin: 20px 0;
+}
+
+.row-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 16px 0;
 }

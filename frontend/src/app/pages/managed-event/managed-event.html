@@ -1,43 +1,36 @@
-<a mat-button [routerLink]="['/asbls', slug, 'manage', 'events']"><mat-icon>arrow_back</mat-icon> {{ 'manage.eventsTitle' | transloco }}</a>
+<div class="page">
+  @if (event(); as event) {
+    <h1>{{ event.title }}</h1>
+    @if (event.description) {
+      <p class="muted">{{ event.description }}</p>
+    }
 
-@if (event(); as event) {
-  <div class="stack">
-    <mat-card appearance="outlined">
-      <mat-card-header>
-        <h1 matCardTitle>{{ event.title }}</h1>
-        <mat-card-subtitle>
-          {{ 'manage.statuses.' + event.status | transloco }} · {{ 'manage.visibilities.' + event.visibility | transloco }}
-        </mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <p>{{ event.startsAt | date: 'full' : undefined : lang() }} · {{ event.startsAt | date: 'shortTime' : undefined : lang() }}</p>
-        @if (event.location) {
-          <p>{{ event.location }}</p>
-        }
-        @if (event.description) {
-          <p>{{ event.description }}</p>
-        }
-        @if (event.status === 'DRAFT') {
-          <p class="hint">{{ 'manage.draftHint' | transloco }}</p>
-        }
-      </mat-card-content>
-      <mat-card-actions>
-        @if (event.canManage && event.status === 'DRAFT') {
-          <button mat-flat-button type="button" (click)="publish()" [disabled]="saving()">
-            <mat-icon>publish</mat-icon> {{ 'manage.publish' | transloco }}
-          </button>
-        }
-        @if (event.status === 'PUBLISHED' && event.visibility === 'PUBLIC') {
-          <a mat-button [routerLink]="['/events', event.id]"><mat-icon>open_in_new</mat-icon> {{ 'manage.viewPublic' | transloco }}</a>
-        }
-      </mat-card-actions>
-    </mat-card>
+    <dl class="facts">
+      <div><dt>{{ 'manage.startsAt' | transloco }}</dt><dd>{{ event.startsAt | date: 'fullDate' : undefined : lang() }} · {{ event.startsAt | date: 'shortTime' : undefined : lang() }}</dd></div>
+      @if (event.location) {
+        <div><dt>{{ 'manage.location' | transloco }}</dt><dd>{{ event.location }}</dd></div>
+      }
+      <div><dt>{{ 'manage.visibility' | transloco }}</dt><dd><span class="tag warm">{{ 'manage.visibilities.' + event.visibility | transloco }}</span></dd></div>
+      <div><dt>{{ 'manage.status' | transloco }}</dt><dd><span class="tag" [class.ok]="event.status === 'PUBLISHED'">{{ 'manage.statuses.' + event.status | transloco }}</span></dd></div>
+    </dl>
 
-    <section>
-      <h2>{{ 'manage.ticketsTitle' | transloco }}</h2>
-      @if (event.tickets.length === 0) {
-        <p>{{ 'manage.noTickets' | transloco }}</p>
-      } @else {
+    @if (event.status === 'DRAFT') {
+      <p class="hint">{{ 'manage.draftHint' | transloco }}</p>
+    }
+    <div class="toolbar">
+      @if (event.canManage && event.status === 'DRAFT') {
+        <button mat-flat-button type="button" (click)="publish()" [disabled]="saving()">{{ 'manage.publish' | transloco }}</button>
+      }
+      @if (event.status === 'PUBLISHED' && event.visibility === 'PUBLIC') {
+        <a mat-stroked-button [routerLink]="['/events', event.id]">{{ 'manage.viewPublic' | transloco }}</a>
+      }
+    </div>
+
+    <h2 class="section">{{ 'manage.ticketsTitle' | transloco }}</h2>
+    @if (event.tickets.length === 0) {
+      <p class="empty">{{ 'manage.noTickets' | transloco }}</p>
+    } @else {
+      <div class="data-table">
         <table mat-table [dataSource]="event.tickets">
           <ng-container matColumnDef="label">
             <th mat-header-cell *matHeaderCellDef>{{ 'manage.ticketLabel' | transloco }}</th>
@@ -55,61 +48,56 @@
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let ticket">
               @if (ticket.soldSeats < ticket.totalSeats) {
-                <button mat-stroked-button type="button" (click)="book(ticket)" [disabled]="saving()">
-                  {{ 'manage.book' | transloco }}
-                </button>
+                <button mat-flat-button type="button" (click)="book(ticket)" [disabled]="saving()">{{ 'manage.book' | transloco }}</button>
               } @else {
-                {{ 'manage.full' | transloco }}
+                <span class="tag">{{ 'manage.full' | transloco }}</span>
               }
             </td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="columnsFor(event)"></tr>
           <tr mat-row *matRowDef="let row; columns: columnsFor(event)"></tr>
         </table>
-      }
-    </section>
+      </div>
+    }
 
     @if (event.canManage) {
-      <mat-card appearance="outlined">
-        <mat-card-header>
-          <h2 matCardTitle>{{ 'manage.addTicket' | transloco }}</h2>
-        </mat-card-header>
-        <mat-card-content>
-          <form [formGroup]="ticketForm" (ngSubmit)="addTicket()" novalidate class="stack">
-            <mat-form-field appearance="outline">
-              <mat-label>{{ 'manage.ticketLabel' | transloco }}</mat-label>
-              <input matInput formControlName="label" />
-              @if (ticketForm.controls.label.invalid) {
-                <mat-error>{{ 'manage.required' | transloco }}</mat-error>
-              }
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-              <mat-label>{{ 'manage.price' | transloco }}</mat-label>
-              <input matInput formControlName="price" inputmode="decimal" />
-              <span matTextSuffix>€</span>
-              @if (ticketForm.controls.price.invalid) {
-                <mat-error>{{ 'manage.invalidPrice' | transloco }}</mat-error>
-              }
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-              <mat-label>{{ 'manage.seats' | transloco }}</mat-label>
-              <input matInput formControlName="totalSeats" inputmode="numeric" />
-              @if (ticketForm.controls.totalSeats.invalid) {
-                <mat-error>{{ 'manage.invalidSeats' | transloco }}</mat-error>
-              }
-            </mat-form-field>
-            <button mat-stroked-button type="submit" [disabled]="saving()">{{ 'manage.addTicket' | transloco }}</button>
-          </form>
-        </mat-card-content>
-      </mat-card>
+      <section class="box">
+        <h2>{{ 'manage.addTicket' | transloco }}</h2>
+        <form [formGroup]="ticketForm" (ngSubmit)="addTicket()" novalidate class="stack">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'manage.ticketLabel' | transloco }}</mat-label>
+            <input matInput formControlName="label" />
+            @if (ticketForm.controls.label.invalid) {
+              <mat-error>{{ 'manage.required' | transloco }}</mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'manage.price' | transloco }}</mat-label>
+            <input matInput formControlName="price" inputmode="decimal" />
+            <span matTextSuffix>€</span>
+            @if (ticketForm.controls.price.invalid) {
+              <mat-error>{{ 'manage.invalidPrice' | transloco }}</mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'manage.seats' | transloco }}</mat-label>
+            <input matInput formControlName="totalSeats" inputmode="numeric" />
+            @if (ticketForm.controls.totalSeats.invalid) {
+              <mat-error>{{ 'manage.invalidSeats' | transloco }}</mat-error>
+            }
+          </mat-form-field>
+          <div><button mat-flat-button type="submit" [disabled]="saving()">{{ 'manage.addTicket' | transloco }}</button></div>
+        </form>
+      </section>
     }
 
     @if (error(); as error) {
       <p class="error" role="alert">{{ error | transloco }}</p>
     }
-  </div>
-} @else if (error(); as error) {
-  <p class="error" role="alert">{{ error | transloco }}</p>
-} @else {
-  <mat-spinner diameter="40" />
-}
+    <a class="back" [routerLink]="['/asbls', slug, 'manage', 'events']">{{ 'manage.eventsTitle' | transloco }}</a>
+  } @else if (error(); as error) {
+    <p class="error" role="alert">{{ error | transloco }}</p>
+  } @else {
+    <mat-spinner diameter="40" />
+  }
+</div>

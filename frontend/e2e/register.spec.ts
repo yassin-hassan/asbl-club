@@ -15,7 +15,9 @@ test('a visitor creates an account from the landing page and is logged straight 
   // Logged in straight away, on the dashboard: a brand-new account belongs to no association yet.
   await expect(page.getByRole('heading', { name: 'Your associations' })).toBeVisible();
   await expect(page.getByText('You have no associations yet')).toBeVisible();
-  await expect(page.getByRole('navigation', { name: 'Main navigation' })).toContainText(email);
+  await expect(
+    page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'My account' }),
+  ).toHaveAttribute('title', email);
 });
 
 test('an email that already has an account is flagged on the email field', async ({ page }) => {

@@ -26,12 +26,12 @@ test('a user closes their account: confirmation, logged out, and the password no
   await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'My account' }).click();
 
   // Changing one's mind is possible...
-  await page.getByRole('button', { name: 'Delete my account' }).click();
+  await page.getByRole('button', { name: 'Delete permanently' }).click();
   await page.getByRole('dialog').getByRole('button', { name: 'Cancel' }).click();
   await expect(page.getByRole('heading', { name: 'My account', exact: true })).toBeVisible();
 
   // ...confirming is final.
-  await page.getByRole('button', { name: 'Delete my account' }).click();
+  await page.getByRole('button', { name: 'Delete permanently' }).click();
   await page.getByRole('dialog').getByRole('button', { name: 'Delete permanently' }).click();
 
   await expect(page).toHaveURL(/\/login\?deleted=1$/);

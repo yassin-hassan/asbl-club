@@ -1,33 +1,38 @@
-<a mat-button [routerLink]="['/asbls', slug, 'members']"><mat-icon>arrow_back</mat-icon> {{ 'manage.back' | transloco }}</a>
-
-@if (error(); as error) {
-  <p class="error" role="alert">{{ error | transloco }}</p>
-} @else if (list(); as list) {
-  <h1>{{ 'manage.eventsTitle' | transloco }} · {{ list.denomination }}</h1>
-
-  @if (list.canManage) {
-    <a mat-flat-button [routerLink]="['/asbls', slug, 'manage', 'events', 'new']">
-      <mat-icon>add</mat-icon> {{ 'manage.create' | transloco }}
-    </a>
-  }
-
-  @if (list.events.length === 0) {
-    <p>{{ 'manage.none' | transloco }}</p>
-  } @else {
-    <mat-nav-list>
-      @for (event of list.events; track event.id) {
-        <a mat-list-item [routerLink]="['/asbls', slug, 'manage', 'events', event.id]">
-          <mat-icon matListItemIcon>event</mat-icon>
-          <span matListItemTitle>{{ event.title }}</span>
-          <span matListItemLine>
-            {{ event.startsAt | date: 'medium' : undefined : lang() }} ·
-            {{ 'manage.statuses.' + event.status | transloco }} ·
-            {{ 'manage.visibilities.' + event.visibility | transloco }}
-          </span>
-        </a>
+<div class="page">
+  @if (error(); as error) {
+    <p class="error" role="alert">{{ error | transloco }}</p>
+  } @else if (list(); as list) {
+    <div class="page-head">
+      <div>
+        <h1>{{ list.denomination }}</h1>
+        <p class="muted">{{ 'manage.eventsTitle' | transloco }}</p>
+      </div>
+      @if (list.canManage) {
+        <a mat-flat-button [routerLink]="['/asbls', slug, 'manage', 'events', 'new']">{{ 'manage.create' | transloco }}</a>
       }
-    </mat-nav-list>
+    </div>
+
+    @if (list.events.length === 0) {
+      <p class="empty">{{ 'manage.none' | transloco }}</p>
+    } @else {
+      <div class="row-list">
+        @for (event of list.events; track event.id) {
+          <a class="row-link" [routerLink]="['/asbls', slug, 'manage', 'events', event.id]">
+            <span>
+              <span class="title">{{ event.title }}</span>
+              <span class="meta">
+                {{ event.startsAt | date: 'medium' : undefined : lang() }}
+                <span class="tag" [class.ok]="event.status === 'PUBLISHED'">{{ 'manage.statuses.' + event.status | transloco }}</span>
+                <span class="tag warm">{{ 'manage.visibilities.' + event.visibility | transloco }}</span>
+              </span>
+            </span>
+            <mat-icon class="go">arrow_forward</mat-icon>
+          </a>
+        }
+      </div>
+    }
+    <a class="back" [routerLink]="['/asbls', slug, 'members']">{{ 'manage.back' | transloco }}</a>
+  } @else {
+    <mat-spinner diameter="40" />
   }
-} @else {
-  <mat-spinner diameter="40" />
-}
+</div>

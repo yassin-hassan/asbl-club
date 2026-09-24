@@ -1,48 +1,52 @@
-<mat-toolbar class="toolbar">
-  <nav class="toolbar-content" [attr.aria-label]="'nav.main' | transloco">
-    <a mat-button routerLink="/" class="brand">
-      <mat-icon>groups</mat-icon>
-      ASBL Club
-    </a>
+<header class="site-header">
+  <nav class="nav wrap" [attr.aria-label]="'nav.main' | transloco">
+    <a routerLink="/" class="home" aria-label="asbl.club"><app-logo /></a>
     <span class="spacer"></span>
 
-    <!-- Three plain buttons, like the server-rendered site: one click, and no menu/overlay code in the
-         initial download. -->
+    <!-- Three plain buttons, like the server-rendered site: one click, no menu code in the initial download. -->
     <div class="languages" role="group" [attr.aria-label]="'lang.choose' | transloco">
-      @for (code of languages; track code) {
+      @for (code of languages; track code; let last = $last) {
         <button type="button" class="language" [class.active]="language.active() === code"
                 [attr.aria-pressed]="language.active() === code" [attr.lang]="code"
                 [attr.aria-label]="'lang.' + code | transloco" (click)="language.use(code)">
           {{ code | uppercase }}
         </button>
+        @if (!last) {
+          <span class="sep" aria-hidden="true">·</span>
+        }
       }
     </div>
 
     @if (auth.user(); as user) {
-      <a mat-button routerLink="/account" [attr.aria-label]="'nav.account' | transloco">
-        <mat-icon>account_circle</mat-icon>
-        {{ user.email }}
-      </a>
-      <button mat-icon-button type="button" (click)="logout()" [attr.aria-label]="'nav.logout' | transloco">
-        <mat-icon>logout</mat-icon>
-      </button>
+      <a class="text-link" routerLink="/account" [title]="user.email">{{ 'nav.account' | transloco }}</a>
+      <button mat-stroked-button type="button" (click)="logout()">{{ 'nav.logout' | transloco }}</button>
     } @else {
-      <a mat-flat-button routerLink="/login">{{ 'nav.login' | transloco }}</a>
+      <a class="text-link" routerLink="/login">{{ 'nav.login' | transloco }}</a>
+      <a mat-flat-button routerLink="/register">{{ 'nav.createAsbl' | transloco }}</a>
     }
   </nav>
-</mat-toolbar>
+</header>
 
-<main class="page">
+<main>
   <router-outlet />
 </main>
 
-<footer class="footer">
-  <div class="footer-content">
-    <p>{{ 'footer.tagline' | transloco }}</p>
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div>
+      <app-logo [inverse]="true" />
+      <p class="tagline">{{ 'footer.tagline' | transloco }}</p>
+    </div>
     <nav [attr.aria-label]="'footer.legal' | transloco">
-      <a routerLink="/legal">{{ 'legal.notice.title' | transloco }}</a>
-      <a routerLink="/privacy">{{ 'legal.privacy.title' | transloco }}</a>
-      <a routerLink="/cookies">{{ 'legal.cookies.title' | transloco }}</a>
+      <h2>{{ 'footer.legal' | transloco }}</h2>
+      <ul>
+        <li><a routerLink="/legal">{{ 'legal.notice.title' | transloco }}</a></li>
+        <li><a routerLink="/privacy">{{ 'legal.privacy.title' | transloco }}</a></li>
+        <li><a routerLink="/cookies">{{ 'legal.cookies.title' | transloco }}</a></li>
+      </ul>
     </nav>
+  </div>
+  <div class="wrap">
+    <div class="footer-bar">© 2026 asbl.club — {{ 'footer.country' | transloco }}</div>
   </div>
 </footer>

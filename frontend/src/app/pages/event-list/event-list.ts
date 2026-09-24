@@ -4,7 +4,6 @@ import { DatePipe } from '@angular/common';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { EventFeedItem, PublicService } from '../../api/generated';
 import { errorMessageKey } from '../../services/problem';
@@ -12,7 +11,7 @@ import { LanguageService } from '../../i18n/language';
 
 @Component({
   selector: 'app-event-list',
-  imports: [RouterLink, DatePipe, TranslocoPipe, MatButtonModule, MatIconModule, MatListModule, MatProgressSpinnerModule],
+  imports: [RouterLink, DatePipe, TranslocoPipe, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
   templateUrl: './event-list.html',
 })
 export class EventList {

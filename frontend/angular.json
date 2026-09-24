@@ -2,7 +2,8 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "cli": {
-    "packageManager": "npm"
+    "packageManager": "npm",
+    "analytics": "21aa4b8c-bd76-4fad-b6b3-4f1f3ae22056"
   },
   "newProjectRoot": "projects",
   "projects": {
@@ -25,9 +26,14 @@
               }
             ],
             "styles": [
-              "node_modules/@fontsource/roboto/400.css",
-              "node_modules/@fontsource/roboto/500.css",
-              "node_modules/material-icons/iconfont/filled.css",
+              "node_modules/@fontsource/inter/400.css",
+              "node_modules/@fontsource/inter/500.css",
+              "node_modules/@fontsource/inter/600.css",
+              "node_modules/@fontsource/inter/700.css",
+              "node_modules/@fontsource/poppins/500.css",
+              "node_modules/@fontsource/poppins/600.css",
+              "node_modules/@fontsource/poppins/700.css",
+              "node_modules/material-icons/iconfont/outlined.css",
               "src/material-theme.scss",
               "src/styles.css"
             ]

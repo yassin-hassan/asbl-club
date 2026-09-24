@@ -3,8 +3,6 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CurrencyPipe, DatePipe, DOCUMENT } from '@angular/common';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -17,10 +15,9 @@ import { LanguageService } from '../../i18n/language';
   selector: 'app-event-detail',
   imports: [
     RouterLink, DatePipe, CurrencyPipe, TranslocoPipe,
-    MatButtonModule, MatCardModule, MatIconModule, MatProgressSpinnerModule, MatTableModule,
+    MatButtonModule, MatProgressSpinnerModule, MatTableModule,
   ],
   templateUrl: './event-detail.html',
-  styleUrl: './event-detail.css',
 })
 export class EventDetail {
   private route = inject(ActivatedRoute);

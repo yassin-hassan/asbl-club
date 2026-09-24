@@ -3,7 +3,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { CurrencyPipe, DOCUMENT } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { loadStripe, Stripe, StripeElements } from '@stripe/stripe-js';
@@ -15,7 +14,7 @@ import { errorMessageKey, problemOf } from '../../services/problem';
 // card details go from the browser straight to Stripe and never reach our server.
 @Component({
   selector: 'app-checkout',
-  imports: [CurrencyPipe, TranslocoPipe, MatButtonModule, MatCardModule, MatProgressSpinnerModule],
+  imports: [CurrencyPipe, TranslocoPipe, MatButtonModule, MatProgressSpinnerModule],
   templateUrl: './checkout.html',
   styles: '.narrow { max-width: 480px; margin: 0 auto; } .amount { font: var(--mat-sys-headline-small); }',
 })

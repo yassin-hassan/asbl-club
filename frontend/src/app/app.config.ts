@@ -3,6 +3,7 @@ import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
 import localeNl from '@angular/common/locales/nl';
 import { provideRouter } from '@angular/router';
+import { MatIconRegistry } from '@angular/material/icon';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 
 import { routes } from './app.routes';
@@ -26,6 +27,10 @@ export const appConfig: ApplicationConfig = {
     // forwards to Spring and the auth interceptor recognises as our own API.
     provideApi(''),
     provideTranslations(),
+    // The design system uses line icons: Material's "outlined" set is the closest standard match.
+    provideAppInitializer(() => {
+      inject(MatIconRegistry).setDefaultFontSetClass('material-icons-outlined');
+    }),
     // Both run before the first navigation: the page renders in the right language, and guards already
     // know who is logged in.
     provideAppInitializer(() => inject(LanguageService).init()),

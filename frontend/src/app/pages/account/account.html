@@ -1,53 +1,25 @@
 <!-- The route guard only lets logged-in users in, so user() is set here. -->
 @if (user(); as user) {
-  <div class="stack">
-    <mat-card appearance="outlined">
-      <mat-card-header>
-        <mat-icon mat-card-avatar>account_circle</mat-icon>
-        <h1 matCardTitle>{{ 'account.title' | transloco }}</h1>
-        <mat-card-subtitle>{{ user.email }}</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <mat-list>
-          <mat-list-item>
-            <span matListItemTitle>{{ 'account.id' | transloco }}</span>
-            <span matListItemLine>{{ user.id }}</span>
-          </mat-list-item>
-          <mat-list-item>
-            <span matListItemTitle>{{ 'account.roles' | transloco }}</span>
-            <span matListItemLine>
-              <mat-chip-set>
-                @for (role of user.roles; track role) {
-                  <mat-chip>{{ role }}</mat-chip>
-                }
-              </mat-chip-set>
-            </span>
-          </mat-list-item>
-        </mat-list>
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-stroked-button type="button" (click)="exportData()">
-          <mat-icon>download</mat-icon> {{ 'account.export' | transloco }}
-        </button>
-      </mat-card-actions>
-    </mat-card>
+  <div class="page">
+    <h1>{{ 'account.title' | transloco }}</h1>
+    <p class="muted">{{ user.email }}</p>
 
-    <mat-card appearance="outlined">
-      <mat-card-header>
-        <h2 matCardTitle>{{ 'account.deleteTitle' | transloco }}</h2>
-      </mat-card-header>
-      <mat-card-content>
-        <p>{{ 'account.deleteWarning' | transloco }}</p>
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-stroked-button type="button" class="error" (click)="deleteAccount()">
-          <mat-icon>delete_forever</mat-icon> {{ 'account.deleteTitle' | transloco }}
-        </button>
-      </mat-card-actions>
-    </mat-card>
+    <section class="box">
+      <h2>{{ 'account.export' | transloco }}</h2>
+      <button mat-stroked-button type="button" (click)="exportData()">{{ 'account.export' | transloco }}</button>
+    </section>
+
+    <section class="box danger">
+      <h2>{{ 'account.deleteTitle' | transloco }}</h2>
+      <p>{{ 'account.deleteWarning' | transloco }}</p>
+      <button mat-flat-button type="button" class="danger" (click)="deleteAccount()">
+        {{ 'account.delete' | transloco }}
+      </button>
+    </section>
 
     @if (error(); as error) {
       <p class="error" role="alert">{{ error | transloco }}</p>
     }
+    <a class="back" routerLink="/">{{ 'account.back' | transloco }}</a>
   </div>
 }

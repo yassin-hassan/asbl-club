@@ -1,7 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { switchMap, take, takeWhile, timer } from 'rxjs';
@@ -15,7 +14,7 @@ type Outcome = 'checking' | 'confirmed' | 'processing' | 'failed';
 // server every 2 s, for up to 30 s, until the booking is no longer waiting for payment.
 @Component({
   selector: 'app-payment-complete',
-  imports: [RouterLink, TranslocoPipe, MatButtonModule, MatCardModule, MatProgressSpinnerModule],
+  imports: [RouterLink, TranslocoPipe, MatButtonModule, MatProgressSpinnerModule],
   templateUrl: './payment-complete.html',
   styles: '.narrow { max-width: 480px; margin: 0 auto; }',
 })

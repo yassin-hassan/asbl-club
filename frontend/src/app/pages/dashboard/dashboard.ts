@@ -1,8 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { AccountService, MyAssociation } from '../../api/generated';
@@ -11,7 +9,7 @@ import { errorMessageKey } from '../../services/problem';
 // The home page of a logged-in user: their associations and their role in each.
 @Component({
   selector: 'app-dashboard',
-  imports: [RouterLink, TranslocoPipe, MatButtonModule, MatIconModule, MatListModule, MatProgressSpinnerModule],
+  imports: [RouterLink, TranslocoPipe, MatButtonModule, MatProgressSpinnerModule],
   templateUrl: './dashboard.html',
 })
 export class Dashboard {
