@@ -27,12 +27,19 @@
     "passwordRequired": "Geef je wachtwoord in.",
     "error": "Ongeldig e-mailadres of wachtwoord",
     "noAccount": "Nog geen account",
-    "createOne": "Een account aanmaken"
+    "createOne": "Een account aanmaken",
+    "deleted": "Uw account is verwijderd"
   },
   "account": {
     "title": "Mijn account",
     "id": "ID",
-    "roles": "Rollen"
+    "roles": "Rollen",
+    "export": "Mijn gegevens exporteren",
+    "deleteTitle": "Mijn account verwijderen",
+    "deleteWarning": "Deze actie is onomkeerbaar, uw account wordt gesloten en uw persoonsgegevens geanonimiseerd.",
+    "deleteConfirm": "Weet u zeker dat u uw account definitief wilt verwijderen? Deze actie is onomkeerbaar.",
+    "cancel": "Annuleren",
+    "delete": "Definitief verwijderen"
   },
   "events": {
     "back": "Home",
@@ -153,5 +160,16 @@
     "nameRequired": "Geef je naam in.",
     "passwordTooShort": "Minstens 8 tekens.",
     "submitting": "Aanmaken…"
+  },
+  "dashboard": {
+    "title": "Uw verenigingen",
+    "none": "U heeft nog geen verenigingen",
+    "createAsbl": "Een VZW aanmaken"
+  },
+  "roles": {
+    "ADMIN": "Beheerder",
+    "TREASURER": "Penningmeester",
+    "VIEWER": "Lezer",
+    "MEMBER": "Lid"
   }
 }

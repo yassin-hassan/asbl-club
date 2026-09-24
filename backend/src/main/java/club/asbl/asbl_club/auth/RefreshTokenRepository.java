@@ -21,4 +21,9 @@ interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query("UPDATE RefreshToken t SET t.revokedAt = :now WHERE t.familyId = :familyId AND t.revokedAt IS NULL")
     int revokeFamily(UUID familyId, Instant now);
+
+    // Every session of one user, on every device: "log out everywhere".
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("UPDATE RefreshToken t SET t.revokedAt = :now WHERE t.user.id = :userId AND t.revokedAt IS NULL")
+    int revokeAllOfUser(Long userId, Instant now);
 }

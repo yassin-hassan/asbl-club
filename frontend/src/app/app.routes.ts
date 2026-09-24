@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './services/auth.guard';
+import { authGuard, whenLoggedIn } from './services/auth.guard';
 
 // Every page is lazy-loaded: its code (and the Material components it uses) is only downloaded the first
 // time someone opens it, so the initial download stays small as more pages are migrated.
@@ -8,6 +8,8 @@ import { authGuard } from './services/auth.guard';
 const legal = () => import('./pages/legal/legal').then((m) => m.Legal);
 
 export const routes: Routes = [
+  // Same URL as the server-rendered site: "/" is the dashboard when logged in, the landing page otherwise.
+  { path: '', canMatch: [whenLoggedIn], loadComponent: () => import('./pages/dashboard/dashboard').then((m) => m.Dashboard) },
   { path: '', loadComponent: () => import('./pages/landing/landing').then((m) => m.Landing) },
   {
     path: 'asbls/:slug/events',

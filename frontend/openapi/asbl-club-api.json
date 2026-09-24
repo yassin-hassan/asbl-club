@@ -13,6 +13,9 @@
     "name" : "Public",
     "description" : "Associations and their public events, readable without logging in"
   }, {
+    "name" : "Account",
+    "description" : "The logged-in user's own account"
+  }, {
     "name" : "Authentication",
     "description" : "Exchange credentials for tokens"
   } ],
@@ -124,6 +127,66 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/MeResponse"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "Account" ],
+        "summary" : "Close my account (GDPR right to erasure)",
+        "operationId" : "deleteMyAccount",
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/me/export" : {
+      "get" : {
+        "tags" : [ "Account" ],
+        "summary" : "Everything we hold about me (GDPR right of access)",
+        "operationId" : "exportMyData",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AccountExport"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/me/associations" : {
+      "get" : {
+        "tags" : [ "Account" ],
+        "summary" : "The associations I belong to, with my role",
+        "operationId" : "listMyAssociations",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/MyAssociation"
+                  }
                 }
               }
             }
@@ -321,6 +384,89 @@
             "items" : {
               "type" : "string"
             }
+          }
+        }
+      },
+      "AccountExport" : {
+        "type" : "object",
+        "properties" : {
+          "profile" : {
+            "$ref" : "#/components/schemas/ProfileExport"
+          },
+          "memberships" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/AsblSummary"
+            }
+          },
+          "payments" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PaymentExport"
+            }
+          }
+        }
+      },
+      "AsblSummary" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "denomination" : {
+            "type" : "string"
+          },
+          "slug" : {
+            "type" : "string"
+          },
+          "role" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PaymentExport" : {
+        "type" : "object",
+        "properties" : {
+          "amount" : {
+            "type" : "number"
+          },
+          "status" : {
+            "type" : "string"
+          },
+          "paidAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
+      "ProfileExport" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "email" : {
+            "type" : "string"
+          },
+          "language" : {
+            "type" : "string"
+          }
+        }
+      },
+      "MyAssociation" : {
+        "required" : [ "denomination", "role", "slug" ],
+        "type" : "object",
+        "properties" : {
+          "slug" : {
+            "type" : "string"
+          },
+          "denomination" : {
+            "type" : "string"
+          },
+          "role" : {
+            "type" : "string",
+            "enum" : [ "ADMIN", "TREASURER", "VIEWER", "MEMBER" ]
           }
         }
       },

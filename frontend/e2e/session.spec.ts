@@ -13,7 +13,7 @@ test('login, stay logged in across a reload, log out', async ({ page }) => {
 
   await logIn(page);
   await expect(page).toHaveURL(/\/account$/);
-  await expect(page.getByRole('heading', { name: 'My account' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'My account', exact: true })).toBeVisible();
 
   // The refresh token is a hardened cookie that page scripts can't read...
   const refreshCookie = (await page.context().cookies()).find((cookie) => cookie.name === 'refresh_token');
@@ -22,7 +22,7 @@ test('login, stay logged in across a reload, log out', async ({ page }) => {
 
   // ...and it's what keeps the user logged in when the in-memory access token is lost on reload.
   await page.reload();
-  await expect(page.getByRole('heading', { name: 'My account' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'My account', exact: true })).toBeVisible();
 
   await page.getByRole('button', { name: 'Log out' }).click();
   await expect(page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Log in' })).toBeVisible();

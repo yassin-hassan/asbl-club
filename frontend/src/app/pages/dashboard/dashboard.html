@@ -1,0 +1,22 @@
+<h1>{{ 'dashboard.title' | transloco }}</h1>
+
+@if (error(); as error) {
+  <p class="error" role="alert">{{ error | transloco }}</p>
+} @else if (associations(); as associations) {
+  @if (associations.length === 0) {
+    <p>{{ 'dashboard.none' | transloco }}</p>
+  } @else {
+    <mat-nav-list>
+      @for (association of associations; track association.slug) {
+        <a mat-list-item [routerLink]="['/asbls', association.slug, 'members']">
+          <mat-icon matListItemIcon>groups</mat-icon>
+          <span matListItemTitle>{{ association.denomination }}</span>
+          <span matListItemLine>{{ 'roles.' + association.role | transloco }}</span>
+        </a>
+      }
+    </mat-nav-list>
+  }
+  <a mat-flat-button routerLink="/asbls/new"><mat-icon>add</mat-icon> {{ 'dashboard.createAsbl' | transloco }}</a>
+} @else {
+  <mat-spinner diameter="40" />
+}

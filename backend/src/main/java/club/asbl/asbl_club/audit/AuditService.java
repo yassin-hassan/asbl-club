@@ -81,7 +81,7 @@ public class AuditService {
                 || authentication instanceof AnonymousAuthenticationToken) {
             return null;
         }
-        return userService.getByEmail(authentication.getName());
+        return userService.getAuthenticated(authentication);
     }
 
     private String currentIp() {

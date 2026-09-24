@@ -29,6 +29,7 @@ export class Login {
   });
 
   readonly submitting = signal(false);
+  readonly accountDeleted = this.route.snapshot.queryParamMap.has('deleted');
   readonly error = signal<string | null>(null);
 
   submit(): void {
@@ -42,7 +43,7 @@ export class Login {
     this.auth.login(email, password).subscribe({
       // Back to the page the guard sent us from. navigateByUrl stays inside the app, so a crafted
       // ?returnUrl=https://evil.example can't redirect the user to another site.
-      next: () => this.router.navigateByUrl(this.route.snapshot.queryParamMap.get('returnUrl') ?? '/account'),
+      next: () => this.router.navigateByUrl(this.route.snapshot.queryParamMap.get('returnUrl') ?? '/'),
       error: (err: HttpErrorResponse) => {
         this.submitting.set(false);
         // 401 gets our own wording: the API deliberately doesn't say whether the email or the password was wrong.
