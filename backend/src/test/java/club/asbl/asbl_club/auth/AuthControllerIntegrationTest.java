@@ -54,6 +54,16 @@ class AuthControllerIntegrationTest {
         assertThat(jwt.getSubject()).isEqualTo(alice.getPublicId().toString());
         assertThat(jwt.getClaimAsString("email")).isEqualTo("alice@club.test");
         assertThat(jwt.getClaimAsString("iss")).isEqualTo("asbl-club");
+        assertThat(jwt.getClaimAsStringList("roles")).containsExactly("USER");
+    }
+
+    @Test
+    void superAdminToken_carriesTheSuperAdminRole() throws Exception {
+        userService.registerSuperAdmin("Root", "root@club.test", "password123");
+
+        Jwt jwt = jwtDecoder.decode(accessToken("root@club.test", "password123"));
+
+        assertThat(jwt.getClaimAsStringList("roles")).containsExactlyInAnyOrder("USER", "SUPERADMIN");
     }
 
     // Why "sub" is the public ID and not the email: a closed account frees its email for someone else.
