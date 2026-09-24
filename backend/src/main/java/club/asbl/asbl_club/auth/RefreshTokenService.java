@@ -1,5 +1,6 @@
 package club.asbl.asbl_club.auth;
 
+import club.asbl.asbl_club.audit.AuditService;
 import club.asbl.asbl_club.user.User;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -10,6 +11,7 @@ import java.time.Instant;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.HexFormat;
+import java.util.Map;
 import java.util.UUID;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,15 +24,19 @@ import org.springframework.transaction.annotation.Transactional;
 class RefreshTokenService {
 
     static final Duration REFRESH_TOKEN_TTL = Duration.ofDays(14);
+    static final String REUSE_DETECTED = "REFRESH_TOKEN_REUSE_DETECTED";
     private static final int TOKEN_BYTES = 32;
 
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserDetailsService userDetailsService;
+    private final AuditService auditService;
     private final SecureRandom secureRandom = new SecureRandom();
 
-    RefreshTokenService(RefreshTokenRepository refreshTokenRepository, UserDetailsService userDetailsService) {
+    RefreshTokenService(RefreshTokenRepository refreshTokenRepository, UserDetailsService userDetailsService,
+            AuditService auditService) {
         this.refreshTokenRepository = refreshTokenRepository;
         this.userDetailsService = userDetailsService;
+        this.auditService = auditService;
     }
 
     // What a successful refresh hands back: who the user is, their current roles, and the new raw token.
@@ -55,6 +61,9 @@ class RefreshTokenService {
             // An already-rotated token came back: it was copied. We can't tell whether the thief or the
             // real user sent it, so end the whole login session; the real user logs in again.
             refreshTokenRepository.revokeFamily(current.getFamilyId(), now);
+            // The strongest theft signal we have: keep a permanent trace (committed thanks to noRollbackFor).
+            auditService.recordSecurityEvent(REUSE_DETECTED, current.getUser(),
+                    Map.of("familyId", current.getFamilyId().toString()));
             throw new InvalidRefreshTokenException();
         }
         if (!current.isUsable(now)) {

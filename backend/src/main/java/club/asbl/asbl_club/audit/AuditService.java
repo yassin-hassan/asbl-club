@@ -48,6 +48,12 @@ public class AuditService {
         auditLogRepository.save(new AuditLog(action, user, ip, null, null, null, payload));
     }
 
+    // Security events about a known user that happen without a password login (e.g. token theft signals).
+    @Transactional
+    public void recordSecurityEvent(String action, User user, Map<String, Object> payload) {
+        auditLogRepository.save(new AuditLog(action, user, currentIp(), null, null, null, payload));
+    }
+
     @Transactional(readOnly = true)
     public List<AuditLogView> journalOf(Asbl asbl) {
         return auditLogRepository.findByAsblIdOrderByCreatedAtDesc(asbl.getId()).stream()

@@ -30,7 +30,9 @@ class AuditRetentionIntegrationTest {
         int removed = auditLogRepository.deleteOlderThanRetention();
 
         assertThat(removed).isEqualTo(1);
-        Integer remaining = jdbcTemplate.queryForObject("SELECT count(*) FROM audit_logs", Integer.class);
+        // Only this test's rows: other tests may have committed audit entries of their own.
+        Integer remaining = jdbcTemplate.queryForObject(
+                "SELECT count(*) FROM audit_logs WHERE action IN ('OLD', 'RECENT')", Integer.class);
         assertThat(remaining).isEqualTo(1);
     }
 }
