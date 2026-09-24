@@ -14,6 +14,7 @@ public record AsblMembers(
         boolean paymentsEnabled,
         @Schema(requiredMode = REQUIRED) List<Member> members) {
 
+    @Schema(name = "AsblMember")
     public record Member(
             @Schema(requiredMode = REQUIRED) String name,
             @Schema(requiredMode = REQUIRED) String email,

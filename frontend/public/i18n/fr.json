@@ -200,5 +200,43 @@
     "ACTIVE": "Actif",
     "EXCLUDED": "Exclu",
     "LEFT": "Parti"
+  },
+  "manage": {
+    "eventsTitle": "Événements",
+    "create": "Créer un événement",
+    "none": "Aucun événement pour l'instant",
+    "title": "Titre",
+    "description": "Description",
+    "startsAt": "Début",
+    "location": "Lieu",
+    "status": "Statut",
+    "visibility": "Visibilité",
+    "visibilities": {
+      "PUBLIC": "Public",
+      "MEMBERS": "Membres"
+    },
+    "submit": "Créer l'événement",
+    "publish": "Publier",
+    "viewPublic": "Voir la page publique",
+    "ticketsTitle": "Catégories tarifaires",
+    "noTickets": "Aucune catégorie pour l'instant",
+    "addTicket": "Ajouter une catégorie",
+    "ticketLabel": "Libellé",
+    "price": "Prix",
+    "seats": "Places",
+    "sold": "Vendues",
+    "draftHint": "Brouillon : invisible pour le public jusqu'à la publication.",
+    "submitting": "Enregistrement…",
+    "required": "Ce champ est obligatoire.",
+    "invalidPrice": "Un prix en euros, par ex. 12,50.",
+    "invalidSeats": "Au moins 1 place.",
+    "statuses": {
+      "DRAFT": "Brouillon",
+      "PUBLISHED": "Publié",
+      "CANCELLED": "Annulé",
+      "ENDED": "Terminé"
+    },
+    "noAccess": "Vous n'êtes pas membre de cette association.",
+    "back": "Retour à l'association"
   }
 }

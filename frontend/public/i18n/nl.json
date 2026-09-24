@@ -200,5 +200,43 @@
     "ACTIVE": "Actief",
     "EXCLUDED": "Uitgesloten",
     "LEFT": "Vertrokken"
+  },
+  "manage": {
+    "eventsTitle": "Evenementen",
+    "create": "Een evenement aanmaken",
+    "none": "Nog geen evenementen",
+    "title": "Titel",
+    "description": "Beschrijving",
+    "startsAt": "Begin",
+    "location": "Locatie",
+    "status": "Status",
+    "visibility": "Zichtbaarheid",
+    "visibilities": {
+      "PUBLIC": "Openbaar",
+      "MEMBERS": "Leden"
+    },
+    "submit": "Evenement aanmaken",
+    "publish": "Publiceren",
+    "viewPublic": "Openbare pagina bekijken",
+    "ticketsTitle": "Prijscategorieën",
+    "noTickets": "Nog geen categorieën",
+    "addTicket": "Een categorie toevoegen",
+    "ticketLabel": "Label",
+    "price": "Prijs",
+    "seats": "Plaatsen",
+    "sold": "Verkocht",
+    "draftHint": "Concept: onzichtbaar voor het publiek tot publicatie.",
+    "submitting": "Opslaan…",
+    "required": "Dit veld is verplicht.",
+    "invalidPrice": "Een prijs in euro, bv. 12,50.",
+    "invalidSeats": "Minstens 1 plaats.",
+    "statuses": {
+      "DRAFT": "Concept",
+      "PUBLISHED": "Gepubliceerd",
+      "CANCELLED": "Geannuleerd",
+      "ENDED": "Afgelopen"
+    },
+    "noAccess": "Je bent geen lid van deze vereniging.",
+    "back": "Terug naar de vereniging"
   }
 }

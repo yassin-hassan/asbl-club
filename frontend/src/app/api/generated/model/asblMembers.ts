@@ -7,7 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { Member } from './member';
+import { AsblMember } from './asblMember';
 
 
 export interface AsblMembers { 
@@ -21,6 +21,6 @@ export interface AsblMembers {
      * Whether payments can be received (Stripe connected)
      */
     paymentsEnabled: boolean;
-    members: Array<Member>;
+    members: Array<AsblMember>;
 }
 

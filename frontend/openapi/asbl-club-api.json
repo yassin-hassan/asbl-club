@@ -13,6 +13,9 @@
     "name" : "Public",
     "description" : "Associations and their public events, readable without logging in"
   }, {
+    "name" : "Event management",
+    "description" : "An association's events, as seen and managed by its members"
+  }, {
     "name" : "Account",
     "description" : "The logged-in user's own account"
   }, {
@@ -148,6 +151,160 @@
             "description" : "URL identifier or BCE number already taken",
             "content" : {
               "application/problem+json" : { }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/asbls/{slug}/manage/events" : {
+      "get" : {
+        "tags" : [ "Event management" ],
+        "summary" : "All the association's events, drafts included (members)",
+        "operationId" : "listManagedEvents",
+        "parameters" : [ {
+          "name" : "slug",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ManagedEventList"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      },
+      "post" : {
+        "tags" : [ "Event management" ],
+        "summary" : "Create an event, as a draft (administrators)",
+        "operationId" : "createEvent",
+        "parameters" : [ {
+          "name" : "slug",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CreateEventRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ManagedEvent"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/asbls/{slug}/manage/events/{eventId}/tickets" : {
+      "post" : {
+        "tags" : [ "Event management" ],
+        "summary" : "Add a ticket category to an event (administrators)",
+        "operationId" : "addTicketCategory",
+        "parameters" : [ {
+          "name" : "slug",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "eventId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AddTicketRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Added; the updated event",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ManagedEvent"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/asbls/{slug}/manage/events/{eventId}/publish" : {
+      "post" : {
+        "tags" : [ "Event management" ],
+        "summary" : "Publish a draft event (administrators)",
+        "operationId" : "publishEvent",
+        "parameters" : [ {
+          "name" : "slug",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "eventId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ManagedEvent"
+                }
+              }
             }
           }
         },
@@ -354,6 +511,44 @@
         } ]
       }
     },
+    "/api/v1/asbls/{slug}/manage/events/{eventId}" : {
+      "get" : {
+        "tags" : [ "Event management" ],
+        "summary" : "One event with its ticket categories and sales (members)",
+        "operationId" : "getManagedEvent",
+        "parameters" : [ {
+          "name" : "slug",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "eventId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ManagedEvent"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      }
+    },
     "/api/v1/asbls/{slug}/events" : {
       "get" : {
         "tags" : [ "Public" ],
@@ -475,6 +670,122 @@
           },
           "denomination" : {
             "type" : "string"
+          }
+        }
+      },
+      "CreateEventRequest" : {
+        "required" : [ "startsAt", "title", "visibility" ],
+        "type" : "object",
+        "properties" : {
+          "title" : {
+            "maxLength" : 255,
+            "minLength" : 0,
+            "type" : "string"
+          },
+          "description" : {
+            "maxLength" : 5000,
+            "minLength" : 0,
+            "type" : "string"
+          },
+          "startsAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "location" : {
+            "maxLength" : 255,
+            "minLength" : 0,
+            "type" : "string"
+          },
+          "visibility" : {
+            "minLength" : 1,
+            "pattern" : "PUBLIC|MEMBERS",
+            "type" : "string"
+          }
+        }
+      },
+      "ManagedEvent" : {
+        "required" : [ "canManage", "id", "startsAt", "status", "tickets", "title", "visibility" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "title" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "startsAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "location" : {
+            "type" : "string"
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "DRAFT", "PUBLISHED", "CANCELLED", "ENDED" ]
+          },
+          "visibility" : {
+            "type" : "string",
+            "enum" : [ "PUBLIC", "MEMBERS" ]
+          },
+          "canManage" : {
+            "type" : "boolean"
+          },
+          "tickets" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ManagedTicket"
+            }
+          }
+        }
+      },
+      "ManagedTicket" : {
+        "required" : [ "id", "label", "price", "soldSeats", "totalSeats" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "label" : {
+            "type" : "string"
+          },
+          "price" : {
+            "type" : "number",
+            "description" : "Price in euros"
+          },
+          "totalSeats" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "soldSeats" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "AddTicketRequest" : {
+        "required" : [ "label", "price", "totalSeats" ],
+        "type" : "object",
+        "properties" : {
+          "label" : {
+            "maxLength" : 100,
+            "minLength" : 0,
+            "type" : "string"
+          },
+          "price" : {
+            "minimum" : 0.0,
+            "exclusiveMinimum" : false,
+            "type" : "number"
+          },
+          "totalSeats" : {
+            "minimum" : 1,
+            "type" : "integer",
+            "format" : "int32"
           }
         }
       },
@@ -647,6 +958,26 @@
           }
         }
       },
+      "AsblMember" : {
+        "required" : [ "email", "name", "role", "status" ],
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "email" : {
+            "type" : "string"
+          },
+          "role" : {
+            "type" : "string",
+            "enum" : [ "ADMIN", "TREASURER", "VIEWER", "MEMBER" ]
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "PENDING", "ACTIVE", "EXCLUDED", "LEFT" ]
+          }
+        }
+      },
       "AsblMembers" : {
         "required" : [ "denomination", "members", "myRole", "paymentsEnabled", "slug" ],
         "type" : "object",
@@ -668,28 +999,55 @@
           "members" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/Member"
+              "$ref" : "#/components/schemas/AsblMember"
             }
           }
         }
       },
-      "Member" : {
-        "required" : [ "email", "name", "role", "status" ],
+      "ManagedEventItem" : {
+        "required" : [ "id", "startsAt", "status", "title", "visibility" ],
         "type" : "object",
         "properties" : {
-          "name" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "title" : {
             "type" : "string"
           },
-          "email" : {
-            "type" : "string"
-          },
-          "role" : {
+          "startsAt" : {
             "type" : "string",
-            "enum" : [ "ADMIN", "TREASURER", "VIEWER", "MEMBER" ]
+            "format" : "date-time"
           },
           "status" : {
             "type" : "string",
-            "enum" : [ "PENDING", "ACTIVE", "EXCLUDED", "LEFT" ]
+            "enum" : [ "DRAFT", "PUBLISHED", "CANCELLED", "ENDED" ]
+          },
+          "visibility" : {
+            "type" : "string",
+            "enum" : [ "PUBLIC", "MEMBERS" ]
+          }
+        }
+      },
+      "ManagedEventList" : {
+        "required" : [ "canManage", "denomination", "events", "slug" ],
+        "type" : "object",
+        "properties" : {
+          "slug" : {
+            "type" : "string"
+          },
+          "denomination" : {
+            "type" : "string"
+          },
+          "canManage" : {
+            "type" : "boolean",
+            "description" : "Whether the viewer may create and change events"
+          },
+          "events" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ManagedEventItem"
+            }
           }
         }
       },
