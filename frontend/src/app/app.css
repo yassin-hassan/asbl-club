@@ -42,3 +42,21 @@
   display: flex;
   gap: 16px;
 }
+
+.languages {
+  display: flex;
+}
+
+.language {
+  padding: 4px 6px;
+  border: 0;
+  background: none;
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-label-large);
+  cursor: pointer;
+}
+
+.language.active {
+  color: var(--mat-sys-primary);
+  text-decoration: underline;
+}

@@ -1,35 +1,70 @@
-<a mat-button routerLink="/"><mat-icon>arrow_back</mat-icon> {{ 'events.back' | transloco }}</a>
-
 @if (loading()) {
   <mat-spinner diameter="40" />
 } @else if (error(); as error) {
   <p class="error" role="alert">{{ error | transloco }}</p>
-} @else {
+} @else if (event(); as event) {
+  <a mat-button [routerLink]="['/asbls', event.asbl.slug, 'events']">
+    <mat-icon>arrow_back</mat-icon> {{ event.asbl.denomination }}
+  </a>
+
   <mat-card appearance="outlined">
     <mat-card-header>
-      <h1 matCardTitle>{{ event()!.title }}</h1>
-      <mat-card-subtitle>{{ event()!.startsAt | date: 'full' : undefined : lang() }}</mat-card-subtitle>
+      <h1 matCardTitle>{{ event.title }}</h1>
+      <mat-card-subtitle>{{ 'event.organisedBy' | transloco: { name: event.asbl.denomination } }}</mat-card-subtitle>
     </mat-card-header>
-    <mat-card-content>
-      @if (event()!.description) {
-        <p>{{ event()!.description }}</p>
+
+    <mat-card-content class="stack">
+      <dl class="facts">
+        <div>
+          <dt><mat-icon>schedule</mat-icon> {{ 'event.startsAt' | transloco }}</dt>
+          <dd>{{ event.startsAt | date: 'full' : undefined : lang() }} · {{ event.startsAt | date: 'shortTime' : undefined : lang() }}</dd>
+        </div>
+        @if (event.location) {
+          <div>
+            <dt><mat-icon>place</mat-icon> {{ 'event.location' | transloco }}</dt>
+            <dd>{{ event.location }}</dd>
+          </div>
+        }
+      </dl>
+
+      @if (event.description) {
+        <p>{{ event.description }}</p>
       }
 
-      <h2>{{ 'event.availability' | transloco }}</h2>
-      <p class="hint">{{ 'event.refreshHint' | transloco }}</p>
-      @if (availability().length === 0) {
-        <p>{{ 'event.noTickets' | transloco }}</p>
-      } @else {
-        <mat-list>
-          @for (a of availability(); track a.categoryId) {
-            <mat-list-item>
-              <mat-icon matListItemIcon>confirmation_number</mat-icon>
-              <span matListItemTitle>{{ 'event.category' | transloco: { id: a.categoryId } }}</span>
-              <span matListItemLine>{{ 'event.left' | transloco: { count: a.remaining } }}</span>
-            </mat-list-item>
-          }
-        </mat-list>
-      }
+      <section>
+        <h2>{{ 'event.tickets' | transloco }}</h2>
+        @if (tickets().length === 0) {
+          <p>{{ 'event.noTickets' | transloco }}</p>
+        } @else {
+          <table mat-table [dataSource]="tickets()">
+            <ng-container matColumnDef="label">
+              <th mat-header-cell *matHeaderCellDef>{{ 'event.ticket' | transloco }}</th>
+              <td mat-cell *matCellDef="let ticket">{{ ticket.label }}</td>
+            </ng-container>
+            <ng-container matColumnDef="price">
+              <th mat-header-cell *matHeaderCellDef>{{ 'event.price' | transloco }}</th>
+              <td mat-cell *matCellDef="let ticket">{{ ticket.price | currency: 'EUR' : 'symbol' : '1.2-2' : lang() }}</td>
+            </ng-container>
+            <ng-container matColumnDef="remaining">
+              <th mat-header-cell *matHeaderCellDef>{{ 'event.seatsLeft' | transloco }}</th>
+              <td mat-cell *matCellDef="let ticket">{{ ticket.remaining }}</td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="columns"></tr>
+            <tr mat-row *matRowDef="let row; columns: columns"></tr>
+          </table>
+          <p class="hint">{{ 'event.refreshHint' | transloco }}</p>
+        }
+      </section>
+
+      <section>
+        <h2>{{ 'event.share' | transloco }}</h2>
+        <div class="share">
+          <a mat-stroked-button [href]="whatsAppLink()" target="_blank" rel="noopener noreferrer">
+            <mat-icon>chat</mat-icon> WhatsApp
+          </a>
+          <a mat-stroked-button [href]="emailLink()"><mat-icon>mail</mat-icon> {{ 'event.email' | transloco }}</a>
+        </div>
+      </section>
     </mat-card-content>
   </mat-card>
 }

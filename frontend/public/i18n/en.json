@@ -40,11 +40,17 @@
   },
   "event": {
     "loadError": "Could not load this event.",
-    "availability": "Seat availability",
     "refreshHint": "Updates every 5 seconds.",
     "noTickets": "No ticket categories, or none remaining.",
-    "category": "Category {{ id }}",
-    "left": "{{ count }} left"
+    "organisedBy": "Organised by {{ name }}",
+    "startsAt": "Start",
+    "location": "Location",
+    "tickets": "Ticket categories",
+    "ticket": "Label",
+    "price": "Price",
+    "seatsLeft": "Seats left",
+    "share": "Share",
+    "email": "Email"
   },
   "errors": {
     "generic": "Something went wrong. Please try again.",

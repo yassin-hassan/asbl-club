@@ -1,0 +1,27 @@
+.facts {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+
+.facts dt {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-label-large);
+}
+
+.facts dd {
+  margin: 0 0 0 28px;
+}
+
+.hint {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.share {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}

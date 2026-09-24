@@ -11,6 +11,8 @@ model/eventFeedItem.ts
 model/loginRequest.ts
 model/meResponse.ts
 model/models.ts
+model/publicEvent.ts
+model/publicTicket.ts
 model/seatAvailability.ts
 model/tokenResponse.ts
 param.ts

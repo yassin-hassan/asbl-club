@@ -16,6 +16,7 @@ import club.asbl.asbl_club.event.EventService;
 import club.asbl.asbl_club.event.EventStatus;
 import club.asbl.asbl_club.user.User;
 import club.asbl.asbl_club.user.UserService;
+import java.math.BigDecimal;
 import java.time.Instant;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +69,21 @@ class ApiIntegrationTest {
         mockMvc.perform(get("/api/v1/events/" + published.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Concert"));
+    }
+
+    @Test
+    void eventDetail_includesAssociationLocationAndTickets() throws Exception {
+        Event published = seedPublishedEvent();
+        eventService.addTicketCategory(published, "Standard", new BigDecimal("12.50"), 100);
+
+        mockMvc.perform(get("/api/v1/events/" + published.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.location").value("Hall"))
+                .andExpect(jsonPath("$.asbl.slug").value("mon-club"))
+                .andExpect(jsonPath("$.asbl.denomination").value("Mon Club"))
+                .andExpect(jsonPath("$.tickets[0].label").value("Standard"))
+                .andExpect(jsonPath("$.tickets[0].price").value(12.50))
+                .andExpect(jsonPath("$.tickets[0].remaining").value(100));
     }
 
     @Test
