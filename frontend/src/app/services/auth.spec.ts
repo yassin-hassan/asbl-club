@@ -21,7 +21,7 @@ describe('AuthService', () => {
   // Fails the test if a request was made that the test didn't expect.
   afterEach(() => http.verify());
 
-  it('logs in, then loads the current user with the new access token', () => {
+  it('logs in, keeps the access token, then loads the current user', () => {
     let result: CurrentUser | undefined;
     auth.login('alice@club.test', 'password123').subscribe((user) => (result = user));
 
@@ -30,9 +30,8 @@ describe('AuthService', () => {
     expect(login.request.body).toEqual({ email: 'alice@club.test', password: 'password123' });
     login.flush({ accessToken: 'token-123', tokenType: 'Bearer', expiresIn: 900 });
 
-    const me = http.expectOne('/api/v1/me');
-    expect(me.request.headers.get('Authorization')).toBe('Bearer token-123');
-    me.flush(alice);
+    expect(auth.accessToken()).toBe('token-123');
+    http.expectOne('/api/v1/me').flush(alice);
 
     expect(result).toEqual(alice);
     expect(auth.user()).toEqual(alice);
@@ -47,6 +46,7 @@ describe('AuthService', () => {
 
     http.expectNone('/api/v1/me');
     expect(status).toBe(401);
+    expect(auth.accessToken()).toBeNull();
     expect(auth.isLoggedIn()).toBe(false);
   });
 });
