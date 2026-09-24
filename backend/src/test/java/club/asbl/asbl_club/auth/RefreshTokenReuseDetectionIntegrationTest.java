@@ -62,6 +62,19 @@ class RefreshTokenReuseDetectionIntegrationTest {
     }
 
     @Test
+    void reuse_leavesAPermanentAuditTrace() throws Exception {
+        String stolen = refreshTokenService.issue(user);
+        refreshAndGetRefreshToken(stolen);
+
+        refresh(stolen).andExpect(status().isUnauthorized());
+
+        Integer traces = jdbcTemplate.queryForObject(
+                "SELECT count(*) FROM audit_logs WHERE action = 'REFRESH_TOKEN_REUSE_DETECTED' AND user_id = ?",
+                Integer.class, user.getId());
+        assertThat(traces).isEqualTo(1);
+    }
+
+    @Test
     void reuseDetection_onlyEndsThatLoginSession() throws Exception {
         String laptop = refreshTokenService.issue(user);
         String phone = refreshTokenService.issue(user);
