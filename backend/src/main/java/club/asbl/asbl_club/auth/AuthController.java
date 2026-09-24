@@ -1,5 +1,7 @@
 package club.asbl.asbl_club.auth;
 
+import club.asbl.asbl_club.user.User;
+import club.asbl.asbl_club.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,11 +25,13 @@ class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
+    private final UserService userService;
     private final WebAuthenticationDetailsSource detailsSource = new WebAuthenticationDetailsSource();
 
-    AuthController(AuthenticationManager authenticationManager, TokenService tokenService) {
+    AuthController(AuthenticationManager authenticationManager, TokenService tokenService, UserService userService) {
         this.authenticationManager = authenticationManager;
         this.tokenService = tokenService;
+        this.userService = userService;
     }
 
     @Operation(summary = "Log in with email and password, get a short-lived access token")
@@ -37,13 +41,16 @@ class AuthController {
                 UsernamePasswordAuthenticationToken.unauthenticated(request.email(), request.password());
         // Carries the client IP, which the login audit log records.
         attempt.setDetails(detailsSource.buildDetails(httpRequest));
+        Authentication authentication;
         try {
-            Authentication authentication = authenticationManager.authenticate(attempt);
-            return tokenService.issueAccessToken(authentication);
+            authentication = authenticationManager.authenticate(attempt);
         } catch (AuthenticationException e) {
             // One answer for "unknown email" and "wrong password", so the endpoint can't be used
             // to find out which emails have an account.
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
+        // The password check only gives us the email; the token needs the user's public ID.
+        User user = userService.getByEmail(authentication.getName());
+        return tokenService.issueAccessToken(user);
     }
 }

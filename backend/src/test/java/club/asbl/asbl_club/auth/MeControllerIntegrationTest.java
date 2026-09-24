@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import club.asbl.asbl_club.TestcontainersConfiguration;
+import club.asbl.asbl_club.user.User;
 import club.asbl.asbl_club.user.UserService;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,9 +37,11 @@ class MeControllerIntegrationTest {
     @Autowired
     UserService userService;
 
+    User alice;
+
     @BeforeEach
     void registerAlice() {
-        userService.register("Alice", "alice@club.test", "password123");
+        alice = userService.register("Alice", "alice@club.test", "password123");
     }
 
     @Test
@@ -54,6 +57,7 @@ class MeControllerIntegrationTest {
 
         mockMvc.perform(get("/api/v1/me").header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(alice.getPublicId().toString()))
                 .andExpect(jsonPath("$.email").value("alice@club.test"));
     }
 
