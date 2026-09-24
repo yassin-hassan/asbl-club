@@ -5,6 +5,7 @@ import club.asbl.asbl_club.asbl.AsblSummary;
 import club.asbl.asbl_club.user.User;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +41,12 @@ public class MembershipService {
     @Transactional(readOnly = true)
     public boolean isMember(User user, Asbl asbl) {
         return membershipRepository.existsByUserAndAsbl(user, asbl);
+    }
+
+    // The user's role in this association, or empty when they aren't a member.
+    @Transactional(readOnly = true)
+    public Optional<String> roleOf(User user, Asbl asbl) {
+        return membershipRepository.findByUserAndAsbl(user, asbl).map(m -> m.getRole().name());
     }
 
     @Transactional(readOnly = true)

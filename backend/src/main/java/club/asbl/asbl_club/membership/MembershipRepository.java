@@ -3,6 +3,7 @@ package club.asbl.asbl_club.membership;
 import club.asbl.asbl_club.asbl.Asbl;
 import club.asbl.asbl_club.user.User;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -15,6 +16,8 @@ interface MembershipRepository extends JpaRepository<Membership, Long> {
     List<Membership> findByAsbl(Asbl asbl);
 
     boolean existsByUserAndAsbl(User user, Asbl asbl);
+
+    Optional<Membership> findByUserAndAsbl(User user, Asbl asbl);
 
     boolean existsByUserAndAsblAndRole(User user, Asbl asbl, MembershipRole role);
 }

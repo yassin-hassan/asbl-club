@@ -171,5 +171,34 @@
     "TREASURER": "Penningmeester",
     "VIEWER": "Lezer",
     "MEMBER": "Lid"
+  },
+  "asbl": {
+    "createTitle": "Een VZW aanmaken",
+    "denomination": "Naam",
+    "bceNumber": "KBO-nummer",
+    "slug": "URL-identificatie",
+    "language": "Hoofdtaal",
+    "submit": "VZW aanmaken",
+    "submitting": "Aanmaken…",
+    "slugTaken": "Deze URL-identificatie is al in gebruik",
+    "bceTaken": "Dit KBO-nummer is al geregistreerd",
+    "bcePattern": "Het KBO-nummer moet de vorm 0123.456.789 hebben",
+    "slugPattern": "De URL-identificatie mag alleen kleine letters, cijfers en koppeltekens bevatten",
+    "slugHint": "Gebruikt in adressen: asbl.club/asbls/…",
+    "required": "Dit veld is verplicht."
+  },
+  "members": {
+    "title": "Leden",
+    "name": "Naam",
+    "email": "E-mailadres",
+    "role": "Rol",
+    "status": "Status",
+    "noAccess": "Je bent geen lid van deze vereniging."
+  },
+  "statuses": {
+    "PENDING": "In afwachting",
+    "ACTIVE": "Actief",
+    "EXCLUDED": "Uitgesloten",
+    "LEFT": "Vertrokken"
   }
 }

@@ -125,6 +125,8 @@ jobs:
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/asbl
           SPRING_DATASOURCE_USERNAME: asbl
           SPRING_DATASOURCE_PASSWORD: asbl
+          # The flows sign up several accounts per run from one address; the limiter has its own tests.
+          RATE_LIMIT_ENABLED: 'false'
 
       - name: Keep the report when it fails
         if: failure()

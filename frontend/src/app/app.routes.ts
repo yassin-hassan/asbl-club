@@ -12,6 +12,16 @@ export const routes: Routes = [
   { path: '', canMatch: [whenLoggedIn], loadComponent: () => import('./pages/dashboard/dashboard').then((m) => m.Dashboard) },
   { path: '', loadComponent: () => import('./pages/landing/landing').then((m) => m.Landing) },
   {
+    path: 'asbls/new',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/create-asbl/create-asbl').then((m) => m.CreateAsbl),
+  },
+  {
+    path: 'asbls/:slug/members',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/asbl-members/asbl-members').then((m) => m.AsblMembersPage),
+  },
+  {
     path: 'asbls/:slug/events',
     loadComponent: () => import('./pages/event-list/event-list').then((m) => m.EventList),
   },

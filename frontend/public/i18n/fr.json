@@ -171,5 +171,34 @@
     "TREASURER": "Trésorier",
     "VIEWER": "Lecteur",
     "MEMBER": "Membre"
+  },
+  "asbl": {
+    "createTitle": "Créer une ASBL",
+    "denomination": "Dénomination",
+    "bceNumber": "Numéro BCE",
+    "slug": "Identifiant d'URL",
+    "language": "Langue principale",
+    "submit": "Créer l'ASBL",
+    "submitting": "Création…",
+    "slugTaken": "Cet identifiant d'URL est déjà pris",
+    "bceTaken": "Ce numéro BCE est déjà enregistré",
+    "bcePattern": "Le numéro BCE doit être au format 0123.456.789",
+    "slugPattern": "L'identifiant d'URL ne peut contenir que des lettres minuscules, des chiffres et des tirets",
+    "slugHint": "Utilisé dans les adresses : asbl.club/asbls/…",
+    "required": "Ce champ est obligatoire."
+  },
+  "members": {
+    "title": "Membres",
+    "name": "Nom",
+    "email": "Adresse e-mail",
+    "role": "Rôle",
+    "status": "Statut",
+    "noAccess": "Vous n'êtes pas membre de cette association."
+  },
+  "statuses": {
+    "PENDING": "En attente",
+    "ACTIVE": "Actif",
+    "EXCLUDED": "Exclu",
+    "LEFT": "Parti"
   }
 }

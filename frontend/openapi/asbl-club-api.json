@@ -18,6 +18,9 @@
   }, {
     "name" : "Authentication",
     "description" : "Exchange credentials for tokens"
+  }, {
+    "name" : "Associations",
+    "description" : "Creating and managing associations (logged-in users)"
   } ],
   "paths" : {
     "/api/v1/auth/register" : {
@@ -113,6 +116,44 @@
             }
           }
         }
+      }
+    },
+    "/api/v1/asbls" : {
+      "post" : {
+        "tags" : [ "Associations" ],
+        "summary" : "Create an association; I become its administrator",
+        "operationId" : "createAsbl",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CreateAsblRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AsblResource"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "URL identifier or BCE number already taken",
+            "content" : {
+              "application/problem+json" : { }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
       }
     },
     "/api/v1/me" : {
@@ -283,6 +324,36 @@
         }
       }
     },
+    "/api/v1/asbls/{slug}/members" : {
+      "get" : {
+        "tags" : [ "Associations" ],
+        "summary" : "An association's members (members only)",
+        "operationId" : "getAsblMembers",
+        "parameters" : [ {
+          "name" : "slug",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AsblMembers"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      }
+    },
     "/api/v1/asbls/{slug}/events" : {
       "get" : {
         "tags" : [ "Public" ],
@@ -364,6 +435,45 @@
           },
           "password" : {
             "minLength" : 1,
+            "type" : "string"
+          }
+        }
+      },
+      "CreateAsblRequest" : {
+        "required" : [ "bceNumber", "defaultLanguage", "denomination", "slug" ],
+        "type" : "object",
+        "properties" : {
+          "denomination" : {
+            "maxLength" : 255,
+            "minLength" : 0,
+            "type" : "string"
+          },
+          "bceNumber" : {
+            "minLength" : 1,
+            "pattern" : "\\d{4}\\.\\d{3}\\.\\d{3}",
+            "type" : "string"
+          },
+          "slug" : {
+            "maxLength" : 255,
+            "minLength" : 0,
+            "pattern" : "[a-z0-9-]+",
+            "type" : "string"
+          },
+          "defaultLanguage" : {
+            "minLength" : 1,
+            "pattern" : "fr|nl|en",
+            "type" : "string"
+          }
+        }
+      },
+      "AsblResource" : {
+        "required" : [ "denomination", "slug" ],
+        "type" : "object",
+        "properties" : {
+          "slug" : {
+            "type" : "string"
+          },
+          "denomination" : {
             "type" : "string"
           }
         }
@@ -470,18 +580,6 @@
           }
         }
       },
-      "AsblResource" : {
-        "required" : [ "denomination", "slug" ],
-        "type" : "object",
-        "properties" : {
-          "slug" : {
-            "type" : "string"
-          },
-          "denomination" : {
-            "type" : "string"
-          }
-        }
-      },
       "PublicEvent" : {
         "required" : [ "asbl", "id", "startsAt", "tickets", "title" ],
         "type" : "object",
@@ -546,6 +644,52 @@
           "remaining" : {
             "type" : "integer",
             "format" : "int32"
+          }
+        }
+      },
+      "AsblMembers" : {
+        "required" : [ "denomination", "members", "myRole", "paymentsEnabled", "slug" ],
+        "type" : "object",
+        "properties" : {
+          "slug" : {
+            "type" : "string"
+          },
+          "denomination" : {
+            "type" : "string"
+          },
+          "myRole" : {
+            "type" : "string",
+            "description" : "The viewer's role in this association"
+          },
+          "paymentsEnabled" : {
+            "type" : "boolean",
+            "description" : "Whether payments can be received (Stripe connected)"
+          },
+          "members" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Member"
+            }
+          }
+        }
+      },
+      "Member" : {
+        "required" : [ "email", "name", "role", "status" ],
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "email" : {
+            "type" : "string"
+          },
+          "role" : {
+            "type" : "string",
+            "enum" : [ "ADMIN", "TREASURER", "VIEWER", "MEMBER" ]
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "PENDING", "ACTIVE", "EXCLUDED", "LEFT" ]
           }
         }
       },
