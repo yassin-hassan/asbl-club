@@ -268,5 +268,25 @@
     "providerDown": "The payment service is unreachable. Try again in a moment.",
     "stillProcessing": "Payment is being processed. It will be confirmed as soon as Stripe confirms it.",
     "backToEvent": "Back to the event"
+  },
+  "payments": {
+    "title": "Payments",
+    "intro": "Online payments (tickets, dues) go straight to the association's own Stripe account.",
+    "NOT_CONNECTED": "Not connected to Stripe yet: the association can't receive payments.",
+    "PENDING": "Stripe setup unfinished, or being reviewed by Stripe.",
+    "READY": "Payments enabled: the association can receive card payments.",
+    "status": {
+      "NOT_CONNECTED": "Not connected",
+      "PENDING": "Pending",
+      "READY": "Enabled"
+    },
+    "connect": "Connect Stripe",
+    "continue": "Continue on Stripe",
+    "manage": "Review my details on Stripe",
+    "redirecting": "Taking you to Stripe…",
+    "stripeDown": "Stripe can't be reached right now. Try again in a moment.",
+    "adminsOnly": "Only the association's administrators manage payments.",
+    "back": "Back to the association",
+    "link": "Payments"
   }
 }

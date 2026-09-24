@@ -37,6 +37,11 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/managed-event/managed-event').then((m) => m.ManagedEventPage),
   },
   {
+    path: 'asbls/:slug/manage/payments',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/payment-setup/payment-setup').then((m) => m.PaymentSetup),
+  },
+  {
     path: 'asbls/:slug/events',
     loadComponent: () => import('./pages/event-list/event-list').then((m) => m.EventList),
   },

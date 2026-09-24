@@ -51,10 +51,23 @@ public class StripeConnectService {
 
     @Transactional(readOnly = true)
     public boolean isReady(Asbl asbl) throws StripeException {
+        return status(asbl) == ConnectStatus.READY;
+    }
+
+    // Asked of Stripe each time: Stripe decides when an account may take payments (identity checks, bank
+    // details...), and that can change at any moment on its side.
+    @Transactional(readOnly = true)
+    public ConnectStatus status(Asbl asbl) throws StripeException {
         if (asbl.getStripeAccountId() == null) {
-            return false;
+            return ConnectStatus.NOT_CONNECTED;
         }
         Account account = stripe.accounts().retrieve(asbl.getStripeAccountId());
-        return Boolean.TRUE.equals(account.getChargesEnabled());
+        return Boolean.TRUE.equals(account.getChargesEnabled()) ? ConnectStatus.READY : ConnectStatus.PENDING;
+    }
+
+    public enum ConnectStatus {
+        NOT_CONNECTED, // no Stripe account yet
+        PENDING,       // account created, onboarding unfinished or under review at Stripe
+        READY          // Stripe accepts card payments for this association
     }
 }

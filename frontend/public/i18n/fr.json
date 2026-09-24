@@ -268,5 +268,25 @@
     "providerDown": "Le service de paiement est injoignable. Réessayez dans un instant.",
     "stillProcessing": "Paiement en cours de traitement. Il sera confirmé dès que nous recevrons la confirmation de Stripe.",
     "backToEvent": "Retour à l'événement"
+  },
+  "payments": {
+    "title": "Paiements",
+    "intro": "Les paiements en ligne (billets, cotisations) arrivent directement sur le compte Stripe de l'association.",
+    "NOT_CONNECTED": "Pas encore connecté à Stripe : l'association ne peut pas encore recevoir de paiements.",
+    "PENDING": "Configuration Stripe pas terminée, ou en cours de vérification par Stripe.",
+    "READY": "Paiements activés : l'association peut recevoir des paiements par carte.",
+    "status": {
+      "NOT_CONNECTED": "Non connecté",
+      "PENDING": "En attente",
+      "READY": "Activé"
+    },
+    "connect": "Connecter Stripe",
+    "continue": "Continuer sur Stripe",
+    "manage": "Revoir mes informations sur Stripe",
+    "redirecting": "Redirection vers Stripe…",
+    "stripeDown": "Stripe est injoignable pour le moment. Réessayez dans un instant.",
+    "adminsOnly": "Seuls les administrateurs de l'association gèrent les paiements.",
+    "back": "Retour à l'association",
+    "link": "Paiements"
   }
 }

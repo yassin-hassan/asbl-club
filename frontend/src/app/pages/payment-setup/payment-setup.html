@@ -1,0 +1,38 @@
+<div class="page">
+  <h1>{{ 'payments.title' | transloco }}</h1>
+
+  @if (setup(); as setup) {
+    <p class="muted">{{ setup.denomination }}</p>
+    <section class="box">
+      <h2>
+        Stripe
+        <span class="tag" [class.ok]="setup.status === 'READY'" [class.warm]="setup.status === 'PENDING'">
+          {{ 'payments.status.' + setup.status | transloco }}
+        </span>
+      </h2>
+      <p>{{ 'payments.' + setup.status | transloco }}</p>
+      <p>{{ 'payments.intro' | transloco }}</p>
+      @switch (setup.status) {
+        @case ('NOT_CONNECTED') {
+          <button mat-flat-button type="button" (click)="goToStripe()" [disabled]="redirecting()">{{ 'payments.connect' | transloco }}</button>
+        }
+        @case ('PENDING') {
+          <button mat-flat-button type="button" (click)="goToStripe()" [disabled]="redirecting()">{{ 'payments.continue' | transloco }}</button>
+        }
+        @default {
+          <button mat-stroked-button type="button" (click)="goToStripe()" [disabled]="redirecting()">{{ 'payments.manage' | transloco }}</button>
+        }
+      }
+    </section>
+  }
+
+  @if (redirecting()) {
+    <p class="hint" role="status">{{ 'payments.redirecting' | transloco }}</p>
+  } @else if (error(); as error) {
+    <p class="error" role="alert">{{ error | transloco }}</p>
+  } @else if (!setup()) {
+    <mat-spinner diameter="40" />
+  }
+
+  <a class="back" [routerLink]="['/asbls', slug, 'members']">{{ 'payments.back' | transloco }}</a>
+</div>
