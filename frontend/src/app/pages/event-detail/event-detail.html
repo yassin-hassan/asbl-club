@@ -1,22 +1,35 @@
-<p><a routerLink="/">← home</a></p>
+<a mat-button routerLink="/"><mat-icon>arrow_back</mat-icon> Home</a>
 
 @if (loading()) {
-  <p>Loading…</p>
+  <mat-spinner diameter="40" />
 } @else if (error()) {
-  <p class="error">{{ error() }}</p>
+  <p class="error" role="alert">{{ error() }}</p>
 } @else {
-  <h1>{{ event()!.title }}</h1>
-  <p><em>{{ event()!.startsAt | date: 'full' }}</em></p>
-  <p>{{ event()!.description }}</p>
-
-  <h2>Seat availability <small>(auto-refreshes every 5s)</small></h2>
-  @if (availability().length === 0) {
-    <p>No ticket categories, or none remaining.</p>
-  } @else {
-    <ul>
-      @for (a of availability(); track a.categoryId) {
-        <li>Category {{ a.categoryId }}: {{ a.remaining }} left</li>
+  <mat-card appearance="outlined">
+    <mat-card-header>
+      <mat-card-title>{{ event()!.title }}</mat-card-title>
+      <mat-card-subtitle>{{ event()!.startsAt | date: 'full' }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      @if (event()!.description) {
+        <p>{{ event()!.description }}</p>
       }
-    </ul>
-  }
+
+      <h2>Seat availability</h2>
+      <p class="hint">Updates every 5 seconds.</p>
+      @if (availability().length === 0) {
+        <p>No ticket categories, or none remaining.</p>
+      } @else {
+        <mat-list>
+          @for (a of availability(); track a.categoryId) {
+            <mat-list-item>
+              <mat-icon matListItemIcon>confirmation_number</mat-icon>
+              <span matListItemTitle>Category {{ a.categoryId }}</span>
+              <span matListItemLine>{{ a.remaining }} left</span>
+            </mat-list-item>
+          }
+        </mat-list>
+      }
+    </mat-card-content>
+  </mat-card>
 }

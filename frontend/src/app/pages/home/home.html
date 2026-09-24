@@ -1,11 +1,18 @@
-<h1>ASBL Club — events</h1>
-<p>Enter an association slug to view its public events.</p>
-
-<p>
-  <input
-    [value]="slug()"
-    (input)="slug.set($any($event.target).value)"
-    placeholder="association slug"
-  />
-  <a [routerLink]="['/asbls', slug(), 'events']">View events →</a>
-</p>
+<mat-card appearance="outlined">
+  <mat-card-header>
+    <mat-card-title>Public events</mat-card-title>
+    <mat-card-subtitle>Enter an association's short name to see its public events.</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="row">
+      <mat-form-field appearance="outline" class="grow">
+        <mat-label>Association</mat-label>
+        <input matInput [value]="slug()" (input)="slug.set($any($event.target).value)" />
+      </mat-form-field>
+      <a mat-flat-button [routerLink]="['/asbls', slug(), 'events']" [disabled]="!slug()">
+        View events
+        <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+      </a>
+    </div>
+  </mat-card-content>
+</mat-card>

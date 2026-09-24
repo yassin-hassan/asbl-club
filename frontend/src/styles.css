@@ -1,25 +1,21 @@
-/* Barebones global styles — deliberately minimal (frontend is a thin client). */
-:root {
-  font-family: system-ui, -apple-system, sans-serif;
-  line-height: 1.5;
-  color: #1f2937;
+/* Global layout only. Colours, typography and components come from the Material theme
+   (material-theme.scss); pages use Material components rather than custom CSS. */
+.page {
+  max-width: 960px;
+  margin: 24px auto;
+  padding: 0 16px;
 }
-.container {
-  max-width: 720px;
-  margin: 2rem auto;
-  padding: 0 1rem;
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
-a {
-  color: #2563eb;
-}
+
 .error {
-  color: #b91c1c;
+  color: var(--mat-sys-error);
 }
-input {
-  padding: 0.4rem;
-  margin-right: 0.5rem;
-}
-small {
-  color: #6b7280;
-  font-weight: normal;
+
+a {
+  color: var(--mat-sys-primary);
 }

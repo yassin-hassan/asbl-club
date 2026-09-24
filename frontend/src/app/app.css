@@ -1,0 +1,23 @@
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+}
+
+.toolbar-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.brand {
+  font: var(--mat-sys-title-large);
+}
+
+.spacer {
+  flex: 1;
+}
