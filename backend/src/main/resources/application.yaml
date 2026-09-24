@@ -48,4 +48,8 @@ springdoc:
   paths-to-match: /api/**
   # Describe responses as JSON (instead of */*), so generated clients parse them.
   default-produces-media-type: application/json
+  # springdoc 3 writes OpenAPI 3.1 by default; the Angular client generator's 3.1 support is still beta,
+  # so the contract stays on 3.0 until it isn't.
+  api-docs:
+    version: openapi_3_0
 
