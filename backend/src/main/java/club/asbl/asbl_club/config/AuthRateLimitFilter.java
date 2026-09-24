@@ -44,6 +44,7 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
             "/api/v1/auth/refresh", 30); // every page load of the Angular app refreshes once
 
     private final boolean enabled;
+    private final ProblemResponses problems;
 
     // Bounded and expiring: a plain map would grow with every IP ever seen, which an attacker
     // could use to exhaust memory.
@@ -52,8 +53,9 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
             .expireAfterAccess(Duration.ofMinutes(10))
             .build();
 
-    AuthRateLimitFilter(RateLimitProperties properties) {
+    AuthRateLimitFilter(RateLimitProperties properties, ProblemResponses problems) {
         this.enabled = properties.enabled();
+        this.problems = problems;
     }
 
     @Override
@@ -74,7 +76,11 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
         }
         long retryAfterSeconds = TimeUnit.NANOSECONDS.toSeconds(probe.getNanosToWaitForRefill()) + 1;
         response.setHeader(HttpHeaders.RETRY_AFTER, String.valueOf(retryAfterSeconds));
-        response.sendError(HttpStatus.TOO_MANY_REQUESTS.value());
+        if (path.startsWith("/api/")) {
+            problems.write(request, response, HttpStatus.TOO_MANY_REQUESTS, "Too many attempts. Try again later.");
+        } else {
+            response.sendError(HttpStatus.TOO_MANY_REQUESTS.value()); // Thymeleaf pages: the HTML error page
+        }
     }
 
     // The decoded, normalised path the application routes on. The raw URI would let "/api/v1/auth/%6cogin"

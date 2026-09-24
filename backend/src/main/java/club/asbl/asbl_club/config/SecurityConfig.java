@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,7 +13,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
+import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -23,7 +28,9 @@ public class SecurityConfig {
     @Bean
     @Order(1)
     SecurityFilterChain apiSecurityFilterChain(HttpSecurity http,
-            JwtAuthenticationConverter jwtAuthenticationConverter) throws Exception {
+            JwtAuthenticationConverter jwtAuthenticationConverter, ProblemResponses problems) throws Exception {
+        AuthenticationEntryPoint notAuthenticated = problemEntryPoint(problems);
+        AccessDeniedHandler notAllowed = problemAccessDeniedHandler(problems);
         http
                 .securityMatcher("/api/**")
                 .cors(cors -> cors.configurationSource(apiCorsConfigurationSource()))
@@ -38,8 +45,31 @@ public class SecurityConfig {
                 // Reads "Authorization: Bearer <jwt>" and verifies it with the JwtDecoder bean (JwtConfig),
                 // then maps its "roles" claim to authorities.
                 .oauth2ResourceServer(resourceServer -> resourceServer
-                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter)));
+                        .authenticationEntryPoint(notAuthenticated)
+                        .accessDeniedHandler(notAllowed)
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter)))
+                // 401/403 decided by the security layer get the same Problem Details body as controller errors.
+                .exceptionHandling(handling -> handling
+                        .authenticationEntryPoint(notAuthenticated)
+                        .accessDeniedHandler(notAllowed));
         return http.build();
+    }
+
+    // Keeps the standard Bearer behaviour (status + WWW-Authenticate header), then adds the error body.
+    private static AuthenticationEntryPoint problemEntryPoint(ProblemResponses problems) {
+        BearerTokenAuthenticationEntryPoint bearer = new BearerTokenAuthenticationEntryPoint();
+        return (request, response, exception) -> {
+            bearer.commence(request, response, exception);
+            problems.write(request, response, HttpStatus.UNAUTHORIZED, "Authentication is required.");
+        };
+    }
+
+    private static AccessDeniedHandler problemAccessDeniedHandler(ProblemResponses problems) {
+        BearerTokenAccessDeniedHandler bearer = new BearerTokenAccessDeniedHandler();
+        return (request, response, exception) -> {
+            bearer.handle(request, response, exception);
+            problems.write(request, response, HttpStatus.FORBIDDEN, "You are not allowed to do this.");
+        };
     }
 
     private CorsConfigurationSource apiCorsConfigurationSource() {
