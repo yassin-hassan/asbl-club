@@ -3,7 +3,6 @@ package club.asbl.asbl_club.audit;
 import club.asbl.asbl_club.asbl.Asbl;
 import club.asbl.asbl_club.user.User;
 import club.asbl.asbl_club.user.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -89,11 +88,8 @@ public class AuditService {
         if (!(RequestContextHolder.getRequestAttributes() instanceof ServletRequestAttributes attributes)) {
             return null;
         }
-        HttpServletRequest request = attributes.getRequest();
-        String forwarded = request.getHeader("X-Forwarded-For");
-        if (forwarded != null && !forwarded.isBlank()) {
-            return forwarded.split(",")[0].trim();
-        }
-        return request.getRemoteAddr();
+        // Already the real client IP: the server resolves X-Forwarded-For from trusted proxies only
+        // (server.forward-headers-strategy). Reading the header here would let any client fake it.
+        return attributes.getRequest().getRemoteAddr();
     }
 }

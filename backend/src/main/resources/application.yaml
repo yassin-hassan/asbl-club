@@ -1,5 +1,9 @@
 server:
   port: ${PORT:8080}
+  # Behind the hosting platform's proxy: take the client IP and scheme from X-Forwarded-* headers, but
+  # only when the request comes from an internal (private-range) proxy address, so clients can't fake them.
+  # Needed for per-IP rate limiting, correct audit IPs, and HTTPS-aware redirects and HSTS.
+  forward-headers-strategy: native
 
 spring:
   application:
@@ -36,6 +40,9 @@ stripe:
   secret-key: ${STRIPE_SECRET_KEY:}
   publishable-key: ${STRIPE_PUBLISHABLE_KEY:}
   webhook-secret: ${STRIPE_WEBHOOK_SECRET:}
+
+rate-limit:
+  enabled: ${RATE_LIMIT_ENABLED:true}
 
 springdoc:
   paths-to-match: /api/**
