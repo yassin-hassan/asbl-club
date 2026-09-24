@@ -7,7 +7,7 @@
 } @else {
   <mat-card appearance="outlined">
     <mat-card-header>
-      <mat-card-title>{{ event()!.title }}</mat-card-title>
+      <h1 matCardTitle>{{ event()!.title }}</h1>
       <mat-card-subtitle>{{ event()!.startsAt | date: 'full' : undefined : lang() }}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
