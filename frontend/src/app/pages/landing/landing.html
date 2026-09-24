@@ -1,0 +1,54 @@
+<section class="hero">
+  <div>
+    <span class="badge">{{ 'landing.hero.badge' | transloco }}</span>
+    <!-- The title contains a little markup (<br>, <b>); Angular sanitises [innerHTML], so it can't carry scripts. -->
+    <h1 [innerHTML]="'landing.hero.title' | transloco"></h1>
+    <p class="lead">{{ 'landing.hero.lead' | transloco }}</p>
+    <div class="actions">
+      <a mat-flat-button routerLink="/register">{{ 'landing.hero.ctaPrimary' | transloco }}</a>
+      <a mat-stroked-button routerLink="/login">{{ 'landing.hero.ctaSecondary' | transloco }}</a>
+    </div>
+    <p class="hint">{{ 'landing.hero.trust' | transloco }}</p>
+  </div>
+</section>
+
+<section class="block">
+  <p class="eyebrow">{{ 'landing.features.eyebrow' | transloco }}</p>
+  <h2>{{ 'landing.features.title' | transloco }}</h2>
+  <p class="hint">{{ 'landing.features.sub' | transloco }}</p>
+  <div class="grid">
+    @for (feature of features; track feature.key) {
+      <mat-card appearance="outlined">
+        <mat-card-content>
+          <mat-icon class="feature-icon">{{ feature.icon }}</mat-icon>
+          <h3>{{ 'landing.' + feature.key + '.title' | transloco }}</h3>
+          <p>{{ 'landing.' + feature.key + '.desc' | transloco }}</p>
+        </mat-card-content>
+      </mat-card>
+    }
+  </div>
+</section>
+
+<section class="block">
+  <p class="eyebrow">{{ 'landing.steps.eyebrow' | transloco }}</p>
+  <h2>{{ 'landing.steps.title' | transloco }}</h2>
+  <ol class="grid steps">
+    @for (step of steps; track step; let i = $index) {
+      <li>
+        <span class="step-number">{{ i + 1 }}</span>
+        <h3>{{ 'landing.' + step + '.title' | transloco }}</h3>
+        <p>{{ 'landing.' + step + '.desc' | transloco }}</p>
+      </li>
+    }
+  </ol>
+</section>
+
+<section class="block">
+  <app-event-search />
+</section>
+
+<section class="block cta">
+  <h2>{{ 'landing.cta.title' | transloco }}</h2>
+  <p>{{ 'landing.cta.sub' | transloco }}</p>
+  <a mat-flat-button routerLink="/register">{{ 'landing.cta.button' | transloco }}</a>
+</section>

@@ -1,6 +1,16 @@
 {
-  "lang": { "fr": "Français", "nl": "Nederlands", "en": "English", "choose": "Taal" },
-  "nav": { "login": "Aanmelden", "account": "Mijn account", "logout": "Afmelden" },
+  "lang": {
+    "fr": "Français",
+    "nl": "Nederlands",
+    "en": "English",
+    "choose": "Taal"
+  },
+  "nav": {
+    "main": "Hoofdnavigatie",
+    "login": "Aanmelden",
+    "account": "Mijn account",
+    "logout": "Afmelden"
+  },
   "home": {
     "title": "Openbare evenementen",
     "subtitle": "Geef de korte naam van een vereniging in om haar openbare evenementen te zien.",
@@ -17,7 +27,11 @@
     "passwordRequired": "Geef je wachtwoord in.",
     "error": "Ongeldig e-mailadres of wachtwoord"
   },
-  "account": { "title": "Mijn account", "id": "ID", "roles": "Rollen" },
+  "account": {
+    "title": "Mijn account",
+    "id": "ID",
+    "roles": "Rollen"
+  },
   "events": {
     "back": "Home",
     "title": "Evenementen van \"{{ slug }}\"",
@@ -38,5 +52,85 @@
     "notFound": "Niet gevonden.",
     "forbidden": "Je hebt hier geen toegang toe.",
     "tooManyRequests": "Te veel pogingen. Probeer het zo meteen opnieuw."
+  },
+  "error": {
+    "404": {
+      "title": "Pagina niet gevonden",
+      "body": "De pagina die u zoekt bestaat niet of is verplaatst."
+    }
+  },
+  "footer": {
+    "tagline": "Het gratis beheerplatform voor Belgische vzw's en clubs.",
+    "legal": "Juridisch"
+  },
+  "legal": {
+    "notice": {
+      "title": "Wettelijke vermeldingen",
+      "body": "asbl.club is een beheerplatform voor Belgische verenigingen zonder winstoogmerk. Deze site wordt uitgegeven in het kader van een eindwerk en is een prototype. De definitieve uitgeversgegevens en de identiteit van de uitgever en de host worden vóór elke ingebruikname gepreciseerd."
+    },
+    "privacy": {
+      "title": "Privacy (AVG)",
+      "body": "asbl.club verwerkt persoonsgegevens met inachtneming van de Algemene Verordening Gegevensbescherming. De verzamelde gegevens dienen uitsluitend voor het beheer van accounts, lidmaatschappen en betalingen. U heeft recht op inzage, verbetering en verwijdering van uw gegevens, uit te oefenen via uw account of op eenvoudig verzoek."
+    },
+    "cookies": {
+      "title": "Cookies",
+      "body": "asbl.club gebruikt uitsluitend technische cookies die nodig zijn voor de werking van de site, met name om uw sessie te behouden en uw taal te onthouden. Er worden geen advertentie-trackingcookies geplaatst zonder uw toestemming."
+    }
+  },
+  "landing": {
+    "title": "asbl.club, het platform voor Belgische verenigingen",
+    "hero": {
+      "badge": "Gratis voor verenigingen, zonder abonnement",
+      "title": "Beheer uw vzw,<br><b>eenvoudig en gratis.</b>",
+      "lead": "Ledenregister, online lidgelden, evenementen, ticketverkoop en giften, vanuit een beveiligde back-office in het Frans, Nederlands en Engels.",
+      "ctaPrimary": "Mijn vzw gratis aanmaken",
+      "ctaSecondary": "Inloggen",
+      "trust": "Betalingen via Stripe en Bancontact, geen vaste kosten"
+    },
+    "panel": {
+      "title": "Lidgelden 2026"
+    },
+    "features": {
+      "eyebrow": "Alles-in-één",
+      "title": "Een platform gemaakt voor vrijwilligers",
+      "sub": "U hoeft niet vertrouwd te zijn met informatica, asbl.club vervangt Excel-bestanden en handmatige bankafpuntingen."
+    },
+    "feature1": {
+      "title": "Leden en lidgelden",
+      "desc": "Actueel register, online betaling, automatische herinneringen en pdf-ontvangstbewijzen."
+    },
+    "feature2": {
+      "title": "Evenementen en ticketverkoop",
+      "desc": "Tickets, tariefcategorieën en aanwezigheidscontrole."
+    },
+    "feature3": {
+      "title": "Giften en ontvangstbewijzen",
+      "desc": "Gepersonaliseerde giftpagina, anonieme giften en fiscale attesten."
+    },
+    "feature4": {
+      "title": "Veiligheid en audit",
+      "desc": "Beveiligde back-office, auditlogboek en AVG-conformiteit."
+    },
+    "steps": {
+      "eyebrow": "Eenvoudig",
+      "title": "Hoe werkt het?"
+    },
+    "step1": {
+      "title": "Maak uw vzw aan",
+      "desc": "Vul uw wettelijke gegevens in en koppel uw rekening via Stripe."
+    },
+    "step2": {
+      "title": "Nodig uw leden uit",
+      "desc": "Importeer uw lijst of stuur uitnodigingen per e-mail."
+    },
+    "step3": {
+      "title": "Ontvang online",
+      "desc": "Lidgelden, tickets en giften komen rechtstreeks op uw rekening."
+    },
+    "cta": {
+      "title": "Klaar om het beheer van uw vereniging te vereenvoudigen?",
+      "sub": "Gratis, zonder verplichting. U betaalt enkel een commissie op verwerkte betalingen.",
+      "button": "Mijn vzw gratis aanmaken"
+    }
   }
 }

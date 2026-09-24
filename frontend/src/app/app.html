@@ -1,5 +1,5 @@
 <mat-toolbar class="toolbar">
-  <nav class="toolbar-content">
+  <nav class="toolbar-content" [attr.aria-label]="'nav.main' | transloco">
     <a mat-button routerLink="/" class="brand">
       <mat-icon>groups</mat-icon>
       ASBL Club
@@ -35,3 +35,14 @@
 <main class="page">
   <router-outlet />
 </main>
+
+<footer class="footer">
+  <div class="footer-content">
+    <p>{{ 'footer.tagline' | transloco }}</p>
+    <nav [attr.aria-label]="'footer.legal' | transloco">
+      <a routerLink="/legal">{{ 'legal.notice.title' | transloco }}</a>
+      <a routerLink="/privacy">{{ 'legal.privacy.title' | transloco }}</a>
+      <a routerLink="/cookies">{{ 'legal.cookies.title' | transloco }}</a>
+    </nav>
+  </div>
+</footer>

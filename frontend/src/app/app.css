@@ -21,3 +21,24 @@
 .spacer {
   flex: 1;
 }
+
+.footer {
+  margin-top: 48px;
+  padding: 24px 16px;
+  border-top: 1px solid var(--mat-sys-outline-variant);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.footer-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 16px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.footer nav {
+  display: flex;
+  gap: 16px;
+}

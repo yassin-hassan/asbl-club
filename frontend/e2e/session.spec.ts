@@ -25,7 +25,7 @@ test('login, stay logged in across a reload, log out', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'My account' })).toBeVisible();
 
   await page.getByRole('button', { name: 'Log out' }).click();
-  await expect(page.getByRole('link', { name: 'Log in' })).toBeVisible();
+  await expect(page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Log in' })).toBeVisible();
 
   // Logged out for real: the session was revoked on the server, a reload doesn't bring it back.
   await page.goto('/account');

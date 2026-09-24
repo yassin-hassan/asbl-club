@@ -1,6 +1,16 @@
 {
-  "lang": { "fr": "Français", "nl": "Nederlands", "en": "English", "choose": "Langue" },
-  "nav": { "login": "Se connecter", "account": "Mon compte", "logout": "Se déconnecter" },
+  "lang": {
+    "fr": "Français",
+    "nl": "Nederlands",
+    "en": "English",
+    "choose": "Langue"
+  },
+  "nav": {
+    "main": "Navigation principale",
+    "login": "Se connecter",
+    "account": "Mon compte",
+    "logout": "Se déconnecter"
+  },
   "home": {
     "title": "Événements publics",
     "subtitle": "Entrez le nom court d'une association pour voir ses événements publics.",
@@ -17,7 +27,11 @@
     "passwordRequired": "Entrez votre mot de passe.",
     "error": "Adresse e-mail ou mot de passe invalide"
   },
-  "account": { "title": "Mon compte", "id": "Identifiant", "roles": "Rôles" },
+  "account": {
+    "title": "Mon compte",
+    "id": "Identifiant",
+    "roles": "Rôles"
+  },
   "events": {
     "back": "Accueil",
     "title": "Événements de « {{ slug }} »",
@@ -38,5 +52,85 @@
     "notFound": "Introuvable.",
     "forbidden": "Vous n'avez pas accès à ceci.",
     "tooManyRequests": "Trop de tentatives. Réessayez dans un instant."
+  },
+  "error": {
+    "404": {
+      "title": "Page introuvable",
+      "body": "La page que vous cherchez n'existe pas ou a été déplacée."
+    }
+  },
+  "footer": {
+    "tagline": "La plateforme gratuite de gestion pour les ASBL et clubs belges.",
+    "legal": "Légal"
+  },
+  "legal": {
+    "notice": {
+      "title": "Mentions légales",
+      "body": "asbl.club est une plateforme de gestion pour les associations sans but lucratif belges. Ce site est édité dans le cadre d'un projet de fin d'études et constitue un prototype. Les informations d'édition définitives, l'identité de l'éditeur et celle de l'hébergeur seront précisées avant toute mise en production."
+    },
+    "privacy": {
+      "title": "Confidentialité (RGPD)",
+      "body": "asbl.club traite les données personnelles dans le respect du Règlement général sur la protection des données. Les données collectées servent uniquement à la gestion des comptes, des adhésions et des paiements. Vous disposez d'un droit d'accès, de rectification et de suppression de vos données, exerçable depuis votre espace compte ou sur simple demande."
+    },
+    "cookies": {
+      "title": "Cookies",
+      "body": "asbl.club utilise uniquement des cookies techniques nécessaires au fonctionnement du site, notamment pour maintenir votre session et mémoriser votre langue. Aucun cookie de suivi publicitaire n'est déposé sans votre consentement."
+    }
+  },
+  "landing": {
+    "title": "asbl.club, la plateforme des associations belges",
+    "hero": {
+      "badge": "Gratuit pour les associations, sans abonnement",
+      "title": "Gérez votre ASBL,<br><b>simplement et gratuitement.</b>",
+      "lead": "Registre des membres, cotisations en ligne, événements, billetterie et dons, depuis un back-office sécurisé en français, néerlandais et anglais.",
+      "ctaPrimary": "Créer mon ASBL gratuitement",
+      "ctaSecondary": "Se connecter",
+      "trust": "Paiements via Stripe et Bancontact, aucun frais fixe"
+    },
+    "panel": {
+      "title": "Cotisations 2026"
+    },
+    "features": {
+      "eyebrow": "Tout-en-un",
+      "title": "Une plateforme pensée pour les bénévoles",
+      "sub": "Pas besoin d'être à l'aise avec l'informatique, asbl.club remplace les fichiers Excel et les rapprochements bancaires manuels."
+    },
+    "feature1": {
+      "title": "Membres et cotisations",
+      "desc": "Registre à jour, paiement en ligne, rappels automatiques et reçus PDF."
+    },
+    "feature2": {
+      "title": "Événements et billetterie",
+      "desc": "Billets, catégories tarifaires et contrôle des présences."
+    },
+    "feature3": {
+      "title": "Dons et reçus",
+      "desc": "Page de don personnalisée, dons anonymes et attestations fiscales."
+    },
+    "feature4": {
+      "title": "Sécurité et audit",
+      "desc": "Back-office sécurisé, journal d'audit et conformité RGPD."
+    },
+    "steps": {
+      "eyebrow": "Simple",
+      "title": "Comment ça marche ?"
+    },
+    "step1": {
+      "title": "Créez votre ASBL",
+      "desc": "Renseignez vos informations légales et connectez votre compte via Stripe."
+    },
+    "step2": {
+      "title": "Invitez vos membres",
+      "desc": "Importez votre liste ou envoyez des invitations par e-mail."
+    },
+    "step3": {
+      "title": "Encaissez en ligne",
+      "desc": "Cotisations, billets et dons arrivent directement sur votre compte."
+    },
+    "cta": {
+      "title": "Prêt à simplifier la gestion de votre association ?",
+      "sub": "Gratuit, sans engagement. Vous ne payez qu'une commission sur les paiements traités.",
+      "button": "Créer mon ASBL gratuitement"
+    }
   }
 }
