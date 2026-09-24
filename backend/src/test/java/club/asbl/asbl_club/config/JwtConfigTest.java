@@ -63,12 +63,24 @@ class JwtConfigTest {
         assertThatThrownBy(() -> decoder.decode(token)).isInstanceOf(JwtException.class);
     }
 
+    @Test
+    void rejectsATokenFromAnotherIssuer() {
+        String token = encode(encoder, "someone-else", "alice@example.com", Instant.now().plus(15, ChronoUnit.MINUTES));
+
+        assertThatThrownBy(() -> decoder.decode(token)).isInstanceOf(JwtException.class);
+    }
+
     private String encode(String subject, Instant expiresAt) {
         return encode(encoder, subject, expiresAt);
     }
 
     private static String encode(JwtEncoder encoder, String subject, Instant expiresAt) {
+        return encode(encoder, JwtConfig.ISSUER, subject, expiresAt);
+    }
+
+    private static String encode(JwtEncoder encoder, String issuer, String subject, Instant expiresAt) {
         JwtClaimsSet claims = JwtClaimsSet.builder()
+                .issuer(issuer)
                 .subject(subject)
                 .issuedAt(expiresAt.minus(15, ChronoUnit.MINUTES))
                 .expiresAt(expiresAt)

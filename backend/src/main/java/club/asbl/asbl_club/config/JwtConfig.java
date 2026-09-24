@@ -9,11 +9,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 
 @Configuration
 public class JwtConfig {
+
+    // Written into every token as "iss" and required by the decoder.
+    public static final String ISSUER = "asbl-club";
 
     // Temporary: a new key pair on every start, so tokens don't survive a restart and aren't
     // shared between instances. Replaced by a configured key later (roadmap Phase 2, slice 8).
@@ -38,8 +42,11 @@ public class JwtConfig {
 
     @Bean
     JwtDecoder jwtDecoder(KeyPair jwtSigningKeyPair) {
-        return NimbusJwtDecoder
+        NimbusJwtDecoder decoder = NimbusJwtDecoder
                 .withPublicKey((RSAPublicKey) jwtSigningKeyPair.getPublic())
                 .build();
+        // Default checks (exp / nbf) plus: "iss" must be ours.
+        decoder.setJwtValidator(JwtValidators.createDefaultWithIssuer(ISSUER));
+        return decoder;
     }
 }
