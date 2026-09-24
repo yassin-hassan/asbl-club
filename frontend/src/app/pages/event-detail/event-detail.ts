@@ -1,49 +1,65 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { DatePipe } from '@angular/common';
+import { CurrencyPipe, DatePipe, DOCUMENT } from '@angular/common';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatListModule } from '@angular/material/list';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTableModule } from '@angular/material/table';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { catchError, interval, of, startWith, switchMap } from 'rxjs';
-import { EventFeedItem, PublicService, SeatAvailability } from '../../api/generated';
+import { catchError, interval, of, switchMap } from 'rxjs';
+import { PublicEvent, PublicService, PublicTicket, SeatAvailability } from '../../api/generated';
 import { errorMessageKey } from '../../services/problem';
 import { LanguageService } from '../../i18n/language';
 
 @Component({
   selector: 'app-event-detail',
-  imports: [RouterLink, DatePipe, TranslocoPipe, MatButtonModule, MatCardModule, MatIconModule, MatListModule, MatProgressSpinnerModule],
+  imports: [
+    RouterLink, DatePipe, CurrencyPipe, TranslocoPipe,
+    MatButtonModule, MatCardModule, MatIconModule, MatProgressSpinnerModule, MatTableModule,
+  ],
   templateUrl: './event-detail.html',
-  styles: '.hint { color: var(--mat-sys-on-surface-variant); }',
+  styleUrl: './event-detail.css',
 })
 export class EventDetail {
   private route = inject(ActivatedRoute);
   private api = inject(PublicService);
+  private document = inject(DOCUMENT);
   readonly lang = inject(LanguageService).active;
 
   readonly eventId = Number(this.route.snapshot.paramMap.get('id'));
 
-  readonly event = signal<EventFeedItem | null>(null);
+  readonly event = signal<PublicEvent | null>(null);
   readonly error = signal<string | null>(null);
   readonly loading = computed(() => this.event() === null && this.error() === null);
 
-  // The RxJS fundamental worth learning: poll availability every 5s.
-  // switchMap cancels any in-flight request when the next tick fires, so a
-  // slow response can never land after a newer one. startWith(0) fires immediately.
-  // toSignal() bridges the Observable into a signal the template can read.
-  readonly availability = toSignal(
+  // The event arrives with its tickets and remaining seats; after that, seats are polled every 5 s.
+  // switchMap drops a slow response when the next tick fires, so an old count never overwrites a newer one.
+  private readonly liveSeats = toSignal(
     interval(5000).pipe(
-      startWith(0),
       switchMap(() =>
-        this.api
-          .getEventAvailability(this.eventId)
-          .pipe(catchError(() => of([] as SeatAvailability[]))),
+        this.api.getEventAvailability(this.eventId).pipe(catchError(() => of(null as SeatAvailability[] | null))),
       ),
     ),
-    { initialValue: [] as SeatAvailability[] },
+    { initialValue: null },
+  );
+
+  // Ticket names and prices from the event, remaining seats from the latest poll when there is one.
+  readonly tickets = computed<PublicTicket[]>(() => {
+    const tickets = this.event()?.tickets ?? [];
+    const live = new Map((this.liveSeats() ?? []).map((seat) => [seat.categoryId, seat.remaining]));
+    return tickets.map((ticket) => ({ ...ticket, remaining: live.get(ticket.id) ?? ticket.remaining }));
+  });
+  readonly columns = ['label', 'price', 'remaining'];
+
+  // Share links point at this page; the text is encoded so titles with spaces or "&" survive.
+  readonly shareUrl = computed(() => this.document.location.href);
+  readonly whatsAppLink = computed(
+    () => `https://wa.me/?text=${encodeURIComponent(`${this.event()?.title ?? ''} ${this.shareUrl()}`)}`,
+  );
+  readonly emailLink = computed(
+    () => `mailto:?subject=${encodeURIComponent(this.event()?.title ?? '')}&body=${encodeURIComponent(this.shareUrl())}`,
   );
 
   constructor() {

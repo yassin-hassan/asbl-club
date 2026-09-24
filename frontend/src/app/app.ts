@@ -3,7 +3,6 @@ import { UpperCasePipe } from '@angular/common';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { AuthService } from './services/auth';
@@ -14,7 +13,7 @@ import { LANGUAGES, LanguageService } from './i18n/language';
   selector: 'app-root',
   imports: [
     RouterOutlet, RouterLink, UpperCasePipe, TranslocoPipe,
-    MatToolbarModule, MatButtonModule, MatIconModule, MatMenuModule,
+    MatToolbarModule, MatButtonModule, MatIconModule,
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'

@@ -21,6 +21,8 @@ import { AsblResource } from '../model/asblResource';
 // @ts-ignore
 import { EventFeedItem } from '../model/eventFeedItem';
 // @ts-ignore
+import { PublicEvent } from '../model/publicEvent';
+// @ts-ignore
 import { SeatAvailability } from '../model/seatAvailability';
 
 // @ts-ignore
@@ -96,16 +98,16 @@ export class PublicService extends BaseService {
     }
 
     /**
-     * Get a public event by id
+     * Get a public event with its association, location and tickets
      * @endpoint get /api/v1/events/{eventId}
      * @param eventId 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public getEvent(eventId: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<EventFeedItem>;
-    public getEvent(eventId: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<EventFeedItem>>;
-    public getEvent(eventId: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<EventFeedItem>>;
+    public getEvent(eventId: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PublicEvent>;
+    public getEvent(eventId: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PublicEvent>>;
+    public getEvent(eventId: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PublicEvent>>;
     public getEvent(eventId: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (eventId === null || eventId === undefined) {
             throw new Error('Required parameter eventId was null or undefined when calling getEvent.');
@@ -138,7 +140,7 @@ export class PublicService extends BaseService {
 
         let localVarPath = `/api/v1/events/${this.configuration.encodeParam({name: "eventId", value: eventId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int64"})}`;
         const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<EventFeedItem>('get', `${basePath}${localVarPath}`,
+        return this.httpClient.request<PublicEvent>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,

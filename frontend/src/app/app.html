@@ -6,17 +6,17 @@
     </a>
     <span class="spacer"></span>
 
-    <button mat-button type="button" [matMenuTriggerFor]="languageMenu" [attr.aria-label]="'lang.choose' | transloco">
-      <mat-icon>translate</mat-icon>
-      {{ language.active() | uppercase }}
-    </button>
-    <mat-menu #languageMenu="matMenu">
+    <!-- Three plain buttons, like the server-rendered site: one click, and no menu/overlay code in the
+         initial download. -->
+    <div class="languages" role="group" [attr.aria-label]="'lang.choose' | transloco">
       @for (code of languages; track code) {
-        <button mat-menu-item type="button" (click)="language.use(code)" [attr.lang]="code">
-          {{ 'lang.' + code | transloco }}
+        <button type="button" class="language" [class.active]="language.active() === code"
+                [attr.aria-pressed]="language.active() === code" [attr.lang]="code"
+                [attr.aria-label]="'lang.' + code | transloco" (click)="language.use(code)">
+          {{ code | uppercase }}
         </button>
       }
-    </mat-menu>
+    </div>
 
     @if (auth.user(); as user) {
       <a mat-button routerLink="/account" [attr.aria-label]="'nav.account' | transloco">

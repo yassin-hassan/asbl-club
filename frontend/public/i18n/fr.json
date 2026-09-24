@@ -40,11 +40,17 @@
   },
   "event": {
     "loadError": "Impossible de charger cet événement.",
-    "availability": "Places disponibles",
     "refreshHint": "Mis à jour toutes les 5 secondes.",
     "noTickets": "Aucune catégorie de billets, ou plus de places.",
-    "category": "Catégorie {{ id }}",
-    "left": "{{ count }} restantes"
+    "organisedBy": "Organisé par {{ name }}",
+    "startsAt": "Début",
+    "location": "Lieu",
+    "tickets": "Catégories tarifaires",
+    "ticket": "Libellé",
+    "price": "Prix",
+    "seatsLeft": "Places restantes",
+    "share": "Partager",
+    "email": "E-mail"
   },
   "errors": {
     "generic": "Une erreur est survenue. Réessayez.",

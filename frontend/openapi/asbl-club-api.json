@@ -102,7 +102,7 @@
     "/api/v1/events/{eventId}" : {
       "get" : {
         "tags" : [ "Public" ],
-        "summary" : "Get a public event by id",
+        "summary" : "Get a public event with its association, location and tickets",
         "operationId" : "getEvent",
         "parameters" : [ {
           "name" : "eventId",
@@ -119,7 +119,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/EventFeedItem"
+                  "$ref" : "#/components/schemas/PublicEvent"
                 }
               }
             }
@@ -267,8 +267,20 @@
           }
         }
       },
-      "EventFeedItem" : {
-        "required" : [ "id", "startsAt", "title" ],
+      "AsblResource" : {
+        "required" : [ "denomination", "slug" ],
+        "type" : "object",
+        "properties" : {
+          "slug" : {
+            "type" : "string"
+          },
+          "denomination" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PublicEvent" : {
+        "required" : [ "asbl", "id", "startsAt", "tickets", "title" ],
         "type" : "object",
         "properties" : {
           "id" : {
@@ -284,6 +296,39 @@
           "startsAt" : {
             "type" : "string",
             "format" : "date-time"
+          },
+          "location" : {
+            "type" : "string"
+          },
+          "asbl" : {
+            "$ref" : "#/components/schemas/AsblResource"
+          },
+          "tickets" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicTicket"
+            }
+          }
+        }
+      },
+      "PublicTicket" : {
+        "required" : [ "id", "label", "price", "remaining" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "label" : {
+            "type" : "string"
+          },
+          "price" : {
+            "type" : "number",
+            "description" : "Price in euros"
+          },
+          "remaining" : {
+            "type" : "integer",
+            "format" : "int32"
           }
         }
       },
@@ -301,15 +346,23 @@
           }
         }
       },
-      "AsblResource" : {
-        "required" : [ "denomination", "slug" ],
+      "EventFeedItem" : {
+        "required" : [ "id", "startsAt", "title" ],
         "type" : "object",
         "properties" : {
-          "slug" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "title" : {
             "type" : "string"
           },
-          "denomination" : {
+          "description" : {
             "type" : "string"
+          },
+          "startsAt" : {
+            "type" : "string",
+            "format" : "date-time"
           }
         }
       }

@@ -40,11 +40,17 @@
   },
   "event": {
     "loadError": "Dit evenement kon niet geladen worden.",
-    "availability": "Beschikbare plaatsen",
     "refreshHint": "Wordt elke 5 seconden bijgewerkt.",
     "noTickets": "Geen ticketcategorieën, of geen plaatsen meer.",
-    "category": "Categorie {{ id }}",
-    "left": "nog {{ count }}"
+    "organisedBy": "Georganiseerd door {{ name }}",
+    "startsAt": "Begin",
+    "location": "Locatie",
+    "tickets": "Prijscategorieën",
+    "ticket": "Label",
+    "price": "Prijs",
+    "seatsLeft": "Resterende plaatsen",
+    "share": "Delen",
+    "email": "E-mail"
   },
   "errors": {
     "generic": "Er ging iets mis. Probeer het opnieuw.",

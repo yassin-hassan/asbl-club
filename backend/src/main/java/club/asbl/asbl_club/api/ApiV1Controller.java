@@ -2,6 +2,7 @@ package club.asbl.asbl_club.api;
 
 import club.asbl.asbl_club.asbl.Asbl;
 import club.asbl.asbl_club.asbl.AsblService;
+import club.asbl.asbl_club.event.Event;
 import club.asbl.asbl_club.event.EventFeedItem;
 import club.asbl.asbl_club.event.EventService;
 import club.asbl.asbl_club.event.SeatAvailability;
@@ -44,11 +45,17 @@ class ApiV1Controller {
         return eventService.publicFeedOf(asbl);
     }
 
-    @Operation(operationId = "getEvent", summary = "Get a public event by id")
+    @Operation(operationId = "getEvent", summary = "Get a public event with its association, location and tickets")
     @GetMapping("/events/{eventId}")
-    EventFeedItem event(@PathVariable Long eventId) {
-        return eventService.publicEvent(eventId)
+    PublicEvent event(@PathVariable Long eventId) {
+        Event event = eventService.findPublicEvent(eventId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        List<PublicTicket> tickets = eventService.ticketCategoriesOf(event).stream()
+                .map(t -> new PublicTicket(t.id(), t.label(), t.price(), t.totalSeats() - t.soldSeats()))
+                .toList();
+        Asbl asbl = event.getAsbl();
+        return new PublicEvent(event.getId(), event.getTitle(), event.getDescription(), event.getStartsAt(),
+                event.getLocation(), new AsblResource(asbl.getSlug(), asbl.getDenomination()), tickets);
     }
 
     @Operation(operationId = "getEventAvailability", summary = "Remaining seats per ticket category of a public event")
