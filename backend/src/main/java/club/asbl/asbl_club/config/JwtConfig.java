@@ -1,0 +1,45 @@
+package club.asbl.asbl_club.config;
+
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+
+@Configuration
+public class JwtConfig {
+
+    // Temporary: a new key pair on every start, so tokens don't survive a restart and aren't
+    // shared between instances. Replaced by a configured key later (roadmap Phase 2, slice 8).
+    @Bean
+    KeyPair jwtSigningKeyPair() {
+        try {
+            KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
+            generator.initialize(2048);
+            return generator.generateKeyPair();
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("RSA is not available in this JVM", e);
+        }
+    }
+
+    @Bean
+    JwtEncoder jwtEncoder(KeyPair jwtSigningKeyPair) {
+        return NimbusJwtEncoder
+                .withKeyPair((RSAPublicKey) jwtSigningKeyPair.getPublic(),
+                        (RSAPrivateKey) jwtSigningKeyPair.getPrivate())
+                .build();
+    }
+
+    @Bean
+    JwtDecoder jwtDecoder(KeyPair jwtSigningKeyPair) {
+        return NimbusJwtDecoder
+                .withPublicKey((RSAPublicKey) jwtSigningKeyPair.getPublic())
+                .build();
+    }
+}
