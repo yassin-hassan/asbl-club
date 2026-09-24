@@ -47,6 +47,14 @@ class RefreshToken {
         this.expiresAt = expiresAt;
     }
 
+    boolean isUsable(Instant now) {
+        return revokedAt == null && now.isBefore(expiresAt);
+    }
+
+    void revoke(Instant now) {
+        revokedAt = now;
+    }
+
     User getUser() {
         return user;
     }
