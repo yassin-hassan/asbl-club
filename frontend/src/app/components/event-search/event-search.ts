@@ -2,16 +2,15 @@ import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-event-search',
-  imports: [RouterLink, TranslocoPipe, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule],
+  imports: [RouterLink, TranslocoPipe, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule],
   templateUrl: './event-search.html',
-  styles: '.row { display: flex; gap: 16px; align-items: baseline; } .grow { flex: 1; }',
+  styles: '.search { display: flex; gap: 16px; align-items: flex-start; background: #fff; border: 1px solid var(--asbl-slate-200); border-radius: 16px; padding: 20px; } .grow { flex: 1; } .search a { margin-top: 4px; height: 48px; }',
 })
 // Find an association's public events by its short name (used on the landing page).
 export class EventSearch {

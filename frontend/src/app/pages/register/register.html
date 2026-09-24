@@ -1,9 +1,8 @@
-<mat-card class="narrow" appearance="outlined">
-  <mat-card-header>
-    <h1 matCardTitle>{{ 'register.title' | transloco }}</h1>
-  </mat-card-header>
+<div class="auth-page">
+<div class="auth-card">
+    <h1>{{ 'register.title' | transloco }}</h1>
 
-  <mat-card-content>
+  <div>
     <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="stack">
       <mat-form-field appearance="outline">
         <mat-label>{{ 'register.name' | transloco }}</mat-label>
@@ -42,5 +41,6 @@
       </button>
       <a mat-button routerLink="/login">{{ 'register.haveAccount' | transloco }}</a>
     </form>
-  </mat-card-content>
-</mat-card>
+  </div>
+</div>
+</div>

@@ -1,20 +1,24 @@
-<a mat-button routerLink="/"><mat-icon>arrow_back</mat-icon> {{ 'events.back' | transloco }}</a>
-<h1>{{ 'events.title' | transloco: { slug } }}</h1>
+<div class="page">
+  <h1>{{ 'events.title' | transloco: { slug } }}</h1>
 
-@if (loading()) {
-  <mat-spinner diameter="40" />
-} @else if (error(); as error) {
-  <p class="error" role="alert">{{ error | transloco }}</p>
-} @else if (events()!.length === 0) {
-  <p>{{ 'events.none' | transloco }}</p>
-} @else {
-  <mat-nav-list>
-    @for (ev of events(); track ev.id) {
-      <a mat-list-item [routerLink]="['/events', ev.id]">
-        <mat-icon matListItemIcon>event</mat-icon>
-        <span matListItemTitle>{{ ev.title }}</span>
-        <span matListItemLine>{{ ev.startsAt | date: 'medium' : undefined : lang() }}</span>
-      </a>
-    }
-  </mat-nav-list>
-}
+  @if (loading()) {
+    <mat-spinner diameter="40" />
+  } @else if (error(); as error) {
+    <p class="error" role="alert">{{ error | transloco }}</p>
+  } @else if (events()!.length === 0) {
+    <p class="empty">{{ 'events.none' | transloco }}</p>
+  } @else {
+    <div class="row-list">
+      @for (ev of events(); track ev.id) {
+        <a class="row-link" [routerLink]="['/events', ev.id]">
+          <span>
+            <span class="title">{{ ev.title }}</span>
+            <span class="meta">{{ ev.startsAt | date: 'medium' : undefined : lang() }}</span>
+          </span>
+          <mat-icon class="go">arrow_forward</mat-icon>
+        </a>
+      }
+    </div>
+  }
+  <a class="back" routerLink="/">{{ 'events.back' | transloco }}</a>
+</div>

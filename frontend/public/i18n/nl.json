@@ -9,7 +9,8 @@
     "main": "Hoofdnavigatie",
     "login": "Aanmelden",
     "account": "Mijn account",
-    "logout": "Afmelden"
+    "logout": "Afmelden",
+    "createAsbl": "Mijn VZW aanmaken"
   },
   "home": {
     "title": "Openbare evenementen",
@@ -32,14 +33,13 @@
   },
   "account": {
     "title": "Mijn account",
-    "id": "ID",
-    "roles": "Rollen",
     "export": "Mijn gegevens exporteren",
     "deleteTitle": "Mijn account verwijderen",
     "deleteWarning": "Deze actie is onomkeerbaar, uw account wordt gesloten en uw persoonsgegevens geanonimiseerd.",
     "deleteConfirm": "Weet u zeker dat u uw account definitief wilt verwijderen? Deze actie is onomkeerbaar.",
     "cancel": "Annuleren",
-    "delete": "Definitief verwijderen"
+    "delete": "Definitief verwijderen",
+    "back": "Terug naar de startpagina"
   },
   "events": {
     "back": "Home",
@@ -76,7 +76,8 @@
   },
   "footer": {
     "tagline": "Het gratis beheerplatform voor Belgische vzw's en clubs.",
-    "legal": "Juridisch"
+    "legal": "Juridisch",
+    "country": "België"
   },
   "legal": {
     "notice": {
@@ -103,7 +104,11 @@
       "trust": "Betalingen via Stripe en Bancontact, geen vaste kosten"
     },
     "panel": {
-      "title": "Lidgelden 2026"
+      "title": "Lidgelden 2026",
+      "effective": "Effectief lid",
+      "annualFee": "Jaarlijkse bijdrage",
+      "student": "Student",
+      "paid": "Betaald"
     },
     "features": {
       "eyebrow": "Alles-in-één",
@@ -146,6 +151,10 @@
       "title": "Klaar om het beheer van uw vereniging te vereenvoudigen?",
       "sub": "Gratis, zonder verplichting. U betaalt enkel een commissie op verwerkte betalingen.",
       "button": "Mijn vzw gratis aanmaken"
+    },
+    "directory": {
+      "eyebrow": "Openbare gids",
+      "title": "Ontdek de verenigingen"
     }
   },
   "register": {
@@ -193,7 +202,8 @@
     "email": "E-mailadres",
     "role": "Rol",
     "status": "Status",
-    "noAccess": "Je bent geen lid van deze vereniging."
+    "noAccess": "Je bent geen lid van deze vereniging.",
+    "back": "Terug naar de startpagina"
   },
   "statuses": {
     "PENDING": "In afwachting",

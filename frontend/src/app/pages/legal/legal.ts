@@ -9,7 +9,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
   selector: 'app-legal',
   imports: [RouterLink, TranslocoPipe, MatButtonModule, MatIconModule],
   template: `
-    <article class="stack">
+    <article class="page stack">
       <h1>{{ 'legal.' + page + '.title' | transloco }}</h1>
       <p>{{ 'legal.' + page + '.body' | transloco }}</p>
       <a mat-button routerLink="/"><mat-icon>arrow_back</mat-icon> {{ 'events.back' | transloco }}</a>

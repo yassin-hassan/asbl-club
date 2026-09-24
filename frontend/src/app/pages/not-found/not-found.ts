@@ -7,10 +7,10 @@ import { TranslocoPipe } from '@jsverse/transloco';
   selector: 'app-not-found',
   imports: [RouterLink, TranslocoPipe, MatButtonModule],
   template: `
-    <article class="stack">
+    <article class="page stack">
       <h1>{{ 'error.404.title' | transloco }}</h1>
       <p>{{ 'error.404.body' | transloco }}</p>
-      <a mat-flat-button routerLink="/">{{ 'events.back' | transloco }}</a>
+      <div><a mat-flat-button routerLink="/">{{ 'events.back' | transloco }}</a></div>
     </article>
   `,
 })

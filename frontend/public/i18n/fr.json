@@ -9,7 +9,8 @@
     "main": "Navigation principale",
     "login": "Se connecter",
     "account": "Mon compte",
-    "logout": "Se déconnecter"
+    "logout": "Se déconnecter",
+    "createAsbl": "Créer mon ASBL"
   },
   "home": {
     "title": "Événements publics",
@@ -32,14 +33,13 @@
   },
   "account": {
     "title": "Mon compte",
-    "id": "Identifiant",
-    "roles": "Rôles",
     "export": "Exporter mes données",
     "deleteTitle": "Supprimer mon compte",
     "deleteWarning": "Cette action est irréversible, votre compte sera fermé et vos données personnelles anonymisées.",
     "deleteConfirm": "Êtes-vous sûr de vouloir supprimer définitivement votre compte ? Cette action est irréversible.",
     "cancel": "Annuler",
-    "delete": "Supprimer définitivement"
+    "delete": "Supprimer définitivement",
+    "back": "Retour à l'accueil"
   },
   "events": {
     "back": "Accueil",
@@ -76,7 +76,8 @@
   },
   "footer": {
     "tagline": "La plateforme gratuite de gestion pour les ASBL et clubs belges.",
-    "legal": "Légal"
+    "legal": "Légal",
+    "country": "Belgique"
   },
   "legal": {
     "notice": {
@@ -103,7 +104,11 @@
       "trust": "Paiements via Stripe et Bancontact, aucun frais fixe"
     },
     "panel": {
-      "title": "Cotisations 2026"
+      "title": "Cotisations 2026",
+      "effective": "Membre effectif",
+      "annualFee": "Cotisation annuelle",
+      "student": "Étudiant",
+      "paid": "Payé"
     },
     "features": {
       "eyebrow": "Tout-en-un",
@@ -146,6 +151,10 @@
       "title": "Prêt à simplifier la gestion de votre association ?",
       "sub": "Gratuit, sans engagement. Vous ne payez qu'une commission sur les paiements traités.",
       "button": "Créer mon ASBL gratuitement"
+    },
+    "directory": {
+      "eyebrow": "Annuaire public",
+      "title": "Découvrez les associations"
     }
   },
   "register": {
@@ -193,7 +202,8 @@
     "email": "Adresse e-mail",
     "role": "Rôle",
     "status": "Statut",
-    "noAccess": "Vous n'êtes pas membre de cette association."
+    "noAccess": "Vous n'êtes pas membre de cette association.",
+    "back": "Retour à l'accueil"
   },
   "statuses": {
     "PENDING": "En attente",

@@ -1,12 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
-import { MatListModule } from '@angular/material/list';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { filter, switchMap } from 'rxjs';
 import { AccountService } from '../../api/generated';
@@ -16,7 +12,7 @@ import { ConfirmDialog, ConfirmDialogData } from '../../components/confirm-dialo
 
 @Component({
   selector: 'app-account',
-  imports: [TranslocoPipe, MatButtonModule, MatCardModule, MatChipsModule, MatIconModule, MatListModule],
+  imports: [RouterLink, TranslocoPipe, MatButtonModule],
   templateUrl: './account.html',
 })
 export class Account {

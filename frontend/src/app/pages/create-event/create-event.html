@@ -1,10 +1,6 @@
-<a mat-button [routerLink]="['/asbls', slug, 'manage', 'events']"><mat-icon>arrow_back</mat-icon> {{ 'manage.eventsTitle' | transloco }}</a>
-
-<mat-card class="narrow" appearance="outlined">
-  <mat-card-header>
-    <h1 matCardTitle>{{ 'manage.create' | transloco }}</h1>
-  </mat-card-header>
-  <mat-card-content>
+<div class="page">
+  <h1>{{ 'manage.create' | transloco }}</h1>
+  <section class="box">
     <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="stack">
       <mat-form-field appearance="outline">
         <mat-label>{{ 'manage.title' | transloco }}</mat-label>
@@ -44,9 +40,12 @@
         <p class="error" role="alert">{{ error | transloco }}</p>
       }
 
-      <button mat-flat-button type="submit" [disabled]="submitting()">
-        {{ (submitting() ? 'manage.submitting' : 'manage.submit') | transloco }}
-      </button>
+      <div>
+        <button mat-flat-button type="submit" [disabled]="submitting()">
+          {{ (submitting() ? 'manage.submitting' : 'manage.submit') | transloco }}
+        </button>
+      </div>
     </form>
-  </mat-card-content>
-</mat-card>
+  </section>
+  <a class="back" [routerLink]="['/asbls', slug, 'manage', 'events']">{{ 'manage.eventsTitle' | transloco }}</a>
+</div>
