@@ -44,12 +44,22 @@ class RefreshTokenService {
     }
 
     // Exchanges a valid refresh token for a new one in the same family. The old one can't be used again.
-    @Transactional
+    // noRollbackFor: when a reused token is detected we revoke its family and then throw to answer 401.
+    // Without this, the exception would roll the transaction back and silently undo the revocation.
+    @Transactional(noRollbackFor = InvalidRefreshTokenException.class)
     Rotation rotate(String rawToken) {
         Instant now = Instant.now();
         RefreshToken current = refreshTokenRepository.findByTokenHash(hash(rawToken))
-                .filter(token -> token.isUsable(now))
                 .orElseThrow(InvalidRefreshTokenException::new);
+        if (current.getRevokedAt() != null) {
+            // An already-rotated token came back: it was copied. We can't tell whether the thief or the
+            // real user sent it, so end the whole login session; the real user logs in again.
+            refreshTokenRepository.revokeFamily(current.getFamilyId(), now);
+            throw new InvalidRefreshTokenException();
+        }
+        if (!current.isUsable(now)) {
+            throw new InvalidRefreshTokenException();
+        }
         User user = current.getUser();
         // Same lookup as a password login: rejects closed accounts and gives the roles as they are now.
         UserDetails userDetails;

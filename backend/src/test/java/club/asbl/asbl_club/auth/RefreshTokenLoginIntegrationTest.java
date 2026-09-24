@@ -100,7 +100,8 @@ class RefreshTokenLoginIntegrationTest {
                 .andExpect(status().isUnauthorized())
                 .andExpect(cookie().doesNotExist("refresh_token"));
 
-        Integer rows = jdbcTemplate.queryForObject("SELECT count(*) FROM refresh_tokens", Integer.class);
+        Integer rows = jdbcTemplate.queryForObject(
+                "SELECT count(*) FROM refresh_tokens WHERE user_id = ?", Integer.class, alice.getId());
         assertThat(rows).isZero();
     }
 
