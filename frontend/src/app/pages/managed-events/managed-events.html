@@ -1,0 +1,33 @@
+<a mat-button [routerLink]="['/asbls', slug, 'members']"><mat-icon>arrow_back</mat-icon> {{ 'manage.back' | transloco }}</a>
+
+@if (error(); as error) {
+  <p class="error" role="alert">{{ error | transloco }}</p>
+} @else if (list(); as list) {
+  <h1>{{ 'manage.eventsTitle' | transloco }} · {{ list.denomination }}</h1>
+
+  @if (list.canManage) {
+    <a mat-flat-button [routerLink]="['/asbls', slug, 'manage', 'events', 'new']">
+      <mat-icon>add</mat-icon> {{ 'manage.create' | transloco }}
+    </a>
+  }
+
+  @if (list.events.length === 0) {
+    <p>{{ 'manage.none' | transloco }}</p>
+  } @else {
+    <mat-nav-list>
+      @for (event of list.events; track event.id) {
+        <a mat-list-item [routerLink]="['/asbls', slug, 'manage', 'events', event.id]">
+          <mat-icon matListItemIcon>event</mat-icon>
+          <span matListItemTitle>{{ event.title }}</span>
+          <span matListItemLine>
+            {{ event.startsAt | date: 'medium' : undefined : lang() }} ·
+            {{ 'manage.statuses.' + event.status | transloco }} ·
+            {{ 'manage.visibilities.' + event.visibility | transloco }}
+          </span>
+        </a>
+      }
+    </mat-nav-list>
+  }
+} @else {
+  <mat-spinner diameter="40" />
+}

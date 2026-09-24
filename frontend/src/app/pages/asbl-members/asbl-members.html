@@ -5,6 +5,9 @@
 } @else if (asbl(); as asbl) {
   <h1>{{ asbl.denomination }}</h1>
   <p>{{ 'members.title' | transloco }} · {{ 'roles.' + asbl.myRole | transloco }}</p>
+  <a mat-stroked-button [routerLink]="['/asbls', asbl.slug, 'manage', 'events']">
+    <mat-icon>event</mat-icon> {{ 'manage.eventsTitle' | transloco }}
+  </a>
 
   <table mat-table [dataSource]="asbl.members">
     <ng-container matColumnDef="name">

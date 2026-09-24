@@ -200,5 +200,43 @@
     "ACTIVE": "Active",
     "EXCLUDED": "Excluded",
     "LEFT": "Left"
+  },
+  "manage": {
+    "eventsTitle": "Events",
+    "create": "Create an event",
+    "none": "No events yet",
+    "title": "Title",
+    "description": "Description",
+    "startsAt": "Start",
+    "location": "Location",
+    "status": "Status",
+    "visibility": "Visibility",
+    "visibilities": {
+      "PUBLIC": "Public",
+      "MEMBERS": "Members"
+    },
+    "submit": "Create event",
+    "publish": "Publish",
+    "viewPublic": "View the public page",
+    "ticketsTitle": "Ticket categories",
+    "noTickets": "No ticket categories yet",
+    "addTicket": "Add a ticket category",
+    "ticketLabel": "Label",
+    "price": "Price",
+    "seats": "Seats",
+    "sold": "Sold",
+    "draftHint": "Draft: hidden from the public until published.",
+    "submitting": "Saving…",
+    "required": "This field is required.",
+    "invalidPrice": "A price in euros, e.g. 12.50.",
+    "invalidSeats": "At least 1 seat.",
+    "statuses": {
+      "DRAFT": "Draft",
+      "PUBLISHED": "Published",
+      "CANCELLED": "Cancelled",
+      "ENDED": "Ended"
+    },
+    "noAccess": "You're not a member of this association.",
+    "back": "Back to the association"
   }
 }

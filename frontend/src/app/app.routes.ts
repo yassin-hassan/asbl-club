@@ -22,6 +22,21 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/asbl-members/asbl-members').then((m) => m.AsblMembersPage),
   },
   {
+    path: 'asbls/:slug/manage/events',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/managed-events/managed-events').then((m) => m.ManagedEvents),
+  },
+  {
+    path: 'asbls/:slug/manage/events/new',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/create-event/create-event').then((m) => m.CreateEvent),
+  },
+  {
+    path: 'asbls/:slug/manage/events/:id',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/managed-event/managed-event').then((m) => m.ManagedEventPage),
+  },
+  {
     path: 'asbls/:slug/events',
     loadComponent: () => import('./pages/event-list/event-list').then((m) => m.EventList),
   },

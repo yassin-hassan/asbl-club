@@ -9,19 +9,19 @@
  */
 
 
-export interface Member { 
+export interface AsblMember { 
     name: string;
     email: string;
-    role: MemberRoleEnum;
-    status: MemberStatusEnum;
+    role: AsblMemberRoleEnum;
+    status: AsblMemberStatusEnum;
 }
-export enum MemberRoleEnum {
+export enum AsblMemberRoleEnum {
     Admin = 'ADMIN',
     Treasurer = 'TREASURER',
     Viewer = 'VIEWER',
     Member = 'MEMBER'
 };
-export enum MemberStatusEnum {
+export enum AsblMemberStatusEnum {
     Pending = 'PENDING',
     Active = 'ACTIVE',
     Excluded = 'EXCLUDED',
