@@ -237,6 +237,26 @@
       "ENDED": "Terminé"
     },
     "noAccess": "Vous n'êtes pas membre de cette association.",
-    "back": "Retour à l'association"
+    "back": "Retour à l'association",
+    "book": "Réserver",
+    "full": "Complet",
+    "soldOut": "Cette catégorie est complète",
+    "bookColumn": "Réserver"
+  },
+  "payment": {
+    "title": "Paiement",
+    "amount": "Montant à régler",
+    "pay": "Payer",
+    "checking": "Vérification du paiement…",
+    "received": "Paiement reçu, votre inscription sera confirmée sous peu.",
+    "paying": "Paiement…",
+    "confirmed": "Paiement confirmé. Votre place est réservée.",
+    "failed": "Le paiement n'a pas abouti. Vous pouvez réessayer.",
+    "retry": "Réessayer",
+    "notPayable": "Cette réservation n'a plus rien à payer.",
+    "paymentsDisabled": "Cette association ne peut pas encore recevoir de paiements.",
+    "providerDown": "Le service de paiement est injoignable. Réessayez dans un instant.",
+    "stillProcessing": "Paiement en cours de traitement. Il sera confirmé dès que nous recevrons la confirmation de Stripe.",
+    "backToEvent": "Retour à l'événement"
   }
 }

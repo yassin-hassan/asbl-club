@@ -1,0 +1,32 @@
+<mat-card class="narrow" appearance="outlined">
+  <mat-card-header>
+    <h1 matCardTitle>{{ 'payment.title' | transloco }}</h1>
+  </mat-card-header>
+  <mat-card-content class="stack">
+    @if (error(); as error) {
+      <p class="error" role="alert">{{ error | transloco }}</p>
+    } @else {
+      @switch (outcome()) {
+        @case ('checking') {
+          <mat-spinner diameter="40" />
+          <p role="status">{{ 'payment.checking' | transloco }}</p>
+        }
+        @case ('confirmed') {
+          <p role="status">{{ 'payment.confirmed' | transloco }}</p>
+        }
+        @case ('processing') {
+          <p role="status">{{ 'payment.stillProcessing' | transloco }}</p>
+        }
+        @case ('failed') {
+          <p class="error" role="alert">{{ 'payment.failed' | transloco }}</p>
+          <a mat-flat-button [routerLink]="['/pay', registrationId]">{{ 'payment.retry' | transloco }}</a>
+        }
+      }
+      @if (registration(); as registration) {
+        <a mat-button [routerLink]="['/asbls', registration.asblSlug, 'manage', 'events', registration.eventId]">
+          {{ 'payment.backToEvent' | transloco }}
+        </a>
+      }
+    }
+  </mat-card-content>
+</mat-card>

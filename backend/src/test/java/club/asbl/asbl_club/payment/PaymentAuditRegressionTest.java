@@ -56,7 +56,7 @@ class PaymentAuditRegressionTest {
                 Instant.parse("2026-09-01T18:00:00Z"), "Salle A", "PUBLIC");
         eventService.addTicketCategory(event, "Normal", new BigDecimal("15.00"), 100);
         Long categoryId = eventService.ticketCategoriesOf(event).get(0).id();
-        Registration registration = reservationService.reserve(categoryId, alice);
+        Registration registration = reservationService.reserve(event, categoryId, alice);
 
         Payment payment = new Payment();
         payment.setAsbl(club);

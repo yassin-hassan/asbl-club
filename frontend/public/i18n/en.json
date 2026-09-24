@@ -237,6 +237,26 @@
       "ENDED": "Ended"
     },
     "noAccess": "You're not a member of this association.",
-    "back": "Back to the association"
+    "back": "Back to the association",
+    "book": "Book",
+    "full": "Full",
+    "soldOut": "This category is sold out",
+    "bookColumn": "Book"
+  },
+  "payment": {
+    "title": "Payment",
+    "amount": "Amount to pay",
+    "pay": "Pay",
+    "checking": "Checking payment…",
+    "received": "Payment received, your registration will be confirmed shortly.",
+    "paying": "Paying…",
+    "confirmed": "Payment confirmed. Your seat is booked.",
+    "failed": "The payment didn't go through. You can try again.",
+    "retry": "Try again",
+    "notPayable": "This booking has nothing left to pay.",
+    "paymentsDisabled": "This association can't receive payments yet.",
+    "providerDown": "The payment service is unreachable. Try again in a moment.",
+    "stillProcessing": "Payment is being processed. It will be confirmed as soon as Stripe confirms it.",
+    "backToEvent": "Back to the event"
   }
 }

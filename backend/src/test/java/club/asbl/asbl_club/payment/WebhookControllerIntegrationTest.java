@@ -93,7 +93,7 @@ class WebhookControllerIntegrationTest {
                 Instant.parse("2026-09-01T18:00:00Z"), "Bruxelles", "PUBLIC");
         eventService.addTicketCategory(event, "Standard", new BigDecimal("12.00"), 50);
         Long categoryId = eventService.ticketCategoriesOf(event).get(0).id();
-        Registration registration = reservationService.reserve(categoryId, admin);
+        Registration registration = reservationService.reserve(event, categoryId, admin);
 
         Payment payment = new Payment();
         payment.setAsbl(club);

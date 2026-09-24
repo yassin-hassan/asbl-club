@@ -8,6 +8,7 @@ export interface Problem {
   detail?: string;
   instance?: string;
   errors?: Record<string, string>; // validation errors: field -> message, in the request's language
+  code?: string; // which of several errors with the same status, e.g. SOLD_OUT, PAYMENTS_DISABLED
 }
 
 export function problemOf(error: unknown): Problem | null {

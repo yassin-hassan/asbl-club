@@ -6,6 +6,7 @@ api/associations.service.ts
 api/authentication.service.ts
 api/eventManagement.service.ts
 api/public.service.ts
+api/registrations.service.ts
 configuration.ts
 encoder.ts
 index.ts
@@ -15,6 +16,8 @@ model/asblMember.ts
 model/asblMembers.ts
 model/asblResource.ts
 model/asblSummary.ts
+model/bookRequest.ts
+model/checkout.ts
 model/createAsblRequest.ts
 model/createEventRequest.ts
 model/eventFeedItem.ts
@@ -26,6 +29,7 @@ model/managedTicket.ts
 model/meResponse.ts
 model/models.ts
 model/myAssociation.ts
+model/myRegistration.ts
 model/paymentExport.ts
 model/profileExport.ts
 model/publicEvent.ts
