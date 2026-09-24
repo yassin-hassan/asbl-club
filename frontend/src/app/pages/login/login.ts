@@ -7,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../services/auth';
+import { errorMessage } from '../../services/problem';
 
 @Component({
   selector: 'app-login',
@@ -43,9 +44,8 @@ export class Login {
       next: () => this.router.navigateByUrl(this.route.snapshot.queryParamMap.get('returnUrl') ?? '/account'),
       error: (err: HttpErrorResponse) => {
         this.submitting.set(false);
-        this.error.set(
-          err.status === 401 ? 'Email or password is incorrect.' : `Login failed (HTTP ${err.status}).`,
-        );
+        // 401 gets our own wording: the API deliberately doesn't say whether the email or the password was wrong.
+        this.error.set(err.status === 401 ? 'Email or password is incorrect.' : errorMessage(err));
       },
     });
   }

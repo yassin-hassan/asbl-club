@@ -9,6 +9,7 @@ import { MatCardModule } from '@angular/material/card';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { catchError, interval, of, startWith, switchMap } from 'rxjs';
 import { EventFeedItem, PublicService, SeatAvailability } from '../../api/generated';
+import { errorMessage } from '../../services/problem';
 
 @Component({
   selector: 'app-event-detail',
@@ -45,7 +46,7 @@ export class EventDetail {
   constructor() {
     this.api.getEvent(this.eventId).subscribe({
       next: (e) => this.event.set(e),
-      error: (err) => this.error.set(`Could not load event (HTTP ${err.status})`),
+      error: (err) => this.error.set(errorMessage(err, 'Could not load this event.')),
     });
   }
 }

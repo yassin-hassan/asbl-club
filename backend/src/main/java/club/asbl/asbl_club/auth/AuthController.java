@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.time.Duration;
 import org.springframework.http.HttpHeaders;
@@ -73,7 +74,8 @@ class AuthController {
     @Operation(operationId = "refresh", summary = "Exchange the refresh token cookie for a new access token and a new refresh token")
     @PostMapping("/refresh")
     ResponseEntity<TokenResponse> refresh(
-            @Parameter(hidden = true) @CookieValue(name = REFRESH_TOKEN_COOKIE, required = false) String refreshToken) {
+            @Parameter(hidden = true) @CookieValue(name = REFRESH_TOKEN_COOKIE, required = false) String refreshToken,
+            HttpServletResponse httpResponse) {
         if (refreshToken == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
@@ -81,10 +83,10 @@ class AuthController {
         try {
             rotation = refreshTokenService.rotate(refreshToken);
         } catch (InvalidRefreshTokenException e) {
-            // Tell the browser to drop the dead cookie, so it stops sending it.
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .header(HttpHeaders.SET_COOKIE, expiredRefreshTokenCookie().toString())
-                    .build();
+            // Tell the browser to drop the dead cookie, so it stops sending it; the 401 body comes from the
+            // API error handler like every other error.
+            httpResponse.addHeader(HttpHeaders.SET_COOKIE, expiredRefreshTokenCookie().toString());
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
         TokenResponse accessToken = tokenService.issueAccessToken(rotation.user(), rotation.authorities());
         return ResponseEntity.ok()
