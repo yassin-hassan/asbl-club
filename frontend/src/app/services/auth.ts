@@ -1,17 +1,17 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { Observable, switchMap, tap } from 'rxjs';
+import { Observable, catchError, finalize, map, of, shareReplay, switchMap, tap } from 'rxjs';
 import { CurrentUser, TokenResponse } from '../models/auth';
 
 // Owns the login state for the whole app (providedIn: 'root' = one shared instance).
-// The refresh token never appears here: it's an HttpOnly cookie the browser handles on its own.
+// The refresh token never appears here: it's an HttpOnly cookie the browser sends to /api/v1/auth/*.
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private http = inject(HttpClient);
 
-  // Kept in memory only, never in localStorage: an injected script can't read it back later,
-  // and a page reload forgets it (the refresh cookie gets a new one, in a later slice).
+  // Kept in memory only, never in localStorage. A page reload forgets it; restoreSession() gets a new one.
   private token: string | null = null;
+  private refreshInFlight: Observable<string> | null = null;
 
   private readonly currentUser = signal<CurrentUser | null>(null);
   readonly user = this.currentUser.asReadonly();
@@ -27,6 +27,44 @@ export class AuthService {
       tap((response) => (this.token = response.accessToken)),
       switchMap(() => this.loadCurrentUser()),
     );
+  }
+
+  // Runs once at app start: if the browser still has a refresh cookie, the user is logged back in.
+  // Never fails: no cookie (or an expired one) just means "not logged in".
+  restoreSession(): Observable<unknown> {
+    return this.refreshAccessToken().pipe(
+      switchMap(() => this.loadCurrentUser()),
+      catchError(() => {
+        this.clearSession();
+        return of(null);
+      }),
+    );
+  }
+
+  // Gets a new access token using the refresh cookie. Callers that arrive while a refresh is already
+  // running share it: the backend accepts each refresh token once, so a second parallel refresh
+  // would look like token theft and end the session.
+  refreshAccessToken(): Observable<string> {
+    this.refreshInFlight ??= this.http.post<TokenResponse>('/api/v1/auth/refresh', null).pipe(
+      map((response) => response.accessToken),
+      tap((token) => (this.token = token)),
+      finalize(() => (this.refreshInFlight = null)),
+      shareReplay(1),
+    );
+    return this.refreshInFlight;
+  }
+
+  // Logged out locally even if the server can't be reached; the server call revokes the refresh token.
+  logout(): Observable<void> {
+    return this.http.post<void>('/api/v1/auth/logout', null).pipe(
+      catchError(() => of(undefined)),
+      tap(() => this.clearSession()),
+    );
+  }
+
+  clearSession(): void {
+    this.token = null;
+    this.currentUser.set(null);
   }
 
   private loadCurrentUser(): Observable<CurrentUser> {

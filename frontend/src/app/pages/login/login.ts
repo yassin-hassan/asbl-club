@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../services/auth';
 
 @Component({
@@ -12,6 +12,7 @@ import { AuthService } from '../../services/auth';
 export class Login {
   private auth = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private fb = inject(NonNullableFormBuilder);
 
   // The form's structure and rules live in the class, not the template: that's what "reactive" means.
@@ -32,7 +33,9 @@ export class Login {
     this.error.set(null);
     const { email, password } = this.form.getRawValue();
     this.auth.login(email, password).subscribe({
-      next: () => this.router.navigate(['/account']),
+      // Back to the page the guard sent us from. navigateByUrl stays inside the app, so a crafted
+      // ?returnUrl=https://evil.example can't redirect the user to another site.
+      next: () => this.router.navigateByUrl(this.route.snapshot.queryParamMap.get('returnUrl') ?? '/account'),
       error: (err: HttpErrorResponse) => {
         this.submitting.set(false);
         this.error.set(

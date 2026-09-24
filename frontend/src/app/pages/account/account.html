@@ -1,5 +1,6 @@
 <h1>My account</h1>
 
+<!-- The route guard only lets logged-in users in, so user() is set here. -->
 @if (user(); as user) {
   <dl>
     <dt>Email</dt>
@@ -9,6 +10,4 @@
     <dt>Roles</dt>
     <dd>{{ user.roles.join(', ') }}</dd>
   </dl>
-} @else {
-  <p>You are not logged in. <a routerLink="/login">Log in</a></p>
 }

@@ -1,3 +1,13 @@
+<nav class="container">
+  <a routerLink="/">Home</a>
+  @if (auth.user(); as user) {
+    <a routerLink="/account">{{ user.email }}</a>
+    <button type="button" (click)="logout()">Log out</button>
+  } @else {
+    <a routerLink="/login">Log in</a>
+  }
+</nav>
+
 <main class="container">
   <router-outlet />
 </main>
