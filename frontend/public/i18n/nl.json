@@ -237,6 +237,26 @@
       "ENDED": "Afgelopen"
     },
     "noAccess": "Je bent geen lid van deze vereniging.",
-    "back": "Terug naar de vereniging"
+    "back": "Terug naar de vereniging",
+    "book": "Reserveren",
+    "full": "Volzet",
+    "soldOut": "Deze categorie is volzet",
+    "bookColumn": "Reserveren"
+  },
+  "payment": {
+    "title": "Betaling",
+    "amount": "Te betalen bedrag",
+    "pay": "Betalen",
+    "checking": "Betaling controleren…",
+    "received": "Betaling ontvangen, uw inschrijving wordt binnenkort bevestigd.",
+    "paying": "Betalen…",
+    "confirmed": "Betaling bevestigd. Je plaats is gereserveerd.",
+    "failed": "De betaling is niet gelukt. Je kan het opnieuw proberen.",
+    "retry": "Opnieuw proberen",
+    "notPayable": "Er valt niets meer te betalen voor deze reservering.",
+    "paymentsDisabled": "Deze vereniging kan nog geen betalingen ontvangen.",
+    "providerDown": "De betaaldienst is onbereikbaar. Probeer het zo meteen opnieuw.",
+    "stillProcessing": "Betaling wordt verwerkt. Ze wordt bevestigd zodra Stripe ze bevestigt.",
+    "backToEvent": "Terug naar het evenement"
   }
 }

@@ -41,4 +41,13 @@ test('an administrator creates a draft event, adds tickets, publishes it, and th
   await page.getByRole('link', { name: 'View the public page' }).click();
   await expect(page.getByRole('heading', { name: 'Spring gala' })).toBeVisible();
   await expect(page.getByRole('row', { name: /Adult/ })).toContainText('€12.50');
+
+  // Booking: the seat is taken at once; paying needs the association to have connected Stripe (it hasn't).
+  await page.goBack();
+  await page.getByRole('row', { name: /Adult/ }).getByRole('button', { name: 'Book' }).click();
+  await expect(page).toHaveURL(/\/pay\/\d+$/);
+  await expect(page.getByRole('alert')).toHaveText("This association can't receive payments yet.");
+
+  await page.goBack();
+  await expect(page.getByRole('row', { name: /Adult.*1 \/ 80/ })).toBeVisible();
 });

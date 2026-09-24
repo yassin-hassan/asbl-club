@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -12,9 +12,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { Observable } from 'rxjs';
-import { EventManagementService, ManagedEvent } from '../../api/generated';
+import { EventManagementService, ManagedEvent, ManagedTicket, RegistrationsService } from '../../api/generated';
 import { LanguageService } from '../../i18n/language';
-import { errorMessageKey } from '../../services/problem';
+import { errorMessageKey, problemOf } from '../../services/problem';
 
 // One event in the back office: details, ticket sales, and — for administrators — adding ticket categories and
 // publishing. Every change returns the updated event, which simply replaces the one on screen.
@@ -30,6 +30,8 @@ export class ManagedEventPage {
   private api = inject(EventManagementService);
   private fb = inject(NonNullableFormBuilder);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private registrations = inject(RegistrationsService);
   readonly lang = inject(LanguageService).active;
 
   readonly slug = this.route.snapshot.paramMap.get('slug') ?? '';
@@ -38,6 +40,10 @@ export class ManagedEventPage {
   readonly error = signal<string | null>(null);
   readonly saving = signal(false);
   readonly columns = ['label', 'price', 'sold'];
+  // Members can book once the event is published.
+  columnsFor(event: ManagedEvent): string[] {
+    return event.status === 'PUBLISHED' ? [...this.columns, 'book'] : this.columns;
+  }
 
   readonly ticketForm = this.fb.group({
     label: ['', [Validators.required, Validators.maxLength(100)]],
@@ -49,6 +55,18 @@ export class ManagedEventPage {
     this.api.getManagedEvent(this.slug, this.eventId).subscribe({
       next: (event) => this.event.set(event),
       error: (err: HttpErrorResponse) => this.error.set(err.status === 403 ? 'manage.noAccess' : errorMessageKey(err)),
+    });
+  }
+
+  book(ticket: ManagedTicket): void {
+    this.saving.set(true);
+    this.error.set(null);
+    this.registrations.bookTicket(this.slug, this.eventId, { ticketCategoryId: ticket.id }).subscribe({
+      next: (registration) => this.router.navigate(['/pay', registration.id]),
+      error: (err: HttpErrorResponse) => {
+        this.saving.set(false);
+        this.error.set(problemOf(err)?.code === 'SOLD_OUT' ? 'manage.soldOut' : errorMessageKey(err));
+      },
     });
   }
 

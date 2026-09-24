@@ -31,10 +31,9 @@ class PaymentController {
     @GetMapping("/pay/{registrationId}")
     String checkout(@PathVariable Long registrationId, Model model, Authentication authentication)
             throws StripeException {
-        Registration registration = registrationRepository.findByIdWithEventAndAsbl(registrationId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        Asbl asbl = registration.getEvent().getAsbl();
         User user = userService.getByEmail(authentication.getName());
+        Registration registration = ownRegistration(registrationId, user);
+        Asbl asbl = registration.getEvent().getAsbl();
 
         PaymentInitiation initiation =
                 paymentService.initiate(registration, asbl, user.getName(), user.getEmail(), user);
@@ -48,12 +47,20 @@ class PaymentController {
     }
 
     @GetMapping("/pay/{registrationId}/complete")
-    String complete(@PathVariable Long registrationId, Model model) {
-        Registration registration = registrationRepository.findByIdWithEventAndAsbl(registrationId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    String complete(@PathVariable Long registrationId, Model model, Authentication authentication) {
+        Registration registration =
+                ownRegistration(registrationId, userService.getByEmail(authentication.getName()));
         Asbl asbl = registration.getEvent().getAsbl();
         model.addAttribute("publishableKey", stripeProperties.publishableKey());
         model.addAttribute("stripeAccount", asbl.getStripeAccountId());
         return "payment/complete";
+    }
+
+    // Someone else's registration is "not found": registration IDs are sequential, so without this check any
+    // logged-in user could open (and start paying) another person's booking by changing the number.
+    private Registration ownRegistration(Long registrationId, User user) {
+        return registrationRepository.findByIdWithEventAndAsbl(registrationId)
+                .filter(r -> r.getUser() != null && r.getUser().getId().equals(user.getId()))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 }

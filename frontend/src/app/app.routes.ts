@@ -51,6 +51,17 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./pages/account/account').then((m) => m.Account),
   },
+  // Same URLs as the server-rendered payment pages; Stripe returns to /pay/{id}/complete.
+  {
+    path: 'pay/:id',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/checkout/checkout').then((m) => m.CheckoutPage),
+  },
+  {
+    path: 'pay/:id/complete',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/payment-complete/payment-complete').then((m) => m.PaymentComplete),
+  },
   { path: 'legal', loadComponent: legal, data: { page: 'notice' } },
   { path: 'privacy', loadComponent: legal, data: { page: 'privacy' } },
   { path: 'cookies', loadComponent: legal, data: { page: 'cookies' } },

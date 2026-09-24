@@ -8,4 +8,6 @@ export * from './eventManagement.service';
 import { EventManagementService } from './eventManagement.service';
 export * from './public.service';
 import { PublicService } from './public.service';
-export const APIS = [AccountService, AssociationsService, AuthenticationService, EventManagementService, PublicService];
+export * from './registrations.service';
+import { RegistrationsService } from './registrations.service';
+export const APIS = [AccountService, AssociationsService, AuthenticationService, EventManagementService, PublicService, RegistrationsService];

@@ -22,10 +22,56 @@
     "name" : "Authentication",
     "description" : "Exchange credentials for tokens"
   }, {
+    "name" : "Registrations",
+    "description" : "Booking tickets and paying for them"
+  }, {
     "name" : "Associations",
     "description" : "Creating and managing associations (logged-in users)"
   } ],
   "paths" : {
+    "/api/v1/registrations/{id}/checkout" : {
+      "post" : {
+        "tags" : [ "Registrations" ],
+        "summary" : "Start (or resume) paying for one of my bookings",
+        "operationId" : "startCheckout",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Ready to pay",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Checkout"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Nothing to pay, or the association can't receive payments yet",
+            "content" : {
+              "application/problem+json" : { }
+            }
+          },
+          "502" : {
+            "description" : "The payment provider couldn't be reached",
+            "content" : {
+              "application/problem+json" : { }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      }
+    },
     "/api/v1/auth/register" : {
       "post" : {
         "tags" : [ "Authentication" ],
@@ -275,6 +321,60 @@
         } ]
       }
     },
+    "/api/v1/asbls/{slug}/manage/events/{eventId}/registrations" : {
+      "post" : {
+        "tags" : [ "Registrations" ],
+        "summary" : "Book a seat (members of the association)",
+        "operationId" : "bookTicket",
+        "parameters" : [ {
+          "name" : "slug",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "eventId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BookRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Booked; pay next",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MyRegistration"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Sold out, or the event isn't open for booking",
+            "content" : {
+              "application/problem+json" : { }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      }
+    },
     "/api/v1/asbls/{slug}/manage/events/{eventId}/publish" : {
       "post" : {
         "tags" : [ "Event management" ],
@@ -303,6 +403,37 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/ManagedEvent"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/registrations/{id}" : {
+      "get" : {
+        "tags" : [ "Registrations" ],
+        "summary" : "One of my bookings and its payment status",
+        "operationId" : "getMyRegistration",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MyRegistration"
                 }
               }
             }
@@ -582,6 +713,29 @@
   },
   "components" : {
     "schemas" : {
+      "Checkout" : {
+        "required" : [ "amount", "clientSecret", "currency", "publishableKey", "stripeAccount" ],
+        "type" : "object",
+        "properties" : {
+          "publishableKey" : {
+            "type" : "string"
+          },
+          "stripeAccount" : {
+            "type" : "string",
+            "description" : "The association's Stripe account (payments go straight to it)"
+          },
+          "clientSecret" : {
+            "type" : "string"
+          },
+          "amount" : {
+            "type" : "number",
+            "description" : "Amount in euros"
+          },
+          "currency" : {
+            "type" : "string"
+          }
+        }
+      },
       "RegisterRequest" : {
         "required" : [ "email", "name", "password" ],
         "type" : "object",
@@ -786,6 +940,50 @@
             "minimum" : 1,
             "type" : "integer",
             "format" : "int32"
+          }
+        }
+      },
+      "BookRequest" : {
+        "required" : [ "ticketCategoryId" ],
+        "type" : "object",
+        "properties" : {
+          "ticketCategoryId" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
+      "MyRegistration" : {
+        "required" : [ "amount", "asblSlug", "currency", "eventId", "eventTitle", "id", "status", "ticketLabel" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "RESERVED", "PAID", "CONFIRMED", "ATTENDED", "CANCELLED", "REFUNDED", "EXPIRED" ]
+          },
+          "amount" : {
+            "type" : "number",
+            "description" : "Amount in euros"
+          },
+          "currency" : {
+            "type" : "string"
+          },
+          "eventId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "eventTitle" : {
+            "type" : "string"
+          },
+          "ticketLabel" : {
+            "type" : "string"
+          },
+          "asblSlug" : {
+            "type" : "string"
           }
         }
       },

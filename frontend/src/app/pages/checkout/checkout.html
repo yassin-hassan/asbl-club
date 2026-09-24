@@ -1,0 +1,30 @@
+<mat-card class="narrow" appearance="outlined">
+  <mat-card-header>
+    <h1 matCardTitle>{{ 'payment.title' | transloco }}</h1>
+  </mat-card-header>
+  <mat-card-content class="stack">
+    @if (error(); as error) {
+      <p class="error" role="alert">{{ error | transloco }}</p>
+    } @else {
+      @if (checkout(); as checkout) {
+        <p>
+          {{ 'payment.amount' | transloco }}:
+          <span class="amount">{{ checkout.amount | currency: checkout.currency : 'symbol' : '1.2-2' : lang() }}</span>
+        </p>
+      }
+      @if (!ready()) {
+        <mat-spinner diameter="40" />
+      }
+      <!-- Stripe mounts its payment form (an iframe from stripe.com) here. -->
+      <div #paymentElement></div>
+      @if (stripeError(); as message) {
+        <p class="error" role="alert">{{ message }}</p>
+      }
+      @if (ready()) {
+        <button mat-flat-button type="button" (click)="pay()" [disabled]="paying()">
+          {{ (paying() ? 'payment.paying' : 'payment.pay') | transloco }}
+        </button>
+      }
+    }
+  </mat-card-content>
+</mat-card>

@@ -131,13 +131,15 @@ class EventController {
             Authentication authentication) {
         User user = userService.getByEmail(authentication.getName());
         Asbl asbl = resolveForMember(slug, user);
-        eventService.findEvent(asbl, eventId)
+        Event event = eventService.findEvent(asbl, eventId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         try {
-            Registration registration = reservationService.reserve(ticketId, user);
+            Registration registration = reservationService.reserve(event, ticketId, user);
             return "redirect:/pay/" + registration.getId();
         } catch (TicketSoldOutException e) {
             return "redirect:/asbls/" + slug + "/events/" + eventId + "?soldout";
+        } catch (TicketNotInEventException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
 

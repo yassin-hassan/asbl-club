@@ -1,5 +1,6 @@
 package club.asbl.asbl_club.payment;
 
+import club.asbl.asbl_club.event.Event;
 import club.asbl.asbl_club.event.EventService;
 import club.asbl.asbl_club.event.TicketCategory;
 import club.asbl.asbl_club.user.User;
@@ -19,8 +20,8 @@ public class ReservationService {
     }
 
     @Transactional
-    public Registration reserve(Long ticketCategoryId, User user) {
-        TicketCategory category = eventService.reserveSeat(ticketCategoryId);
+    public Registration reserve(Event event, Long ticketCategoryId, User user) {
+        TicketCategory category = eventService.reserveSeat(event, ticketCategoryId);
 
         Registration registration = new Registration();
         registration.setEvent(category.getEvent());

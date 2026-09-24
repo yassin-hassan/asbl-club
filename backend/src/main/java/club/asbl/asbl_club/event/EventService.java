@@ -98,9 +98,12 @@ public class EventService {
     }
 
     @Transactional
-    public TicketCategory reserveSeat(Long ticketCategoryId) {
+    public TicketCategory reserveSeat(Event event, Long ticketCategoryId) {
+        // The ticket must belong to the event being booked: a ticket ID from another event (or another
+        // association) must not be bookable through this one.
         TicketCategory category = ticketCategoryRepository.findById(ticketCategoryId)
-                .orElseThrow(() -> new IllegalArgumentException("Unknown ticket category " + ticketCategoryId));
+                .filter(c -> c.getEvent().getId().equals(event.getId()))
+                .orElseThrow(() -> new TicketNotInEventException(ticketCategoryId));
         if (ticketCategoryRepository.reserveOneSeat(ticketCategoryId) == 0) {
             throw new TicketSoldOutException(ticketCategoryId);
         }

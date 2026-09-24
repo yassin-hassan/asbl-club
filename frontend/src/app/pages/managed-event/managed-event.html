@@ -51,8 +51,20 @@
             <th mat-header-cell *matHeaderCellDef>{{ 'manage.sold' | transloco }}</th>
             <td mat-cell *matCellDef="let ticket">{{ ticket.soldSeats }} / {{ ticket.totalSeats }}</td>
           </ng-container>
-          <tr mat-header-row *matHeaderRowDef="columns"></tr>
-          <tr mat-row *matRowDef="let row; columns: columns"></tr>
+          <ng-container matColumnDef="book">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let ticket">
+              @if (ticket.soldSeats < ticket.totalSeats) {
+                <button mat-stroked-button type="button" (click)="book(ticket)" [disabled]="saving()">
+                  {{ 'manage.book' | transloco }}
+                </button>
+              } @else {
+                {{ 'manage.full' | transloco }}
+              }
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="columnsFor(event)"></tr>
+          <tr mat-row *matRowDef="let row; columns: columnsFor(event)"></tr>
         </table>
       }
     </section>
