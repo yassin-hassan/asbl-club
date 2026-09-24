@@ -1,0 +1,14 @@
+<h1>My account</h1>
+
+@if (user(); as user) {
+  <dl>
+    <dt>Email</dt>
+    <dd>{{ user.email }}</dd>
+    <dt>ID</dt>
+    <dd>{{ user.id }}</dd>
+    <dt>Roles</dt>
+    <dd>{{ user.roles.join(', ') }}</dd>
+  </dl>
+} @else {
+  <p>You are not logged in. <a routerLink="/login">Log in</a></p>
+}
