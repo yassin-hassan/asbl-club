@@ -4,7 +4,10 @@ import java.time.Instant;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,10 +16,23 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ApplicationEventPublisher events;
 
-    UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, ApplicationEventPublisher events) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.events = events;
+    }
+
+    // The logged-in user, however they logged in: server session (name = email) or API access token
+    // (name = the public ID in the token's "sub").
+    @Transactional(readOnly = true)
+    public User getAuthenticated(Authentication authentication) {
+        if (authentication instanceof JwtAuthenticationToken jwt) {
+            return userRepository.findByPublicId(UUID.fromString(jwt.getName()))
+                    .orElseThrow(() -> new IllegalStateException("No user for this access token"));
+        }
+        return getByEmail(authentication.getName());
     }
 
     @Transactional(readOnly = true)
@@ -59,5 +75,6 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(UUID.randomUUID().toString()));
         user.setDeletedAt(Instant.now());
         userRepository.save(user);
+        events.publishEvent(new AccountClosed(user.getId()));
     }
 }

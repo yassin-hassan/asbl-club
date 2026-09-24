@@ -4,6 +4,9 @@
   </mat-card-header>
 
   <mat-card-content>
+    @if (accountDeleted) {
+      <p role="status">{{ 'login.deleted' | transloco }}</p>
+    }
     <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="stack">
       <mat-form-field appearance="outline">
         <mat-label>{{ 'login.email' | transloco }}</mat-label>

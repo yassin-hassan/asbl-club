@@ -27,12 +27,19 @@
     "passwordRequired": "Entrez votre mot de passe.",
     "error": "Adresse e-mail ou mot de passe invalide",
     "noAccount": "Pas encore de compte",
-    "createOne": "Créer un compte"
+    "createOne": "Créer un compte",
+    "deleted": "Votre compte a été supprimé"
   },
   "account": {
     "title": "Mon compte",
     "id": "Identifiant",
-    "roles": "Rôles"
+    "roles": "Rôles",
+    "export": "Exporter mes données",
+    "deleteTitle": "Supprimer mon compte",
+    "deleteWarning": "Cette action est irréversible, votre compte sera fermé et vos données personnelles anonymisées.",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer définitivement votre compte ? Cette action est irréversible.",
+    "cancel": "Annuler",
+    "delete": "Supprimer définitivement"
   },
   "events": {
     "back": "Accueil",
@@ -153,5 +160,16 @@
     "nameRequired": "Entrez votre nom.",
     "passwordTooShort": "Au moins 8 caractères.",
     "submitting": "Création…"
+  },
+  "dashboard": {
+    "title": "Vos associations",
+    "none": "Vous n'avez encore aucune association",
+    "createAsbl": "Créer une ASBL"
+  },
+  "roles": {
+    "ADMIN": "Administrateur",
+    "TREASURER": "Trésorier",
+    "VIEWER": "Lecteur",
+    "MEMBER": "Membre"
   }
 }

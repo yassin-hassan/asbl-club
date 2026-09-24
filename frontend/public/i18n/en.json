@@ -27,12 +27,19 @@
     "passwordRequired": "Enter your password.",
     "error": "Invalid email or password",
     "noAccount": "No account yet",
-    "createOne": "Create an account"
+    "createOne": "Create an account",
+    "deleted": "Your account has been deleted"
   },
   "account": {
     "title": "My account",
     "id": "ID",
-    "roles": "Roles"
+    "roles": "Roles",
+    "export": "Export my data",
+    "deleteTitle": "Delete my account",
+    "deleteWarning": "This action is irreversible, your account will be closed and your personal data anonymised.",
+    "deleteConfirm": "Are you sure you want to permanently delete your account? This action cannot be undone.",
+    "cancel": "Cancel",
+    "delete": "Delete permanently"
   },
   "events": {
     "back": "Home",
@@ -153,5 +160,16 @@
     "nameRequired": "Enter your name.",
     "passwordTooShort": "At least 8 characters.",
     "submitting": "Creating…"
+  },
+  "dashboard": {
+    "title": "Your associations",
+    "none": "You have no associations yet",
+    "createAsbl": "Create an ASBL"
+  },
+  "roles": {
+    "ADMIN": "Administrator",
+    "TREASURER": "Treasurer",
+    "VIEWER": "Viewer",
+    "MEMBER": "Member"
   }
 }

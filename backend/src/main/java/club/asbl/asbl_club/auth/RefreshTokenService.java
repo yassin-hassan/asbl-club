@@ -1,6 +1,7 @@
 package club.asbl.asbl_club.auth;
 
 import club.asbl.asbl_club.audit.AuditService;
+import club.asbl.asbl_club.user.AccountClosed;
 import club.asbl.asbl_club.user.User;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -13,6 +14,7 @@ import java.util.Collection;
 import java.util.HexFormat;
 import java.util.Map;
 import java.util.UUID;
+import org.springframework.context.event.EventListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -88,6 +90,13 @@ class RefreshTokenService {
     void revokeSession(String rawToken) {
         refreshTokenRepository.findByTokenHash(hash(rawToken))
                 .ifPresent(token -> refreshTokenRepository.revokeFamily(token.getFamilyId(), Instant.now()));
+    }
+
+    // A closed account keeps no session anywhere. (Refresh would refuse it anyway; this makes it immediate
+    // and leaves no usable token behind.) Runs inside the closing transaction.
+    @EventListener
+    void onAccountClosed(AccountClosed event) {
+        refreshTokenRepository.revokeAllOfUser(event.userId(), Instant.now());
     }
 
     private String create(User user, UUID familyId) {
