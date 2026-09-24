@@ -27,6 +27,9 @@
   }, {
     "name" : "Associations",
     "description" : "Creating and managing associations (logged-in users)"
+  }, {
+    "name" : "Payment setup",
+    "description" : "Connecting an association to Stripe (administrators)"
   } ],
   "paths" : {
     "/api/v1/registrations/{id}/checkout" : {
@@ -195,6 +198,42 @@
           },
           "409" : {
             "description" : "URL identifier or BCE number already taken",
+            "content" : {
+              "application/problem+json" : { }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/asbls/{slug}/manage/payments/onboarding" : {
+      "post" : {
+        "tags" : [ "Payment setup" ],
+        "summary" : "Get a Stripe onboarding link for the association",
+        "operationId" : "startStripeOnboarding",
+        "parameters" : [ {
+          "name" : "slug",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Go to this address now",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/StripeOnboardingLink"
+                }
+              }
+            }
+          },
+          "502" : {
+            "description" : "Stripe couldn't be reached",
             "content" : {
               "application/problem+json" : { }
             }
@@ -642,6 +681,42 @@
         } ]
       }
     },
+    "/api/v1/asbls/{slug}/manage/payments" : {
+      "get" : {
+        "tags" : [ "Payment setup" ],
+        "summary" : "Whether the association can receive payments",
+        "operationId" : "getPaymentSetup",
+        "parameters" : [ {
+          "name" : "slug",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PaymentSetupStatus"
+                }
+              }
+            }
+          },
+          "502" : {
+            "description" : "Stripe couldn't be reached",
+            "content" : {
+              "application/problem+json" : { }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      }
+    },
     "/api/v1/asbls/{slug}/manage/events/{eventId}" : {
       "get" : {
         "tags" : [ "Event management" ],
@@ -824,6 +899,16 @@
           },
           "denomination" : {
             "type" : "string"
+          }
+        }
+      },
+      "StripeOnboardingLink" : {
+        "required" : [ "url" ],
+        "type" : "object",
+        "properties" : {
+          "url" : {
+            "type" : "string",
+            "description" : "Stripe-hosted onboarding page; single use, expires quickly"
           }
         }
       },
@@ -1199,6 +1284,23 @@
             "items" : {
               "$ref" : "#/components/schemas/AsblMember"
             }
+          }
+        }
+      },
+      "PaymentSetupStatus" : {
+        "required" : [ "denomination", "slug", "status" ],
+        "type" : "object",
+        "properties" : {
+          "slug" : {
+            "type" : "string"
+          },
+          "denomination" : {
+            "type" : "string"
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "NOT_CONNECTED: no Stripe account yet; PENDING: onboarding unfinished or under review at Stripe; READY: card payments accepted",
+            "enum" : [ "NOT_CONNECTED", "PENDING", "READY" ]
           }
         }
       },

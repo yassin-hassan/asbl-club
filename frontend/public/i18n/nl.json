@@ -268,5 +268,25 @@
     "providerDown": "De betaaldienst is onbereikbaar. Probeer het zo meteen opnieuw.",
     "stillProcessing": "Betaling wordt verwerkt. Ze wordt bevestigd zodra Stripe ze bevestigt.",
     "backToEvent": "Terug naar het evenement"
+  },
+  "payments": {
+    "title": "Betalingen",
+    "intro": "Online betalingen (tickets, lidgelden) komen rechtstreeks op de Stripe-rekening van de vereniging terecht.",
+    "NOT_CONNECTED": "Nog niet verbonden met Stripe: de vereniging kan nog geen betalingen ontvangen.",
+    "PENDING": "Stripe-configuratie niet afgerond, of wordt door Stripe nagekeken.",
+    "READY": "Betalingen actief: de vereniging kan kaartbetalingen ontvangen.",
+    "status": {
+      "NOT_CONNECTED": "Niet verbonden",
+      "PENDING": "In behandeling",
+      "READY": "Actief"
+    },
+    "connect": "Stripe verbinden",
+    "continue": "Verder op Stripe",
+    "manage": "Mijn gegevens op Stripe nakijken",
+    "redirecting": "Doorsturen naar Stripe…",
+    "stripeDown": "Stripe is momenteel niet bereikbaar. Probeer het zo meteen opnieuw.",
+    "adminsOnly": "Alleen beheerders van de vereniging beheren de betalingen.",
+    "back": "Terug naar de vereniging",
+    "link": "Betalingen"
   }
 }

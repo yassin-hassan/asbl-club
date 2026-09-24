@@ -5,6 +5,7 @@ api/api.ts
 api/associations.service.ts
 api/authentication.service.ts
 api/eventManagement.service.ts
+api/paymentSetup.service.ts
 api/public.service.ts
 api/registrations.service.ts
 configuration.ts
@@ -31,11 +32,13 @@ model/models.ts
 model/myAssociation.ts
 model/myRegistration.ts
 model/paymentExport.ts
+model/paymentSetupStatus.ts
 model/profileExport.ts
 model/publicEvent.ts
 model/publicTicket.ts
 model/registerRequest.ts
 model/seatAvailability.ts
+model/stripeOnboardingLink.ts
 model/tokenResponse.ts
 param.ts
 provide-api.ts
