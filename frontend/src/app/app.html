@@ -1,13 +1,24 @@
-<nav class="container">
-  <a routerLink="/">Home</a>
-  @if (auth.user(); as user) {
-    <a routerLink="/account">{{ user.email }}</a>
-    <button type="button" (click)="logout()">Log out</button>
-  } @else {
-    <a routerLink="/login">Log in</a>
-  }
-</nav>
+<mat-toolbar class="toolbar">
+  <nav class="toolbar-content">
+    <a mat-button routerLink="/" class="brand">
+      <mat-icon>groups</mat-icon>
+      ASBL Club
+    </a>
+    <span class="spacer"></span>
+    @if (auth.user(); as user) {
+      <a mat-button routerLink="/account">
+        <mat-icon>account_circle</mat-icon>
+        {{ user.email }}
+      </a>
+      <button mat-icon-button type="button" (click)="logout()" aria-label="Log out">
+        <mat-icon>logout</mat-icon>
+      </button>
+    } @else {
+      <a mat-flat-button routerLink="/login">Log in</a>
+    }
+  </nav>
+</mat-toolbar>
 
-<main class="container">
+<main class="page">
   <router-outlet />
 </main>

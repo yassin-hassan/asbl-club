@@ -1,13 +1,28 @@
-<h1>My account</h1>
-
 <!-- The route guard only lets logged-in users in, so user() is set here. -->
 @if (user(); as user) {
-  <dl>
-    <dt>Email</dt>
-    <dd>{{ user.email }}</dd>
-    <dt>ID</dt>
-    <dd>{{ user.id }}</dd>
-    <dt>Roles</dt>
-    <dd>{{ user.roles.join(', ') }}</dd>
-  </dl>
+  <mat-card appearance="outlined">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>account_circle</mat-icon>
+      <mat-card-title>My account</mat-card-title>
+      <mat-card-subtitle>{{ user.email }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-list>
+        <mat-list-item>
+          <span matListItemTitle>ID</span>
+          <span matListItemLine>{{ user.id }}</span>
+        </mat-list-item>
+        <mat-list-item>
+          <span matListItemTitle>Roles</span>
+          <span matListItemLine>
+            <mat-chip-set>
+              @for (role of user.roles; track role) {
+                <mat-chip>{{ role }}</mat-chip>
+              }
+            </mat-chip-set>
+          </span>
+        </mat-list-item>
+      </mat-list>
+    </mat-card-content>
+  </mat-card>
 }

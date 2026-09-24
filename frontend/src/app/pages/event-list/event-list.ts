@@ -1,11 +1,15 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { EventFeedItem, PublicService } from '../../api/generated';
 
 @Component({
   selector: 'app-event-list',
-  imports: [RouterLink, DatePipe],
+  imports: [RouterLink, DatePipe, MatButtonModule, MatIconModule, MatListModule, MatProgressSpinnerModule],
   templateUrl: './event-list.html',
 })
 export class EventList {

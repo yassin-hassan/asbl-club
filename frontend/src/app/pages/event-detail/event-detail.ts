@@ -1,14 +1,20 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatCardModule } from '@angular/material/card';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { catchError, interval, of, startWith, switchMap } from 'rxjs';
 import { EventFeedItem, PublicService, SeatAvailability } from '../../api/generated';
 
 @Component({
   selector: 'app-event-detail',
-  imports: [RouterLink, DatePipe],
+  imports: [RouterLink, DatePipe, MatButtonModule, MatCardModule, MatIconModule, MatListModule, MatProgressSpinnerModule],
   templateUrl: './event-detail.html',
+  styles: '.hint { color: var(--mat-sys-on-surface-variant); }',
 })
 export class EventDetail {
   private route = inject(ActivatedRoute);
