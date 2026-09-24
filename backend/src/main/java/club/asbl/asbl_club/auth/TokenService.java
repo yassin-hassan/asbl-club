@@ -1,5 +1,6 @@
 package club.asbl.asbl_club.auth;
 
+import club.asbl.asbl_club.config.JwtConfig;
 import java.time.Duration;
 import java.time.Instant;
 import org.springframework.security.core.Authentication;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 @Service
 class TokenService {
 
-    static final String ISSUER = "asbl-club";
     static final Duration ACCESS_TOKEN_TTL = Duration.ofMinutes(15);
 
     private final JwtEncoder jwtEncoder;
@@ -25,7 +25,7 @@ class TokenService {
     TokenResponse issueAccessToken(Authentication authentication) {
         Instant now = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer(ISSUER)
+                .issuer(JwtConfig.ISSUER)
                 .subject(authentication.getName())
                 .issuedAt(now)
                 .expiresAt(now.plus(ACCESS_TOKEN_TTL))
