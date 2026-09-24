@@ -31,6 +31,14 @@ export class AuthService {
     );
   }
 
+  // A new account is logged in straight away: the API answers with the same tokens as a login.
+  register(name: string, email: string, password: string): Observable<CurrentUser> {
+    return this.api.register({ name, email, password }).pipe(
+      tap((response) => (this.token = response.accessToken)),
+      switchMap(() => this.loadCurrentUser()),
+    );
+  }
+
   // Runs once at app start: if the browser still has a refresh cookie, the user is logged back in.
   // Never fails: no cookie (or an expired one) just means "not logged in".
   restoreSession(): Observable<unknown> {

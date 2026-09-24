@@ -28,6 +28,10 @@
       <button mat-flat-button type="submit" [disabled]="submitting()">
         {{ (submitting() ? 'login.submitting' : 'login.submit') | transloco }}
       </button>
+      <p>
+        {{ 'login.noAccount' | transloco }} ·
+        <a routerLink="/register">{{ 'login.createOne' | transloco }}</a>
+      </p>
     </form>
   </mat-card-content>
 </mat-card>

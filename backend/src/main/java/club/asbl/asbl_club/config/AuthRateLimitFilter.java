@@ -41,6 +41,7 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
             "/api/v1/auth/login", 10,
             "/login", 10,
             "/register", 5,
+            "/api/v1/auth/register", 5,
             "/api/v1/auth/refresh", 30); // every page load of the Angular app refreshes once
 
     private final boolean enabled;

@@ -13,6 +13,7 @@ model/meResponse.ts
 model/models.ts
 model/publicEvent.ts
 model/publicTicket.ts
+model/registerRequest.ts
 model/seatAvailability.ts
 model/tokenResponse.ts
 param.ts
