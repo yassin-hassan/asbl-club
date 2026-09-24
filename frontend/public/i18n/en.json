@@ -171,5 +171,34 @@
     "TREASURER": "Treasurer",
     "VIEWER": "Viewer",
     "MEMBER": "Member"
+  },
+  "asbl": {
+    "createTitle": "Create an ASBL",
+    "denomination": "Name",
+    "bceNumber": "BCE number",
+    "slug": "URL identifier",
+    "language": "Main language",
+    "submit": "Create ASBL",
+    "submitting": "Creating…",
+    "slugTaken": "This URL identifier is already taken",
+    "bceTaken": "This BCE number is already registered",
+    "bcePattern": "The BCE number must be in the format 0123.456.789",
+    "slugPattern": "The URL identifier may only contain lowercase letters, digits and hyphens",
+    "slugHint": "Used in addresses: asbl.club/asbls/…",
+    "required": "This field is required."
+  },
+  "members": {
+    "title": "Members",
+    "name": "Name",
+    "email": "Email address",
+    "role": "Role",
+    "status": "Status",
+    "noAccess": "You're not a member of this association."
+  },
+  "statuses": {
+    "PENDING": "Pending",
+    "ACTIVE": "Active",
+    "EXCLUDED": "Excluded",
+    "LEFT": "Left"
   }
 }

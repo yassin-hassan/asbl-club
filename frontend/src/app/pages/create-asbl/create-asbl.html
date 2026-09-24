@@ -1,0 +1,54 @@
+<mat-card class="narrow" appearance="outlined">
+  <mat-card-header>
+    <h1 matCardTitle>{{ 'asbl.createTitle' | transloco }}</h1>
+  </mat-card-header>
+  <mat-card-content>
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="stack">
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'asbl.denomination' | transloco }}</mat-label>
+        <input matInput formControlName="denomination" />
+        @if (form.controls.denomination.invalid) {
+          <mat-error>{{ 'asbl.required' | transloco }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'asbl.bceNumber' | transloco }}</mat-label>
+        <input matInput formControlName="bceNumber" placeholder="0123.456.789" />
+        @if (form.controls.bceNumber.hasError('taken')) {
+          <mat-error>{{ 'asbl.bceTaken' | transloco }}</mat-error>
+        } @else if (form.controls.bceNumber.invalid) {
+          <mat-error>{{ 'asbl.bcePattern' | transloco }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'asbl.slug' | transloco }}</mat-label>
+        <input matInput formControlName="slug" />
+        <mat-hint>{{ 'asbl.slugHint' | transloco }}</mat-hint>
+        @if (form.controls.slug.hasError('taken')) {
+          <mat-error>{{ 'asbl.slugTaken' | transloco }}</mat-error>
+        } @else if (form.controls.slug.invalid) {
+          <mat-error>{{ 'asbl.slugPattern' | transloco }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'asbl.language' | transloco }}</mat-label>
+        <mat-select formControlName="defaultLanguage">
+          @for (code of languages; track code) {
+            <mat-option [value]="code">{{ 'lang.' + code | transloco }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      @if (error(); as error) {
+        <p class="error" role="alert">{{ error | transloco }}</p>
+      }
+
+      <button mat-flat-button type="submit" [disabled]="submitting()">
+        {{ (submitting() ? 'asbl.submitting' : 'asbl.submit') | transloco }}
+      </button>
+    </form>
+  </mat-card-content>
+</mat-card>

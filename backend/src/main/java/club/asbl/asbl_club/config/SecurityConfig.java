@@ -37,7 +37,9 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.GET, "/api/v1/asbls/**", "/api/v1/events/**").permitAll()
+                        // Public reads, listed one by one: anything else under /api needs a login (deny by default).
+                        .requestMatchers(HttpMethod.GET, "/api/v1/asbls/*", "/api/v1/asbls/*/events",
+                                "/api/v1/events/*", "/api/v1/events/*/availability").permitAll()
                         .requestMatchers(HttpMethod.POST,
                                 "/api/v1/auth/login", "/api/v1/auth/register", "/api/v1/auth/refresh", "/api/v1/auth/logout")
                         .permitAll()
