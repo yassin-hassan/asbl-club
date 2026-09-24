@@ -1,13 +1,15 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Observable, catchError, finalize, map, of, shareReplay, switchMap, tap } from 'rxjs';
-import { CurrentUser, TokenResponse } from '../models/auth';
+import { AuthenticationService, MeResponse } from '../api/generated';
+
+export type CurrentUser = MeResponse;
 
 // Owns the login state for the whole app (providedIn: 'root' = one shared instance).
+// The HTTP calls themselves come from the client generated from the backend's OpenAPI contract.
 // The refresh token never appears here: it's an HttpOnly cookie the browser sends to /api/v1/auth/*.
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private http = inject(HttpClient);
+  private api = inject(AuthenticationService);
 
   // Kept in memory only, never in localStorage. A page reload forgets it; restoreSession() gets a new one.
   private token: string | null = null;
@@ -23,7 +25,7 @@ export class AuthService {
   }
 
   login(email: string, password: string): Observable<CurrentUser> {
-    return this.http.post<TokenResponse>('/api/v1/auth/login', { email, password }).pipe(
+    return this.api.login({ email, password }).pipe(
       tap((response) => (this.token = response.accessToken)),
       switchMap(() => this.loadCurrentUser()),
     );
@@ -45,7 +47,7 @@ export class AuthService {
   // running share it: the backend accepts each refresh token once, so a second parallel refresh
   // would look like token theft and end the session.
   refreshAccessToken(): Observable<string> {
-    this.refreshInFlight ??= this.http.post<TokenResponse>('/api/v1/auth/refresh', null).pipe(
+    this.refreshInFlight ??= this.api.refresh().pipe(
       map((response) => response.accessToken),
       tap((token) => (this.token = token)),
       finalize(() => (this.refreshInFlight = null)),
@@ -56,7 +58,8 @@ export class AuthService {
 
   // Logged out locally even if the server can't be reached; the server call revokes the refresh token.
   logout(): Observable<void> {
-    return this.http.post<void>('/api/v1/auth/logout', null).pipe(
+    return this.api.logout().pipe(
+      map(() => undefined),
       catchError(() => of(undefined)),
       tap(() => this.clearSession()),
     );
@@ -68,6 +71,6 @@ export class AuthService {
   }
 
   private loadCurrentUser(): Observable<CurrentUser> {
-    return this.http.get<CurrentUser>('/api/v1/me').pipe(tap((user) => this.currentUser.set(user)));
+    return this.api.getCurrentUser().pipe(tap((user) => this.currentUser.set(user)));
   }
 }

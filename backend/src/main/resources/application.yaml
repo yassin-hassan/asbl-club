@@ -46,4 +46,6 @@ rate-limit:
 
 springdoc:
   paths-to-match: /api/**
+  # Describe responses as JSON (instead of */*), so generated clients parse them.
+  default-produces-media-type: application/json
 

@@ -4,6 +4,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { Router, provideRouter } from '@angular/router';
 import { authInterceptor } from './auth.interceptor';
 import { AuthService } from './auth';
+import { provideApi } from '../api/generated';
 
 describe('authInterceptor', () => {
   const tokenResponse = (accessToken: string) => ({ accessToken, tokenType: 'Bearer', expiresIn: 900 });
@@ -19,6 +20,7 @@ describe('authInterceptor', () => {
         provideHttpClient(withInterceptors([authInterceptor])),
         provideHttpClientTesting(),
         provideRouter([]),
+        provideApi(''),
       ],
     });
     http = TestBed.inject(HttpClient);

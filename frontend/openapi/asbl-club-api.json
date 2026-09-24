@@ -1,0 +1,323 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "title" : "asbl.club API",
+    "description" : "Public read API exposing associations and their public events. Reads are open with CORS for showcase sites. Everything else requires a JWT access token from POST /api/v1/auth/login, sent as a Bearer token.",
+    "version" : "v1"
+  },
+  "servers" : [ {
+    "url" : "http://localhost",
+    "description" : "Generated server url"
+  } ],
+  "tags" : [ {
+    "name" : "Public",
+    "description" : "Associations and their public events, readable without logging in"
+  }, {
+    "name" : "Authentication",
+    "description" : "Exchange credentials for tokens"
+  } ],
+  "paths" : {
+    "/api/v1/auth/refresh" : {
+      "post" : {
+        "tags" : [ "Authentication" ],
+        "summary" : "Exchange the refresh token cookie for a new access token and a new refresh token",
+        "operationId" : "refresh",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/logout" : {
+      "post" : {
+        "tags" : [ "Authentication" ],
+        "summary" : "Log out: revoke this login session's refresh tokens and clear the cookie",
+        "operationId" : "logout",
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login" : {
+      "post" : {
+        "tags" : [ "Authentication" ],
+        "summary" : "Log in with email and password, get a short-lived access token (body) and a long-lived refresh token (HttpOnly cookie)",
+        "operationId" : "login",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/me" : {
+      "get" : {
+        "tags" : [ "Authentication" ],
+        "summary" : "Who am I? Requires a valid access token",
+        "operationId" : "getCurrentUser",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MeResponse"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/events/{eventId}" : {
+      "get" : {
+        "tags" : [ "Public" ],
+        "summary" : "Get a public event by id",
+        "operationId" : "getEvent",
+        "parameters" : [ {
+          "name" : "eventId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/EventFeedItem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/events/{eventId}/availability" : {
+      "get" : {
+        "tags" : [ "Public" ],
+        "summary" : "Remaining seats per ticket category of a public event",
+        "operationId" : "getEventAvailability",
+        "parameters" : [ {
+          "name" : "eventId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/SeatAvailability"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/asbls/{slug}" : {
+      "get" : {
+        "tags" : [ "Public" ],
+        "summary" : "Get an association by slug",
+        "operationId" : "getAsbl",
+        "parameters" : [ {
+          "name" : "slug",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AsblResource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/asbls/{slug}/events" : {
+      "get" : {
+        "tags" : [ "Public" ],
+        "summary" : "List an association's public events",
+        "operationId" : "listAsblEvents",
+        "parameters" : [ {
+          "name" : "slug",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/EventFeedItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "TokenResponse" : {
+        "required" : [ "accessToken", "expiresIn", "tokenType" ],
+        "type" : "object",
+        "properties" : {
+          "accessToken" : {
+            "type" : "string"
+          },
+          "tokenType" : {
+            "type" : "string"
+          },
+          "expiresIn" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
+      "LoginRequest" : {
+        "required" : [ "email", "password" ],
+        "type" : "object",
+        "properties" : {
+          "email" : {
+            "type" : "string"
+          },
+          "password" : {
+            "type" : "string"
+          }
+        }
+      },
+      "MeResponse" : {
+        "required" : [ "email", "id", "roles" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "email" : {
+            "type" : "string"
+          },
+          "roles" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "EventFeedItem" : {
+        "required" : [ "id", "startsAt", "title" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "title" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "startsAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
+      "SeatAvailability" : {
+        "required" : [ "categoryId", "remaining" ],
+        "type" : "object",
+        "properties" : {
+          "categoryId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "remaining" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "AsblResource" : {
+        "required" : [ "denomination", "slug" ],
+        "type" : "object",
+        "properties" : {
+          "slug" : {
+            "type" : "string"
+          },
+          "denomination" : {
+            "type" : "string"
+          }
+        }
+      }
+    },
+    "securitySchemes" : {
+      "bearer" : {
+        "type" : "http",
+        "scheme" : "bearer",
+        "bearerFormat" : "JWT"
+      }
+    }
+  }
+}

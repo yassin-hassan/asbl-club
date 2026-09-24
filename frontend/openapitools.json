@@ -1,0 +1,20 @@
+{
+  "$schema": "./node_modules/@openapitools/openapi-generator-cli/config.schema.json",
+  "spaces": 2,
+  "generator-cli": {
+    "version": "7.25.0",
+    "generators": {
+      "asbl-club": {
+        "generatorName": "typescript-angular",
+        "inputSpec": "openapi/asbl-club-api.json",
+        "output": "src/app/api/generated",
+        "additionalProperties": {
+          "ngVersion": "21.0.0",
+          "providedIn": "root",
+          "supportsES6": true,
+          "stringEnums": true
+        }
+      }
+    }
+  }
+}

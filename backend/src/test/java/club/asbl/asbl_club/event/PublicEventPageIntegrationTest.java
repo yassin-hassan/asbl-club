@@ -96,7 +96,7 @@ class PublicEventPageIntegrationTest {
         published.setStatus(EventStatus.PUBLISHED);
         eventService.addTicketCategory(published, "Standard", new BigDecimal("10.00"), 100);
 
-        mockMvc.perform(get("/events/" + published.getId() + "/availability"))
+        mockMvc.perform(get("/api/v1/events/" + published.getId() + "/availability"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].remaining").value(100));
     }

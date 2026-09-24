@@ -1,8 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
-import { EventApiService } from '../../services/event-api';
-import { EventFeedItem } from '../../models/event';
+import { EventFeedItem, PublicService } from '../../api/generated';
 
 @Component({
   selector: 'app-event-list',
@@ -11,7 +10,7 @@ import { EventFeedItem } from '../../models/event';
 })
 export class EventList {
   private route = inject(ActivatedRoute);
-  private api = inject(EventApiService);
+  private api = inject(PublicService);
 
   // Read the :slug segment from the route.
   readonly slug = this.route.snapshot.paramMap.get('slug') ?? '';
@@ -22,7 +21,7 @@ export class EventList {
   readonly loading = computed(() => this.events() === null && this.error() === null);
 
   constructor() {
-    this.api.listEvents(this.slug).subscribe({
+    this.api.listAsblEvents(this.slug).subscribe({
       next: (list) => this.events.set(list),
       error: (err) => this.error.set(`Could not load events (HTTP ${err.status})`),
     });

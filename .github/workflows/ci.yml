@@ -49,6 +49,23 @@ jobs:
       - name: Install
         run: npm ci --legacy-peer-deps
 
+      # The API client is generated from openapi/asbl-club-api.json (which the backend's
+      # OpenApiContractTest keeps in sync with the API). Fail if someone changed the contract
+      # without regenerating, or edited generated code by hand.
+      - name: Set up JDK 21 (runs the OpenAPI generator)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Generated API client is up to date
+        run: |
+          npm run api:generate
+          git diff --exit-code -- src/app/api/generated
+
+      - name: Test
+        run: npx ng test --watch=false
+
       - name: Build
         run: npm run build
 

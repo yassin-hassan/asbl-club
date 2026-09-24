@@ -4,6 +4,7 @@ import club.asbl.asbl_club.asbl.Asbl;
 import club.asbl.asbl_club.asbl.AsblService;
 import club.asbl.asbl_club.event.EventFeedItem;
 import club.asbl.asbl_club.event.EventService;
+import club.asbl.asbl_club.event.SeatAvailability;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
@@ -16,7 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/v1")
-@Tag(name = "Public read API", description = "Associations and their public events")
+@Tag(name = "Public", description = "Associations and their public events, readable without logging in")
 class ApiV1Controller {
 
     private final AsblService asblService;
@@ -27,7 +28,7 @@ class ApiV1Controller {
         this.eventService = eventService;
     }
 
-    @Operation(summary = "Get an association by slug")
+    @Operation(operationId = "getAsbl", summary = "Get an association by slug")
     @GetMapping("/asbls/{slug}")
     AsblResource asbl(@PathVariable String slug) {
         Asbl asbl = asblService.findBySlug(slug)
@@ -35,7 +36,7 @@ class ApiV1Controller {
         return new AsblResource(asbl.getSlug(), asbl.getDenomination());
     }
 
-    @Operation(summary = "List an association's public events")
+    @Operation(operationId = "listAsblEvents", summary = "List an association's public events")
     @GetMapping("/asbls/{slug}/events")
     List<EventFeedItem> events(@PathVariable String slug) {
         Asbl asbl = asblService.findBySlug(slug)
@@ -43,10 +44,17 @@ class ApiV1Controller {
         return eventService.publicFeedOf(asbl);
     }
 
-    @Operation(summary = "Get a public event by id")
+    @Operation(operationId = "getEvent", summary = "Get a public event by id")
     @GetMapping("/events/{eventId}")
     EventFeedItem event(@PathVariable Long eventId) {
         return eventService.publicEvent(eventId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    @Operation(operationId = "getEventAvailability", summary = "Remaining seats per ticket category of a public event")
+    @GetMapping("/events/{eventId}/availability")
+    List<SeatAvailability> availability(@PathVariable Long eventId) {
+        return eventService.publicAvailability(eventId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 }

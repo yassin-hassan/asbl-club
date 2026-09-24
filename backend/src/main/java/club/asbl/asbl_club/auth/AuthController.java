@@ -3,6 +3,7 @@ package club.asbl.asbl_club.auth;
 import club.asbl.asbl_club.user.User;
 import club.asbl.asbl_club.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -44,7 +45,7 @@ class AuthController {
         this.refreshTokenService = refreshTokenService;
     }
 
-    @Operation(summary = "Log in with email and password, get a short-lived access token "
+    @Operation(operationId = "login", summary = "Log in with email and password, get a short-lived access token "
             + "(body) and a long-lived refresh token (HttpOnly cookie)")
     @PostMapping("/login")
     ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest request, HttpServletRequest httpRequest) {
@@ -69,10 +70,10 @@ class AuthController {
                 .body(accessToken);
     }
 
-    @Operation(summary = "Exchange the refresh token cookie for a new access token and a new refresh token")
+    @Operation(operationId = "refresh", summary = "Exchange the refresh token cookie for a new access token and a new refresh token")
     @PostMapping("/refresh")
     ResponseEntity<TokenResponse> refresh(
-            @CookieValue(name = REFRESH_TOKEN_COOKIE, required = false) String refreshToken) {
+            @Parameter(hidden = true) @CookieValue(name = REFRESH_TOKEN_COOKIE, required = false) String refreshToken) {
         if (refreshToken == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
@@ -91,9 +92,10 @@ class AuthController {
                 .body(accessToken);
     }
 
-    @Operation(summary = "Log out: revoke this login session's refresh tokens and clear the cookie")
+    @Operation(operationId = "logout", summary = "Log out: revoke this login session's refresh tokens and clear the cookie")
     @PostMapping("/logout")
-    ResponseEntity<Void> logout(@CookieValue(name = REFRESH_TOKEN_COOKIE, required = false) String refreshToken) {
+    ResponseEntity<Void> logout(
+            @Parameter(hidden = true) @CookieValue(name = REFRESH_TOKEN_COOKIE, required = false) String refreshToken) {
         if (refreshToken != null) {
             refreshTokenService.revokeSession(refreshToken);
         }
