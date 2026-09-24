@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import club.asbl.asbl_club.TestcontainersConfiguration;
+import club.asbl.asbl_club.user.User;
 import club.asbl.asbl_club.user.UserService;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Test;
@@ -41,7 +42,7 @@ class AuthControllerIntegrationTest {
 
     @Test
     void validCredentials_returnAnAccessTokenForThatUser() throws Exception {
-        userService.register("Alice", "alice@club.test", "password123");
+        User alice = userService.register("Alice", "alice@club.test", "password123");
 
         String body = login("alice@club.test", "password123")
                 .andExpect(status().isOk())
@@ -50,8 +51,21 @@ class AuthControllerIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         Jwt jwt = jwtDecoder.decode(JsonPath.read(body, "$.accessToken"));
-        assertThat(jwt.getSubject()).isEqualTo("alice@club.test");
+        assertThat(jwt.getSubject()).isEqualTo(alice.getPublicId().toString());
+        assertThat(jwt.getClaimAsString("email")).isEqualTo("alice@club.test");
         assertThat(jwt.getClaimAsString("iss")).isEqualTo("asbl-club");
+    }
+
+    // Why "sub" is the public ID and not the email: a closed account frees its email for someone else.
+    @Test
+    void reusedEmail_belongsToADifferentSubject() throws Exception {
+        User original = userService.register("Alice", "alice@club.test", "password123");
+        userService.anonymizeAndClose(original);
+        userService.register("New Alice", "alice@club.test", "password456");
+
+        Jwt jwt = jwtDecoder.decode(accessToken("alice@club.test", "password456"));
+
+        assertThat(jwt.getSubject()).isNotEqualTo(original.getPublicId().toString());
     }
 
     @Test
@@ -98,6 +112,13 @@ class AuthControllerIntegrationTest {
         return mockMvc.perform(post("/api/v1/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"email\": \"%s\", \"password\": \"%s\"}".formatted(email, password)));
+    }
+
+    private String accessToken(String email, String password) throws Exception {
+        String body = login(email, password)
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        return JsonPath.read(body, "$.accessToken");
     }
 
     private Integer auditCount(String action, String email) {

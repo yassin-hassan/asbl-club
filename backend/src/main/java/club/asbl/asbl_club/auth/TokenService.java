@@ -1,9 +1,9 @@
 package club.asbl.asbl_club.auth;
 
 import club.asbl.asbl_club.config.JwtConfig;
+import club.asbl.asbl_club.user.User;
 import java.time.Duration;
 import java.time.Instant;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
 import org.springframework.security.oauth2.jwt.JwsHeader;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
@@ -22,11 +22,14 @@ class TokenService {
         this.jwtEncoder = jwtEncoder;
     }
 
-    TokenResponse issueAccessToken(Authentication authentication) {
+    TokenResponse issueAccessToken(User user) {
         Instant now = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer(JwtConfig.ISSUER)
-                .subject(authentication.getName())
+                // Stable identity: emails change and get reused, the public ID never does.
+                .subject(user.getPublicId().toString())
+                // Display data only, never used to identify the user.
+                .claim("email", user.getEmail())
                 .issuedAt(now)
                 .expiresAt(now.plus(ACCESS_TOKEN_TTL))
                 .build();

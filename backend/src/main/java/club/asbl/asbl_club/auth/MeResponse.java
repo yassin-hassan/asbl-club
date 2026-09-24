@@ -1,4 +1,6 @@
 package club.asbl.asbl_club.auth;
 
-record MeResponse(String email) {
+import java.util.UUID;
+
+record MeResponse(UUID id, String email) {
 }
