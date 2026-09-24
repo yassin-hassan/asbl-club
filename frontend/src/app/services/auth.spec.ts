@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { AuthService } from './auth';
-import { CurrentUser } from '../models/auth';
+import { AuthService, CurrentUser } from './auth';
+import { provideApi } from '../api/generated';
 
 describe('AuthService', () => {
   const alice: CurrentUser = { id: '3f2b8c1e-0000-4000-8000-000000000001', email: 'alice@club.test', roles: ['USER'] };
@@ -13,7 +13,7 @@ describe('AuthService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideApi('')],
     });
     auth = TestBed.inject(AuthService);
     http = TestBed.inject(HttpTestingController);

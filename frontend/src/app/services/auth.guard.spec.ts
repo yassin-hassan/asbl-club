@@ -4,11 +4,12 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree, provideRouter } from '@angular/router';
 import { authGuard } from './auth.guard';
 import { AuthService } from './auth';
+import { provideApi } from '../api/generated';
 
 describe('authGuard', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([]), provideApi('')],
     });
   });
 

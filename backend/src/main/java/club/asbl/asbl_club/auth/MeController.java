@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Authentication", description = "Exchange credentials for tokens")
 class MeController {
 
-    @Operation(summary = "Who am I? Requires a valid access token",
+    @Operation(operationId = "getCurrentUser", summary = "Who am I? Requires a valid access token",
             security = @SecurityRequirement(name = "bearer"))
     @GetMapping("/api/v1/me")
     MeResponse me(@AuthenticationPrincipal Jwt jwt) {

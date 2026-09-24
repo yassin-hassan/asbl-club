@@ -65,6 +65,13 @@ public class EventService {
     }
 
     @Transactional(readOnly = true)
+    public Optional<List<SeatAvailability>> publicAvailability(Long eventId) {
+        return findPublicEvent(eventId).map(event -> ticketCategoriesOf(event).stream()
+                .map(t -> new SeatAvailability(t.id(), t.totalSeats() - t.soldSeats()))
+                .toList());
+    }
+
+    @Transactional(readOnly = true)
     public List<EventFeedItem> publicFeed() {
         return eventRepository.findByVisibilityAndStatusOrderByStartsAtDesc(
                 EventVisibility.PUBLIC, EventStatus.PUBLISHED).stream()

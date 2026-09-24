@@ -61,7 +61,7 @@
 <script th:inline="javascript" th:attr="nonce=${cspNonce}">
     const eventId = /*[[${event.id}]]*/ 0;
     function refreshSeats() {
-        fetch('/events/' + eventId + '/availability')
+        fetch('/api/v1/events/' + eventId + '/availability')
             .then(response => response.json())
             .then(categories => categories.forEach(function (category) {
                 const cell = document.getElementById('seats-' + category.categoryId);

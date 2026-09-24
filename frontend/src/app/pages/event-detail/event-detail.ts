@@ -3,8 +3,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { catchError, interval, of, startWith, switchMap } from 'rxjs';
-import { EventApiService } from '../../services/event-api';
-import { EventFeedItem, SeatAvailability } from '../../models/event';
+import { EventFeedItem, PublicService, SeatAvailability } from '../../api/generated';
 
 @Component({
   selector: 'app-event-detail',
@@ -13,7 +12,7 @@ import { EventFeedItem, SeatAvailability } from '../../models/event';
 })
 export class EventDetail {
   private route = inject(ActivatedRoute);
-  private api = inject(EventApiService);
+  private api = inject(PublicService);
 
   readonly eventId = Number(this.route.snapshot.paramMap.get('id'));
 
@@ -30,7 +29,7 @@ export class EventDetail {
       startWith(0),
       switchMap(() =>
         this.api
-          .availability(this.eventId)
+          .getEventAvailability(this.eventId)
           .pipe(catchError(() => of([] as SeatAvailability[]))),
       ),
     ),
