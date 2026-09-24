@@ -1,5 +1,6 @@
 package club.asbl.asbl_club.api;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.startsWith;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -13,6 +14,7 @@ import club.asbl.asbl_club.TestcontainersConfiguration;
 import club.asbl.asbl_club.user.UserService;
 import com.jayway.jsonpath.JsonPath;
 import jakarta.servlet.http.Cookie;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +48,28 @@ class ApiProblemDetailsIntegrationTest {
                         .content("{\"email\": \"alice@club.test\"}"))
                 .andExpect(problem(400, "/api/v1/auth/login"))
                 .andExpect(jsonPath("$.errors.password").exists());
+    }
+
+    // The API is stateless: the language comes with each request (Accept-Language, set by the Angular app).
+    @Test
+    void validationMessages_followTheRequestedLanguage() throws Exception {
+        String english = passwordErrorIn("en");
+        String french = passwordErrorIn("fr");
+        String dutch = passwordErrorIn("nl");
+
+        assertThat(english).isEqualTo("must not be blank");
+        assertThat(french).isEqualTo("ne doit pas être vide");
+        assertThat(dutch).isNotIn(english, french);
+        assertThat(passwordErrorIn("de")).isEqualTo(french); // unsupported → French
+    }
+
+    private String passwordErrorIn(String language) throws Exception {
+        String body = mockMvc.perform(post("/api/v1/auth/login")
+                        .header("Accept-Language", language)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\": \"alice@club.test\"}"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        return JsonPath.read(body, "$.errors.password");
     }
 
     @Test

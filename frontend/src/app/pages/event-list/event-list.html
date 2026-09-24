@@ -1,19 +1,19 @@
-<a mat-button routerLink="/"><mat-icon>arrow_back</mat-icon> Home</a>
-<h1>Events for "{{ slug }}"</h1>
+<a mat-button routerLink="/"><mat-icon>arrow_back</mat-icon> {{ 'events.back' | transloco }}</a>
+<h1>{{ 'events.title' | transloco: { slug } }}</h1>
 
 @if (loading()) {
   <mat-spinner diameter="40" />
-} @else if (error()) {
-  <p class="error" role="alert">{{ error() }}</p>
+} @else if (error(); as error) {
+  <p class="error" role="alert">{{ error | transloco }}</p>
 } @else if (events()!.length === 0) {
-  <p>No public events.</p>
+  <p>{{ 'events.none' | transloco }}</p>
 } @else {
   <mat-nav-list>
     @for (ev of events(); track ev.id) {
       <a mat-list-item [routerLink]="['/events', ev.id]">
         <mat-icon matListItemIcon>event</mat-icon>
         <span matListItemTitle>{{ ev.title }}</span>
-        <span matListItemLine>{{ ev.startsAt | date: 'medium' }}</span>
+        <span matListItemLine>{{ ev.startsAt | date: 'medium' : undefined : lang() }}</span>
       </a>
     }
   </mat-nav-list>

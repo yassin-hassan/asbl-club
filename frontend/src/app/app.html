@@ -5,16 +5,29 @@
       ASBL Club
     </a>
     <span class="spacer"></span>
+
+    <button mat-button type="button" [matMenuTriggerFor]="languageMenu" [attr.aria-label]="'lang.choose' | transloco">
+      <mat-icon>translate</mat-icon>
+      {{ language.active() | uppercase }}
+    </button>
+    <mat-menu #languageMenu="matMenu">
+      @for (code of languages; track code) {
+        <button mat-menu-item type="button" (click)="language.use(code)" [attr.lang]="code">
+          {{ 'lang.' + code | transloco }}
+        </button>
+      }
+    </mat-menu>
+
     @if (auth.user(); as user) {
-      <a mat-button routerLink="/account">
+      <a mat-button routerLink="/account" [attr.aria-label]="'nav.account' | transloco">
         <mat-icon>account_circle</mat-icon>
         {{ user.email }}
       </a>
-      <button mat-icon-button type="button" (click)="logout()" aria-label="Log out">
+      <button mat-icon-button type="button" (click)="logout()" [attr.aria-label]="'nav.logout' | transloco">
         <mat-icon>logout</mat-icon>
       </button>
     } @else {
-      <a mat-flat-button routerLink="/login">Log in</a>
+      <a mat-flat-button routerLink="/login">{{ 'nav.login' | transloco }}</a>
     }
   </nav>
 </mat-toolbar>

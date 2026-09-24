@@ -1,0 +1,42 @@
+{
+  "lang": { "fr": "Français", "nl": "Nederlands", "en": "English", "choose": "Langue" },
+  "nav": { "login": "Se connecter", "account": "Mon compte", "logout": "Se déconnecter" },
+  "home": {
+    "title": "Événements publics",
+    "subtitle": "Entrez le nom court d'une association pour voir ses événements publics.",
+    "association": "Association",
+    "viewEvents": "Voir les événements"
+  },
+  "login": {
+    "title": "Connexion",
+    "email": "Adresse e-mail",
+    "password": "Mot de passe",
+    "submit": "Se connecter",
+    "submitting": "Connexion…",
+    "invalidEmail": "Entrez une adresse e-mail valide.",
+    "passwordRequired": "Entrez votre mot de passe.",
+    "error": "Adresse e-mail ou mot de passe invalide"
+  },
+  "account": { "title": "Mon compte", "id": "Identifiant", "roles": "Rôles" },
+  "events": {
+    "back": "Accueil",
+    "title": "Événements de « {{ slug }} »",
+    "none": "Aucun événement public.",
+    "loadError": "Impossible de charger les événements."
+  },
+  "event": {
+    "loadError": "Impossible de charger cet événement.",
+    "availability": "Places disponibles",
+    "refreshHint": "Mis à jour toutes les 5 secondes.",
+    "noTickets": "Aucune catégorie de billets, ou plus de places.",
+    "category": "Catégorie {{ id }}",
+    "left": "{{ count }} restantes"
+  },
+  "errors": {
+    "generic": "Une erreur est survenue. Réessayez.",
+    "unreachable": "Impossible de joindre le serveur. Vérifiez votre connexion et réessayez.",
+    "notFound": "Introuvable.",
+    "forbidden": "Vous n'avez pas accès à ceci.",
+    "tooManyRequests": "Trop de tentatives. Réessayez dans un instant."
+  }
+}

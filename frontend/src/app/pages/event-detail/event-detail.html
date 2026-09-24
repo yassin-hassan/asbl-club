@@ -1,31 +1,31 @@
-<a mat-button routerLink="/"><mat-icon>arrow_back</mat-icon> Home</a>
+<a mat-button routerLink="/"><mat-icon>arrow_back</mat-icon> {{ 'events.back' | transloco }}</a>
 
 @if (loading()) {
   <mat-spinner diameter="40" />
-} @else if (error()) {
-  <p class="error" role="alert">{{ error() }}</p>
+} @else if (error(); as error) {
+  <p class="error" role="alert">{{ error | transloco }}</p>
 } @else {
   <mat-card appearance="outlined">
     <mat-card-header>
       <mat-card-title>{{ event()!.title }}</mat-card-title>
-      <mat-card-subtitle>{{ event()!.startsAt | date: 'full' }}</mat-card-subtitle>
+      <mat-card-subtitle>{{ event()!.startsAt | date: 'full' : undefined : lang() }}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
       @if (event()!.description) {
         <p>{{ event()!.description }}</p>
       }
 
-      <h2>Seat availability</h2>
-      <p class="hint">Updates every 5 seconds.</p>
+      <h2>{{ 'event.availability' | transloco }}</h2>
+      <p class="hint">{{ 'event.refreshHint' | transloco }}</p>
       @if (availability().length === 0) {
-        <p>No ticket categories, or none remaining.</p>
+        <p>{{ 'event.noTickets' | transloco }}</p>
       } @else {
         <mat-list>
           @for (a of availability(); track a.categoryId) {
             <mat-list-item>
               <mat-icon matListItemIcon>confirmation_number</mat-icon>
-              <span matListItemTitle>Category {{ a.categoryId }}</span>
-              <span matListItemLine>{{ a.remaining }} left</span>
+              <span matListItemTitle>{{ 'event.category' | transloco: { id: a.categoryId } }}</span>
+              <span matListItemLine>{{ 'event.left' | transloco: { count: a.remaining } }}</span>
             </mat-list-item>
           }
         </mat-list>

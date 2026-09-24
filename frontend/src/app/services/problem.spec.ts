@@ -1,26 +1,25 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { errorMessage, problemOf } from './problem';
+import { errorMessageKey, problemOf } from './problem';
 
 describe('Problem Details helpers', () => {
   const apiError = (status: number, body: unknown) =>
     new HttpErrorResponse({ status, error: body, url: '/api/v1/events/42' });
 
-  it('reads the Problem Details body', () => {
+  it('reads the Problem Details body, including field errors', () => {
     const error = apiError(400, { status: 400, title: 'Bad Request', errors: { password: 'must not be blank' } });
 
     expect(problemOf(error)?.errors).toEqual({ password: 'must not be blank' });
   });
 
-  it('prefers the detail, then the title', () => {
-    expect(errorMessage(apiError(404, { title: 'Not Found', detail: 'No such event.' }))).toBe('No such event.');
-    expect(errorMessage(apiError(404, { title: 'Not Found' }))).toBe('Not Found');
+  it('picks a message for the common failures', () => {
+    expect(errorMessageKey(apiError(0, null))).toBe('errors.unreachable');
+    expect(errorMessageKey(apiError(403, {}))).toBe('errors.forbidden');
+    expect(errorMessageKey(apiError(404, {}))).toBe('errors.notFound');
+    expect(errorMessageKey(apiError(429, {}))).toBe('errors.tooManyRequests');
   });
 
-  it('explains when the server cannot be reached', () => {
-    expect(errorMessage(apiError(0, null))).toContain("Can't reach the server");
-  });
-
-  it('falls back when there is no Problem Details body', () => {
-    expect(errorMessage(apiError(502, 'Bad Gateway'), 'Could not load events.')).toBe('Could not load events.');
+  it("falls back to the page's own message otherwise", () => {
+    expect(errorMessageKey(apiError(500, {}), 'events.loadError')).toBe('events.loadError');
+    expect(errorMessageKey(new Error('boom'))).toBe('errors.generic');
   });
 });

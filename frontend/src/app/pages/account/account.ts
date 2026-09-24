@@ -4,10 +4,11 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { AuthService } from '../../services/auth';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-account',
-  imports: [MatCardModule, MatListModule, MatChipsModule, MatIconModule],
+  imports: [TranslocoPipe, MatCardModule, MatListModule, MatChipsModule, MatIconModule],
   templateUrl: './account.html',
 })
 export class Account {
