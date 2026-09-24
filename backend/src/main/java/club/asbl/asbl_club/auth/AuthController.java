@@ -91,6 +91,17 @@ class AuthController {
                 .body(accessToken);
     }
 
+    @Operation(summary = "Log out: revoke this login session's refresh tokens and clear the cookie")
+    @PostMapping("/logout")
+    ResponseEntity<Void> logout(@CookieValue(name = REFRESH_TOKEN_COOKIE, required = false) String refreshToken) {
+        if (refreshToken != null) {
+            refreshTokenService.revokeSession(refreshToken);
+        }
+        return ResponseEntity.noContent()
+                .header(HttpHeaders.SET_COOKIE, expiredRefreshTokenCookie().toString())
+                .build();
+    }
+
     // HttpOnly: page JavaScript (and so an XSS payload) can't read it.
     // Secure: only sent over HTTPS (browsers make an exception for http://localhost).
     // SameSite=Strict: never sent on requests started by another site.

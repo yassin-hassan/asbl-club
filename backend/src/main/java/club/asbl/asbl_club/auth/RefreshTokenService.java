@@ -73,6 +73,14 @@ class RefreshTokenService {
         return new Rotation(user, userDetails.getAuthorities(), newRawToken);
     }
 
+    // Logout: ends the login session this token belongs to. Unknown tokens are ignored, so logging out
+    // is always safe to repeat.
+    @Transactional
+    void revokeSession(String rawToken) {
+        refreshTokenRepository.findByTokenHash(hash(rawToken))
+                .ifPresent(token -> refreshTokenRepository.revokeFamily(token.getFamilyId(), Instant.now()));
+    }
+
     private String create(User user, UUID familyId) {
         byte[] bytes = new byte[TOKEN_BYTES];
         secureRandom.nextBytes(bytes);
