@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import java.time.Duration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -15,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -67,17 +69,48 @@ class AuthController {
                 .body(accessToken);
     }
 
+    @Operation(summary = "Exchange the refresh token cookie for a new access token and a new refresh token")
+    @PostMapping("/refresh")
+    ResponseEntity<TokenResponse> refresh(
+            @CookieValue(name = REFRESH_TOKEN_COOKIE, required = false) String refreshToken) {
+        if (refreshToken == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
+        RefreshTokenService.Rotation rotation;
+        try {
+            rotation = refreshTokenService.rotate(refreshToken);
+        } catch (InvalidRefreshTokenException e) {
+            // Tell the browser to drop the dead cookie, so it stops sending it.
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .header(HttpHeaders.SET_COOKIE, expiredRefreshTokenCookie().toString())
+                    .build();
+        }
+        TokenResponse accessToken = tokenService.issueAccessToken(rotation.user(), rotation.authorities());
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, refreshTokenCookie(rotation.refreshToken()).toString())
+                .body(accessToken);
+    }
+
     // HttpOnly: page JavaScript (and so an XSS payload) can't read it.
     // Secure: only sent over HTTPS (browsers make an exception for http://localhost).
     // SameSite=Strict: never sent on requests started by another site.
     // Path: only sent to /api/v1/auth/*, not with every API call.
     private static ResponseCookie refreshTokenCookie(String value) {
+        return refreshTokenCookie(value, RefreshTokenService.REFRESH_TOKEN_TTL);
+    }
+
+    // Same name and path as the real cookie, empty value, Max-Age 0: the browser deletes it.
+    private static ResponseCookie expiredRefreshTokenCookie() {
+        return refreshTokenCookie("", Duration.ZERO);
+    }
+
+    private static ResponseCookie refreshTokenCookie(String value, Duration maxAge) {
         return ResponseCookie.from(REFRESH_TOKEN_COOKIE, value)
                 .httpOnly(true)
                 .secure(true)
                 .sameSite("Strict")
                 .path("/api/v1/auth")
-                .maxAge(RefreshTokenService.REFRESH_TOKEN_TTL)
+                .maxAge(maxAge)
                 .build();
     }
 }
