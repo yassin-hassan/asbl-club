@@ -9,8 +9,8 @@
     "test": "ng test",
     "api:generate": "openapi-generator-cli generate --generator-key asbl-club",
     "e2e": "playwright test",
-    "functions:check": "tsc -p functions/tsconfig.json",
-    "pages:dev": "wrangler pages dev --port 8788"
+    "worker:check": "wrangler types && tsc -p worker/tsconfig.json",
+    "worker:dev": "wrangler dev --port 8788"
   },
   "private": true,
   "packageManager": "npm@10.9.8",
@@ -35,7 +35,6 @@
     "@angular/build": "^21.2.7",
     "@angular/cli": "^21.2.7",
     "@angular/compiler-cli": "^21.2.0",
-    "@cloudflare/workers-types": "^5.20260925.1",
     "@openapitools/openapi-generator-cli": "^2.41.0",
     "@playwright/test": "^1.63.0",
     "jsdom": "^28.0.0",

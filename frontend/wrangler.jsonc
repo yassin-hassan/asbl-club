@@ -1,12 +1,24 @@
-// Cloudflare Pages: the Angular build is the site, functions/ holds the /api proxy.
+// Cloudflare Worker with static assets: the Angular build is the site; worker/index.ts proxies /api/* to Spring.
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "asbl-club",
-  "pages_build_output_dir": "./dist/frontend/browser",
-  "compatibility_date": "2026-09-01",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-09-25",
+  "assets": {
+    "directory": "./dist/frontend/browser",
+    "binding": "ASSETS",
+    // Paths that aren't files (Angular routes like /asbls/x/members) get index.html.
+    "not_found_handling": "single-page-application",
+    // Only the API goes through the Worker; the app's files come straight from the CDN (free, unlimited).
+    "run_worker_first": ["/api/*"]
+  },
   "vars": {
-    // Where the Spring API runs (Render). The secret shared with it is set apart:
-    // `npx wrangler pages secret put EDGE_PROXY_SECRET`.
+    // Where the Spring API runs (Render).
     "API_ORIGIN": "https://asbl-club.onrender.com"
+  },
+  "secrets": {
+    // Shared with the API (EDGE_PROXY_SECRET there too). Set with `npx wrangler secret put EDGE_PROXY_SECRET`;
+    // locally in .dev.vars (not committed).
+    "required": ["EDGE_PROXY_SECRET"]
   }
 }

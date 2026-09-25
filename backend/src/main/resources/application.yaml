@@ -48,7 +48,7 @@ jwt:
 rate-limit:
   enabled: ${RATE_LIMIT_ENABLED:true}
 
-# The CDN in front (Cloudflare Pages proxies /api/* here). Both set = requests carrying the secret are taken as
+# The CDN in front (a Cloudflare Worker proxies /api/* here). Both set = requests carrying the secret are taken as
 # coming from the visitor at the public address (see EdgeProxyFilter). Both empty = no CDN in front.
 edge:
   secret: ${EDGE_PROXY_SECRET:}
