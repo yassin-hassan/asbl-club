@@ -2,14 +2,17 @@
 // Cloudflare's CDN; only the paths in `assets.run_worker_first` (wrangler.jsonc) run this code:
 //
 //   /api/*      relayed to the Spring API on Render (one site address: no CORS, first-party cookies)
+//   RSS feeds   relayed too (/events/rss, /asbls/:slug/events/rss): Spring writes them
 //   /events/:id Angular's index.html with the event's link-preview tags filled in
 //
 // The API trusts what we say about the visitor only because of the shared secret (see EdgeProxyFilter).
 
+const RSS_FEED = /^(\/asbls\/[a-z0-9-]{1,255})?\/events\/rss$/;
+
 export default {
   async fetch(request, env): Promise<Response> {
     const url = new URL(request.url);
-    if (url.pathname.startsWith('/api/')) {
+    if (url.pathname.startsWith('/api/') || RSS_FEED.test(url.pathname)) {
       return proxyToApi(request, url, env);
     }
     const event = /^\/events\/(\d{1,18})$/.exec(url.pathname);

@@ -35,3 +35,12 @@ test("the site's pages carry the security headers", async ({ request }) => {
   expect(headers['content-security-policy']).toContain("frame-ancestors 'none'");
   expect(headers['x-content-type-options']).toBe('nosniff');
 });
+
+test("an association's RSS feed is served on the site, linking to the site's event pages", async ({ request }) => {
+  const response = await request.get('/asbls/club-demo/events/rss');
+
+  expect(response.headers()['content-type']).toContain('application/rss+xml');
+  const feed = await response.text();
+  expect(feed).toContain('Concert de gala');
+  expect(feed).toMatch(/<link>http:\/\/localhost:\d+\/events\/\d+<\/link>/);
+});
