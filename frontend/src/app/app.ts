@@ -1,6 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { UpperCasePipe } from '@angular/common';
-import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { filter, map, take } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { AuthService } from './services/auth';
@@ -21,6 +23,17 @@ export class App {
   readonly language = inject(LanguageService);
   readonly languages = LANGUAGES;
   private router = inject(Router);
+
+  // False until the first page is on screen. That page may wait for the session restore (a returning user),
+  // and the API may be waking up: show that something is happening instead of an empty page.
+  readonly firstPageShown = toSignal(
+    this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      take(1),
+      map(() => true),
+    ),
+    { initialValue: false },
+  );
 
   logout(): void {
     this.auth.logout().subscribe(() => this.router.navigate(['/']));

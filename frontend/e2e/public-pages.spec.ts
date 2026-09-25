@@ -11,6 +11,20 @@ test('the landing page presents the platform and leads to sign-up and login', as
   await expect(page.getByRole('heading', { name: 'How does it work?' })).toBeVisible();
 });
 
+// The first page never waits for the API (on the free hosting it can take minutes to wake up): a visitor who
+// never logged in here gets the landing page with no API call at all.
+test('a first-time visitor sees the landing page without any call to the API', async ({ page }) => {
+  const apiCalls: string[] = [];
+  page.on('request', (request) => {
+    if (new URL(request.url()).pathname.startsWith('/api/')) apiCalls.push(request.url());
+  });
+
+  await page.goto('/');
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Manage your non-profit');
+
+  expect(apiCalls).toEqual([]);
+});
+
 for (const [path, title] of [
   ['/legal', 'Legal notice'],
   ['/privacy', 'Privacy (GDPR)'],

@@ -20,7 +20,7 @@
     @if (auth.user(); as user) {
       <a class="text-link" routerLink="/account" [title]="user.email">{{ 'nav.account' | transloco }}</a>
       <button mat-stroked-button type="button" (click)="logout()">{{ 'nav.logout' | transloco }}</button>
-    } @else {
+    } @else if (!auth.restoringSession()) {
       <a class="text-link" routerLink="/login">{{ 'nav.login' | transloco }}</a>
       <a mat-flat-button routerLink="/register">{{ 'nav.createAsbl' | transloco }}</a>
     }
@@ -28,6 +28,9 @@
 </header>
 
 <main>
+  @if (!firstPageShown()) {
+    <p class="page muted" role="status">{{ 'app.loading' | transloco }}</p>
+  }
   <router-outlet />
 </main>
 

@@ -307,5 +307,8 @@
     "link": "Logboek",
     "platformLink": "Logboek van het platform",
     "adminsOnly": "Alleen beheerders kunnen dit logboek raadplegen."
+  },
+  "app": {
+    "loading": "Laden…"
   }
 }
