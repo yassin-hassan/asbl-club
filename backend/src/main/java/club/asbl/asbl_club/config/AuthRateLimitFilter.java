@@ -27,8 +27,7 @@ import org.springframework.web.util.UrlPathHelper;
  * mass sign-ups). Token bucket per (endpoint, IP): short bursts are fine, the sustained rate is capped.
  * Over the limit: 429 Too Many Requests with a Retry-After header.
  *
- * <p>Runs before Spring Security: form login is handled inside the security filter chain and never
- * reaches later filters. Counters live in this instance's memory; with several instances each counts
+ * <p>Runs before Spring Security, so refused attempts never reach the password check. Counters live in this instance's memory; with several instances each counts
  * separately (a shared store such as Redis would be needed then).
  */
 @Component
@@ -39,8 +38,6 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
     // POST endpoint -> requests allowed per minute per client IP
     private static final Map<String, Integer> LIMITS_PER_MINUTE = Map.of(
             "/api/v1/auth/login", 10,
-            "/login", 10,
-            "/register", 5,
             "/api/v1/auth/register", 5,
             "/api/v1/auth/refresh", 30); // every page load of the Angular app refreshes once
 
@@ -77,11 +74,7 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
         }
         long retryAfterSeconds = TimeUnit.NANOSECONDS.toSeconds(probe.getNanosToWaitForRefill()) + 1;
         response.setHeader(HttpHeaders.RETRY_AFTER, String.valueOf(retryAfterSeconds));
-        if (path.startsWith("/api/")) {
-            problems.write(request, response, HttpStatus.TOO_MANY_REQUESTS, "Too many attempts. Try again later.");
-        } else {
-            response.sendError(HttpStatus.TOO_MANY_REQUESTS.value()); // Thymeleaf pages: the HTML error page
-        }
+        problems.write(request, response, HttpStatus.TOO_MANY_REQUESTS, "Too many attempts. Try again later.");
     }
 
     // The decoded, normalised path the application routes on. The raw URI would let "/api/v1/auth/%6cogin"

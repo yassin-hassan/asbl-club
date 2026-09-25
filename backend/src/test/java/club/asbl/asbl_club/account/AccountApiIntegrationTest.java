@@ -96,6 +96,12 @@ class AccountApiIntegrationTest {
         assertThat(usable).isZero();
         mockMvc.perform(post("/api/v1/auth/refresh").cookie(new Cookie("refresh_token", refreshToken)))
                 .andExpect(status().isUnauthorized());
+
+        // And the old password no longer opens anything: the account is closed, not just logged out.
+        mockMvc.perform(post("/api/v1/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\": \"alice@club.test\", \"password\": \"password123\"}"))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test

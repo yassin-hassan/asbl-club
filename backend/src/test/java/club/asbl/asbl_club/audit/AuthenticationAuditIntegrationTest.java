@@ -1,9 +1,6 @@
 package club.asbl.asbl_club.audit;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
-import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
-import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -37,26 +34,14 @@ class AuthenticationAuditIntegrationTest {
     JdbcTemplate jdbcTemplate;
 
     @Test
-    void successfulLogin_isAudited() throws Exception {
-        String email = "auth-success@club.test";
-        userService.register("Alice", email, "password123");
-
-        mockMvc.perform(formLogin("/login").user(email).password("password123"))
-                .andExpect(authenticated());
-
-        Integer count = jdbcTemplate.queryForObject(
-                "SELECT count(*) FROM audit_logs WHERE action = 'LOGIN_SUCCEEDED' AND payload->>'email' = ?",
-                Integer.class, email);
-        assertThat(count).isEqualTo(1);
-    }
-
-    @Test
     void failedLogin_isAudited() throws Exception {
         String email = "auth-failure@club.test";
         userService.register("Alice", email, "password123");
 
-        mockMvc.perform(formLogin("/login").user(email).password("wrong"))
-                .andExpect(unauthenticated());
+        mockMvc.perform(post("/api/v1/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\": \"%s\", \"password\": \"wrong\"}".formatted(email)))
+                .andExpect(status().isUnauthorized());
 
         Integer count = jdbcTemplate.queryForObject(
                 "SELECT count(*) FROM audit_logs WHERE action = 'LOGIN_FAILED' AND payload->>'email' = ?",

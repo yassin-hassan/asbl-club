@@ -3,13 +3,12 @@ import { authGuard, whenLoggedIn } from './services/auth.guard';
 
 // Every page is lazy-loaded: its code (and the Material components it uses) is only downloaded the first
 // time someone opens it, so the initial download stays small as more pages are migrated.
-// Paths match the server-rendered pages they replace, so switching a path from Thymeleaf to Angular is
-// only a routing change in front of the app.
+// Paths are the ones the site has always had (it was server-rendered before), so old links still work.
 const legal = () => import('./pages/legal/legal').then((m) => m.Legal);
 const auditJournal = () => import('./pages/audit-journal/audit-journal').then((m) => m.AuditJournalPage);
 
 export const routes: Routes = [
-  // Same URL as the server-rendered site: "/" is the dashboard when logged in, the landing page otherwise.
+  // "/" is the dashboard when logged in, the landing page otherwise.
   { path: '', canMatch: [whenLoggedIn], loadComponent: () => import('./pages/dashboard/dashboard').then((m) => m.Dashboard) },
   { path: '', loadComponent: () => import('./pages/landing/landing').then((m) => m.Landing) },
   {
@@ -67,7 +66,7 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./pages/account/account').then((m) => m.Account),
   },
-  // Same URLs as the server-rendered payment pages; Stripe returns to /pay/{id}/complete.
+  // Stripe returns to /pay/{id}/complete after a payment.
   {
     path: 'pay/:id',
     canActivate: [authGuard],

@@ -80,7 +80,7 @@ class PaymentAuditRegressionTest {
         assertThat(registrationRepository.findById(registration.getId()).orElseThrow().getStatus())
                 .isEqualTo(RegistrationStatus.PAID);
 
-        List<AuditLogView> journal = auditService.journalOf(club);
+        List<AuditLogView> journal = auditService.journalOf(club, 0, 50).getContent();
         assertThat(journal).anyMatch(entry -> "PAYMENT_SUCCEEDED".equals(entry.action()));
     }
 }

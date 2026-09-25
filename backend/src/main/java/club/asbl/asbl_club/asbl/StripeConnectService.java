@@ -49,11 +49,6 @@ public class StripeConnectService {
         return link.getUrl();
     }
 
-    @Transactional(readOnly = true)
-    public boolean isReady(Asbl asbl) throws StripeException {
-        return status(asbl) == ConnectStatus.READY;
-    }
-
     // Asked of Stripe each time: Stripe decides when an account may take payments (identity checks, bank
     // details...), and that can change at any moment on its side.
     @Transactional(readOnly = true)

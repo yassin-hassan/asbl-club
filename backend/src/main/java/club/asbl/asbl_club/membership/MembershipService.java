@@ -38,11 +38,6 @@ public class MembershipService {
                 .toList();
     }
 
-    @Transactional(readOnly = true)
-    public boolean isMember(User user, Asbl asbl) {
-        return membershipRepository.existsByUserAndAsbl(user, asbl);
-    }
-
     // The user's role in this association, or empty when they aren't a member.
     @Transactional(readOnly = true)
     public Optional<String> roleOf(User user, Asbl asbl) {

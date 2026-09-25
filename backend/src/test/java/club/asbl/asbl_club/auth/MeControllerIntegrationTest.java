@@ -3,8 +3,6 @@ package club.asbl.asbl_club.auth;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.startsWith;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
-import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -22,7 +20,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,19 +73,6 @@ class MeControllerIntegrationTest {
     @Test
     void withGarbageToken_isUnauthorized() throws Exception {
         mockMvc.perform(get("/api/v1/me").header("Authorization", "Bearer not-a-jwt"))
-                .andExpect(status().isUnauthorized());
-    }
-
-    // CSRF protection is off for /api, which is only safe if a browser's session cookie can never
-    // authenticate an /api call. This pins that down.
-    @Test
-    void thymeleafSessionCookie_doesNotAuthenticateTheApi() throws Exception {
-        MockHttpSession session = (MockHttpSession) mockMvc
-                .perform(formLogin("/login").user("alice@club.test").password("password123"))
-                .andExpect(authenticated())
-                .andReturn().getRequest().getSession(false);
-
-        mockMvc.perform(get("/api/v1/me").session(session))
                 .andExpect(status().isUnauthorized());
     }
 

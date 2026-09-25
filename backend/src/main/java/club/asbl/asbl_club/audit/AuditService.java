@@ -3,7 +3,6 @@ package club.asbl.asbl_club.audit;
 import club.asbl.asbl_club.asbl.Asbl;
 import club.asbl.asbl_club.user.User;
 import club.asbl.asbl_club.user.UserService;
-import java.util.List;
 import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -54,20 +53,6 @@ public class AuditService {
     @Transactional
     public void recordSecurityEvent(String action, User user, Map<String, Object> payload) {
         auditLogRepository.save(new AuditLog(action, user, currentIp(), null, null, null, payload));
-    }
-
-    @Transactional(readOnly = true)
-    public List<AuditLogView> journalOf(Asbl asbl) {
-        return auditLogRepository.findByAsblIdOrderByCreatedAtDesc(asbl.getId()).stream()
-                .map(this::toView)
-                .toList();
-    }
-
-    @Transactional(readOnly = true)
-    public List<AuditLogView> journalAll() {
-        return auditLogRepository.findTop200ByOrderByCreatedAtDesc().stream()
-                .map(this::toView)
-                .toList();
     }
 
     // Newest first; the ID breaks ties between entries written in the same instant, so pages never overlap.
