@@ -72,8 +72,9 @@ jobs:
       - name: Build
         run: npm run build
 
-  # A real browser through the real stack: Chromium → Angular dev server → proxy → Spring → PostgreSQL,
-  # with the backend's demo data. Catches what unit tests with a faked other side can't.
+  # A real browser through the real stack, shaped like production: Chromium → the Cloudflare Worker
+  # (run locally by Wrangler: the built app, security headers, link previews, the /api proxy and its secret)
+  # → Spring → PostgreSQL, with the backend's demo data. Catches what unit tests with a faked other side can't.
   e2e:
     name: End-to-end tests
     runs-on: ubuntu-latest
@@ -117,6 +118,11 @@ jobs:
         working-directory: frontend
         run: npx playwright install --with-deps chromium
 
+      # The Worker's local settings: the API on this machine, and a throwaway secret shared with it below.
+      - name: Configure the local Worker
+        working-directory: frontend
+        run: printf 'API_ORIGIN=http://localhost:8080\nEDGE_PROXY_SECRET=ci-only-edge-secret\n' > .dev.vars
+
       - name: Run end-to-end tests
         working-directory: frontend
         run: npm run e2e
@@ -125,6 +131,11 @@ jobs:
           E2E_BACKEND_COMMAND: >-
             java -jar ../backend/target/asbl-club-0.0.1-SNAPSHOT.jar
             --spring.profiles.active=demo --spring.docker.compose.enabled=false
+          E2E_FRONTEND_COMMAND: npm run build && npx wrangler dev --port 4200
+          E2E_THROUGH_WORKER: 'true'
+          WRANGLER_SEND_METRICS: 'false'
+          EDGE_PROXY_SECRET: ci-only-edge-secret
+          EDGE_PUBLIC_URL: http://localhost:4200
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/asbl
           SPRING_DATASOURCE_USERNAME: asbl
           SPRING_DATASOURCE_PASSWORD: asbl
