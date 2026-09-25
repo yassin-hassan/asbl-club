@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormGroupDirective, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -72,7 +72,10 @@ export class ManagedEventPage {
     this.save(this.api.publishEvent(this.slug, this.eventId));
   }
 
-  addTicket(): void {
+  // Takes the form directive, not just the form: after a ticket is added, resetForm() clears the fields AND
+  // the "submitted" state. form.reset() alone keeps "submitted", so the emptied required fields would all
+  // show their errors straight away (Material shows errors on invalid fields of a submitted form).
+  addTicket(formDirective: FormGroupDirective): void {
     if (this.ticketForm.invalid) {
       this.ticketForm.markAllAsTouched();
       return;
@@ -82,7 +85,7 @@ export class ManagedEventPage {
       label: value.label.trim(),
       price: Number(value.price.replace(',', '.')), // accept "12,50" as written in French and Dutch
       totalSeats: Number(value.totalSeats),
-    }), () => this.ticketForm.reset());
+    }), () => formDirective.resetForm());
   }
 
   private save(request: Observable<ManagedEvent>, done?: () => void): void {
