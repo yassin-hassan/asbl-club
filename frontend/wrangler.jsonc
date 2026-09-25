@@ -1,4 +1,5 @@
-// Cloudflare Worker with static assets: the Angular build is the site; worker/index.ts proxies /api/* to Spring.
+// Cloudflare Worker with static assets: the Angular build is the site; worker/index.ts proxies /api/* to Spring
+// and adds link previews to /events/:id.
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "asbl-club",
@@ -9,8 +10,9 @@
     "binding": "ASSETS",
     // Paths that aren't files (Angular routes like /asbls/x/members) get index.html.
     "not_found_handling": "single-page-application",
-    // Only the API goes through the Worker; the app's files come straight from the CDN (free, unlimited).
-    "run_worker_first": ["/api/*"]
+    // Only these go through the Worker: the API (proxied to Spring) and public event pages (link previews).
+    // Everything else, the app's files, comes straight from the CDN (free, unlimited).
+    "run_worker_first": ["/api/*", "/events/*"]
   },
   "vars": {
     // Where the Spring API runs (Render).

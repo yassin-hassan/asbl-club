@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
 // End-to-end tests: a real browser against the real stack —
-// Chromium → Angular dev server → dev proxy → Spring Boot → PostgreSQL.
+// Chromium → Angular dev server (or, in CI, the Cloudflare Worker) → Spring Boot → PostgreSQL.
 // They rely on the backend's "demo" profile data (demo@asbl.club / password123, association club-demo).
 //
 // Locally: start the backend with the demo profile first, then `npm run e2e` (Angular is started for you).
@@ -30,10 +30,12 @@ export default defineConfig({
       timeout: 180_000,
     },
     {
-      command: 'npm start',
+      // Default: the Angular dev server (with its dev proxy). CI instead builds the app and serves it through
+      // the Cloudflare Worker, like production (E2E_FRONTEND_COMMAND, E2E_THROUGH_WORKER).
+      command: process.env['E2E_FRONTEND_COMMAND'] ?? 'npm start',
       url: 'http://localhost:4200',
       reuseExistingServer: !ci,
-      timeout: 120_000,
+      timeout: 180_000,
     },
   ],
 });
