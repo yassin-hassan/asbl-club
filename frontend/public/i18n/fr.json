@@ -307,5 +307,8 @@
     "link": "Journal",
     "platformLink": "Journal de la plateforme",
     "adminsOnly": "Seuls les administrateurs peuvent consulter ce journal."
+  },
+  "app": {
+    "loading": "Chargement…"
   }
 }

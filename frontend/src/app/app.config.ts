@@ -31,9 +31,12 @@ export const appConfig: ApplicationConfig = {
     provideAppInitializer(() => {
       inject(MatIconRegistry).setDefaultFontSetClass('material-icons-outlined');
     }),
-    // Both run before the first navigation: the page renders in the right language, and guards already
-    // know who is logged in.
+    // The language loads before the first page (a static file from the CDN: fast), so it renders translated.
     provideAppInitializer(() => inject(LanguageService).init()),
-    provideAppInitializer(() => inject(AuthService).restoreSession())
+    // The session restore only starts here: the page doesn't wait for the API (which may be waking up);
+    // the route guards that need to know who is logged in wait for it instead.
+    provideAppInitializer(() => {
+      inject(AuthService).startSessionRestore();
+    }),
   ]
 };

@@ -1,8 +1,14 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Observable, catchError, finalize, map, of, shareReplay, switchMap, tap } from 'rxjs';
 import { AuthenticationService, MeResponse } from '../api/generated';
 
 export type CurrentUser = MeResponse;
+
+// Not a secret, only "this browser had a session", so it's worth asking the server at start-up. The refresh
+// cookie itself is HttpOnly (invisible to the app); without this hint, every visitor's first page would wait
+// for the API, which on the free hosting can take minutes to wake up.
+const SESSION_HINT_KEY = 'asbl.hasSession';
 
 // Owns the login state for the whole app (providedIn: 'root' = one shared instance).
 // The HTTP calls themselves come from the client generated from the backend's OpenAPI contract.
@@ -19,6 +25,11 @@ export class AuthService {
   readonly user = this.currentUser.asReadonly();
   readonly isLoggedIn = computed(() => this.currentUser() !== null);
 
+  // True while the session is being restored at start-up (the page shows, logged-in areas wait).
+  private readonly restoring = signal(false);
+  readonly restoringSession = this.restoring.asReadonly();
+  private restored$: Observable<void> = of(undefined);
+
   // Read by the auth interceptor, which attaches it to API calls. Nothing else should need it.
   accessToken(): string | null {
     return this.token;
@@ -28,6 +39,7 @@ export class AuthService {
     return this.api.login({ email, password }).pipe(
       tap((response) => (this.token = response.accessToken)),
       switchMap(() => this.loadCurrentUser()),
+      tap(() => setSessionHint(true)),
     );
   }
 
@@ -36,17 +48,44 @@ export class AuthService {
     return this.api.register({ name, email, password }).pipe(
       tap((response) => (this.token = response.accessToken)),
       switchMap(() => this.loadCurrentUser()),
+      tap(() => setSessionHint(true)),
     );
   }
 
-  // Runs once at app start: if the browser still has a refresh cookie, the user is logged back in.
-  // Never fails: no cookie (or an expired one) just means "not logged in".
-  restoreSession(): Observable<unknown> {
+  // App start, without holding up the first page: if this browser had a session, log the user back in in the
+  // background. Anything that needs to know who is logged in waits for whenRestored() (the route guards).
+  startSessionRestore(): void {
+    if (!hasSessionHint()) {
+      return; // a visitor: no need to ask the server
+    }
+    this.restoring.set(true);
+    this.restored$ = this.restoreSession().pipe(
+      finalize(() => this.restoring.set(false)),
+      shareReplay(1),
+    );
+    this.restored$.subscribe();
+  }
+
+  // Completes once the start-up restore is over (at once if there was none).
+  whenRestored(): Observable<void> {
+    return this.restored$;
+  }
+
+  // Logs the user back in if the browser still has a valid refresh cookie. Never fails: a rejected cookie
+  // means "logged out" (and the hint is dropped); a server that can't answer (asleep, down) just means
+  // "not now" — the hint stays, so the next visit tries again.
+  restoreSession(): Observable<void> {
     return this.refreshAccessToken().pipe(
       switchMap(() => this.loadCurrentUser()),
-      catchError(() => {
-        this.clearSession();
-        return of(null);
+      map(() => undefined),
+      catchError((error: unknown) => {
+        if (error instanceof HttpErrorResponse && error.status === 401) {
+          this.clearSession();
+        } else {
+          this.token = null;
+          this.currentUser.set(null);
+        }
+        return of(undefined);
       }),
     );
   }
@@ -73,12 +112,35 @@ export class AuthService {
     );
   }
 
+  // The session is over (logout, rejected refresh, account deleted).
   clearSession(): void {
     this.token = null;
     this.currentUser.set(null);
+    setSessionHint(false);
   }
 
   private loadCurrentUser(): Observable<CurrentUser> {
     return this.api.getCurrentUser().pipe(tap((user) => this.currentUser.set(user)));
+  }
+}
+
+// Storage can be unavailable (private mode, blocked site data): the hint is only an optimisation.
+function hasSessionHint(): boolean {
+  try {
+    return localStorage.getItem(SESSION_HINT_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+function setSessionHint(present: boolean): void {
+  try {
+    if (present) {
+      localStorage.setItem(SESSION_HINT_KEY, '1');
+    } else {
+      localStorage.removeItem(SESSION_HINT_KEY);
+    }
+  } catch {
+    // ignore: see hasSessionHint
   }
 }

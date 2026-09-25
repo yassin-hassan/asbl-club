@@ -307,5 +307,8 @@
     "link": "Audit log",
     "platformLink": "Platform audit log",
     "adminsOnly": "Only administrators can read this log."
+  },
+  "app": {
+    "loading": "Loading…"
   }
 }

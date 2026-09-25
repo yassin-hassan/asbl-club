@@ -12,6 +12,7 @@ describe('AuthService', () => {
   let http: HttpTestingController;
 
   beforeEach(() => {
+    localStorage.clear();
     TestBed.configureTestingModule({
       providers: [provideHttpClient(), provideHttpClientTesting(), provideApi('')],
     });
@@ -85,6 +86,64 @@ describe('AuthService', () => {
 
       expect(failed).toBe(false);
       expect(auth.isLoggedIn()).toBe(false);
+    });
+  });
+
+  // The first page mustn't wait for the API: only a browser that had a session asks the server at start-up.
+  describe('startSessionRestore (app start, in the background)', () => {
+    it('asks nothing of the server for a visitor who never logged in here', () => {
+      auth.startSessionRestore();
+
+      http.expectNone('/api/v1/auth/refresh');
+      let restored = false;
+      auth.whenRestored().subscribe(() => (restored = true));
+      expect(restored).toBe(true);
+    });
+
+    it('logs a returning user back in, and makes waiting guards wait until then', () => {
+      localStorage.setItem('asbl.hasSession', '1');
+      auth.startSessionRestore();
+      let restored = false;
+      auth.whenRestored().subscribe(() => (restored = true));
+      expect(auth.restoringSession()).toBe(true);
+      expect(restored).toBe(false);
+
+      http.expectOne('/api/v1/auth/refresh').flush(tokenResponse('token-456'));
+      http.expectOne('/api/v1/me').flush(alice);
+
+      expect(restored).toBe(true);
+      expect(auth.restoringSession()).toBe(false);
+      expect(auth.user()).toEqual(alice);
+    });
+
+    it('forgets the session when the server rejects the refresh cookie', () => {
+      localStorage.setItem('asbl.hasSession', '1');
+      auth.startSessionRestore();
+
+      http.expectOne('/api/v1/auth/refresh').flush(null, { status: 401, statusText: 'Unauthorized' });
+
+      expect(auth.isLoggedIn()).toBe(false);
+      expect(localStorage.getItem('asbl.hasSession')).toBeNull();
+    });
+
+    // E.g. the free API server still waking up: that's "not now", not "logged out".
+    it('keeps the hint when the server cannot answer, so the next visit tries again', () => {
+      localStorage.setItem('asbl.hasSession', '1');
+      auth.startSessionRestore();
+
+      http.expectOne('/api/v1/auth/refresh').flush(null, { status: 524, statusText: 'Origin timeout' });
+
+      expect(auth.isLoggedIn()).toBe(false);
+      expect(localStorage.getItem('asbl.hasSession')).toBe('1');
+    });
+
+    it('remembers the session at login and forgets it at logout', () => {
+      logIn();
+      expect(localStorage.getItem('asbl.hasSession')).toBe('1');
+
+      auth.logout().subscribe();
+      http.expectOne('/api/v1/auth/logout').flush(null, { status: 204, statusText: 'No Content' });
+      expect(localStorage.getItem('asbl.hasSession')).toBeNull();
     });
   });
 
