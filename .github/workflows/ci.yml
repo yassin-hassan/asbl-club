@@ -150,6 +150,69 @@ jobs:
           path: frontend/playwright-report
           retention-days: 7
 
+  # Continuous deployment of the site: after every merge to main whose checks all pass, the Cloudflare Worker (the
+  # Angular app, the /api proxy, link previews) is deployed from that exact commit, so the live site always matches
+  # main. The backend is deployed by Render itself once these checks pass ("Auto-Deploy: After CI Checks Pass").
+  deploy:
+    name: Deploy the site (Cloudflare Worker)
+    needs: [backend, frontend, e2e]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    # The Cloudflare token only exists in this GitHub environment (restricted to main): pull requests,
+    # including ones from forks, never see it.
+    environment:
+      name: production
+      url: https://asbl-club.ynhassan22.workers.dev
+    # One deploy at a time, in merge order; a newer one waits instead of racing.
+    concurrency:
+      group: production-deploy
+      cancel-in-progress: false
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install
+        working-directory: frontend
+        run: npm ci --legacy-peer-deps
+
+      - name: Build the app
+        working-directory: frontend
+        run: npm run build
+
+      # Cloudflare's official action, using the project's own Wrangler version and wrangler.jsonc.
+      # The Worker's secret (EDGE_PROXY_SECRET) is already stored in Cloudflare and kept across deploys.
+      - name: Deploy to Cloudflare
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: frontend
+          command: deploy
+
+      # The live site answers with the app, and the API answers through it (Problem Details from Spring).
+      # The API server may be waking up: a few tries with a generous time limit.
+      - name: Smoke test the live site
+        env:
+          SITE: https://asbl-club.ynhassan22.workers.dev
+        run: |
+          curl --fail --silent --show-error --max-time 30 "$SITE/" | grep -q '<app-root'
+          for attempt in 1 2 3; do
+            type=$(curl --silent --output /dev/null --max-time 120 --write-out '%{http_code} %{content_type}' \
+              "$SITE/api/v1/asbls/smoke-test-does-not-exist") || true
+            echo "attempt $attempt: $type"
+            case "$type" in "404 application/problem+json"*) exit 0 ;; esac
+            sleep 10
+          done
+          exit 1
+
   dependency-review:
     name: Dependency review
     if: github.event_name == 'pull_request'
