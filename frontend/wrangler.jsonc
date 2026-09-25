@@ -1,0 +1,12 @@
+// Cloudflare Pages: the Angular build is the site, functions/ holds the /api proxy.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "asbl-club",
+  "pages_build_output_dir": "./dist/frontend/browser",
+  "compatibility_date": "2026-09-01",
+  "vars": {
+    // Where the Spring API runs (Render). The secret shared with it is set apart:
+    // `npx wrangler pages secret put EDGE_PROXY_SECRET`.
+    "API_ORIGIN": "https://asbl-club.onrender.com"
+  }
+}

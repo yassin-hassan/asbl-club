@@ -66,6 +66,9 @@ jobs:
       - name: Test
         run: npx ng test --watch=false
 
+      - name: Type-check the Cloudflare Pages Function (the /api proxy)
+        run: npm run functions:check
+
       - name: Build
         run: npm run build
 
