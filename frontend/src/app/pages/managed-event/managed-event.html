@@ -63,7 +63,7 @@
     @if (event.canManage) {
       <section class="box">
         <h2>{{ 'manage.addTicket' | transloco }}</h2>
-        <form [formGroup]="ticketForm" (ngSubmit)="addTicket()" novalidate class="stack">
+        <form [formGroup]="ticketForm" #ticketFormDirective="ngForm" (ngSubmit)="addTicket(ticketFormDirective)" novalidate class="stack">
           <mat-form-field appearance="outline">
             <mat-label>{{ 'manage.ticketLabel' | transloco }}</mat-label>
             <input matInput formControlName="label" />

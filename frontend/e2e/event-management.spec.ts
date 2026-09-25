@@ -34,6 +34,9 @@ test('an administrator creates a draft event, adds tickets, publishes it, and th
   await page.getByLabel('Seats').fill('80');
   await page.getByRole('button', { name: 'Add a ticket category' }).click();
   await expect(page.getByRole('row', { name: /Adult.*€12\.50.*0 \/ 80/ })).toBeVisible();
+  // The emptied form is ready for the next category, without error messages on fields nobody touched yet.
+  await expect(page.getByLabel('Label')).toHaveValue('');
+  await expect(page.getByText('This field is required.')).toHaveCount(0);
 
   await page.getByRole('button', { name: 'Publish' }).click();
   await expect(page.getByText('Draft: hidden from the public')).toBeHidden();
