@@ -47,3 +47,7 @@ Thumbs.db
 /test-results/
 /playwright-report/
 /playwright/.cache/
+
+# Cloudflare: local secrets for `wrangler pages dev`, and its local state
+.dev.vars
+.wrangler/
