@@ -55,11 +55,15 @@ edge:
   public-url: ${EDGE_PUBLIC_URL:}
 
 springdoc:
+  # The API description (/v3/api-docs) and Swagger UI are off unless API_DOCS_ENABLED=true (e.g. locally):
+  # production doesn't advertise its endpoints. The contract lives in frontend/openapi/ (OpenApiContractTest).
+  api-docs:
+    enabled: ${API_DOCS_ENABLED:false}
+    # springdoc 3 writes OpenAPI 3.1 by default; the Angular client generator's 3.1 support is still beta,
+    # so the contract stays on 3.0 until it isn't.
+    version: openapi_3_0
+  swagger-ui:
+    enabled: ${API_DOCS_ENABLED:false}
   paths-to-match: /api/**
   # Describe responses as JSON (instead of */*), so generated clients parse them.
   default-produces-media-type: application/json
-  # springdoc 3 writes OpenAPI 3.1 by default; the Angular client generator's 3.1 support is still beta,
-  # so the contract stays on 3.0 until it isn't.
-  api-docs:
-    version: openapi_3_0
-

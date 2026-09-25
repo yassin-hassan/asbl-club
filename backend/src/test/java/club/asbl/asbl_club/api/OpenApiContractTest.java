@@ -20,7 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 // API changes but the committed contract doesn't, so the frontend can't silently drift from the backend.
 // After an intended API change: ./mvnw test -Dtest=OpenApiContractTest -Dopenapi.update=true
 // then regenerate the client: npm run api:generate (in frontend/).
-@SpringBootTest(properties = "spring.docker.compose.enabled=false")
+@SpringBootTest(properties = {"spring.docker.compose.enabled=false", "springdoc.api-docs.enabled=true"})
 @AutoConfigureMockMvc
 @Import(TestcontainersConfiguration.class)
 class OpenApiContractTest {
