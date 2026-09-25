@@ -110,11 +110,11 @@ class ApiIntegrationTest {
                 .andExpect(status().isUnauthorized());
     }
 
+    // Production doesn't advertise its endpoints: the API description is only served when switched on
+    // (API_DOCS_ENABLED=true); its content is checked by OpenApiContractTest.
     @Test
-    void openApiDocument_isPublicAndDescribesTheApi() throws Exception {
-        mockMvc.perform(get("/v3/api-docs"))
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("openapi")))
-                .andExpect(content().string(containsString("/api/v1/asbls/{slug}/events")));
+    void apiDescriptionAndSwaggerUi_areOffByDefault() throws Exception {
+        mockMvc.perform(get("/v3/api-docs")).andExpect(status().isNotFound());
+        mockMvc.perform(get("/swagger-ui/index.html")).andExpect(status().isNotFound());
     }
 }

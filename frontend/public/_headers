@@ -1,0 +1,23 @@
+# Response headers for the Angular site's files, applied by Cloudflare (static assets only: /api/* responses
+# come from Spring, which sets its own). One rule per path pattern; every matching rule applies.
+#
+# Content-Security-Policy: a static site can't get a fresh nonce per request, so no inline scripts at all
+# (index.html has none: critical-CSS inlining is off in angular.json, it added an inline onload handler).
+# Styles need 'unsafe-inline': Angular and Material inject component styles at runtime (lower risk than
+# scripts). Stripe entries as listed in Stripe's security guide (Stripe.js, 3-D Secure, Link).
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://js.stripe.com https://*.js.stripe.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.stripe.com https://link.com https://*.link.com; frame-src https://js.stripe.com https://*.js.stripe.com https://hooks.stripe.com https://link.com https://*.link.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'
+  Strict-Transport-Security: max-age=31536000
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+# Build files with a content hash in their name never change: browsers may keep them for a year.
+# index.html and i18n/*.json keep Cloudflare's default (revalidated on each visit), so new versions show at once.
+/*.js
+  Cache-Control: public, max-age=31536000, immutable
+/*.css
+  Cache-Control: public, max-age=31536000, immutable
+/media/*
+  Cache-Control: public, max-age=31536000, immutable
