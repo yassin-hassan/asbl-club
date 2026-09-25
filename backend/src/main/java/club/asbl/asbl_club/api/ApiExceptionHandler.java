@@ -16,8 +16,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
  * Every error raised in a JSON controller becomes a Problem Details response (RFC 9457,
  * application/problem+json): status, title, detail and the request path, in one shape the frontend can rely on.
  * Spring's base class already does this for its own exceptions and for ResponseStatusException.
- *
- * <p>Scoped to @RestController: the Thymeleaf pages keep their HTML error page.
  */
 @RestControllerAdvice(annotations = RestController.class)
 class ApiExceptionHandler extends ResponseEntityExceptionHandler {

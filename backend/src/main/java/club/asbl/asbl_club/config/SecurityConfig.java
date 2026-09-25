@@ -84,29 +84,28 @@ public class SecurityConfig {
         return source;
     }
 
+    // Everything outside /api: no pages any more (the Angular site is served by the CDN), only a few machine
+    // endpoints. Stateless like the API: no login form, no session, so no CSRF token to protect (webhooks prove
+    // themselves with Stripe's signature). Deny by default: anything not listed is refused.
     @Bean
     @Order(2)
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/login", "/register", "/webhooks/**", "/error", "/css/**", "/js/**",
-                                "/images/**", "/actuator/health", "/actuator/health/**",
-                                "/legal", "/privacy", "/cookies", "/events/**",
-                                "/asbls/*/events/rss", "/.well-known/jwks.json",
-                                "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
+                        .requestMatchers(HttpMethod.POST, "/webhooks/stripe").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/actuator/health", "/actuator/health/**",
+                                "/.well-known/jwks.json", "/events/rss", "/asbls/*/events/rss").permitAll()
+                        // Off unless API_DOCS_ENABLED=true (application.yaml); when on, readable like the API itself.
+                        .requestMatchers(HttpMethod.GET, "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
                         .permitAll()
-                        .requestMatchers("/actuator/**").hasRole("SUPERADMIN")
-                        .requestMatchers("/admin/**").hasRole("SUPERADMIN")
-                        .anyRequest().authenticated())
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/webhooks/**"))
-                .formLogin(form -> form
-                        .loginPage("/login")
-                        .permitAll())
-                .logout(logout -> logout.permitAll());
+                        .requestMatchers("/error").permitAll()
+                        .anyRequest().denyAll());
         return http.build();
     }
 
-    // The same manager form login uses, exposed so the JSON login endpoint can check passwords too.
+    // Checks passwords for the JSON login endpoint (users from CustomUserDetailsService, Argon2 hashes).
     @Bean
     AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();

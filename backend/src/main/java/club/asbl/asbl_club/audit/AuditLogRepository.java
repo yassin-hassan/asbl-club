@@ -1,6 +1,5 @@
 package club.asbl.asbl_club.audit;
 
-import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -11,10 +10,6 @@ import org.springframework.data.repository.Repository;
 interface AuditLogRepository extends Repository<AuditLog, Long> {
 
     AuditLog save(AuditLog auditLog);
-
-    List<AuditLog> findByAsblIdOrderByCreatedAtDesc(Long asblId);
-
-    List<AuditLog> findTop200ByOrderByCreatedAtDesc();
 
     // One page at a time, with each entry's author and association loaded in the same query (no query per row).
     @EntityGraph(attributePaths = {"user", "asbl"})

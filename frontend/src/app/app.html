@@ -3,7 +3,7 @@
     <a routerLink="/" class="home" aria-label="asbl.club"><app-logo /></a>
     <span class="spacer"></span>
 
-    <!-- Three plain buttons, like the server-rendered site: one click, no menu code in the initial download. -->
+    <!-- Three plain buttons: one click, no menu code in the initial download. -->
     <div class="languages" role="group" [attr.aria-label]="'lang.choose' | transloco">
       @for (code of languages; track code; let last = $last) {
         <button type="button" class="language" [class.active]="language.active() === code"

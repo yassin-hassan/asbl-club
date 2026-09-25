@@ -3,7 +3,6 @@ package club.asbl.asbl_club.payment;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -155,15 +154,6 @@ class RegistrationApiIntegrationTest {
                 .thenThrow(new ApiConnectionException("network down"));
 
         checkout(aliceToken, bookedId()).andExpect(status().isBadGateway());
-    }
-
-    // The same ownership rule on the server-rendered payment pages (they stay in production until the switch).
-    @Test
-    void theServerRenderedPaymentPage_isOnlyForTheOwner() throws Exception {
-        Integer id = bookedId();
-
-        mockMvc.perform(get("/pay/" + id).with(user("bob@club.test"))).andExpect(status().isNotFound());
-        mockMvc.perform(get("/pay/" + id + "/complete").with(user("bob@club.test"))).andExpect(status().isNotFound());
     }
 
     // Straight from the database: taking a seat is a direct UPDATE that bypasses Hibernate's cached copy.

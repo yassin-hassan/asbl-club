@@ -13,8 +13,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-// The site moved: people opening a page on the server's own address (old links, bookmarks, the server-rendered
-// pages) are sent to the same page on the public site, which the CDN serves (see EdgeProxyFilter).
+// The site moved: people opening a page on the server's own address (old links and bookmarks from when
+// the server rendered the pages itself) are sent to the same page on the public site, which the CDN serves (see EdgeProxyFilter).
 //
 // Not redirected:
 // - requests the CDN relayed to us: they already look like the public site (EdgeProxyFilter), and redirecting

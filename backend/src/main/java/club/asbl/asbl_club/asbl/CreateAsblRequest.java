@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-// Same rules as the server-rendered form (and the database constraints).
+// Same rules as the database constraints.
 record CreateAsblRequest(
         @NotBlank @Size(max = 255) String denomination,
         @NotBlank @Pattern(regexp = "\\d{4}\\.\\d{3}\\.\\d{3}", message = "{asbl.bceNumber.pattern}") String bceNumber,

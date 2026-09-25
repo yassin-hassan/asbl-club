@@ -2,7 +2,6 @@ package club.asbl.asbl_club.audit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -11,14 +10,16 @@ import club.asbl.asbl_club.asbl.Asbl;
 import club.asbl.asbl_club.asbl.AsblService;
 import club.asbl.asbl_club.user.UserService;
 import java.util.List;
+import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,20 +44,26 @@ class AuditLogIntegrationTest {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
+    // Through the API, as the Angular app does it: the logged-in user (from the access token) is the actor.
     @Test
-    @WithMockUser(username = "alice@club.test")
     void creatingAsbl_writesOneAuditLineWithActorAndPayload() throws Exception {
         userService.register("Alice", "alice@club.test", "password123");
+        String token = JsonPath.read(mockMvc.perform(post("/api/v1/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\": \"alice@club.test\", \"password\": \"password123\"}"))
+                .andReturn().getResponse().getContentAsString(), "$.accessToken");
 
-        mockMvc.perform(post("/asbls").with(csrf())
-                        .param("denomination", "Mon Club")
-                        .param("bceNumber", "0123.456.789")
-                        .param("slug", "mon-club")
-                        .param("defaultLanguage", "fr"))
-                .andExpect(status().is3xxRedirection());
+        mockMvc.perform(post("/api/v1/asbls")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"denomination": "Mon Club", "bceNumber": "0123.456.789", "slug": "mon-club",
+                                 "defaultLanguage": "fr"}
+                                """))
+                .andExpect(status().isCreated());
 
         Asbl asbl = asblService.findBySlug("mon-club").orElseThrow();
-        List<AuditLog> logs = auditLogRepository.findByAsblIdOrderByCreatedAtDesc(asbl.getId());
+        List<AuditLog> logs = auditLogRepository.findByAsblId(asbl.getId(), PageRequest.of(0, 50)).getContent();
 
         assertThat(logs).hasSize(1);
         AuditLog log = logs.get(0);

@@ -1,6 +1,5 @@
 package club.asbl.asbl_club.config;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -58,15 +57,6 @@ class AuthRateLimitIntegrationTest {
     }
 
     @Test
-    void thymeleafFormLogin_isLimitedToo() throws Exception {
-        for (int i = 0; i < LOGIN_LIMIT; i++) {
-            formLogin("10.0.3.1").andExpect(status().is3xxRedirection()); // back to /login?error
-        }
-
-        formLogin("10.0.3.1").andExpect(status().isTooManyRequests());
-    }
-
-    @Test
     void anEncodedPath_cannotSlipPastTheLimit() throws Exception {
         for (int i = 0; i < LOGIN_LIMIT; i++) {
             apiLogin("10.0.4.1").andExpect(status().isUnauthorized());
@@ -79,15 +69,6 @@ class AuthRateLimitIntegrationTest {
 
     private ResultActions apiLogin(String clientIp) throws Exception {
         return mockMvc.perform(json(post("/api/v1/auth/login")).with(from(clientIp)));
-    }
-
-    // What the Thymeleaf login form sends.
-    private ResultActions formLogin(String clientIp) throws Exception {
-        return mockMvc.perform(post("/login")
-                .param("username", "nobody@club.test")
-                .param("password", "wrong")
-                .with(csrf())
-                .with(from(clientIp)));
     }
 
     private static MockHttpServletRequestBuilder json(MockHttpServletRequestBuilder request) {

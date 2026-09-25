@@ -15,8 +15,6 @@ interface MembershipRepository extends JpaRepository<Membership, Long> {
     @EntityGraph(attributePaths = "user")
     List<Membership> findByAsbl(Asbl asbl);
 
-    boolean existsByUserAndAsbl(User user, Asbl asbl);
-
     Optional<Membership> findByUserAndAsbl(User user, Asbl asbl);
 
     boolean existsByUserAndAsblAndRole(User user, Asbl asbl, MembershipRole role);

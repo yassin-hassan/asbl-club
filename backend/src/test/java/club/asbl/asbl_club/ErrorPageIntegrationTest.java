@@ -19,8 +19,10 @@ class ErrorPageIntegrationTest {
     @Value("${local.server.port}")
     int port;
 
+    // A real server (not MockMvc), so the whole error path runs. There are no pages any more: an unknown address
+    // outside the API is refused (deny by default), and the answer reveals nothing about the application.
     @Test
-    void unknownPageShowsFriendlyErrorWithoutStackTrace() throws Exception {
+    void unknownAddress_isRefusedWithoutRevealingInternals() throws Exception {
         HttpRequest request = HttpRequest.newBuilder(
                         URI.create("http://localhost:" + port + "/images/does-not-exist.png"))
                 .header("Accept", "text/html")
@@ -30,9 +32,8 @@ class ErrorPageIntegrationTest {
         HttpResponse<String> response = HttpClient.newHttpClient()
                 .send(request, HttpResponse.BodyHandlers.ofString());
 
-        assertThat(response.statusCode()).isEqualTo(404);
-        assertThat(response.body()).contains("Page introuvable");
-        assertThat(response.body()).doesNotContain("Whitelabel");
+        assertThat(response.statusCode()).isEqualTo(403);
         assertThat(response.body()).doesNotContain("Exception");
+        assertThat(response.body()).doesNotContain("club.asbl");
     }
 }
