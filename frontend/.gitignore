@@ -48,6 +48,7 @@ Thumbs.db
 /playwright-report/
 /playwright/.cache/
 
-# Cloudflare: local secrets for `wrangler pages dev`, and its local state
+# Cloudflare: local secrets for `wrangler dev`, its local state, and generated types (`npm run worker:check`)
 .dev.vars
 .wrangler/
+worker-configuration.d.ts

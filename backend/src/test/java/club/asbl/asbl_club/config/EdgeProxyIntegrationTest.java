@@ -27,18 +27,18 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.transaction.annotation.Transactional;
 
-// The API behind the CDN: requests relayed by our proxy function (it knows the secret) are the visitor's own,
+// The API behind the CDN: requests relayed by our Cloudflare Worker (it knows the secret) are the visitor's own,
 // at the public site; anything else is taken exactly as it arrived.
 @SpringBootTest(properties = {
         "spring.docker.compose.enabled=false",
         "edge.secret=test-edge-secret",
-        "edge.public-url=https://asbl-club.pages.dev"})
+        "edge.public-url=https://asbl-club.example.workers.dev"})
 @AutoConfigureMockMvc
 @Import(TestcontainersConfiguration.class)
 @Transactional
 class EdgeProxyIntegrationTest {
 
-    private static final String SITE = "https://asbl-club.pages.dev";
+    private static final String SITE = "https://asbl-club.example.workers.dev";
     private static final String VISITOR_IP = "203.0.113.42";
 
     @Autowired
@@ -102,7 +102,7 @@ class EdgeProxyIntegrationTest {
                 eq(SITE + "/asbls/mon-club/manage/payments"));
     }
 
-    // What the proxy function sends: the browser's request (with its Origin), plus the secret and the visitor's IP.
+    // What the Worker sends: the browser's request (with its Origin), plus the secret and the visitor's IP.
     // It reaches the server at the host's own address, not the site's.
     private static MockHttpServletRequestBuilder viaProxy(MockHttpServletRequestBuilder request, String secret) {
         return request
