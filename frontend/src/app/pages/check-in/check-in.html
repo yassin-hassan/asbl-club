@@ -1,0 +1,33 @@
+<div class="page">
+  <h1>{{ 'checkIn.title' | transloco }}</h1>
+  <p class="hint">{{ 'checkIn.hint' | transloco }}</p>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="scan" novalidate>
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'checkIn.code' | transloco }}</mat-label>
+      <input matInput #field formControlName="code" autocomplete="off" autocapitalize="off" spellcheck="false" />
+    </mat-form-field>
+    <button mat-flat-button type="submit" [disabled]="checking()">{{ 'checkIn.submit' | transloco }}</button>
+  </form>
+
+  <ol class="scans" aria-live="polite">
+    @for (scan of scans(); track $index) {
+      <li [class]="scan.kind" [class.latest]="$first">
+        @switch (scan.kind) {
+          @case ('in') {
+            <strong>{{ 'checkIn.in' | transloco }}</strong> {{ scan.name }} · {{ scan.ticket }}
+          }
+          @case ('again') {
+            <strong>{{ 'checkIn.again' | transloco: { time: (scan.at | date: 'shortTime' : undefined : lang()) } }}</strong>
+            {{ scan.name }} · {{ scan.ticket }}
+          }
+          @case ('refused') {
+            <strong>{{ scan.messageKey | transloco }}</strong>
+          }
+        }
+      </li>
+    }
+  </ol>
+
+  <a class="back" [routerLink]="['/asbls', slug, 'manage', 'events', eventId]">{{ 'manage.backToEvent' | transloco }}</a>
+</div>

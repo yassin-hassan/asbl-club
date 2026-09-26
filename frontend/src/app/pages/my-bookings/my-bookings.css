@@ -1,0 +1,18 @@
+.booking {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.booking h3 {
+  margin: 0 0 4px;
+}
+.booking p {
+  margin: 4px 0;
+}
+.details {
+  flex: 1 1 280px;
+  min-width: 0;
+}

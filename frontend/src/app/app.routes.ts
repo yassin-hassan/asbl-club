@@ -37,6 +37,11 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/create-event/create-event').then((m) => m.CreateEvent),
   },
   {
+    path: 'asbls/:slug/manage/events/:id/check-in',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/check-in/check-in').then((m) => m.CheckInPage),
+  },
+  {
     path: 'asbls/:slug/manage/events/:id',
     canActivate: [authGuard],
     loadComponent: () => import('./pages/managed-event/managed-event').then((m) => m.ManagedEventPage),
@@ -72,6 +77,11 @@ export const routes: Routes = [
   },
   { path: 'login', loadComponent: () => import('./pages/login/login').then((m) => m.Login) },
   { path: 'register', loadComponent: () => import('./pages/register/register').then((m) => m.Register) },
+  {
+    path: 'bookings',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/my-bookings/my-bookings').then((m) => m.MyBookings),
+  },
   {
     path: 'account',
     canActivate: [authGuard],

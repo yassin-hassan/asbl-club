@@ -1,0 +1,39 @@
+.scan {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 12px;
+}
+.scan mat-form-field {
+  flex: 1 1 320px;
+}
+.scans {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.scans li {
+  padding: 10px 14px;
+  border-radius: var(--asbl-radius);
+  border-left: 6px solid;
+  opacity: 0.6;
+}
+.scans li.latest {
+  opacity: 1;
+  font-size: 1.25em;
+  padding: 18px 16px;
+}
+.scans .in {
+  background: #dcfce7;
+  border-color: var(--asbl-green-700);
+}
+.scans .again {
+  background: var(--asbl-amber-100);
+  border-color: #92600a;
+}
+.scans .refused {
+  background: #fee2e2;
+  border-color: #b91c1c;
+}

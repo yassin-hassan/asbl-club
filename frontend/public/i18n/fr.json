@@ -10,7 +10,8 @@
     "login": "Se connecter",
     "account": "Mon compte",
     "logout": "Se déconnecter",
-    "createAsbl": "Créer mon ASBL"
+    "createAsbl": "Créer mon ASBL",
+    "bookings": "Mes réservations"
   },
   "home": {
     "title": "Événements publics",
@@ -393,5 +394,26 @@
       "REFUNDED": "Remboursé",
       "EXPIRED": "Expiré"
     }
+  },
+  "bookings": {
+    "title": "Mes réservations",
+    "none": "Vous n'avez encore rien réservé.",
+    "upcoming": "À venir",
+    "noneUpcoming": "Rien de prévu.",
+    "past": "Passées",
+    "pay": "Payer",
+    "checkedInAt": "entrée le {{ time }}",
+    "qrLabel": "QR code du billet pour {{ event }}"
+  },
+  "checkIn": {
+    "title": "Entrées",
+    "hint": "Scannez le QR code d'un billet, ou tapez le code imprimé dessous, puis appuyez sur Entrée.",
+    "code": "Code du billet",
+    "submit": "Valider l'entrée",
+    "in": "Bienvenue !",
+    "again": "Déjà entré à {{ time }} :",
+    "unknown": "Billet inconnu pour cet événement.",
+    "notValid": "Ce billet n'est plus valable (remboursé ou annulé).",
+    "eventNotOpen": "Cet événement n'a pas lieu."
   }
 }

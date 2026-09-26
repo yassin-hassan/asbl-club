@@ -10,7 +10,8 @@
     "login": "Log in",
     "account": "My account",
     "logout": "Log out",
-    "createAsbl": "Create my ASBL"
+    "createAsbl": "Create my ASBL",
+    "bookings": "My bookings"
   },
   "home": {
     "title": "Public events",
@@ -393,5 +394,26 @@
       "REFUNDED": "Refunded",
       "EXPIRED": "Expired"
     }
+  },
+  "bookings": {
+    "title": "My bookings",
+    "none": "You haven't booked anything yet.",
+    "upcoming": "Upcoming",
+    "noneUpcoming": "Nothing coming up.",
+    "past": "Past",
+    "pay": "Pay",
+    "checkedInAt": "checked in {{ time }}",
+    "qrLabel": "Ticket QR code for {{ event }}"
+  },
+  "checkIn": {
+    "title": "Check-in",
+    "hint": "Scan a ticket's QR code, or type the code printed under it, then press Enter.",
+    "code": "Ticket code",
+    "submit": "Check in",
+    "in": "Welcome!",
+    "again": "Already checked in at {{ time }}:",
+    "unknown": "Unknown ticket for this event.",
+    "notValid": "This ticket isn't valid any more (refunded or cancelled).",
+    "eventNotOpen": "This event isn't taking place."
   }
 }

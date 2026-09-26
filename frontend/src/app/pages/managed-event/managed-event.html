@@ -32,6 +32,9 @@
       @if (event.canManage && event.status === 'DRAFT') {
         <button mat-stroked-button type="button" (click)="deleteDraft()" [disabled]="saving()">{{ 'manage.delete' | transloco }}</button>
       }
+      @if (event.canSeeAttendees && event.status === 'PUBLISHED') {
+        <a mat-stroked-button [routerLink]="['/asbls', slug, 'manage', 'events', event.id, 'check-in']">{{ 'checkIn.title' | transloco }}</a>
+      }
       @if (event.status === 'PUBLISHED' && event.visibility === 'PUBLIC') {
         <a mat-stroked-button [routerLink]="['/events', event.id]">{{ 'manage.viewPublic' | transloco }}</a>
       }
