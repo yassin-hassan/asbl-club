@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { FormGroupDirective, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -18,6 +18,7 @@ import { errorMessageKey, problemOf } from '../../services/problem';
 // publishing. Every change returns the updated event, which simply replaces the one on screen.
 @Component({
   selector: 'app-managed-event',
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     RouterLink, DatePipe, CurrencyPipe, ReactiveFormsModule, TranslocoPipe,
     MatButtonModule, MatFormFieldModule, MatInputModule, MatProgressSpinnerModule, MatTableModule,

@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CurrencyPipe, DatePipe, DOCUMENT } from '@angular/common';
 import { TranslocoPipe } from '@jsverse/transloco';
@@ -13,6 +13,7 @@ import { LanguageService } from '../../i18n/language';
 
 @Component({
   selector: 'app-event-detail',
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     RouterLink, DatePipe, CurrencyPipe, TranslocoPipe,
     MatButtonModule, MatProgressSpinnerModule, MatTableModule,

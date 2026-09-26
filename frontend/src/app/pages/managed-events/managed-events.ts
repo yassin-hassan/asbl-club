@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -13,6 +13,7 @@ import { errorMessageKey } from '../../services/problem';
 // An association's events as its members see them: drafts included. Administrators can create more.
 @Component({
   selector: 'app-managed-events',
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [RouterLink, DatePipe, TranslocoPipe, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
   templateUrl: './managed-events.html',
 })

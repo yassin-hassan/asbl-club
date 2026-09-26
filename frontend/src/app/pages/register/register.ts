@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -11,6 +11,7 @@ import { errorMessageKey } from '../../services/problem';
 
 @Component({
   selector: 'app-register',
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [ReactiveFormsModule, RouterLink, TranslocoPipe, MatFormFieldModule, MatInputModule, MatButtonModule],
   templateUrl: './register.html',
   styles: '.narrow { max-width: 420px; margin: 0 auto; }',

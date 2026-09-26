@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -14,6 +14,7 @@ type Outcome = 'checking' | 'confirmed' | 'processing' | 'failed';
 // server every 2 s, for up to 30 s, until the booking is no longer waiting for payment.
 @Component({
   selector: 'app-payment-complete',
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [RouterLink, TranslocoPipe, MatButtonModule, MatProgressSpinnerModule],
   templateUrl: './payment-complete.html',
   styles: '.narrow { max-width: 480px; margin: 0 auto; }',

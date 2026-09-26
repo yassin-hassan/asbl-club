@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,6 +11,7 @@ import { errorMessageKey } from '../../services/problem';
 // An association's member area (members only; the API enforces it).
 @Component({
   selector: 'app-asbl-members',
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [RouterLink, TranslocoPipe, MatButtonModule, MatProgressSpinnerModule, MatTableModule],
   templateUrl: './asbl-members.html',
 })

@@ -1,4 +1,4 @@
-import { Component, DOCUMENT, inject, signal } from '@angular/core';
+import { Component, DOCUMENT, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,6 +12,7 @@ import { errorMessageKey } from '../../services/problem';
 // Coming back with ?resume means that link had expired: we ask for a fresh one straight away.
 @Component({
   selector: 'app-payment-setup',
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [RouterLink, TranslocoPipe, MatButtonModule, MatProgressSpinnerModule],
   templateUrl: './payment-setup.html',
 })

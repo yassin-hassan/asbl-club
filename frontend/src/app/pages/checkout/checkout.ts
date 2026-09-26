@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, signal, viewChild } from '@angular/core';
+import { Component, ElementRef, inject, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CurrencyPipe, DOCUMENT } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
@@ -14,6 +14,7 @@ import { errorMessageKey, problemOf } from '../../services/problem';
 // card details go from the browser straight to Stripe and never reach our server.
 @Component({
   selector: 'app-checkout',
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [CurrencyPipe, TranslocoPipe, MatButtonModule, MatProgressSpinnerModule],
   templateUrl: './checkout.html',
   styles: '.narrow { max-width: 480px; margin: 0 auto; } .amount { font: var(--mat-sys-headline-small); }',

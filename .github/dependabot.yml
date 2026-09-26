@@ -26,15 +26,23 @@ updates:
     open-pull-requests-limit: 10
     labels:
       - dependencies
+    # Major Angular versions are upgraded by hand with `ng update`, which also runs Angular's code migrations; a
+    # bare version bump skips them (and once proposed TypeScript 7 alongside Angular 22, which needs TypeScript 6).
+    # TypeScript's major version is dictated by Angular's supported range, so it moves with those upgrades too.
+    ignore:
+      - dependency-name: "@angular/*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@angular-devkit/*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
     groups:
       # Angular packages are version-locked to each other and must upgrade
-      # together — including TypeScript, whose supported range Angular dictates.
-      # Grouping them means one coordinated PR instead of ~9 separate ones.
+      # together. Grouping them means one coordinated PR instead of ~9 separate ones.
       angular:
         patterns:
           - "@angular/*"
           - "@angular-devkit/*"
-          - "typescript"
       # Everything else on the frontend, minor/patch only, as one PR.
       frontend-minor-and-patch:
         patterns:

@@ -4,7 +4,7 @@ import localeFr from '@angular/common/locales/fr';
 import localeNl from '@angular/common/locales/nl';
 import { provideRouter, withNavigationErrorHandler } from '@angular/router';
 import { MatIconRegistry } from '@angular/material/icon';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideHttpClient, withInterceptors, withXhr } from '@angular/common/http';
 
 import { routes } from './app.routes';
 import { authInterceptor } from './services/auth.interceptor';
@@ -30,7 +30,7 @@ export const appConfig: ApplicationConfig = {
         reloadForNewVersion(error, (url) => document.location.assign(url));
       }),
     ),
-    provideHttpClient(withInterceptors([languageInterceptor, authInterceptor])),
+    provideHttpClient(withXhr(), withInterceptors([languageInterceptor, authInterceptor])),
     // Generated API client: '' keeps URLs relative (/api/...), i.e. same origin, which the dev proxy
     // forwards to Spring and the auth interceptor recognises as our own API.
     provideApi(''),

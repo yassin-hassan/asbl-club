@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -10,6 +10,7 @@ import { errorMessageKey } from '../../services/problem';
 // The home page of a logged-in user: their associations and their role in each.
 @Component({
   selector: 'app-dashboard',
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [RouterLink, TranslocoPipe, MatButtonModule, MatProgressSpinnerModule],
   templateUrl: './dashboard.html',
 })

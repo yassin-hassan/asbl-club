@@ -33,3 +33,5 @@ build/
 .vscode/
 
 .DS_Store
+# Angular build cache, if an ng command runs from the repository root
+.angular/
