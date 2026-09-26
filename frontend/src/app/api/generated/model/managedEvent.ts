@@ -19,6 +19,10 @@ export interface ManagedEvent {
     status: ManagedEventStatusEnum;
     visibility: ManagedEventVisibilityEnum;
     canManage: boolean;
+    /**
+     * Administrators and treasurers see who booked
+     */
+    canSeeAttendees: boolean;
     tickets: Array<ManagedTicket>;
 }
 export enum ManagedEventStatusEnum {

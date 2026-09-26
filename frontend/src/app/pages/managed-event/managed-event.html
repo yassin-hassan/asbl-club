@@ -80,6 +80,10 @@
       </div>
     }
 
+    @if (event.canSeeAttendees) {
+      <app-attendee-list [slug]="slug" [event]="event" />
+    }
+
     @if (editable(event)) {
       <section class="box">
         <h2>{{ (editing() ? 'manage.changeTicket' : 'manage.addTicket') | transloco: { label: editing()?.label } }}</h2>

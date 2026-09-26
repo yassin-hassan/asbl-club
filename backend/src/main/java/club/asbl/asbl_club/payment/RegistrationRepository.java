@@ -19,6 +19,11 @@ interface RegistrationRepository extends JpaRepository<Registration, Long> {
             + "where r.event.id = :eventId and r.status = club.asbl.asbl_club.payment.RegistrationStatus.RESERVED")
     int cancelUnpaid(@Param("eventId") Long eventId);
 
+    // Everyone who booked this event, with what the attendee list shows, in one query.
+    @Query("select r from Registration r left join fetch r.user join fetch r.ticketCategory "
+            + "where r.event.id = :eventId order by r.registeredAt")
+    List<Registration> findAttendees(@Param("eventId") Long eventId);
+
     @Query("select r.id from Registration r where r.status = club.asbl.asbl_club.payment.RegistrationStatus.RESERVED "
             + "and r.registeredAt < :before")
     List<Long> findReservedBefore(@Param("before") Instant before);

@@ -15,6 +15,7 @@ import { EventManagementService, ManagedEvent, ManagedTicket, RegistrationsServi
 import { LanguageService } from '../../i18n/language';
 import { errorMessageKey, problemOf } from '../../services/problem';
 import { ConfirmDialog, ConfirmDialogData } from '../../components/confirm-dialog/confirm-dialog';
+import { AttendeeList } from './attendee-list';
 
 // The lifecycle rules the API may invoke (409 + code), as messages for people.
 const LIFECYCLE_ERRORS: Record<string, string> = {
@@ -30,7 +31,7 @@ const LIFECYCLE_ERRORS: Record<string, string> = {
   selector: 'app-managed-event',
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
-    RouterLink, DatePipe, CurrencyPipe, ReactiveFormsModule, TranslocoPipe,
+    RouterLink, DatePipe, AttendeeList, CurrencyPipe, ReactiveFormsModule, TranslocoPipe,
     MatButtonModule, MatFormFieldModule, MatInputModule, MatProgressSpinnerModule, MatTableModule,
   ],
   templateUrl: './managed-event.html',

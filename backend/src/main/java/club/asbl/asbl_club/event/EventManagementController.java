@@ -52,7 +52,15 @@ class EventManagementController {
         this.membershipService = membershipService;
     }
 
-    private record Access(Asbl asbl, boolean admin) {
+    private record Access(Asbl asbl, String role) {
+        boolean admin() {
+            return "ADMIN".equals(role);
+        }
+
+        // Who booked, and whether they paid, is for those who run the event and handle its money.
+        boolean seesAttendees() {
+            return admin() || "TREASURER".equals(role);
+        }
     }
 
     @Operation(operationId = "listManagedEvents", summary = "All the association's events, drafts included (members)",
@@ -85,7 +93,7 @@ class EventManagementController {
     @GetMapping("/{eventId}")
     Detail get(@PathVariable String slug, @PathVariable Long eventId, Authentication authentication) {
         Access access = asMember(slug, authentication);
-        return detail(eventOf(access, eventId), access.admin());
+        return detail(eventOf(access, eventId), access.admin(), access.seesAttendees());
     }
 
     @Operation(operationId = "addTicketCategory", summary = "Add a ticket category to an event (administrators)",
@@ -199,12 +207,17 @@ class EventManagementController {
         return new ErrorResponseException(HttpStatus.CONFLICT, problem, null);
     }
 
+    // Every caller but the read endpoint is an administrator.
     private Detail detail(Event event, boolean canManage) {
+        return detail(event, canManage, canManage);
+    }
+
+    private Detail detail(Event event, boolean canManage, boolean canSeeAttendees) {
         var tickets = eventService.ticketCategoriesOf(event).stream()
                 .map(t -> new Ticket(t.id(), t.label(), t.price(), t.totalSeats(), t.soldSeats()))
                 .toList();
         return new Detail(event.getId(), event.getTitle(), event.getDescription(), event.getStartsAt(),
-                event.getLocation(), event.getStatus().name(), event.getVisibility().name(), canManage, tickets);
+                event.getLocation(), event.getStatus().name(), event.getVisibility().name(), canManage, canSeeAttendees, tickets);
     }
 
     // The event must belong to this association: an ID from another association is simply not found here.
@@ -218,7 +231,7 @@ class EventManagementController {
         Asbl asbl = asblService.findBySlug(slug).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         String role = membershipService.roleOf(user, asbl)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN));
-        return new Access(asbl, "ADMIN".equals(role));
+        return new Access(asbl, role);
     }
 
     private Access asAdmin(String slug, Authentication authentication) {

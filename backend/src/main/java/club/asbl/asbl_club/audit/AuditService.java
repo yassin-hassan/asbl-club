@@ -32,6 +32,13 @@ public class AuditService {
         auditLogRepository.save(log);
     }
 
+    // For an action whose actor is known without looking at the request (e.g. the member a booking is for).
+    @Transactional
+    public void recordFor(User actor, String action, Asbl asbl, String entityType, Long entityId,
+            Map<String, Object> payload) {
+        auditLogRepository.save(new AuditLog(action, actor, currentIp(), asbl, entityType, entityId, payload));
+    }
+
     @Transactional
     public void record(String action, Asbl asbl) {
         record(action, asbl, null, null, null);

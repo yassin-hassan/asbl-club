@@ -372,5 +372,26 @@
     "title": "Demandes d’adhésion",
     "approve": "Accepter",
     "decline": "Refuser"
+  },
+  "attendees": {
+    "title": "Participants",
+    "none": "Personne n'a encore réservé.",
+    "summary": "{{ paid }} payé(s) · {{ waiting }} en attente de paiement",
+    "download": "Télécharger (CSV)",
+    "name": "Nom",
+    "email": "E-mail",
+    "ticket": "Billet",
+    "status": "Statut",
+    "amount": "Montant",
+    "bookedAt": "Réservé le",
+    "statuses": {
+      "RESERVED": "En attente de paiement",
+      "PAID": "Payé",
+      "CONFIRMED": "Confirmé",
+      "ATTENDED": "Présent",
+      "CANCELLED": "Annulé",
+      "REFUNDED": "Remboursé",
+      "EXPIRED": "Expiré"
+    }
   }
 }

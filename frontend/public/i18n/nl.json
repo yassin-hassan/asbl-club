@@ -372,5 +372,26 @@
     "title": "Lidmaatschapsaanvragen",
     "approve": "Goedkeuren",
     "decline": "Weigeren"
+  },
+  "attendees": {
+    "title": "Deelnemers",
+    "none": "Nog niemand heeft geboekt.",
+    "summary": "{{ paid }} betaald · {{ waiting }} wacht op betaling",
+    "download": "Downloaden (CSV)",
+    "name": "Naam",
+    "email": "E-mail",
+    "ticket": "Ticket",
+    "status": "Status",
+    "amount": "Bedrag",
+    "bookedAt": "Geboekt op",
+    "statuses": {
+      "RESERVED": "Wacht op betaling",
+      "PAID": "Betaald",
+      "CONFIRMED": "Bevestigd",
+      "ATTENDED": "Aanwezig",
+      "CANCELLED": "Geannuleerd",
+      "REFUNDED": "Terugbetaald",
+      "EXPIRED": "Verlopen"
+    }
   }
 }

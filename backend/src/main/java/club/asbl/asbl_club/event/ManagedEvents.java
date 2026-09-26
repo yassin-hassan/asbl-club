@@ -40,6 +40,8 @@ public final class ManagedEvents {
             @Schema(requiredMode = REQUIRED, allowableValues = {"DRAFT", "PUBLISHED", "CANCELLED", "ENDED"}) String status,
             @Schema(requiredMode = REQUIRED, allowableValues = {"PUBLIC", "MEMBERS"}) String visibility,
             @Schema(requiredMode = REQUIRED) boolean canManage,
+            @Schema(requiredMode = REQUIRED, description = "Administrators and treasurers see who booked")
+            boolean canSeeAttendees,
             @Schema(requiredMode = REQUIRED) List<Ticket> tickets) {
     }
 

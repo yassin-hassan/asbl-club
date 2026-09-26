@@ -20,6 +20,8 @@ model/asblMember.ts
 model/asblMembers.ts
 model/asblResource.ts
 model/asblSummary.ts
+model/attendee.ts
+model/attendees.ts
 model/auditEntry.ts
 model/auditJournal.ts
 model/bookRequest.ts

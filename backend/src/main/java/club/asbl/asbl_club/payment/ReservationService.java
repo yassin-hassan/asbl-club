@@ -1,11 +1,13 @@
 package club.asbl.asbl_club.payment;
 
+import club.asbl.asbl_club.audit.AuditService;
 import club.asbl.asbl_club.event.Event;
 import club.asbl.asbl_club.event.EventCancelled;
 import club.asbl.asbl_club.event.EventService;
 import club.asbl.asbl_club.event.TicketCategory;
 import club.asbl.asbl_club.user.User;
 import java.time.Instant;
+import java.util.Map;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,10 +17,13 @@ public class ReservationService {
 
     private final EventService eventService;
     private final RegistrationRepository registrationRepository;
+    private final AuditService auditService;
 
-    ReservationService(EventService eventService, RegistrationRepository registrationRepository) {
+    ReservationService(EventService eventService, RegistrationRepository registrationRepository,
+            AuditService auditService) {
         this.eventService = eventService;
         this.registrationRepository = registrationRepository;
+        this.auditService = auditService;
     }
 
     @Transactional
@@ -33,7 +38,10 @@ public class ReservationService {
         registration.setRegisteredAt(Instant.now());
         registration.setAmount(category.getPrice());
         registration.setCurrency("EUR");
-        return registrationRepository.save(registration);
+        Registration saved = registrationRepository.save(registration);
+        auditService.recordFor(user, "BOOKING_CREATED", category.getEvent().getAsbl(), "Registration", saved.getId(),
+                Map.of("event", category.getEvent().getId(), "ticket", category.getLabel()));
+        return saved;
     }
 
     // An event was cancelled: bookings not yet paid are cancelled with it (checkout then refuses them; a payment
