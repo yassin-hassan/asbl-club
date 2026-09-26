@@ -32,6 +32,11 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/create-event/create-event').then((m) => m.CreateEvent),
   },
   {
+    path: 'asbls/:slug/manage/events/:id/edit',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/create-event/create-event').then((m) => m.CreateEvent),
+  },
+  {
     path: 'asbls/:slug/manage/events/:id',
     canActivate: [authGuard],
     loadComponent: () => import('./pages/managed-event/managed-event').then((m) => m.ManagedEventPage),

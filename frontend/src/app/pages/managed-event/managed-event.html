@@ -11,15 +11,26 @@
         <div><dt>{{ 'manage.location' | transloco }}</dt><dd>{{ event.location }}</dd></div>
       }
       <div><dt>{{ 'manage.visibility' | transloco }}</dt><dd><span class="tag warm">{{ 'manage.visibilities.' + event.visibility | transloco }}</span></dd></div>
-      <div><dt>{{ 'manage.status' | transloco }}</dt><dd><span class="tag" [class.ok]="event.status === 'PUBLISHED'">{{ 'manage.statuses.' + event.status | transloco }}</span></dd></div>
+      <div><dt>{{ 'manage.status' | transloco }}</dt><dd><span class="tag" [class.ok]="event.status === 'PUBLISHED'" [class.warm]="event.status === 'CANCELLED'">{{ 'manage.statuses.' + event.status | transloco }}</span></dd></div>
     </dl>
 
     @if (event.status === 'DRAFT') {
       <p class="hint">{{ 'manage.draftHint' | transloco }}</p>
+    } @else if (event.status === 'CANCELLED') {
+      <p class="hint">{{ 'manage.cancelledHint' | transloco }}</p>
     }
     <div class="toolbar">
       @if (event.canManage && event.status === 'DRAFT') {
         <button mat-flat-button type="button" (click)="publish()" [disabled]="saving()">{{ 'manage.publish' | transloco }}</button>
+      }
+      @if (editable(event)) {
+        <a mat-stroked-button [routerLink]="['/asbls', slug, 'manage', 'events', event.id, 'edit']">{{ 'manage.edit' | transloco }}</a>
+      }
+      @if (event.canManage && event.status === 'PUBLISHED') {
+        <button mat-stroked-button type="button" (click)="cancelEvent()" [disabled]="saving()">{{ 'manage.cancelEvent' | transloco }}</button>
+      }
+      @if (event.canManage && event.status === 'DRAFT') {
+        <button mat-stroked-button type="button" (click)="deleteDraft()" [disabled]="saving()">{{ 'manage.delete' | transloco }}</button>
       }
       @if (event.status === 'PUBLISHED' && event.visibility === 'PUBLIC') {
         <a mat-stroked-button [routerLink]="['/events', event.id]">{{ 'manage.viewPublic' | transloco }}</a>
@@ -54,16 +65,28 @@
               }
             </td>
           </ng-container>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let ticket" class="row-actions">
+              <button mat-button type="button" (click)="editTicket(ticket)" [disabled]="saving()">{{ 'manage.change' | transloco }}</button>
+              @if (ticket.soldSeats === 0) {
+                <button mat-button type="button" (click)="removeTicket(ticket)" [disabled]="saving()">{{ 'manage.remove' | transloco }}</button>
+              }
+            </td>
+          </ng-container>
           <tr mat-header-row *matHeaderRowDef="columnsFor(event)"></tr>
           <tr mat-row *matRowDef="let row; columns: columnsFor(event)"></tr>
         </table>
       </div>
     }
 
-    @if (event.canManage) {
+    @if (editable(event)) {
       <section class="box">
-        <h2>{{ 'manage.addTicket' | transloco }}</h2>
-        <form [formGroup]="ticketForm" #ticketFormDirective="ngForm" (ngSubmit)="addTicket(ticketFormDirective)" novalidate class="stack">
+        <h2>{{ (editing() ? 'manage.changeTicket' : 'manage.addTicket') | transloco: { label: editing()?.label } }}</h2>
+        @if (editing()) {
+          <p class="hint">{{ 'manage.priceHint' | transloco }}</p>
+        }
+        <form [formGroup]="ticketForm" #ticketFormDirective="ngForm" (ngSubmit)="saveTicket(ticketFormDirective)" novalidate class="stack">
           <mat-form-field appearance="outline">
             <mat-label>{{ 'manage.ticketLabel' | transloco }}</mat-label>
             <input matInput formControlName="label" />
@@ -86,7 +109,12 @@
               <mat-error>{{ 'manage.invalidSeats' | transloco }}</mat-error>
             }
           </mat-form-field>
-          <div><button mat-flat-button type="submit" [disabled]="saving()">{{ 'manage.addTicket' | transloco }}</button></div>
+          <div class="toolbar">
+            <button mat-flat-button type="submit" [disabled]="saving()">{{ (editing() ? 'manage.saveTicket' : 'manage.addTicket') | transloco }}</button>
+            @if (editing()) {
+              <button mat-button type="button" (click)="stopEditing(ticketFormDirective)">{{ 'manage.discard' | transloco }}</button>
+            }
+          </div>
         </form>
       </section>
     }

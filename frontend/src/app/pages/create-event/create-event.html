@@ -1,5 +1,5 @@
 <div class="page">
-  <h1>{{ 'manage.create' | transloco }}</h1>
+  <h1>{{ (eventId === null ? 'manage.create' : 'manage.edit') | transloco }}</h1>
   <section class="box">
     <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="stack">
       <mat-form-field appearance="outline">
@@ -42,10 +42,14 @@
 
       <div>
         <button mat-flat-button type="submit" [disabled]="submitting()">
-          {{ (submitting() ? 'manage.submitting' : 'manage.submit') | transloco }}
+          {{ (submitting() ? 'manage.submitting' : eventId === null ? 'manage.submit' : 'manage.save') | transloco }}
         </button>
       </div>
     </form>
   </section>
-  <a class="back" [routerLink]="['/asbls', slug, 'manage', 'events']">{{ 'manage.eventsTitle' | transloco }}</a>
+  @if (eventId === null) {
+    <a class="back" [routerLink]="['/asbls', slug, 'manage', 'events']">{{ 'manage.eventsTitle' | transloco }}</a>
+  } @else {
+    <a class="back" [routerLink]="['/asbls', slug, 'manage', 'events', eventId]">{{ 'manage.backToEvent' | transloco }}</a>
+  }
 </div>

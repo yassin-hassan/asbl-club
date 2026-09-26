@@ -18,11 +18,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.ErrorResponseException;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -104,8 +108,95 @@ class EventManagementController {
     Detail publish(@PathVariable String slug, @PathVariable Long eventId, Authentication authentication) {
         Access access = asAdmin(slug, authentication);
         Event event = eventOf(access, eventId);
-        eventService.publish(event);
+        lifecycle(() -> eventService.publish(event));
         return detail(event, true);
+    }
+
+    @Operation(operationId = "updateEvent", summary = "Edit a draft or published event (administrators)",
+            security = @SecurityRequirement(name = "bearer"))
+    @ApiResponse(responseCode = "200", description = "The updated event", content = @Content(schema = @Schema(implementation = Detail.class)))
+    @ApiResponse(responseCode = "409", description = "Cancelled or past event (EVENT_NOT_EDITABLE)",
+            content = @Content(mediaType = "application/problem+json"))
+    @PutMapping("/{eventId}")
+    Detail update(@PathVariable String slug, @PathVariable Long eventId, @Valid @RequestBody CreateEventRequest request,
+            Authentication authentication) {
+        Event event = eventOf(asAdmin(slug, authentication), eventId);
+        lifecycle(() -> eventService.update(event, request.title(), request.description(), request.startsAt(),
+                request.location(), request.visibility()));
+        return detail(event, true);
+    }
+
+    // An action, like publishing: cancelling is a step in the lifecycle (published → cancelled).
+    @Operation(operationId = "cancelEvent", summary = "Cancel a published event: hidden and no longer bookable (administrators)",
+            security = @SecurityRequirement(name = "bearer"))
+    @ApiResponse(responseCode = "200", description = "The cancelled event", content = @Content(schema = @Schema(implementation = Detail.class)))
+    @ApiResponse(responseCode = "409", description = "Not a published event (EVENT_NOT_EDITABLE)",
+            content = @Content(mediaType = "application/problem+json"))
+    @PostMapping("/{eventId}/cancel")
+    Detail cancel(@PathVariable String slug, @PathVariable Long eventId, Authentication authentication) {
+        Event event = eventOf(asAdmin(slug, authentication), eventId);
+        lifecycle(() -> eventService.cancel(event));
+        return detail(event, true);
+    }
+
+    @Operation(operationId = "deleteDraftEvent", summary = "Delete a draft event (administrators)",
+            security = @SecurityRequirement(name = "bearer"))
+    @ApiResponse(responseCode = "204", description = "Deleted")
+    @ApiResponse(responseCode = "409", description = "Not a draft (EVENT_NOT_EDITABLE): cancel a published event instead",
+            content = @Content(mediaType = "application/problem+json"))
+    @DeleteMapping("/{eventId}")
+    ResponseEntity<Void> deleteDraft(@PathVariable String slug, @PathVariable Long eventId, Authentication authentication) {
+        Event event = eventOf(asAdmin(slug, authentication), eventId);
+        lifecycle(() -> eventService.deleteDraft(event));
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(operationId = "updateTicketCategory", summary = "Change a ticket category (administrators)",
+            security = @SecurityRequirement(name = "bearer"))
+    @ApiResponse(responseCode = "200", description = "The updated event", content = @Content(schema = @Schema(implementation = Detail.class)))
+    @ApiResponse(responseCode = "409", description = "Fewer seats than taken (SEATS_BELOW_SOLD), or event not editable",
+            content = @Content(mediaType = "application/problem+json"))
+    @PutMapping("/{eventId}/tickets/{ticketId}")
+    Detail updateTicket(@PathVariable String slug, @PathVariable Long eventId, @PathVariable Long ticketId,
+            @Valid @RequestBody AddTicketRequest request, Authentication authentication) {
+        Event event = eventOf(asAdmin(slug, authentication), eventId);
+        lifecycle(() -> eventService.updateTicketCategory(event, ticketId, request.label(), request.price(),
+                request.totalSeats()));
+        return detail(event, true);
+    }
+
+    @Operation(operationId = "removeTicketCategory", summary = "Remove a ticket category nobody booked (administrators)",
+            security = @SecurityRequirement(name = "bearer"))
+    @ApiResponse(responseCode = "200", description = "The updated event", content = @Content(schema = @Schema(implementation = Detail.class)))
+    @ApiResponse(responseCode = "409", description = "Already booked (TICKET_IN_USE), or event not editable",
+            content = @Content(mediaType = "application/problem+json"))
+    @DeleteMapping("/{eventId}/tickets/{ticketId}")
+    Detail removeTicket(@PathVariable String slug, @PathVariable Long eventId, @PathVariable Long ticketId,
+            Authentication authentication) {
+        Event event = eventOf(asAdmin(slug, authentication), eventId);
+        lifecycle(() -> eventService.removeTicketCategory(event, ticketId));
+        return detail(event, true);
+    }
+
+    // The lifecycle rules' outcomes as HTTP answers; a stable "code" tells the client which rule said no.
+    private static void lifecycle(Runnable change) {
+        try {
+            change.run();
+        } catch (TicketNotInEventException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        } catch (EventNotEditableException e) {
+            throw conflict("EVENT_NOT_EDITABLE", "This event can't be changed in its current state.");
+        } catch (SeatsBelowSoldException e) {
+            throw conflict("SEATS_BELOW_SOLD", "There can't be fewer seats than those already taken.");
+        } catch (TicketInUseException e) {
+            throw conflict("TICKET_IN_USE", "This ticket category has bookings and can't be removed.");
+        }
+    }
+
+    private static ErrorResponseException conflict(String code, String detail) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, detail);
+        problem.setProperty("code", code);
+        return new ErrorResponseException(HttpStatus.CONFLICT, problem, null);
     }
 
     private Detail detail(Event event, boolean canManage) {
