@@ -203,7 +203,18 @@
     "role": "Role",
     "status": "Status",
     "noAccess": "You're not a member of this association.",
-    "back": "Back to home"
+    "back": "Back to home",
+    "actions": "Actions",
+    "changeRole": "Role of {{ name }}",
+    "exclude": "Exclude",
+    "excludeTitle": "Exclude {{ name }}?",
+    "excludeConfirm": "{{ name }} loses access to the association at once and can’t come back through the invitation link.",
+    "leave": "Leave the association",
+    "leaveTitle": "Leave {{ name }}?",
+    "leaveConfirm": "You lose access to the association. You can ask to join again through its invitation link.",
+    "lastAdmin": "An association needs at least one administrator: appoint another one first.",
+    "notOnYourself": "You can’t exclude yourself: leave the association instead.",
+    "cancel": "Cancel"
   },
   "statuses": {
     "PENDING": "Pending",

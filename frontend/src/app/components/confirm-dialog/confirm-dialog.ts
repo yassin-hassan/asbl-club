@@ -9,6 +9,8 @@ export interface ConfirmDialogData {
   message: string;
   confirm: string;
   cancel: string;
+  // Values for placeholders in the texts, e.g. { name: 'Alice' } for "Exclude {{ name }}?".
+  params?: Record<string, string>;
 }
 
 // Reusable "are you sure?" dialog for irreversible actions.
@@ -17,8 +19,8 @@ export interface ConfirmDialogData {
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [MatDialogModule, MatButtonModule, TranslocoPipe],
   template: `
-    <h2 mat-dialog-title>{{ data.title | transloco }}</h2>
-    <mat-dialog-content>{{ data.message | transloco }}</mat-dialog-content>
+    <h2 mat-dialog-title>{{ data.title | transloco: data.params }}</h2>
+    <mat-dialog-content>{{ data.message | transloco: data.params }}</mat-dialog-content>
     <mat-dialog-actions align="end">
       <button mat-button type="button" [mat-dialog-close]="false">{{ data.cancel | transloco }}</button>
       <button mat-flat-button type="button" class="danger" [mat-dialog-close]="true">{{ data.confirm | transloco }}</button>

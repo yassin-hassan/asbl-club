@@ -1,5 +1,7 @@
 package club.asbl.asbl_club.membership;
 
+import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
+
 import club.asbl.asbl_club.asbl.Asbl;
 import club.asbl.asbl_club.asbl.AsblService;
 import club.asbl.asbl_club.user.User;
@@ -10,6 +12,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +23,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -95,6 +102,35 @@ class MemberManagementController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(operationId = "changeMemberRole", summary = "Give an active member another role (administrators)",
+            security = @SecurityRequirement(name = "bearer"))
+    @ApiResponse(responseCode = "204", description = "Changed")
+    @ApiResponse(responseCode = "404", description = "No active member with that ID here",
+            content = @Content(mediaType = "application/problem+json"))
+    @ApiResponse(responseCode = "409", description = "The last active administrator (code LAST_ADMIN)",
+            content = @Content(mediaType = "application/problem+json"))
+    @PutMapping("/members/{userId}/role")
+    ResponseEntity<Void> changeRole(@PathVariable String slug, @PathVariable UUID userId,
+            @Valid @RequestBody RoleChange change, Authentication authentication) {
+        Asbl asbl = asAdmin(slug, authentication);
+        return MembershipDecisions.decided(() -> membershipService.changeRole(asbl, userId, MembershipRole.valueOf(change.role())));
+    }
+
+    @Operation(operationId = "excludeMember",
+            summary = "Exclude a member: access ends at once and the join link won't let them back (administrators)",
+            security = @SecurityRequirement(name = "bearer"))
+    @ApiResponse(responseCode = "204", description = "Excluded")
+    @ApiResponse(responseCode = "404", description = "No active member with that ID here",
+            content = @Content(mediaType = "application/problem+json"))
+    @ApiResponse(responseCode = "409", description = "The last active administrator (LAST_ADMIN), or oneself (NOT_ON_YOURSELF)",
+            content = @Content(mediaType = "application/problem+json"))
+    @PostMapping("/members/{userId}/exclude")
+    ResponseEntity<Void> exclude(@PathVariable String slug, @PathVariable UUID userId, Authentication authentication) {
+        Asbl asbl = asAdmin(slug, authentication);
+        User actor = userService.getAuthenticated(authentication);
+        return MembershipDecisions.decided(() -> membershipService.exclude(asbl, userId, actor));
+    }
+
     private Asbl asAdmin(String slug, Authentication authentication) {
         User user = userService.getAuthenticated(authentication);
         Asbl asbl = asblService.findBySlug(slug).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
@@ -102,6 +138,12 @@ class MemberManagementController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
         return asbl;
+    }
+
+    @Schema(name = "RoleChange")
+    record RoleChange(@NotNull @Pattern(regexp = "ADMIN|TREASURER|VIEWER|MEMBER")
+                      @Schema(requiredMode = REQUIRED, allowableValues = {"ADMIN", "TREASURER", "VIEWER", "MEMBER"})
+                      String role) {
     }
 
     @Schema(name = "JoinLink")

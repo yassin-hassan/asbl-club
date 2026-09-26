@@ -35,3 +35,26 @@
 .box {
   margin-bottom: 20px;
 }
+
+.role-select {
+  font: inherit;
+  padding: 6px 8px;
+  border: 1px solid var(--asbl-slate-200);
+  border-radius: 8px;
+  background: var(--asbl-slate-50);
+  color: inherit;
+}
+.danger-text {
+  --mat-button-text-label-text-color: var(--asbl-red-700);
+}
+tr.inactive td {
+  color: var(--asbl-slate-400);
+}
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

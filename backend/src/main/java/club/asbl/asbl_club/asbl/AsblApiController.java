@@ -1,6 +1,7 @@
 package club.asbl.asbl_club.asbl;
 
 import club.asbl.asbl_club.api.AsblResource;
+import club.asbl.asbl_club.membership.MembershipDecisions;
 import club.asbl.asbl_club.membership.MembershipService;
 import club.asbl.asbl_club.user.User;
 import club.asbl.asbl_club.user.UserService;
@@ -87,6 +88,20 @@ class AsblApiController {
                 .toList();
         return new AsblMembers(asbl.getSlug(), asbl.getDenomination(), myRole, asbl.getStripeAccountId() != null,
                 members);
+    }
+
+    // Any active member may leave. The last active administrator can't (someone must keep running it).
+    @Operation(operationId = "leaveAsbl", summary = "Leave the association", security = @SecurityRequirement(name = "bearer"))
+    @ApiResponse(responseCode = "204", description = "Left")
+    @ApiResponse(responseCode = "404", description = "Not an active member here",
+            content = @Content(mediaType = "application/problem+json"))
+    @ApiResponse(responseCode = "409", description = "The last active administrator (code LAST_ADMIN)",
+            content = @Content(mediaType = "application/problem+json"))
+    @PostMapping("/{slug}/leave")
+    ResponseEntity<Void> leave(@PathVariable String slug, Authentication authentication) {
+        User user = userService.getAuthenticated(authentication);
+        Asbl asbl = asblService.findBySlug(slug).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return MembershipDecisions.decided(() -> membershipService.leave(asbl, user));
     }
 
     private ErrorResponseException conflict(String field, String messageKey, RuntimeException cause) {

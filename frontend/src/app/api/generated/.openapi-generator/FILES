@@ -44,6 +44,7 @@ model/profileExport.ts
 model/publicEvent.ts
 model/publicTicket.ts
 model/registerRequest.ts
+model/roleChange.ts
 model/seatAvailability.ts
 model/stripeOnboardingLink.ts
 model/tokenResponse.ts

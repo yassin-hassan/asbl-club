@@ -203,7 +203,18 @@
     "role": "Rôle",
     "status": "Statut",
     "noAccess": "Vous n'êtes pas membre de cette association.",
-    "back": "Retour à l'accueil"
+    "back": "Retour à l'accueil",
+    "actions": "Actions",
+    "changeRole": "Rôle de {{ name }}",
+    "exclude": "Exclure",
+    "excludeTitle": "Exclure {{ name }} ?",
+    "excludeConfirm": "{{ name }} perd immédiatement l’accès à l’association et ne pourra pas revenir par le lien d’invitation.",
+    "leave": "Quitter l’association",
+    "leaveTitle": "Quitter {{ name }} ?",
+    "leaveConfirm": "Vous perdez l’accès à l’association. Vous pourrez redemander à la rejoindre par son lien d’invitation.",
+    "lastAdmin": "Une association a besoin d’au moins un administrateur : nommez-en un autre d’abord.",
+    "notOnYourself": "Vous ne pouvez pas vous exclure vous-même : quittez l’association.",
+    "cancel": "Annuler"
   },
   "statuses": {
     "PENDING": "En attente",
