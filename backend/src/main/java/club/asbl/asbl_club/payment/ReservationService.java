@@ -36,8 +36,9 @@ public class ReservationService {
         return registrationRepository.save(registration);
     }
 
-    // An event was cancelled: bookings not yet paid are cancelled with it (checkout then refuses them). Paid ones stay
-    // PAID: they're refunded from the association's Stripe dashboard for now. Runs inside the cancelling transaction.
+    // An event was cancelled: bookings not yet paid are cancelled with it (checkout then refuses them; a payment
+    // already under way is refunded when Stripe reports it, see PaymentService). Paid ones stay PAID: they're
+    // refunded from the association's Stripe dashboard for now. Runs inside the cancelling transaction.
     @EventListener
     void onEventCancelled(EventCancelled cancelled) {
         registrationRepository.cancelUnpaid(cancelled.eventId());

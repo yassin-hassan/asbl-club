@@ -300,7 +300,8 @@
     "paymentsDisabled": "This association can't receive payments yet.",
     "providerDown": "The payment service is unreachable. Try again in a moment.",
     "stillProcessing": "Payment is being processed. It will be confirmed as soon as Stripe confirms it.",
-    "backToEvent": "Back to the event"
+    "backToEvent": "Back to the event",
+    "refunded": "This event was cancelled while you were paying, so your payment has been refunded. The refund usually reaches your account within 5 to 10 days."
   },
   "payments": {
     "title": "Payments",

@@ -13,6 +13,9 @@
         @case ('confirmed') {
           <p role="status">{{ 'payment.confirmed' | transloco }}</p>
         }
+        @case ('refunded') {
+          <p role="status">{{ 'payment.refunded' | transloco }}</p>
+        }
         @case ('processing') {
           <p role="status">{{ 'payment.stillProcessing' | transloco }}</p>
         }

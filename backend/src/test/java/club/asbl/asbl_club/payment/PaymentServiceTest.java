@@ -1,6 +1,7 @@
 package club.asbl.asbl_club.payment;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
@@ -13,6 +14,10 @@ import club.asbl.asbl_club.asbl.Asbl;
 import club.asbl.asbl_club.audit.AuditService;
 import club.asbl.asbl_club.user.User;
 import com.stripe.StripeClient;
+import com.stripe.exception.ApiConnectionException;
+import com.stripe.net.RequestOptions;
+import com.stripe.param.RefundCreateParams;
+import com.stripe.service.RefundService;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -68,6 +73,28 @@ class PaymentServiceTest {
 
         paymentService.handleSucceeded("pi_x");
 
+        verify(auditService, never()).recordSystem(any(), any(), any(), any(), anyMap());
+    }
+
+    // A payment for a cancelled booking is refunded; if Stripe refuses, nothing is changed and the error propagates,
+    // so the webhook answers 5xx and Stripe sends it again.
+    @Test
+    void handleSucceeded_forACancelledBooking_whenStripeRefusesTheRefund_changesNothing() throws Exception {
+        Payment payment = initiatedPayment();
+        when(payment.getPayable().getId()).thenReturn(42L);
+        Registration cancelled = new Registration();
+        cancelled.setStatus(RegistrationStatus.CANCELLED);
+        when(paymentRepository.findByStripePaymentIntentId("pi_x")).thenReturn(Optional.of(payment));
+        when(registrationRepository.findById(42L)).thenReturn(Optional.of(cancelled));
+        RefundService refunds = mock(RefundService.class);
+        when(stripe.refunds()).thenReturn(refunds);
+        when(refunds.create(any(RefundCreateParams.class), any(RequestOptions.class)))
+                .thenThrow(new ApiConnectionException("Stripe unreachable"));
+
+        assertThatThrownBy(() -> paymentService.handleSucceeded("pi_x")).hasCauseInstanceOf(ApiConnectionException.class);
+
+        assertThat(payment.getStatus()).isEqualTo(PaymentStatus.INITIATED);
+        assertThat(cancelled.getStatus()).isEqualTo(RegistrationStatus.CANCELLED);
         verify(auditService, never()).recordSystem(any(), any(), any(), any(), anyMap());
     }
 

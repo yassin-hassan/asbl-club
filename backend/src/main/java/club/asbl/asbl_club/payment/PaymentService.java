@@ -8,6 +8,7 @@ import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
 import com.stripe.net.RequestOptions;
 import com.stripe.param.PaymentIntentCreateParams;
+import com.stripe.param.RefundCreateParams;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
@@ -102,15 +103,48 @@ public class PaymentService {
             if (payment.getStatus() != PaymentStatus.INITIATED && payment.getStatus() != PaymentStatus.FAILED) {
                 return;
             }
+            Optional<Registration> registration = registrationRepository.findById(payment.getPayable().getId());
+            if (registration.isPresent() && registration.get().getStatus() != RegistrationStatus.RESERVED) {
+                refundUnwanted(payment, registration.get(), paymentIntentId);
+                return;
+            }
             payment.setStatus(PaymentStatus.SUCCEEDED);
             payment.setPaidAt(Instant.now());
-            registrationRepository.findById(payment.getPayable().getId()).ifPresent(registration -> {
-                registration.setStatus(RegistrationStatus.PAID);
-                registration.setQrToken(UUID.randomUUID().toString().replace("-", ""));
+            registration.ifPresent(r -> {
+                r.setStatus(RegistrationStatus.PAID);
+                r.setQrToken(UUID.randomUUID().toString().replace("-", ""));
             });
             auditService.recordSystem("PAYMENT_SUCCEEDED", payment.getAsbl(), "Payment", payment.getId(),
                     Map.of("paymentIntentId", paymentIntentId, "amount", payment.getAmount()));
         });
+    }
+
+    // The money arrived for a booking that no longer waits for it (its event was cancelled while the person was at
+    // Stripe's form): it goes straight back, the association's commission included. Stripe is called first: if it
+    // fails, nothing here changes, the webhook answers 5xx and Stripe sends it again. The idempotency key makes that
+    // retried refund return the first one instead of refunding twice.
+    private void refundUnwanted(Payment payment, Registration registration, String paymentIntentId) {
+        RequestOptions options = RequestOptions.builder()
+                .setStripeAccount(payment.getAsbl().getStripeAccountId())
+                .setIdempotencyKey("refund-" + payment.getId())
+                .build();
+        RefundCreateParams params = RefundCreateParams.builder()
+                .setPaymentIntent(paymentIntentId)
+                .setRefundApplicationFee(true)
+                .build();
+        try {
+            stripe.refunds().create(params, options);
+        } catch (StripeException e) {
+            throw new IllegalStateException("Stripe refused to refund " + paymentIntentId, e);
+        }
+        String bookingStatus = registration.getStatus().name();
+        payment.setStatus(PaymentStatus.REFUNDED);
+        payment.setPaidAt(Instant.now());
+        registration.setStatus(RegistrationStatus.REFUNDED);
+        auditService.recordSystem("PAYMENT_SUCCEEDED", payment.getAsbl(), "Payment", payment.getId(),
+                Map.of("paymentIntentId", paymentIntentId, "amount", payment.getAmount()));
+        auditService.recordSystem("PAYMENT_REFUNDED", payment.getAsbl(), "Payment", payment.getId(),
+                Map.of("paymentIntentId", paymentIntentId, "amount", payment.getAmount(), "booking", bookingStatus));
     }
 
     @Transactional
