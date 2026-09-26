@@ -129,7 +129,9 @@ class AttendeeController {
         if (event.getStatus() != EventStatus.PUBLISHED) {
             throw conflict("EVENT_NOT_OPEN", "This event isn't taking place.");
         }
-        String code = request.code().strip().toLowerCase(Locale.ROOT); // ticket codes are lowercase hex
+        // As printed on the ticket ("0123 4567 …"), typed with dashes, or sent by a scanner with a line break: only
+        // the characters matter. Ticket codes are lowercase hex.
+        String code = request.code().replaceAll("[\\s-]", "").toLowerCase(Locale.ROOT);
         boolean now = registrationRepository.checkIn(event.getId(), code, Instant.now()) == 1;
         Registration ticket = registrationRepository.findTicket(event.getId(), code)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));

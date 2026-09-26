@@ -116,9 +116,17 @@ class TicketsIntegrationTest {
                 Integer.class, paid.getId())).isEqualTo(1);
     }
 
+    // Typed as the ticket prints it: groups of four separated by spaces.
     @Test
-    void aScannedCode_withSpacesOrCapitals_stillMatches() throws Exception {
-        checkIn("  " + CODE.toUpperCase() + "\n", "alice@club.test").andExpect(jsonPath("$.outcome").value("CHECKED_IN"));
+    void aCodeTypedAsPrinted_withSpaces_matches() throws Exception {
+        checkIn("0123 4567 89ab cdef 0123 4567 89ab cdef", "alice@club.test")
+                .andExpect(jsonPath("$.outcome").value("CHECKED_IN"));
+    }
+
+    @Test
+    void aScannedCode_withCapitalsDashesOrALineBreak_stillMatches() throws Exception {
+        checkIn("  0123-4567-89AB-CDEF-0123-4567-89AB-CDEF\n", "alice@club.test")
+                .andExpect(jsonPath("$.outcome").value("CHECKED_IN"));
     }
 
     @Test
