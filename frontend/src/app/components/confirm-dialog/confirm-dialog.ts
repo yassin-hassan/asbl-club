@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslocoPipe } from '@jsverse/transloco';
@@ -14,6 +14,7 @@ export interface ConfirmDialogData {
 // Reusable "are you sure?" dialog for irreversible actions.
 @Component({
   selector: 'app-confirm-dialog',
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [MatDialogModule, MatButtonModule, TranslocoPipe],
   template: `
     <h2 mat-dialog-title>{{ data.title | transloco }}</h2>

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
@@ -19,6 +19,7 @@ type State = { journal: AuditJournal } | { error: string } | { loading: true };
 // The page number lives in the URL (?page=), so reloading or going back keeps the reader's place.
 @Component({
   selector: 'app-audit-journal',
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [DatePipe, RouterLink, TranslocoPipe, MatButtonModule, MatProgressSpinnerModule, MatTableModule],
   templateUrl: './audit-journal.html',
 })

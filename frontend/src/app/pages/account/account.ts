@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,6 +12,7 @@ import { ConfirmDialog, ConfirmDialogData } from '../../components/confirm-dialo
 
 @Component({
   selector: 'app-account',
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [RouterLink, TranslocoPipe, MatButtonModule],
   templateUrl: './account.html',
 })

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -7,6 +7,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 // One component for the three legal pages; the route says which one (notice, privacy, cookies).
 @Component({
   selector: 'app-legal',
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [RouterLink, TranslocoPipe, MatButtonModule, MatIconModule],
   template: `
     <article class="page stack">

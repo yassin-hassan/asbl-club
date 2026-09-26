@@ -1,8 +1,9 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 
 // The asbl.club logo: an indigo tile with three dots, and the word mark with an amber ".club".
 @Component({
   selector: 'app-logo',
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <span class="mark" aria-hidden="true"><span class="d1"></span><span class="d2"></span><span class="d3"></span></span>
     <span class="word" [class.inverse]="inverse()">asbl<b>.club</b></span>

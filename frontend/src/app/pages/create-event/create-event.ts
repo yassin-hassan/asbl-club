@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,6 +11,7 @@ import { errorMessageKey } from '../../services/problem';
 
 @Component({
   selector: 'app-create-event',
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [ReactiveFormsModule, RouterLink, TranslocoPipe, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule],
   templateUrl: './create-event.html',
   styles: '.narrow { max-width: 560px; margin: 0 auto; }',

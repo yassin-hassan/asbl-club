@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { UpperCasePipe } from '@angular/common';
 import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -12,6 +12,7 @@ import { Logo } from './components/logo/logo';
 // The app shell: a header and footer present on every page (navigation, language, login state), the routed page below.
 @Component({
   selector: 'app-root',
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     RouterOutlet, RouterLink, UpperCasePipe, TranslocoPipe, Logo, MatButtonModule,
   ],

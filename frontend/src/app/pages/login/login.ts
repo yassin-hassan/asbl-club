@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,6 +11,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-login',
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [ReactiveFormsModule, RouterLink, TranslocoPipe, MatFormFieldModule, MatInputModule, MatButtonModule],
   templateUrl: './login.html',
   styles: '.narrow { max-width: 420px; margin: 0 auto; }',
