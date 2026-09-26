@@ -1,7 +1,6 @@
 package club.asbl.asbl_club.payment;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import club.asbl.asbl_club.TestcontainersConfiguration;
@@ -11,31 +10,25 @@ import club.asbl.asbl_club.event.Event;
 import club.asbl.asbl_club.event.EventService;
 import club.asbl.asbl_club.user.User;
 import club.asbl.asbl_club.user.UserService;
-import com.stripe.Stripe;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest(properties = {
         "spring.docker.compose.enabled=false",
-        "stripe.webhook-secret=whsec_test_secret_abcdef0123456789"
+        "stripe.webhook-secret=" + StripeWebhooks.SECRET
 })
 @AutoConfigureMockMvc
 @Import(TestcontainersConfiguration.class)
 @Transactional
 class WebhookControllerIntegrationTest {
-
-    private static final String SECRET = "whsec_test_secret_abcdef0123456789";
 
     @Autowired
     MockMvc mockMvc;
@@ -51,6 +44,8 @@ class WebhookControllerIntegrationTest {
     PaymentRepository paymentRepository;
     @Autowired
     RegistrationRepository registrationRepository;
+    @Autowired
+    JdbcTemplate jdbcTemplate;
 
     @Test
     void succeededWebhook_finalizesThePaymentAndAudits() throws Exception {
@@ -74,6 +69,14 @@ class WebhookControllerIntegrationTest {
 
         assertThat(paymentRepository.findByStripePaymentIntentId(intentId).orElseThrow().getStatus())
                 .isEqualTo(PaymentStatus.FAILED);
+    }
+
+    // Events we don't act on are recorded too: a trace of everything Stripe sent.
+    @Test
+    void eventsWeDontActOn_areStillRecorded() throws Exception {
+        mockMvc.perform(StripeWebhooks.signed("evt_other", "customer.created", "pi_none")).andExpect(status().isOk());
+
+        assertThat(processed("evt_other")).isEqualTo(1);
     }
 
     // A declined card doesn't end a Stripe payment: the person may retry on the same PaymentIntent, with another card.
@@ -109,14 +112,11 @@ class WebhookControllerIntegrationTest {
 
     @Test
     void webhookWithABadSignature_isRejected() throws Exception {
-        String payload = eventPayload("payment_intent.succeeded", "pi_whatever");
-        String badSignature = signature(payload, "the-wrong-secret", Instant.now().getEpochSecond());
+        String payload = StripeWebhooks.payload("evt_forged", "payment_intent.succeeded", "pi_whatever");
 
-        mockMvc.perform(post("/webhooks/stripe")
-                        .header("Stripe-Signature", badSignature)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(payload))
+        mockMvc.perform(StripeWebhooks.request(payload, "the-wrong-secret"))
                 .andExpect(status().isBadRequest());
+        assertThat(processed("evt_forged")).isZero(); // nothing recorded for an unverified request
     }
 
     private Payment seedInitiatedPayment(String slug, String email, String bce, String intentId) {
@@ -142,34 +142,16 @@ class WebhookControllerIntegrationTest {
         return paymentRepository.save(payment);
     }
 
+    // Each delivery gets its own event ID, as distinct Stripe events do; a repeat reuses one on purpose.
+    private int events;
+
     private org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder signedWebhook(
             String type, String intentId) {
-        String payload = eventPayload(type, intentId);
-        String signature = signature(payload, SECRET, Instant.now().getEpochSecond());
-        return post("/webhooks/stripe")
-                .header("Stripe-Signature", signature)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(payload);
+        return StripeWebhooks.signed("evt_test_" + (++events), type, intentId);
     }
 
-    private static String eventPayload(String type, String intentId) {
-        return "{\"id\":\"evt_test\",\"object\":\"event\",\"api_version\":\"" + Stripe.API_VERSION
-                + "\",\"type\":\"" + type
-                + "\",\"data\":{\"object\":{\"id\":\"" + intentId + "\",\"object\":\"payment_intent\"}}}";
-    }
-
-    private static String signature(String payload, String secret, long timestamp) {
-        try {
-            Mac mac = Mac.getInstance("HmacSHA256");
-            mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
-            byte[] hash = mac.doFinal((timestamp + "." + payload).getBytes(StandardCharsets.UTF_8));
-            StringBuilder hex = new StringBuilder();
-            for (byte b : hash) {
-                hex.append(String.format("%02x", b));
-            }
-            return "t=" + timestamp + ",v1=" + hex;
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
+    private int processed(String eventId) {
+        return jdbcTemplate.queryForObject("SELECT count(*) FROM processed_webhook_events WHERE event_id = ?",
+                Integer.class, eventId);
     }
 }
