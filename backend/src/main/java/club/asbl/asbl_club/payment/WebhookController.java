@@ -3,12 +3,9 @@ package club.asbl.asbl_club.payment;
 import com.google.gson.JsonSyntaxException;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.model.Event;
-import com.stripe.model.PaymentIntent;
 import com.stripe.net.Webhook;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,11 +18,11 @@ class WebhookController {
     private static final Logger log = LoggerFactory.getLogger(WebhookController.class);
 
     private final StripeProperties stripeProperties;
-    private final PaymentService paymentService;
+    private final StripeEventHandler eventHandler;
 
-    WebhookController(StripeProperties stripeProperties, PaymentService paymentService) {
+    WebhookController(StripeProperties stripeProperties, StripeEventHandler eventHandler) {
         this.stripeProperties = stripeProperties;
-        this.paymentService = paymentService;
+        this.eventHandler = eventHandler;
     }
 
     @PostMapping("/webhooks/stripe")
@@ -42,22 +39,8 @@ class WebhookController {
             return ResponseEntity.badRequest().body("Invalid signature");
         }
         log.info("Received Stripe webhook: {} ({})", event.getType(), event.getId());
-        try {
-            switch (event.getType()) {
-                case "payment_intent.succeeded" -> paymentIntentId(event).ifPresent(paymentService::handleSucceeded);
-                case "payment_intent.payment_failed" -> paymentIntentId(event).ifPresent(paymentService::handleFailed);
-                default -> {
-                }
-            }
-        } catch (OptimisticLockingFailureException e) {
-            log.info("Concurrent duplicate delivery for event {}, already handled by another delivery", event.getId());
-        }
+        // Any failure below propagates as a 5xx on purpose: nothing was recorded, so Stripe's retry handles it again.
+        eventHandler.handle(event);
         return ResponseEntity.ok("ok");
-    }
-
-    private static Optional<String> paymentIntentId(Event event) {
-        return event.getDataObjectDeserializer().getObject()
-                .filter(object -> object instanceof PaymentIntent)
-                .map(object -> ((PaymentIntent) object).getId());
     }
 }

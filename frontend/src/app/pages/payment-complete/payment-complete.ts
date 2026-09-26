@@ -7,11 +7,15 @@ import { switchMap, take, takeWhile, timer } from 'rxjs';
 import { MyRegistration, RegistrationsService } from '../../api/generated';
 import { errorMessageKey } from '../../services/problem';
 
-type Outcome = 'checking' | 'confirmed' | 'processing' | 'failed';
+export type Outcome = 'checking' | 'confirmed' | 'refunded' | 'processing' | 'failed';
+
+// Statuses in which Stripe's answer is still awaited. CANCELLED too: the event was cancelled while the person was
+// paying, and their payment (if it went through) is about to be refunded, which ends as REFUNDED.
+const WAITING = new Set(['RESERVED', 'CANCELLED']);
 
 // Where Stripe sends the browser after a payment attempt. Stripe's redirect only *suggests* the outcome (anyone can
 // type this URL); the truth is the booking's status on our server, set by Stripe's signed webhook. So: ask the
-// server every 2 s, for up to 30 s, until the booking is no longer waiting for payment.
+// server every 2 s, for up to 30 s, until the booking has its outcome: paid, or refunded (event cancelled meanwhile).
 @Component({
   selector: 'app-payment-complete',
   changeDetection: ChangeDetectionStrategy.Eager,
@@ -35,18 +39,25 @@ export class PaymentComplete {
     timer(0, 2000).pipe(
       take(15),
       switchMap(() => api.getMyRegistration(this.registrationId)),
-      takeWhile((registration) => registration.status === 'RESERVED', true),
+      takeWhile((registration) => WAITING.has(registration.status), true),
     ).subscribe({
       next: (registration) => {
         this.registration.set(registration);
-        this.outcome.set(registration.status === 'RESERVED' ? 'checking' : 'confirmed');
+        this.outcome.set(outcomeOf(registration.status));
       },
       error: (err) => this.error.set(errorMessageKey(err)),
       complete: () => {
-        if (this.registration()?.status === 'RESERVED') {
+        if (WAITING.has(this.registration()?.status ?? '')) {
           this.outcome.set('processing'); // still waiting for Stripe's confirmation after 30 s
         }
       },
     });
   }
+}
+
+export function outcomeOf(status: string): Outcome {
+  if (WAITING.has(status)) {
+    return 'checking';
+  }
+  return status === 'REFUNDED' ? 'refunded' : 'confirmed';
 }
