@@ -6,6 +6,8 @@ api/associations.service.ts
 api/audit.service.ts
 api/authentication.service.ts
 api/eventManagement.service.ts
+api/joining.service.ts
+api/memberManagement.service.ts
 api/paymentSetup.service.ts
 api/public.service.ts
 api/registrations.service.ts
@@ -25,6 +27,8 @@ model/checkout.ts
 model/createAsblRequest.ts
 model/createEventRequest.ts
 model/eventFeedItem.ts
+model/joinInvitation.ts
+model/joinLink.ts
 model/loginRequest.ts
 model/managedEvent.ts
 model/managedEventItem.ts

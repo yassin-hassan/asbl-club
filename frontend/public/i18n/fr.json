@@ -310,5 +310,32 @@
   },
   "app": {
     "loading": "Chargement…"
+  },
+  "join": {
+    "title": "Rejoindre {{ name }}",
+    "intro": "Vous avez reçu le lien d’invitation de cette association. Un administrateur validera votre demande.",
+    "ask": "Demander à rejoindre",
+    "sent": "Demande envoyée. Un administrateur de {{ name }} va l’examiner.",
+    "pending": "Votre demande attend la validation d’un administrateur.",
+    "member": "Vous êtes déjà membre de {{ name }}.",
+    "open": "Ouvrir l’association",
+    "refused": "Vous ne pouvez pas rejoindre cette association.",
+    "invalid": "Ce lien d’invitation ne fonctionne plus. Demandez-en un nouveau à l’association."
+  },
+  "invite": {
+    "title": "Inviter des membres",
+    "intro": "Partagez ce lien avec les personnes à inviter. Elles demandent à rejoindre, et vous les acceptez ci-dessous.",
+    "create": "Créer un lien d’invitation",
+    "renew": "Nouveau lien",
+    "disable": "Désactiver",
+    "copy": "Copier",
+    "copied": "Copié",
+    "renewHint": "Un nouveau lien remplace celui-ci : l’ancien ne fonctionne plus.",
+    "off": "Pas de lien d’invitation actif."
+  },
+  "requests": {
+    "title": "Demandes d’adhésion",
+    "approve": "Accepter",
+    "decline": "Refuser"
   }
 }

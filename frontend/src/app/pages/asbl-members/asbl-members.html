@@ -1,12 +1,55 @@
 <div class="page">
   @if (error(); as error) {
     <p class="error" role="alert">{{ error | transloco }}</p>
-  } @else if (asbl(); as asbl) {
+  }
+  @if (asbl(); as asbl) {
     <h1>{{ asbl.denomination }}</h1>
     <p class="muted">{{ 'members.title' | transloco }}</p>
 
+    @if (isAdmin()) {
+      <section class="box" aria-labelledby="invite-title">
+        <h2 id="invite-title">{{ 'invite.title' | transloco }}</h2>
+        @if (joinUrl(); as url) {
+          <p>{{ 'invite.intro' | transloco }}</p>
+          <div class="invite-link">
+            <code class="link" data-testid="join-link">{{ url }}</code>
+            <button mat-flat-button type="button" (click)="copy()">
+              {{ (copied() ? 'invite.copied' : 'invite.copy') | transloco }}
+            </button>
+          </div>
+          <p class="hint">{{ 'invite.renewHint' | transloco }}</p>
+          <div class="toolbar">
+            <button mat-stroked-button type="button" (click)="newLink()" [disabled]="busy()">{{ 'invite.renew' | transloco }}</button>
+            <button mat-button type="button" (click)="disableLink()" [disabled]="busy()">{{ 'invite.disable' | transloco }}</button>
+          </div>
+        } @else {
+          <p>{{ 'invite.off' | transloco }}</p>
+          <div><button mat-flat-button type="button" (click)="newLink()" [disabled]="busy()">{{ 'invite.create' | transloco }}</button></div>
+        }
+      </section>
+
+      @if (requests().length > 0) {
+        <section class="box" aria-labelledby="requests-title">
+          <h2 id="requests-title">{{ 'requests.title' | transloco }}</h2>
+          <ul class="requests">
+            @for (request of requests(); track request.id) {
+              <li>
+                <span><b>{{ request.name }}</b> <span class="muted">{{ request.email }}</span></span>
+                <span class="toolbar">
+                  <button mat-flat-button type="button" (click)="approve(request)" [disabled]="busy()"
+                          [attr.aria-label]="('requests.approve' | transloco) + ' ' + request.name">{{ 'requests.approve' | transloco }}</button>
+                  <button mat-stroked-button type="button" (click)="decline(request)" [disabled]="busy()"
+                          [attr.aria-label]="('requests.decline' | transloco) + ' ' + request.name">{{ 'requests.decline' | transloco }}</button>
+                </span>
+              </li>
+            }
+          </ul>
+        </section>
+      }
+    }
+
     <div class="data-table">
-      <table mat-table [dataSource]="asbl.members">
+      <table mat-table [dataSource]="members()">
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef>{{ 'members.name' | transloco }}</th>
           <td mat-cell *matCellDef="let member">{{ member.name }}</td>
@@ -36,7 +79,7 @@
       }
     </div>
     <a class="back" routerLink="/">{{ 'members.back' | transloco }}</a>
-  } @else {
+  } @else if (!error()) {
     <mat-spinner diameter="40" />
   }
 </div>

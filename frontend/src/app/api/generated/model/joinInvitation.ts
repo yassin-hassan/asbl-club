@@ -9,22 +9,15 @@
  */
 
 
-export interface MyAssociation { 
+export interface JoinInvitation { 
     slug: string;
     denomination: string;
-    role: MyAssociationRoleEnum;
     /**
-     * PENDING while a join request awaits an administrator
+     * My membership status there, if any
      */
-    status: MyAssociationStatusEnum;
+    status?: JoinInvitationStatusEnum;
 }
-export enum MyAssociationRoleEnum {
-    Admin = 'ADMIN',
-    Treasurer = 'TREASURER',
-    Viewer = 'VIEWER',
-    Member = 'MEMBER'
-};
-export enum MyAssociationStatusEnum {
+export enum JoinInvitationStatusEnum {
     Pending = 'PENDING',
     Active = 'ACTIVE',
     Excluded = 'EXCLUDED',

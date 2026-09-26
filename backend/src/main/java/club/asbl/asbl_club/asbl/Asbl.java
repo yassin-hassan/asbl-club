@@ -42,6 +42,10 @@ public class Asbl {
     @Column(name = "stripe_account_id", length = 255)
     private String stripeAccountId;
 
+    // The join link's token (see V13); null when the association has no active link.
+    @Column(name = "join_token", length = 64, unique = true)
+    private String joinToken;
+
     protected Asbl() {
     }
 
@@ -111,5 +115,13 @@ public class Asbl {
 
     public void setStripeAccountId(String stripeAccountId) {
         this.stripeAccountId = stripeAccountId;
+    }
+
+    public String getJoinToken() {
+        return joinToken;
+    }
+
+    public void setJoinToken(String joinToken) {
+        this.joinToken = joinToken;
     }
 }

@@ -25,6 +25,12 @@
     "name" : "Authentication",
     "description" : "Exchange credentials for tokens"
   }, {
+    "name" : "Member management",
+    "description" : "The join link and join requests (administrators)"
+  }, {
+    "name" : "Joining",
+    "description" : "Asking to join an association through its join link"
+  }, {
     "name" : "Registrations",
     "description" : "Booking tickets and paying for them"
   }, {
@@ -68,6 +74,82 @@
           },
           "502" : {
             "description" : "The payment provider couldn't be reached",
+            "content" : {
+              "application/problem+json" : { }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/join/{token}" : {
+      "get" : {
+        "tags" : [ "Joining" ],
+        "summary" : "Which association a join link is for, and my status there",
+        "operationId" : "getJoinInvitation",
+        "parameters" : [ {
+          "name" : "token",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/JoinInvitation"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Unknown or expired link",
+            "content" : {
+              "application/problem+json" : { }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      },
+      "post" : {
+        "tags" : [ "Joining" ],
+        "summary" : "Ask to join: an administrator approves the request",
+        "operationId" : "requestToJoin",
+        "parameters" : [ {
+          "name" : "token",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/JoinInvitation"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Excluded from this association (code JOIN_REFUSED)",
+            "content" : {
+              "application/problem+json" : { }
+            }
+          },
+          "404" : {
+            "description" : "Unknown or expired link",
             "content" : {
               "application/problem+json" : { }
             }
@@ -240,6 +322,159 @@
             "content" : {
               "application/problem+json" : { }
             }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/asbls/{slug}/manage/members/{userId}/decline" : {
+      "post" : {
+        "tags" : [ "Member management" ],
+        "summary" : "Turn a join request down",
+        "operationId" : "declineJoinRequest",
+        "parameters" : [ {
+          "name" : "slug",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "userId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Declined"
+          },
+          "404" : {
+            "description" : "No pending request from that person here",
+            "content" : {
+              "application/problem+json" : { }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/asbls/{slug}/manage/members/{userId}/approve" : {
+      "post" : {
+        "tags" : [ "Member management" ],
+        "summary" : "Accept a join request: the person becomes a member",
+        "operationId" : "approveJoinRequest",
+        "parameters" : [ {
+          "name" : "slug",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "userId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Approved"
+          },
+          "404" : {
+            "description" : "No pending request from that person here",
+            "content" : {
+              "application/problem+json" : { }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/asbls/{slug}/manage/join-link" : {
+      "get" : {
+        "tags" : [ "Member management" ],
+        "summary" : "The association's current join link, if any (administrators)",
+        "operationId" : "getJoinLink",
+        "parameters" : [ {
+          "name" : "slug",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/JoinLink"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      },
+      "post" : {
+        "tags" : [ "Member management" ],
+        "summary" : "Create a join link, replacing the current one (which stops working) (administrators)",
+        "operationId" : "newJoinLink",
+        "parameters" : [ {
+          "name" : "slug",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/JoinLink"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "Member management" ],
+        "summary" : "Switch the join link off (administrators)",
+        "operationId" : "disableJoinLink",
+        "parameters" : [ {
+          "name" : "slug",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Switched off"
           }
         },
         "security" : [ {
@@ -887,6 +1122,23 @@
           }
         }
       },
+      "JoinInvitation" : {
+        "required" : [ "denomination", "slug" ],
+        "type" : "object",
+        "properties" : {
+          "slug" : {
+            "type" : "string"
+          },
+          "denomination" : {
+            "type" : "string"
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "My membership status there, if any",
+            "enum" : [ "PENDING", "ACTIVE", "EXCLUDED", "LEFT" ]
+          }
+        }
+      },
       "RegisterRequest" : {
         "required" : [ "email", "name", "password" ],
         "type" : "object",
@@ -985,6 +1237,15 @@
           "url" : {
             "type" : "string",
             "description" : "Stripe-hosted onboarding page; single use, expires quickly"
+          }
+        }
+      },
+      "JoinLink" : {
+        "type" : "object",
+        "properties" : {
+          "token" : {
+            "type" : "string",
+            "description" : "The link's token (the link is <site>/join/<token>); absent when switched off"
           }
         }
       },
@@ -1202,6 +1463,9 @@
           },
           "role" : {
             "type" : "string"
+          },
+          "status" : {
+            "type" : "string"
           }
         }
       },
@@ -1235,7 +1499,7 @@
         }
       },
       "MyAssociation" : {
-        "required" : [ "denomination", "role", "slug" ],
+        "required" : [ "denomination", "role", "slug", "status" ],
         "type" : "object",
         "properties" : {
           "slug" : {
@@ -1247,6 +1511,11 @@
           "role" : {
             "type" : "string",
             "enum" : [ "ADMIN", "TREASURER", "VIEWER", "MEMBER" ]
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "PENDING while a join request awaits an administrator",
+            "enum" : [ "PENDING", "ACTIVE", "EXCLUDED", "LEFT" ]
           }
         }
       },
@@ -1318,9 +1587,14 @@
         }
       },
       "AsblMember" : {
-        "required" : [ "email", "name", "role", "status" ],
+        "required" : [ "email", "id", "name", "role", "status" ],
         "type" : "object",
         "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "The person's public ID (used to approve or decline a request)",
+            "format" : "uuid"
+          },
           "name" : {
             "type" : "string"
           },

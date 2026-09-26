@@ -1,0 +1,26 @@
+<div class="page">
+  @if (invitation(); as invitation) {
+    <h1>{{ 'join.title' | transloco: { name: invitation.denomination } }}</h1>
+    @switch (invitation.status) {
+      @case ('ACTIVE') {
+        <p>{{ 'join.member' | transloco: { name: invitation.denomination } }}</p>
+        <div><a mat-flat-button [routerLink]="['/asbls', invitation.slug, 'members']">{{ 'join.open' | transloco }}</a></div>
+      }
+      @case ('PENDING') {
+        <p role="status">
+          {{ (justAsked() ? 'join.sent' : 'join.pending') | transloco: { name: invitation.denomination } }}
+        </p>
+        <a class="back" routerLink="/">{{ 'account.back' | transloco }}</a>
+      }
+      @default {
+        <p class="muted">{{ 'join.intro' | transloco }}</p>
+        <div><button mat-flat-button type="button" (click)="ask()" [disabled]="sending()">{{ 'join.ask' | transloco }}</button></div>
+      }
+    }
+  } @else if (!error()) {
+    <mat-spinner diameter="40" />
+  }
+  @if (error(); as error) {
+    <p class="error" role="alert">{{ error | transloco }}</p>
+  }
+</div>

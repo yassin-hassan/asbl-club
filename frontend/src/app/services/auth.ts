@@ -1,7 +1,9 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Observable, catchError, finalize, map, of, shareReplay, switchMap, tap } from 'rxjs';
-import { AuthenticationService, MeResponse } from '../api/generated';
+// Specific files, not the generated index (which would pull every API service into the initial download).
+import { AuthenticationService } from '../api/generated/api/authentication.service';
+import { MeResponse } from '../api/generated/model/meResponse';
 
 export type CurrentUser = MeResponse;
 
