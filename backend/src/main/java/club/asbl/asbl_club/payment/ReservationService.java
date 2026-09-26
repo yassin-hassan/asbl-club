@@ -1,10 +1,12 @@
 package club.asbl.asbl_club.payment;
 
 import club.asbl.asbl_club.event.Event;
+import club.asbl.asbl_club.event.EventCancelled;
 import club.asbl.asbl_club.event.EventService;
 import club.asbl.asbl_club.event.TicketCategory;
 import club.asbl.asbl_club.user.User;
 import java.time.Instant;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,5 +34,12 @@ public class ReservationService {
         registration.setAmount(category.getPrice());
         registration.setCurrency("EUR");
         return registrationRepository.save(registration);
+    }
+
+    // An event was cancelled: bookings not yet paid are cancelled with it (checkout then refuses them). Paid ones stay
+    // PAID: they're refunded from the association's Stripe dashboard for now. Runs inside the cancelling transaction.
+    @EventListener
+    void onEventCancelled(EventCancelled cancelled) {
+        registrationRepository.cancelUnpaid(cancelled.eventId());
     }
 }

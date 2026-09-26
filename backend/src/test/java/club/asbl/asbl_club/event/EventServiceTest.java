@@ -7,18 +7,29 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import club.asbl.asbl_club.asbl.Asbl;
+import club.asbl.asbl_club.audit.AuditService;
 import java.time.Instant;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 @ExtendWith(MockitoExtension.class)
 class EventServiceTest {
 
     @Mock
     EventRepository eventRepository;
+
+    @Mock
+    TicketCategoryRepository ticketCategoryRepository;
+
+    @Mock
+    AuditService auditService;
+
+    @Mock
+    ApplicationEventPublisher events;
 
     @InjectMocks
     EventService eventService;

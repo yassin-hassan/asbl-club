@@ -135,6 +135,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   margin-top: 0;
 }
 
+/* Row buttons in a data table (change, remove) stay on one line, at the end. */
+.row-actions {
+  white-space: nowrap;
+  text-align: right;
+}
+
 .back {
   display: inline-block;
   margin-top: 16px;
