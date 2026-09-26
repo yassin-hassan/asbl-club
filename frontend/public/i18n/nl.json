@@ -203,7 +203,18 @@
     "role": "Rol",
     "status": "Status",
     "noAccess": "Je bent geen lid van deze vereniging.",
-    "back": "Terug naar de startpagina"
+    "back": "Terug naar de startpagina",
+    "actions": "Acties",
+    "changeRole": "Rol van {{ name }}",
+    "exclude": "Uitsluiten",
+    "excludeTitle": "{{ name }} uitsluiten?",
+    "excludeConfirm": "{{ name }} verliest meteen de toegang tot de vereniging en kan niet terugkomen via de uitnodigingslink.",
+    "leave": "Vereniging verlaten",
+    "leaveTitle": "{{ name }} verlaten?",
+    "leaveConfirm": "U verliest de toegang tot de vereniging. U kunt later opnieuw lid worden via de uitnodigingslink.",
+    "lastAdmin": "Een vereniging heeft minstens één beheerder nodig: stel eerst iemand anders aan.",
+    "notOnYourself": "U kunt uzelf niet uitsluiten: verlaat de vereniging.",
+    "cancel": "Annuleren"
   },
   "statuses": {
     "PENDING": "In afwachting",

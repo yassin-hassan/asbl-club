@@ -27,6 +27,7 @@ export * from './profileExport';
 export * from './publicEvent';
 export * from './publicTicket';
 export * from './registerRequest';
+export * from './roleChange';
 export * from './seatAvailability';
 export * from './stripeOnboardingLink';
 export * from './tokenResponse';

@@ -116,6 +116,67 @@ public class MembershipService {
         auditService.record("JOIN_DECLINED", asbl, "User", membership.getUser().getId(), null);
     }
 
+    // An administrator gives an active member another role. Rule: an association always keeps an active admin.
+    @Transactional
+    public void changeRole(Asbl asbl, UUID userPublicId, MembershipRole newRole) {
+        Membership membership = activeMember(asbl, userPublicId);
+        MembershipRole oldRole = membership.getRole();
+        if (oldRole == newRole) {
+            return;
+        }
+        if (oldRole == MembershipRole.ADMIN) {
+            requireAnotherActiveAdmin(asbl, membership);
+        }
+        membership.setRole(newRole);
+        auditService.record("MEMBER_ROLE_CHANGED", asbl, "User", membership.getUser().getId(),
+                Map.of("from", oldRole.name(), "to", newRole.name()));
+    }
+
+    // An administrator excludes a member: access ends at once, and the join link won't let them back in.
+    // Not oneself (that's leaving).
+    @Transactional
+    public void exclude(Asbl asbl, UUID userPublicId, User actor) {
+        if (actor.getPublicId().equals(userPublicId)) {
+            throw new NotOnYourselfException();
+        }
+        Membership membership = activeMember(asbl, userPublicId);
+        if (membership.getRole() == MembershipRole.ADMIN) {
+            requireAnotherActiveAdmin(asbl, membership);
+        }
+        membership.setStatus(MembershipStatus.EXCLUDED);
+        membership.setExcludedAt(LocalDate.now());
+        auditService.record("MEMBER_EXCLUDED", asbl, "User", membership.getUser().getId(), null);
+    }
+
+    // A member leaves. They may ask to join again later through the join link.
+    @Transactional
+    public void leave(Asbl asbl, User user) {
+        Membership membership = membershipRepository.findByUserAndAsbl(user, asbl)
+                .filter(m -> m.getStatus() == MembershipStatus.ACTIVE)
+                .orElseThrow(NoSuchMemberException::new);
+        if (membership.getRole() == MembershipRole.ADMIN) {
+            requireAnotherActiveAdmin(asbl, membership);
+        }
+        membership.setStatus(MembershipStatus.LEFT);
+        auditService.record("MEMBER_LEFT", asbl, "User", user.getId(), null);
+    }
+
+    private Membership activeMember(Asbl asbl, UUID userPublicId) {
+        return membershipRepository.findByAsblAndUser_PublicId(asbl, userPublicId)
+                .filter(m -> m.getStatus() == MembershipStatus.ACTIVE)
+                .orElseThrow(NoSuchMemberException::new);
+    }
+
+    // Locks the active admins first (see the repository), so the check and the change it allows happen together.
+    private void requireAnotherActiveAdmin(Asbl asbl, Membership leaving) {
+        boolean another = membershipRepository
+                .findByAsblAndRoleAndStatus(asbl, MembershipRole.ADMIN, MembershipStatus.ACTIVE).stream()
+                .anyMatch(admin -> !admin.getId().equals(leaving.getId()));
+        if (!another) {
+            throw new LastAdminException();
+        }
+    }
+
     private Membership pendingRequest(Asbl asbl, UUID userPublicId) {
         return membershipRepository.findByAsblAndUser_PublicId(asbl, userPublicId)
                 .filter(m -> m.getStatus() == MembershipStatus.PENDING)

@@ -41,6 +41,59 @@
     "description" : "Connecting an association to Stripe (administrators)"
   } ],
   "paths" : {
+    "/api/v1/asbls/{slug}/manage/members/{userId}/role" : {
+      "put" : {
+        "tags" : [ "Member management" ],
+        "summary" : "Give an active member another role (administrators)",
+        "operationId" : "changeMemberRole",
+        "parameters" : [ {
+          "name" : "slug",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "userId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/RoleChange"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "Changed"
+          },
+          "404" : {
+            "description" : "No active member with that ID here",
+            "content" : {
+              "application/problem+json" : { }
+            }
+          },
+          "409" : {
+            "description" : "The last active administrator (code LAST_ADMIN)",
+            "content" : {
+              "application/problem+json" : { }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      }
+    },
     "/api/v1/registrations/{id}/checkout" : {
       "post" : {
         "tags" : [ "Registrations" ],
@@ -319,6 +372,49 @@
           },
           "502" : {
             "description" : "Stripe couldn't be reached",
+            "content" : {
+              "application/problem+json" : { }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/asbls/{slug}/manage/members/{userId}/exclude" : {
+      "post" : {
+        "tags" : [ "Member management" ],
+        "summary" : "Exclude a member: access ends at once and the join link won't let them back (administrators)",
+        "operationId" : "excludeMember",
+        "parameters" : [ {
+          "name" : "slug",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "userId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Excluded"
+          },
+          "404" : {
+            "description" : "No active member with that ID here",
+            "content" : {
+              "application/problem+json" : { }
+            }
+          },
+          "409" : {
+            "description" : "The last active administrator (LAST_ADMIN), or oneself (NOT_ON_YOURSELF)",
             "content" : {
               "application/problem+json" : { }
             }
@@ -682,6 +778,41 @@
                   "$ref" : "#/components/schemas/ManagedEvent"
                 }
               }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/asbls/{slug}/leave" : {
+      "post" : {
+        "tags" : [ "Associations" ],
+        "summary" : "Leave the association",
+        "operationId" : "leaveAsbl",
+        "parameters" : [ {
+          "name" : "slug",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Left"
+          },
+          "404" : {
+            "description" : "Not an active member here",
+            "content" : {
+              "application/problem+json" : { }
+            }
+          },
+          "409" : {
+            "description" : "The last active administrator (code LAST_ADMIN)",
+            "content" : {
+              "application/problem+json" : { }
             }
           }
         },
@@ -1099,6 +1230,17 @@
   },
   "components" : {
     "schemas" : {
+      "RoleChange" : {
+        "required" : [ "role" ],
+        "type" : "object",
+        "properties" : {
+          "role" : {
+            "pattern" : "ADMIN|TREASURER|VIEWER|MEMBER",
+            "type" : "string",
+            "enum" : [ "ADMIN", "TREASURER", "VIEWER", "MEMBER" ]
+          }
+        }
+      },
       "Checkout" : {
         "required" : [ "amount", "clientSecret", "currency", "publishableKey", "stripeAccount" ],
         "type" : "object",
