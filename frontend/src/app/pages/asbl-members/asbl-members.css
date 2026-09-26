@@ -29,6 +29,15 @@
   padding: 10px 0;
   border-top: 1px solid var(--asbl-slate-100);
 }
+.requests .who {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.requests .who .muted {
+  font-size: 13.5px;
+}
 .requests .toolbar {
   margin-top: 0;
 }
