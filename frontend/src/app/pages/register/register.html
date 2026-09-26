@@ -39,7 +39,7 @@
       <button mat-flat-button type="submit" [disabled]="submitting()">
         {{ (submitting() ? 'register.submitting' : 'register.submit') | transloco }}
       </button>
-      <a mat-button routerLink="/login">{{ 'register.haveAccount' | transloco }}</a>
+      <a mat-button routerLink="/login" queryParamsHandling="preserve">{{ 'register.haveAccount' | transloco }}</a>
     </form>
   </div>
 </div>

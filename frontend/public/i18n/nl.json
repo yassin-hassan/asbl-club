@@ -310,5 +310,32 @@
   },
   "app": {
     "loading": "Laden…"
+  },
+  "join": {
+    "title": "Word lid van {{ name }}",
+    "intro": "U hebt de uitnodigingslink van deze vereniging ontvangen. Een beheerder keurt uw aanvraag goed.",
+    "ask": "Lidmaatschap aanvragen",
+    "sent": "Aanvraag verstuurd. Een beheerder van {{ name }} bekijkt ze.",
+    "pending": "Uw aanvraag wacht op goedkeuring door een beheerder.",
+    "member": "U bent al lid van {{ name }}.",
+    "open": "Vereniging openen",
+    "refused": "U kunt geen lid worden van deze vereniging.",
+    "invalid": "Deze uitnodigingslink werkt niet meer. Vraag de vereniging om een nieuwe."
+  },
+  "invite": {
+    "title": "Leden uitnodigen",
+    "intro": "Deel deze link met wie u wilt uitnodigen. Zij vragen het lidmaatschap aan, u keurt het hieronder goed.",
+    "create": "Uitnodigingslink aanmaken",
+    "renew": "Nieuwe link",
+    "disable": "Uitschakelen",
+    "copy": "Kopiëren",
+    "copied": "Gekopieerd",
+    "renewHint": "Een nieuwe link vervangt deze: de oude werkt dan niet meer.",
+    "off": "Geen actieve uitnodigingslink."
+  },
+  "requests": {
+    "title": "Lidmaatschapsaanvragen",
+    "approve": "Goedkeuren",
+    "decline": "Weigeren"
   }
 }

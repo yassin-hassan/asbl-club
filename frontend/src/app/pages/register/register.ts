@@ -1,7 +1,7 @@
 import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -19,6 +19,7 @@ import { errorMessageKey } from '../../services/problem';
 export class Register {
   private auth = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private fb = inject(NonNullableFormBuilder);
 
   // The same rules as the API (which checks again): name required, a valid email, password 8–100 characters.
@@ -40,7 +41,9 @@ export class Register {
     this.error.set(null);
     const { name, email, password } = this.form.getRawValue();
     this.auth.register(name.trim(), email.trim(), password).subscribe({
-      next: () => this.router.navigateByUrl('/'),
+      // Back to where the visitor was going (e.g. a join link). navigateByUrl stays inside the app, so a crafted
+      // ?returnUrl=https://evil.example can't redirect anyone to another site.
+      next: () => this.router.navigateByUrl(this.route.snapshot.queryParamMap.get('returnUrl') ?? '/'),
       error: (err: HttpErrorResponse) => {
         this.submitting.set(false);
         if (err.status === 409) {

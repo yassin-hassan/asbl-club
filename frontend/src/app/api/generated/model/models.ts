@@ -11,6 +11,8 @@ export * from './checkout';
 export * from './createAsblRequest';
 export * from './createEventRequest';
 export * from './eventFeedItem';
+export * from './joinInvitation';
+export * from './joinLink';
 export * from './loginRequest';
 export * from './managedEvent';
 export * from './managedEventItem';

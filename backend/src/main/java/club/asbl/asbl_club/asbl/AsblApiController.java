@@ -79,8 +79,11 @@ class AsblApiController {
         Asbl asbl = asblService.findBySlug(slug).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         String myRole = membershipService.roleOf(viewer, asbl)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN));
+        // Pending join requests are the administrators' business: other members only see who is in.
+        boolean admin = "ADMIN".equals(myRole);
         var members = membershipService.membersOf(asbl).stream()
-                .map(m -> new AsblMembers.Member(m.name(), m.email(), m.role(), m.status()))
+                .filter(m -> admin || "ACTIVE".equals(m.status()))
+                .map(m -> new AsblMembers.Member(m.id(), m.name(), m.email(), m.role(), m.status()))
                 .toList();
         return new AsblMembers(asbl.getSlug(), asbl.getDenomination(), myRole, asbl.getStripeAccountId() != null,
                 members);

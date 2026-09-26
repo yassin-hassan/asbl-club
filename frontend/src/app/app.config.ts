@@ -10,7 +10,9 @@ import { routes } from './app.routes';
 import { authInterceptor } from './services/auth.interceptor';
 import { AuthService } from './services/auth';
 import { reloadForNewVersion } from './services/new-version';
-import { provideApi } from './api/generated';
+// From its own file, not the generated index: the index lists every API service (APIS), which would pull all of
+// them into the initial download instead of the pages that use them.
+import { provideApi } from './api/generated/provide-api';
 import { provideTranslations } from './i18n/transloco';
 import { LanguageService } from './i18n/language';
 import { languageInterceptor } from './i18n/language.interceptor';

@@ -10,6 +10,10 @@
 
 
 export interface AsblMember { 
+    /**
+     * The person\'s public ID (used to approve or decline a request)
+     */
+    id: string;
     name: string;
     email: string;
     role: AsblMemberRoleEnum;

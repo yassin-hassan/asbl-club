@@ -310,5 +310,32 @@
   },
   "app": {
     "loading": "Loading…"
+  },
+  "join": {
+    "title": "Join {{ name }}",
+    "intro": "You received this association’s invitation link. An administrator will approve your request.",
+    "ask": "Ask to join",
+    "sent": "Request sent. An administrator of {{ name }} will review it.",
+    "pending": "Your request is waiting for an administrator’s approval.",
+    "member": "You’re already a member of {{ name }}.",
+    "open": "Open the association",
+    "refused": "You can’t join this association.",
+    "invalid": "This invitation link no longer works. Ask the association for a new one."
+  },
+  "invite": {
+    "title": "Invite members",
+    "intro": "Share this link with the people you want to invite. They ask to join, and you approve them below.",
+    "create": "Create an invitation link",
+    "renew": "New link",
+    "disable": "Turn off",
+    "copy": "Copy",
+    "copied": "Copied",
+    "renewHint": "A new link replaces this one: the old one stops working.",
+    "off": "No active invitation link."
+  },
+  "requests": {
+    "title": "Join requests",
+    "approve": "Approve",
+    "decline": "Decline"
   }
 }

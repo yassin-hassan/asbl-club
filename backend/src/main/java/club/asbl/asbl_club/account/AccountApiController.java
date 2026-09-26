@@ -38,7 +38,7 @@ class AccountApiController {
     List<MyAssociation> associations(Authentication authentication) {
         User user = userService.getAuthenticated(authentication);
         return membershipService.membershipsOf(user).stream()
-                .map(a -> new MyAssociation(a.slug(), a.denomination(), a.role()))
+                .map(a -> new MyAssociation(a.slug(), a.denomination(), a.role(), a.status()))
                 .toList();
     }
 

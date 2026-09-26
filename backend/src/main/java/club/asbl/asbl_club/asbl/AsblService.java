@@ -3,6 +3,8 @@ package club.asbl.asbl_club.asbl;
 import club.asbl.asbl_club.audit.AuditService;
 import club.asbl.asbl_club.membership.MembershipService;
 import club.asbl.asbl_club.user.User;
+import java.security.SecureRandom;
+import java.util.Base64;
 import java.util.Map;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
@@ -10,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AsblService {
+
+    private static final SecureRandom RANDOM = new SecureRandom();
 
     private final AsblRepository asblRepository;
     private final MembershipService membershipService;
@@ -59,5 +63,30 @@ public class AsblService {
     @Transactional(readOnly = true)
     public long count() {
         return asblRepository.count();
+    }
+
+    // A new join link for the association: 256 random bits, so it can't be guessed. Replaces the current one, which
+    // stops working at once. The token itself is never written to the audit log.
+    @Transactional
+    public String newJoinLink(Asbl asbl) {
+        byte[] bytes = new byte[32];
+        RANDOM.nextBytes(bytes);
+        String token = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+        asbl.setJoinToken(token);
+        asblRepository.save(asbl);
+        auditService.record("JOIN_LINK_CREATED", asbl);
+        return token;
+    }
+
+    @Transactional
+    public void disableJoinLink(Asbl asbl) {
+        asbl.setJoinToken(null);
+        asblRepository.save(asbl);
+        auditService.record("JOIN_LINK_DISABLED", asbl);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Asbl> findByJoinToken(String token) {
+        return asblRepository.findByJoinToken(token);
     }
 }

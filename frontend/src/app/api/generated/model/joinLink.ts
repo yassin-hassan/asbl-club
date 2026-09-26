@@ -9,11 +9,10 @@
  */
 
 
-export interface AsblSummary { 
-    id?: number;
-    denomination?: string;
-    slug?: string;
-    role?: string;
-    status?: string;
+export interface JoinLink { 
+    /**
+     * The link\'s token (the link is <site>/join/<token>); absent when switched off
+     */
+    token?: string;
 }
 

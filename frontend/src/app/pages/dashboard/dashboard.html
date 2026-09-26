@@ -17,10 +17,18 @@
     } @else {
       <div class="cards">
         @for (association of associations; track association.slug) {
-          <a class="row-link" [routerLink]="['/asbls', association.slug, 'members']">
-            <span class="title">{{ association.denomination }}</span>
-            <span class="tag">{{ 'roles.' + association.role | transloco }}</span>
-          </a>
+          @if (association.status === 'ACTIVE') {
+            <a class="row-link" [routerLink]="['/asbls', association.slug, 'members']">
+              <span class="title">{{ association.denomination }}</span>
+              <span class="tag">{{ 'roles.' + association.role | transloco }}</span>
+            </a>
+          } @else {
+            <!-- A join request (or a past membership): nothing to open until an administrator approves. -->
+            <div class="row-link">
+              <span class="title">{{ association.denomination }}</span>
+              <span class="tag warm">{{ 'statuses.' + association.status | transloco }}</span>
+            </div>
+          }
         }
       </div>
     }

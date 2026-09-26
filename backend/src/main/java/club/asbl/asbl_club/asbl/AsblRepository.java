@@ -10,4 +10,6 @@ interface AsblRepository extends JpaRepository<Asbl, Long> {
     boolean existsByBceNumber(String bceNumber);
 
     Optional<Asbl> findBySlug(String slug);
+
+    Optional<Asbl> findByJoinToken(String joinToken);
 }
