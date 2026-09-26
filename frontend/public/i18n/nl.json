@@ -301,7 +301,8 @@
     "providerDown": "De betaaldienst is onbereikbaar. Probeer het zo meteen opnieuw.",
     "stillProcessing": "Betaling wordt verwerkt. Ze wordt bevestigd zodra Stripe ze bevestigt.",
     "backToEvent": "Terug naar het evenement",
-    "refunded": "Dit evenement werd geannuleerd terwijl je betaalde, dus je betaling werd terugbetaald. De terugbetaling staat meestal binnen 5 tot 10 dagen op je rekening."
+    "refunded": "Je boeking is verlopen of het evenement werd geannuleerd terwijl je betaalde, dus je betaling werd terugbetaald. De terugbetaling staat meestal binnen 5 tot 10 dagen op je rekening.",
+    "expired": "Deze boeking werd niet op tijd betaald, dus de plaats werd vrijgegeven. Je kunt opnieuw boeken via de pagina van het evenement."
   },
   "payments": {
     "title": "Betalingen",

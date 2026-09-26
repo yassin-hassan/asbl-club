@@ -112,7 +112,7 @@ class RegistrationApiController {
             security = @SecurityRequirement(name = "bearer"))
     @ApiResponse(responseCode = "200", description = "Ready to pay",
             content = @Content(schema = @Schema(implementation = Checkout.class)))
-    @ApiResponse(responseCode = "409", description = "Nothing to pay, or the association can't receive payments yet",
+    @ApiResponse(responseCode = "409", description = "Nothing to pay (NOTHING_TO_PAY), not paid in time (BOOKING_EXPIRED), or the association can't receive payments yet (PAYMENTS_DISABLED)",
             content = @Content(mediaType = "application/problem+json"))
     @ApiResponse(responseCode = "502", description = "The payment provider couldn't be reached",
             content = @Content(mediaType = "application/problem+json"))
@@ -120,6 +120,9 @@ class RegistrationApiController {
     Checkout checkout(@PathVariable Long id, Authentication authentication) {
         User user = userService.getAuthenticated(authentication);
         Registration registration = own(id, user);
+        if (registration.getStatus() == RegistrationStatus.EXPIRED) {
+            throw conflict("BOOKING_EXPIRED", "This booking wasn't paid in time; its seat was given back.");
+        }
         if (registration.getStatus() != RegistrationStatus.RESERVED) {
             throw conflict("NOTHING_TO_PAY", "This booking has nothing left to pay.");
         }

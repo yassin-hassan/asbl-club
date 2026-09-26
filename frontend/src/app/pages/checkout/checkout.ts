@@ -78,7 +78,14 @@ export class CheckoutPage {
 
   private checkoutErrorKey(err: HttpErrorResponse): string {
     if (err.status === 409) {
-      return problemOf(err)?.code === 'PAYMENTS_DISABLED' ? 'payment.paymentsDisabled' : 'payment.notPayable';
+      switch (problemOf(err)?.code) {
+        case 'PAYMENTS_DISABLED':
+          return 'payment.paymentsDisabled';
+        case 'BOOKING_EXPIRED':
+          return 'payment.expired';
+        default:
+          return 'payment.notPayable';
+      }
     }
     return err.status === 502 ? 'payment.providerDown' : errorMessageKey(err);
   }

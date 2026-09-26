@@ -13,11 +13,13 @@ import static org.mockito.Mockito.when;
 import club.asbl.asbl_club.asbl.Asbl;
 import club.asbl.asbl_club.audit.AuditService;
 import club.asbl.asbl_club.user.User;
+import club.asbl.asbl_club.event.EventService;
 import com.stripe.StripeClient;
 import com.stripe.exception.ApiConnectionException;
 import com.stripe.net.RequestOptions;
 import com.stripe.param.RefundCreateParams;
 import com.stripe.service.RefundService;
+import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -41,6 +43,12 @@ class PaymentServiceTest {
 
     @Mock
     AuditService auditService;
+
+    @Mock
+    EntityManager entityManager;
+
+    @Mock
+    EventService eventService;
 
     @InjectMocks
     PaymentService paymentService;

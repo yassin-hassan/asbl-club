@@ -301,7 +301,8 @@
     "providerDown": "Le service de paiement est injoignable. Réessayez dans un instant.",
     "stillProcessing": "Paiement en cours de traitement. Il sera confirmé dès que nous recevrons la confirmation de Stripe.",
     "backToEvent": "Retour à l'événement",
-    "refunded": "Cet événement a été annulé pendant votre paiement : vous avez été remboursé. Le remboursement arrive en général sur votre compte sous 5 à 10 jours."
+    "refunded": "Votre réservation a expiré ou l'événement a été annulé pendant votre paiement : vous avez été remboursé. Le remboursement arrive en général sur votre compte sous 5 à 10 jours.",
+    "expired": "Cette réservation n'a pas été payée à temps : sa place a été libérée. Vous pouvez réserver à nouveau depuis la page de l'événement."
   },
   "payments": {
     "title": "Paiements",

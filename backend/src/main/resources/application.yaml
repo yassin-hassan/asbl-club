@@ -41,6 +41,10 @@ stripe:
   publishable-key: ${STRIPE_PUBLISHABLE_KEY:}
   webhook-secret: ${STRIPE_WEBHOOK_SECRET:}
 
+bookings:
+  # An unpaid booking gives its seat back after this long (Stripe's form, 3-D Secure included, takes a few minutes).
+  expire-after: ${BOOKINGS_EXPIRE_AFTER:30m}
+
 jwt:
   # PKCS#8 PEM private key (a secret: SSM Parameter Store in production). Empty = temporary key (dev/tests).
   signing-key: ${JWT_SIGNING_KEY:}

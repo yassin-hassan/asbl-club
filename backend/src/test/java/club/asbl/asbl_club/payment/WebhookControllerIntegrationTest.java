@@ -2,6 +2,7 @@ package club.asbl.asbl_club.payment;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -18,6 +19,8 @@ import com.stripe.net.RequestOptions;
 import com.stripe.param.RefundCreateParams;
 import com.stripe.service.RefundService;
 import java.math.BigDecimal;
+import jakarta.persistence.EntityManager;
+import java.time.Duration;
 import java.time.Instant;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -58,6 +61,10 @@ class WebhookControllerIntegrationTest {
     // Stripe itself is replaced by a stand-in: no refund may reach a real Stripe account from a test.
     @MockitoBean
     StripeClient stripe;
+    @Autowired
+    BookingExpiry bookingExpiry;
+    @Autowired
+    EntityManager entityManager;
 
     @Test
     void succeededWebhook_finalizesThePaymentAndAudits() throws Exception {
@@ -111,6 +118,52 @@ class WebhookControllerIntegrationTest {
         assertThat(jdbcTemplate.queryForObject(
                 "SELECT count(*) FROM audit_logs WHERE action = 'PAYMENT_REFUNDED' AND entity_id = ?",
                 Integer.class, payment.getId())).isEqualTo(1);
+    }
+
+    // The person took longer than the booking window at Stripe's form: the booking expired and gave its seat back,
+    // then the payment succeeds. A seat is still free: they get it again, no refund.
+    @Test
+    void aPaymentJustAfterExpiry_takesASeatAgain_whenOneIsFree() throws Exception {
+        Payment payment = seedInitiatedPayment("club-late-ok", "lateok@club.test", "0707.707.707", "pi_hook_late_ok");
+        Long booking = expire(payment);
+
+        mockMvc.perform(signedWebhook("payment_intent.succeeded", "pi_hook_late_ok")).andExpect(status().isOk());
+
+        assertThat(registrationRepository.findById(booking).orElseThrow().getStatus())
+                .isEqualTo(RegistrationStatus.PAID);
+        assertThat(soldSeatsOf(booking)).isEqualTo(1);
+        verify(stripe, never()).refunds();
+    }
+
+    // Same, but the seat it gave back has been sold since (here: the last one): refunded.
+    @Test
+    void aPaymentJustAfterExpiry_isRefunded_whenNoSeatIsLeft() throws Exception {
+        Payment payment = seedInitiatedPayment("club-late-full", "latefull@club.test", "0808.808.808", "pi_hook_late_full");
+        Long booking = expire(payment);
+        jdbcTemplate.update("UPDATE ticket_categories t SET sold_seats = total_seats FROM registrations r "
+                + "WHERE r.ticket_category_id = t.id AND r.id = ?", booking); // sold out meanwhile
+        when(stripe.refunds()).thenReturn(mock(RefundService.class));
+
+        mockMvc.perform(signedWebhook("payment_intent.succeeded", "pi_hook_late_full")).andExpect(status().isOk());
+
+        assertThat(registrationRepository.findById(booking).orElseThrow().getStatus())
+                .isEqualTo(RegistrationStatus.REFUNDED);
+    }
+
+    private Long expire(Payment payment) {
+        Long booking = payment.getPayable().getId();
+        entityManager.flush();
+        jdbcTemplate.update("UPDATE registrations SET registered_at = now() - interval '31 minutes' WHERE id = ?",
+                booking);
+        bookingExpiry.expireReservedBefore(Instant.now().minus(Duration.ofMinutes(30)));
+        assertThat(soldSeatsOf(booking)).isZero();
+        return booking;
+    }
+
+    private int soldSeatsOf(Long booking) {
+        entityManager.flush();
+        return jdbcTemplate.queryForObject("SELECT t.sold_seats FROM ticket_categories t "
+                + "JOIN registrations r ON r.ticket_category_id = t.id WHERE r.id = ?", Integer.class, booking);
     }
 
     // Events we don't act on are recorded too: a trace of everything Stripe sent.

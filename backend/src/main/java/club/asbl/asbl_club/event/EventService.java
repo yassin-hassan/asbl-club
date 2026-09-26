@@ -219,6 +219,19 @@ public class EventService {
         return category;
     }
 
+    // Takes one seat if any is left, without failing otherwise (unlike reserveSeat, whose exception would doom the
+    // caller's whole transaction): for a payment that arrives just after its booking expired.
+    @Transactional
+    public boolean takeSeatIfAvailable(Long ticketCategoryId) {
+        return ticketCategoryRepository.reserveOneSeat(ticketCategoryId) == 1;
+    }
+
+    // A booking ended without being paid (expired): its seat can be booked again.
+    @Transactional
+    public void releaseSeat(Long ticketCategoryId) {
+        ticketCategoryRepository.releaseOneSeat(ticketCategoryId);
+    }
+
     @Transactional(readOnly = true)
     public List<TicketCategorySummary> ticketCategoriesOf(Event event) {
         return ticketCategoryRepository.findByEvent(event).stream()
