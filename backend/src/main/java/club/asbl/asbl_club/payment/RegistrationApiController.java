@@ -9,6 +9,7 @@ import club.asbl.asbl_club.event.TicketNotInEventException;
 import club.asbl.asbl_club.event.TicketSoldOutException;
 import club.asbl.asbl_club.membership.MembershipService;
 import club.asbl.asbl_club.payment.Registrations.BookRequest;
+import club.asbl.asbl_club.payment.Registrations.Booking;
 import club.asbl.asbl_club.payment.Registrations.Checkout;
 import club.asbl.asbl_club.payment.Registrations.Mine;
 import club.asbl.asbl_club.user.User;
@@ -22,6 +23,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -100,6 +102,14 @@ class RegistrationApiController {
         return ResponseEntity.created(URI.create("/api/v1/registrations/" + booked.id())).body(booked);
     }
 
+    @Operation(operationId = "listMyBookings", summary = "My bookings, soonest event first",
+            security = @SecurityRequirement(name = "bearer"))
+    @GetMapping("/api/v1/registrations")
+    List<Booking> myBookings(Authentication authentication) {
+        User user = userService.getAuthenticated(authentication);
+        return registrationRepository.findMine(user.getId()).stream().map(RegistrationApiController::booking).toList();
+    }
+
     @Operation(operationId = "getMyRegistration", summary = "One of my bookings and its payment status",
             security = @SecurityRequirement(name = "bearer"))
     @GetMapping("/api/v1/registrations/{id}")
@@ -155,6 +165,16 @@ class RegistrationApiController {
         return registrationRepository.findByIdWithEventAndAsbl(id)
                 .filter(r -> r.getUser() != null && r.getUser().getId().equals(user.getId()))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    // The ticket code only once paid (or used): before that there's no ticket to show.
+    private static Booking booking(Registration r) {
+        boolean ticket = r.getStatus() == RegistrationStatus.PAID || r.getStatus() == RegistrationStatus.CONFIRMED
+                || r.getStatus() == RegistrationStatus.ATTENDED;
+        return new Booking(r.getId(), r.getStatus().name(), r.getAmount(), r.getCurrency(), r.getEvent().getId(),
+                r.getEvent().getTitle(), r.getEvent().getStartsAt(), r.getEvent().getLocation(),
+                r.getEvent().getAsbl().getDenomination(), r.getEvent().getAsbl().getSlug(),
+                r.getTicketCategory().getLabel(), ticket ? r.getQrToken() : null, r.getCheckinAt());
     }
 
     private static Mine mine(Registration r) {

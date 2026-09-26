@@ -18,6 +18,7 @@
     </div>
 
     @if (auth.user(); as user) {
+      <a class="text-link" routerLink="/bookings">{{ 'nav.bookings' | transloco }}</a>
       <a class="text-link" routerLink="/account" [title]="user.email">{{ 'nav.account' | transloco }}</a>
       <button mat-stroked-button type="button" (click)="logout()">{{ 'nav.logout' | transloco }}</button>
     } @else if (!auth.restoringSession()) {

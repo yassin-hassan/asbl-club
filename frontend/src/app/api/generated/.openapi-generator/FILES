@@ -25,6 +25,8 @@ model/attendees.ts
 model/auditEntry.ts
 model/auditJournal.ts
 model/bookRequest.ts
+model/checkIn.ts
+model/checkInRequest.ts
 model/checkout.ts
 model/createAsblRequest.ts
 model/createEventRequest.ts
@@ -39,6 +41,7 @@ model/managedTicket.ts
 model/meResponse.ts
 model/models.ts
 model/myAssociation.ts
+model/myBooking.ts
 model/myRegistration.ts
 model/paymentExport.ts
 model/paymentSetupStatus.ts

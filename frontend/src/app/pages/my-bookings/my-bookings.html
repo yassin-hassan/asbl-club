@@ -1,0 +1,52 @@
+<div class="page">
+  <h1>{{ 'bookings.title' | transloco }}</h1>
+  @if (bookings.value(); as all) {
+    @if (all.length === 0) {
+      <p class="empty">{{ 'bookings.none' | transloco }}</p>
+    } @else {
+      <h2 class="section">{{ 'bookings.upcoming' | transloco }}</h2>
+      @if (split().upcoming.length === 0) {
+        <p class="empty">{{ 'bookings.noneUpcoming' | transloco }}</p>
+      }
+      @for (booking of split().upcoming; track booking.id) {
+        <ng-container *ngTemplateOutlet="card; context: { $implicit: booking }" />
+      }
+      @if (split().past.length > 0) {
+        <h2 class="section">{{ 'bookings.past' | transloco }}</h2>
+        @for (booking of split().past; track booking.id) {
+          <ng-container *ngTemplateOutlet="card; context: { $implicit: booking }" />
+        }
+      }
+    }
+  } @else if (bookings.error(); as error) {
+    <p class="error" role="alert">{{ errorKey(error) | transloco }}</p>
+  } @else {
+    <mat-spinner diameter="40" />
+  }
+</div>
+
+<ng-template #card let-booking>
+  <article class="box booking" [attr.aria-label]="booking.eventTitle">
+    <div class="details">
+      <h3>{{ booking.eventTitle }}</h3>
+      <p class="muted">{{ booking.asblName }}</p>
+      <p>{{ booking.startsAt | date: 'fullDate' : undefined : lang() }} · {{ booking.startsAt | date: 'shortTime' : undefined : lang() }}
+        @if (booking.location) { · {{ booking.location }} }</p>
+      <p>{{ booking.ticketLabel }} · {{ booking.amount | currency: booking.currency : 'symbol' : '1.2-2' : lang() }}</p>
+      <p>
+        <span class="tag" [class.ok]="booking.status === 'PAID'" [class.warm]="booking.status === 'RESERVED'">
+          {{ 'attendees.statuses.' + booking.status | transloco }}
+        </span>
+        @if (booking.checkedInAt) {
+          <span class="muted"> {{ 'bookings.checkedInAt' | transloco: { time: (booking.checkedInAt | date: 'short' : undefined : lang()) } }}</span>
+        }
+      </p>
+      @if (booking.status === 'RESERVED') {
+        <a mat-flat-button [routerLink]="['/pay', booking.id]">{{ 'bookings.pay' | transloco }}</a>
+      }
+    </div>
+    @if (booking.ticketCode && booking.status !== 'ATTENDED') {
+      <app-ticket-qr [code]="booking.ticketCode" [label]="'bookings.qrLabel' | transloco: { event: booking.eventTitle }" />
+    }
+  </article>
+</ng-template>

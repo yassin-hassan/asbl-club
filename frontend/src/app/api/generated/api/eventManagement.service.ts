@@ -21,6 +21,10 @@ import { AddTicketRequest } from '../model/addTicketRequest';
 // @ts-ignore
 import { Attendees } from '../model/attendees';
 // @ts-ignore
+import { CheckIn } from '../model/checkIn';
+// @ts-ignore
+import { CheckInRequest } from '../model/checkInRequest';
+// @ts-ignore
 import { CreateEventRequest } from '../model/createEventRequest';
 // @ts-ignore
 import { ManagedEvent } from '../model/managedEvent';
@@ -174,6 +178,84 @@ export class EventManagementService extends BaseService {
         return this.httpClient.request<ManagedEvent>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Check a ticket in at the door (administrators and treasurers)
+     * @endpoint post /api/v1/asbls/{slug}/manage/events/{eventId}/check-ins
+     * @param slug 
+     * @param eventId 
+     * @param checkInRequest 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public checkIn(slug: string, eventId: number, checkInRequest: CheckInRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json' | 'application/problem+json', context?: HttpContext, transferCache?: boolean}): Observable<CheckIn>;
+    public checkIn(slug: string, eventId: number, checkInRequest: CheckInRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json' | 'application/problem+json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<CheckIn>>;
+    public checkIn(slug: string, eventId: number, checkInRequest: CheckInRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json' | 'application/problem+json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<CheckIn>>;
+    public checkIn(slug: string, eventId: number, checkInRequest: CheckInRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json' | 'application/problem+json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (slug === null || slug === undefined) {
+            throw new Error('Required parameter slug was null or undefined when calling checkIn.');
+        }
+        if (eventId === null || eventId === undefined) {
+            throw new Error('Required parameter eventId was null or undefined when calling checkIn.');
+        }
+        if (checkInRequest === null || checkInRequest === undefined) {
+            throw new Error('Required parameter checkInRequest was null or undefined when calling checkIn.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        // authentication (bearer) required
+        localVarHeaders = this.configuration.addCredentialToHeaders('bearer', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json',
+            'application/problem+json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/asbls/${this.configuration.encodeParam({name: "slug", value: slug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/manage/events/${this.configuration.encodeParam({name: "eventId", value: eventId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int64"})}/check-ins`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<CheckIn>('post', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: checkInRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

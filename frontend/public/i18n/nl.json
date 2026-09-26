@@ -10,7 +10,8 @@
     "login": "Aanmelden",
     "account": "Mijn account",
     "logout": "Afmelden",
-    "createAsbl": "Mijn VZW aanmaken"
+    "createAsbl": "Mijn VZW aanmaken",
+    "bookings": "Mijn boekingen"
   },
   "home": {
     "title": "Openbare evenementen",
@@ -393,5 +394,26 @@
       "REFUNDED": "Terugbetaald",
       "EXPIRED": "Verlopen"
     }
+  },
+  "bookings": {
+    "title": "Mijn boekingen",
+    "none": "Je hebt nog niets geboekt.",
+    "upcoming": "Komend",
+    "noneUpcoming": "Niets gepland.",
+    "past": "Voorbij",
+    "pay": "Betalen",
+    "checkedInAt": "binnen om {{ time }}",
+    "qrLabel": "QR-code van het ticket voor {{ event }}"
+  },
+  "checkIn": {
+    "title": "Toegang",
+    "hint": "Scan de QR-code van een ticket, of typ de code eronder, en druk op Enter.",
+    "code": "Ticketcode",
+    "submit": "Binnenlaten",
+    "in": "Welkom!",
+    "again": "Al binnen om {{ time }}:",
+    "unknown": "Onbekend ticket voor dit evenement.",
+    "notValid": "Dit ticket is niet meer geldig (terugbetaald of geannuleerd).",
+    "eventNotOpen": "Dit evenement gaat niet door."
   }
 }
