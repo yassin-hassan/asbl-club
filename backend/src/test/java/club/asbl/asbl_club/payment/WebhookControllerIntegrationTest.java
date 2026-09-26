@@ -49,6 +49,8 @@ class WebhookControllerIntegrationTest {
     ReservationService reservationService;
     @Autowired
     PaymentRepository paymentRepository;
+    @Autowired
+    RegistrationRepository registrationRepository;
 
     @Test
     void succeededWebhook_finalizesThePaymentAndAudits() throws Exception {
@@ -72,6 +74,37 @@ class WebhookControllerIntegrationTest {
 
         assertThat(paymentRepository.findByStripePaymentIntentId(intentId).orElseThrow().getStatus())
                 .isEqualTo(PaymentStatus.FAILED);
+    }
+
+    // A declined card doesn't end a Stripe payment: the person may retry on the same PaymentIntent, with another card.
+    // Stripe then sends "payment_failed" for the first attempt and "succeeded" for the second.
+    @Test
+    void aDeclinedCardFollowedByASuccessfulRetry_endsPaid() throws Exception {
+        String intentId = "pi_hook_retry";
+        Payment payment = seedInitiatedPayment("club-retry", "retry@club.test", "0303.303.303", intentId);
+
+        mockMvc.perform(signedWebhook("payment_intent.payment_failed", intentId)).andExpect(status().isOk());
+        mockMvc.perform(signedWebhook("payment_intent.succeeded", intentId)).andExpect(status().isOk());
+
+        assertThat(paymentRepository.findByStripePaymentIntentId(intentId).orElseThrow().getStatus())
+                .isEqualTo(PaymentStatus.SUCCEEDED);
+        assertThat(registrationRepository.findById(payment.getPayable().getId()).orElseThrow().getStatus())
+                .isEqualTo(RegistrationStatus.PAID);
+    }
+
+    // Stripe doesn't promise order: the first attempt's "failed" may arrive after the retry's "succeeded".
+    @Test
+    void aLateFailure_doesNotUndoASuccess() throws Exception {
+        String intentId = "pi_hook_late";
+        Payment payment = seedInitiatedPayment("club-late", "late@club.test", "0404.404.404", intentId);
+
+        mockMvc.perform(signedWebhook("payment_intent.succeeded", intentId)).andExpect(status().isOk());
+        mockMvc.perform(signedWebhook("payment_intent.payment_failed", intentId)).andExpect(status().isOk());
+
+        assertThat(paymentRepository.findByStripePaymentIntentId(intentId).orElseThrow().getStatus())
+                .isEqualTo(PaymentStatus.SUCCEEDED);
+        assertThat(registrationRepository.findById(payment.getPayable().getId()).orElseThrow().getStatus())
+                .isEqualTo(RegistrationStatus.PAID);
     }
 
     @Test

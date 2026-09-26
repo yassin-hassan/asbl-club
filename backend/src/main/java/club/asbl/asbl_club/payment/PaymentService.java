@@ -92,10 +92,14 @@ public class PaymentService {
         return new PaymentInitiation(payment.getId(), intent.getClientSecret());
     }
 
+    // Stripe may send its messages more than once and in any order, so the rules only ever move a payment forward:
+    // "succeeded" wins, even after "failed" (a declined card isn't the end: the person may retry on the same Stripe
+    // payment with another card); "failed" only replaces "initiated", so a late one never undoes a success; and a
+    // repeated message finds the work already done.
     @Transactional
     public void handleSucceeded(String paymentIntentId) {
         paymentRepository.findByStripePaymentIntentId(paymentIntentId).ifPresent(payment -> {
-            if (payment.getStatus() != PaymentStatus.INITIATED) {
+            if (payment.getStatus() != PaymentStatus.INITIATED && payment.getStatus() != PaymentStatus.FAILED) {
                 return;
             }
             payment.setStatus(PaymentStatus.SUCCEEDED);
