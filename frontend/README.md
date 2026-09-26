@@ -1,55 +1,30 @@
-# frontend — ASBL Club Angular slice (Phase 1)
+# frontend — the asbl.club web app and edge Worker
 
-A thin Angular 21 client for the public events feed. This is the "strangler fig"
-frontend that lives beside the Spring Boot app and consumes its JSON API. See
-`../../LEARNING-ROADMAP.md` for the overall plan.
-
-## What's here
+The Angular 22 app, and the Cloudflare Worker that serves it and forwards `/api/*` to the Spring API. See the
+[main README](../README.md) for the architecture and how to run everything.
 
 ```
 src/app/
-  models/event.ts              TS interfaces mirroring the Java records
-  services/event-api.ts        HttpClient calls to the backend
-  pages/home/                  slug entry point
-  pages/event-list/            GET /api/v1/asbls/:slug/events
-  pages/event-detail/          GET /api/v1/events/:id  +  polled availability
-  app.routes.ts                routes
-  app.config.ts                provideHttpClient + provideRouter
-proxy.conf.json                dev proxy → Spring on :8080
+  pages/           one folder per page (lazy-loaded routes, see app.routes.ts)
+  components/      shared pieces (confirm dialog, logo, event search)
+  services/        auth (session, refresh, guard, interceptor), Problem Details helpers, new-version recovery
+  i18n/            language handling (Transloco; texts in public/i18n/{fr,nl,en}.json)
+  api/generated/   the API client, generated from openapi/asbl-club-api.json (don't edit by hand)
+worker/            the Cloudflare Worker: API proxy, link previews, RSS relay
+e2e/               Playwright end-to-end tests
+public/_headers    security headers (CSP) and caching for the static site
 ```
 
-## Running it (dev)
-
-1. Start the backend so it's listening on `http://localhost:8080`
-   (from `../backend`, e.g. `./mvnw spring-boot:run` with the DB from the
-   repo-root `compose.yaml`).
-2. Start the frontend:
-
-   ```
-   npm start        # = ng serve, http://localhost:4200
-   ```
-
-3. Open http://localhost:4200 — it defaults to the seeded `club-demo` association.
-
-`npm start` uses `proxy.conf.json`, which forwards `/api/*` and
-`/events/**/availability` to :8080, so browser and API share one origin (no CORS
-in dev). This mirrors the Phase 2 reverse-proxy setup.
-
-## Build
-
-```
-npm run build      # outputs dist/frontend
+```bash
+npm install --legacy-peer-deps   # npm 10's arborist trips on the optional test dependencies otherwise
+npm start                        # http://localhost:4200, proxies /api to the API on :8080
+npm test                         # unit tests (Vitest)
+npm run e2e                      # end-to-end tests (the API must be running)
+npm run build                    # production build in dist/frontend
+npm run api:generate             # regenerate the API client after the contract changes
+npm run worker:dev               # the built app through the Worker, as in production (http://localhost:8788)
 ```
 
-## Install caveat
-
-npm 10.9.8 has an arborist bug (`Cannot read properties of null (reading 'edgesOut')`)
-triggered by Angular 21's default test stack (vitest → jsdom → optional canvas).
-Install with:
-
-```
-npm install --legacy-peer-deps
-```
-
-Testing is out of scope for Phase 1, so this is harmless. Revisit if/when a test
-setup is added.
+The contract (`openapi/asbl-club-api.json`) is produced by the backend: after changing the API, run
+`./mvnw test -Dtest=OpenApiContractTest -Dopenapi.update=true` in `backend/`, then `npm run api:generate` here.
+CI fails if the two drift apart.
