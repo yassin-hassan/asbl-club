@@ -14,6 +14,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,9 @@ class LastAdminConcurrencyTest {
 
     @Test
     void twoAdminsDemotingEachOtherAtOnce_leaveOneAdmin() throws Exception {
-        String unique = String.valueOf(System.nanoTime()).substring(4, 13); // 9 digits, unique per run
+        // Exactly 9 random digits for this run's names (a clock value has no guaranteed length: nanoTime() counts
+        // from an arbitrary origin, and was only 11 digits long on a freshly started CI machine).
+        String unique = String.valueOf(ThreadLocalRandom.current().nextInt(100_000_000, 1_000_000_000));
         User first = userService.register("First", "first-" + unique + "@race.test", "password123");
         User second = userService.register("Second", "second-" + unique + "@race.test", "password123");
         club = asblService.createAsbl(first, "Race Club", "0" + unique.substring(0, 3) + "." + unique.substring(3, 6)
