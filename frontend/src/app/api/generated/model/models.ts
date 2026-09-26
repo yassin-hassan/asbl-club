@@ -4,6 +4,8 @@ export * from './asblMember';
 export * from './asblMembers';
 export * from './asblResource';
 export * from './asblSummary';
+export * from './attendee';
+export * from './attendees';
 export * from './auditEntry';
 export * from './auditJournal';
 export * from './bookRequest';

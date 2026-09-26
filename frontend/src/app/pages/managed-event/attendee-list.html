@@ -1,0 +1,54 @@
+<h2 class="section">{{ 'attendees.title' | transloco }}</h2>
+@if (attendees.value(); as list) {
+  @if (list.attendees.length === 0) {
+    <p class="empty">{{ 'attendees.none' | transloco }}</p>
+  } @else {
+    <div class="toolbar">
+      <p class="hint">{{ 'attendees.summary' | transloco: { paid: paid(), waiting: waiting() } }}</p>
+      <button mat-stroked-button type="button" (click)="download()" [disabled]="downloading()">
+        {{ 'attendees.download' | transloco }}
+      </button>
+    </div>
+    @if (downloadError(); as error) {
+      <p class="error" role="alert">{{ error | transloco }}</p>
+    }
+    <div class="data-table">
+      <table mat-table [dataSource]="list.attendees" [attr.aria-label]="'attendees.title' | transloco">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>{{ 'attendees.name' | transloco }}</th>
+          <td mat-cell *matCellDef="let a">{{ a.name }}</td>
+        </ng-container>
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef>{{ 'attendees.email' | transloco }}</th>
+          <td mat-cell *matCellDef="let a">{{ a.email }}</td>
+        </ng-container>
+        <ng-container matColumnDef="ticket">
+          <th mat-header-cell *matHeaderCellDef>{{ 'attendees.ticket' | transloco }}</th>
+          <td mat-cell *matCellDef="let a">{{ a.ticket }}</td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>{{ 'attendees.status' | transloco }}</th>
+          <td mat-cell *matCellDef="let a">
+            <span class="tag" [class.ok]="a.status === 'PAID'" [class.warm]="a.status === 'RESERVED'">
+              {{ 'attendees.statuses.' + a.status | transloco }}
+            </span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="amount">
+          <th mat-header-cell *matHeaderCellDef>{{ 'attendees.amount' | transloco }}</th>
+          <td mat-cell *matCellDef="let a">{{ a.amount | currency: a.currency : 'symbol' : '1.2-2' : lang() }}</td>
+        </ng-container>
+        <ng-container matColumnDef="bookedAt">
+          <th mat-header-cell *matHeaderCellDef>{{ 'attendees.bookedAt' | transloco }}</th>
+          <td mat-cell *matCellDef="let a">{{ a.bookedAt | date: 'short' : undefined : lang() }}</td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+        <tr mat-row *matRowDef="let row; columns: columns"></tr>
+      </table>
+    </div>
+  }
+} @else if (attendees.error(); as error) {
+  <p class="error" role="alert">{{ errorKey(error) | transloco }}</p>
+} @else {
+  <mat-spinner diameter="32" />
+}

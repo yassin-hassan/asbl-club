@@ -1367,6 +1367,95 @@
         } ]
       }
     },
+    "/api/v1/asbls/{slug}/manage/events/{eventId}/attendees" : {
+      "get" : {
+        "tags" : [ "Event management" ],
+        "summary" : "Who booked this event (administrators and treasurers)",
+        "operationId" : "listAttendees",
+        "parameters" : [ {
+          "name" : "slug",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "eventId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Every booking, oldest first",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Attendees"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Not an administrator or treasurer of this association",
+            "content" : {
+              "application/problem+json" : { }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/asbls/{slug}/manage/events/{eventId}/attendees/export" : {
+      "get" : {
+        "tags" : [ "Event management" ],
+        "summary" : "The attendee list as a CSV file for Excel (administrators and treasurers)",
+        "operationId" : "exportAttendees",
+        "parameters" : [ {
+          "name" : "slug",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "eventId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Semicolon-separated, UTF-8 with a byte-order mark",
+            "content" : {
+              "text/csv" : {
+                "schema" : {
+                  "type" : "string",
+                  "format" : "binary"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Not an administrator or treasurer of this association",
+            "content" : {
+              "application/problem+json" : { }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      }
+    },
     "/api/v1/asbls/{slug}/manage/audit" : {
       "get" : {
         "tags" : [ "Audit" ],
@@ -1515,7 +1604,7 @@
         }
       },
       "ManagedEvent" : {
-        "required" : [ "canManage", "id", "startsAt", "status", "tickets", "title", "visibility" ],
+        "required" : [ "canManage", "canSeeAttendees", "id", "startsAt", "status", "tickets", "title", "visibility" ],
         "type" : "object",
         "properties" : {
           "id" : {
@@ -1545,6 +1634,10 @@
           },
           "canManage" : {
             "type" : "boolean"
+          },
+          "canSeeAttendees" : {
+            "type" : "boolean",
+            "description" : "Administrators and treasurers see who booked"
           },
           "tickets" : {
             "type" : "array",
@@ -2082,6 +2175,54 @@
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/ManagedEventItem"
+            }
+          }
+        }
+      },
+      "Attendee" : {
+        "required" : [ "amount", "bookedAt", "bookingId", "currency", "email", "name", "status", "ticket" ],
+        "type" : "object",
+        "properties" : {
+          "bookingId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "email" : {
+            "type" : "string"
+          },
+          "ticket" : {
+            "type" : "string"
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "RESERVED", "PAID", "CONFIRMED", "ATTENDED", "CANCELLED", "REFUNDED", "EXPIRED" ]
+          },
+          "amount" : {
+            "type" : "number"
+          },
+          "currency" : {
+            "type" : "string"
+          },
+          "bookedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
+      "Attendees" : {
+        "required" : [ "attendees", "eventTitle" ],
+        "type" : "object",
+        "properties" : {
+          "eventTitle" : {
+            "type" : "string"
+          },
+          "attendees" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Attendee"
             }
           }
         }

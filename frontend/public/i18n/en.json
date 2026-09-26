@@ -372,5 +372,26 @@
     "title": "Join requests",
     "approve": "Approve",
     "decline": "Decline"
+  },
+  "attendees": {
+    "title": "Attendees",
+    "none": "Nobody has booked yet.",
+    "summary": "{{ paid }} paid · {{ waiting }} awaiting payment",
+    "download": "Download (CSV)",
+    "name": "Name",
+    "email": "Email",
+    "ticket": "Ticket",
+    "status": "Status",
+    "amount": "Amount",
+    "bookedAt": "Booked",
+    "statuses": {
+      "RESERVED": "Awaiting payment",
+      "PAID": "Paid",
+      "CONFIRMED": "Confirmed",
+      "ATTENDED": "Attended",
+      "CANCELLED": "Cancelled",
+      "REFUNDED": "Refunded",
+      "EXPIRED": "Expired"
+    }
   }
 }
