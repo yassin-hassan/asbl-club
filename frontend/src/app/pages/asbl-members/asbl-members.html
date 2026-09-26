@@ -34,7 +34,10 @@
           <ul class="requests">
             @for (request of requests(); track request.id) {
               <li>
-                <span><b>{{ request.name }}</b> <span class="muted">{{ request.email }}</span></span>
+                <span class="who">
+                  <b>{{ request.name }}</b>
+                  <span class="muted">{{ request.email }}</span>
+                </span>
                 <span class="toolbar">
                   <button mat-flat-button type="button" (click)="approve(request)" [disabled]="busy()"
                           [attr.aria-label]="('requests.approve' | transloco) + ' ' + request.name">{{ 'requests.approve' | transloco }}</button>
