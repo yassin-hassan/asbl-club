@@ -35,7 +35,9 @@ export class App {
     { initialValue: false },
   );
 
+  // Back to "/", which shows the landing page once logged out. Forced even when already on "/" (the dashboard):
+  // by default the router ignores a navigation to the current URL, and the dashboard would stay on screen.
   logout(): void {
-    this.auth.logout().subscribe(() => this.router.navigate(['/']));
+    this.auth.logout().subscribe(() => this.router.navigateByUrl('/', { onSameUrlNavigation: 'reload' }));
   }
 }

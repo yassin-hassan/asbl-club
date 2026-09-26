@@ -32,6 +32,19 @@ test('login, stay logged in across a reload, log out', async ({ page }) => {
   await expect(page).toHaveURL(/\/login/);
 });
 
+// "/" is the dashboard when logged in and the landing page otherwise: logging out while on it must swap the page,
+// not just the header (the router ignores navigations to the current URL unless told otherwise).
+test('logging out from the dashboard shows the landing page, not the old dashboard', async ({ page }) => {
+  await page.goto('/login');
+  await logIn(page);
+  await expect(page.getByRole('heading', { name: 'Your associations' })).toBeVisible();
+
+  await page.getByRole('button', { name: 'Log out' }).click();
+
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Manage your non-profit');
+  await expect(page.getByRole('heading', { name: 'Your associations' })).toHaveCount(0);
+});
+
 test('a wrong password is refused without saying which field was wrong', async ({ page }) => {
   await page.goto('/login');
   await logIn(page, 'wrong-password');
