@@ -27,4 +27,8 @@ interface TicketCategoryRepository extends JpaRepository<TicketCategory, Long> {
     @Query("update TicketCategory t set t.soldSeats = t.soldSeats + 1 "
             + "where t.id = :id and t.soldSeats < t.totalSeats")
     int reserveOneSeat(@Param("id") Long id);
+
+    @Modifying
+    @Query("update TicketCategory t set t.soldSeats = t.soldSeats - 1 where t.id = :id and t.soldSeats > 0")
+    int releaseOneSeat(@Param("id") Long id);
 }

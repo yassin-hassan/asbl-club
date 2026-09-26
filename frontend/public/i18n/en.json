@@ -301,7 +301,8 @@
     "providerDown": "The payment service is unreachable. Try again in a moment.",
     "stillProcessing": "Payment is being processed. It will be confirmed as soon as Stripe confirms it.",
     "backToEvent": "Back to the event",
-    "refunded": "This event was cancelled while you were paying, so your payment has been refunded. The refund usually reaches your account within 5 to 10 days."
+    "refunded": "Your booking ran out of time or the event was cancelled while you were paying, so your payment has been refunded. The refund usually reaches your account within 5 to 10 days.",
+    "expired": "This booking wasn't paid in time, so its seat was given back. You can book again from the event page."
   },
   "payments": {
     "title": "Payments",

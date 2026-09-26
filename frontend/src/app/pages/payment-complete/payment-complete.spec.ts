@@ -6,6 +6,8 @@ describe('outcomeOf', () => {
     expect(outcomeOf('RESERVED')).toBe('checking');
     // The event was cancelled while the person was paying: a refund is on its way.
     expect(outcomeOf('CANCELLED')).toBe('checking');
+    // The booking ran out of time while the person was paying: same, a refund is on its way.
+    expect(outcomeOf('EXPIRED')).toBe('checking');
   });
 
   it('confirms a paid booking', () => {

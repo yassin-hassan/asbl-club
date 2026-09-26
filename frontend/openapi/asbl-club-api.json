@@ -357,7 +357,7 @@
             }
           },
           "409" : {
-            "description" : "Nothing to pay, or the association can't receive payments yet",
+            "description" : "Nothing to pay (NOTHING_TO_PAY), not paid in time (BOOKING_EXPIRED), or the association can't receive payments yet (PAYMENTS_DISABLED)",
             "content" : {
               "application/problem+json" : { }
             }

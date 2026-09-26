@@ -2,6 +2,8 @@ package club.asbl.asbl_club.payment;
 
 import club.asbl.asbl_club.asbl.Asbl;
 import club.asbl.asbl_club.audit.AuditService;
+import club.asbl.asbl_club.event.EventService;
+import club.asbl.asbl_club.event.EventStatus;
 import club.asbl.asbl_club.user.User;
 import com.stripe.StripeClient;
 import com.stripe.exception.StripeException;
@@ -9,6 +11,8 @@ import com.stripe.model.PaymentIntent;
 import com.stripe.net.RequestOptions;
 import com.stripe.param.PaymentIntentCreateParams;
 import com.stripe.param.RefundCreateParams;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
@@ -29,13 +33,18 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final RegistrationRepository registrationRepository;
     private final AuditService auditService;
+    private final EntityManager entityManager;
+    private final EventService eventService;
 
     public PaymentService(StripeClient stripe, PaymentRepository paymentRepository,
-            RegistrationRepository registrationRepository, AuditService auditService) {
+            RegistrationRepository registrationRepository, AuditService auditService, EntityManager entityManager,
+            EventService eventService) {
+        this.eventService = eventService;
         this.stripe = stripe;
         this.paymentRepository = paymentRepository;
         this.registrationRepository = registrationRepository;
         this.auditService = auditService;
+        this.entityManager = entityManager;
     }
 
     @Transactional
@@ -104,7 +113,12 @@ public class PaymentService {
                 return;
             }
             Optional<Registration> registration = registrationRepository.findById(payment.getPayable().getId());
-            if (registration.isPresent() && registration.get().getStatus() != RegistrationStatus.RESERVED) {
+            // Lock the booking row and re-read it (SELECT … FOR UPDATE): the expiry job may have changed it since
+            // Hibernate first loaded it, and it must not change it between our check and our write. A plain locking
+            // query isn't enough: Hibernate would lock the row but hand back the copy it already holds.
+            registration.ifPresent(r -> entityManager.refresh(r, LockModeType.PESSIMISTIC_WRITE));
+            if (registration.isPresent() && registration.get().getStatus() != RegistrationStatus.RESERVED
+                    && !takeSeatBack(registration.get())) {
                 refundUnwanted(payment, registration.get(), paymentIntentId);
                 return;
             }
@@ -119,8 +133,21 @@ public class PaymentService {
         });
     }
 
+    // Paid a little late: the booking had just expired and given its seat back. If the event is still on and a seat
+    // is still free, the person simply gets one again rather than a refund.
+    private boolean takeSeatBack(Registration booking) {
+        if (booking.getStatus() != RegistrationStatus.EXPIRED
+                || booking.getEvent().getStatus() != EventStatus.PUBLISHED
+                || !eventService.takeSeatIfAvailable(booking.getTicketCategory().getId())) {
+            return false;
+        }
+        auditService.recordSystem("BOOKING_REINSTATED", booking.getEvent().getAsbl(), "Registration",
+                booking.getId(), Map.of("reason", "paid after expiry"));
+        return true;
+    }
+
     // The money arrived for a booking that no longer waits for it (its event was cancelled while the person was at
-    // Stripe's form): it goes straight back, the association's commission included. Stripe is called first: if it
+    // Stripe's form, or it expired and its seat has been sold since): it goes straight back, the association's commission included. Stripe is called first: if it
     // fails, nothing here changes, the webhook answers 5xx and Stripe sends it again. The idempotency key makes that
     // retried refund return the first one instead of refunding twice.
     private void refundUnwanted(Payment payment, Registration registration, String paymentIntentId) {
