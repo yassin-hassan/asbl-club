@@ -7,7 +7,7 @@ import { EventSearch } from '../../components/event-search/event-search';
 
 @Component({
   selector: 'app-landing',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, TranslocoPipe, MatButtonModule, MatIconModule, EventSearch],
   templateUrl: './landing.html',
   styleUrl: './landing.css',

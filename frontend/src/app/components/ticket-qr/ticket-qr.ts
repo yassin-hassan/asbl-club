@@ -5,7 +5,7 @@ import { toCanvas } from 'qrcode';
 // printed under it, for the door to type if a scan fails.
 @Component({
   selector: 'app-ticket-qr',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <canvas #canvas [attr.aria-label]="label()" role="img"></canvas>
     <code>{{ grouped() }}</code>

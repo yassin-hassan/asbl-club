@@ -12,7 +12,7 @@ import { Logo } from './components/logo/logo';
 // The app shell: a header and footer present on every page (navigation, language, login state), the routed page below.
 @Component({
   selector: 'app-root',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterOutlet, RouterLink, UpperCasePipe, TranslocoPipe, Logo, MatButtonModule,
   ],

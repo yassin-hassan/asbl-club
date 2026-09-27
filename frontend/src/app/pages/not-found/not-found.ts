@@ -5,7 +5,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-not-found',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, TranslocoPipe, MatButtonModule],
   template: `
     <article class="page stack">

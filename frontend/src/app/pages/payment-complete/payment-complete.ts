@@ -18,7 +18,7 @@ const WAITING = new Set(['RESERVED', 'CANCELLED', 'EXPIRED']);
 // server every 2 s, for up to 30 s, until the booking has its outcome: paid, or refunded (event cancelled meanwhile).
 @Component({
   selector: 'app-payment-complete',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, TranslocoPipe, MatButtonModule, MatProgressSpinnerModule],
   templateUrl: './payment-complete.html',
   styles: '.narrow { max-width: 480px; margin: 0 auto; }',

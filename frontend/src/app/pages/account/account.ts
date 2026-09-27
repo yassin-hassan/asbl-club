@@ -15,7 +15,7 @@ import { ConfirmDialog, ConfirmDialogData } from '../../components/confirm-dialo
 
 @Component({
   selector: 'app-account',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, ReactiveFormsModule, TranslocoPipe, MatButtonModule, MatFormFieldModule, MatInputModule],
   templateUrl: './account.html',
 })

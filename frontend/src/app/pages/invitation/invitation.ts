@@ -36,7 +36,7 @@ function storedToken(): string | null {
 
 @Component({
   selector: 'app-invitation',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, TranslocoPipe, MatButtonModule, MatProgressSpinnerModule],
   templateUrl: './invitation.html',
 })

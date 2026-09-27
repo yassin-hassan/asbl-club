@@ -18,7 +18,7 @@ import { InviteByEmail } from './invite-by-email';
 // The API enforces every rule, including "at least one active administrator"; the page only offers what makes sense.
 @Component({
   selector: 'app-asbl-members',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [InviteByEmail, RouterLink, TranslocoPipe, MatButtonModule, MatProgressSpinnerModule, MatTableModule],
   templateUrl: './asbl-members.html',
   styleUrl: './asbl-members.css',

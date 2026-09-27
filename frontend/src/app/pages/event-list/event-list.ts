@@ -11,7 +11,7 @@ import { LanguageService } from '../../i18n/language';
 
 @Component({
   selector: 'app-event-list',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, DatePipe, TranslocoPipe, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
   templateUrl: './event-list.html',
 })

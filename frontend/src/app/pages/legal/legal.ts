@@ -7,7 +7,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 // One component for the three legal pages; the route says which one (notice, privacy, cookies).
 @Component({
   selector: 'app-legal',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, TranslocoPipe, MatButtonModule, MatIconModule],
   template: `
     <article class="page stack">

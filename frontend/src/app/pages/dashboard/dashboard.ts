@@ -10,7 +10,7 @@ import { errorMessageKey } from '../../services/problem';
 // The home page of a logged-in user: their associations and their role in each.
 @Component({
   selector: 'app-dashboard',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, TranslocoPipe, MatButtonModule, MatProgressSpinnerModule],
   templateUrl: './dashboard.html',
 })

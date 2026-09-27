@@ -23,7 +23,7 @@ function sameAsPassword(group: AbstractControl): ValidationErrors | null {
 // The page the emailed link opens: choose a new password (twice, since a typo here would lock the person out).
 @Component({
   selector: 'app-reset-password',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ReactiveFormsModule, RouterLink, TranslocoPipe, MatButtonModule, MatFormFieldModule, MatInputModule],
   templateUrl: './reset-password.html',
 })
