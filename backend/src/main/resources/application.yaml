@@ -33,6 +33,16 @@ spring:
       ddl-auto: validate
     open-in-view: false
 
+# Logs as plain text locally; one JSON object per line in production (LOG_FORMAT=ecs, Elastic Common Schema),
+# so a log search can filter by field: requestId, status, level… Each request's lines share its requestId
+# (RequestIdFilter), shown in text logs too.
+logging:
+  structured:
+    format:
+      console: ${LOG_FORMAT:}
+  pattern:
+    correlation: "[%X{requestId:-}] "
+
 management:
   endpoints:
     web:

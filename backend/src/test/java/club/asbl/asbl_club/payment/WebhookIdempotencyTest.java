@@ -1,7 +1,6 @@
 package club.asbl.asbl_club.payment;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -154,9 +153,9 @@ class WebhookIdempotencyTest {
         doThrow(new IllegalStateException("database hiccup")).doCallRealMethod()
                 .when(paymentService).handleSucceeded(intentId);
 
-        // Our side fails: the error reaches Stripe as a 5xx (MockMvc shows it as the exception itself).
-        assertThatThrownBy(() -> mockMvc.perform(StripeWebhooks.signed(eventId, "payment_intent.succeeded", intentId)))
-                .hasRootCauseMessage("database hiccup");
+        // Our side fails: Stripe gets a 5xx, which it retries.
+        mockMvc.perform(StripeWebhooks.signed(eventId, "payment_intent.succeeded", intentId))
+                .andExpect(status().isInternalServerError());
         assertThat(count("SELECT count(*) FROM processed_webhook_events WHERE event_id = ?", eventId)).isZero();
 
         // Stripe retries the same event: this time it's handled.

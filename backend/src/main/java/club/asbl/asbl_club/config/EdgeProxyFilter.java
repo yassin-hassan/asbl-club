@@ -25,9 +25,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 // The proxy proves itself with a shared secret (like CloudFront's "origin custom header"). Only then is the
 // request taken as the visitor's: their IP from X-Edge-Client-Ip, the site address from configuration (never
 // from a header). Anything else, e.g. someone calling Render directly, is left exactly as it arrived.
-// Runs first, so the rate limiter, security and audit all see the visitor.
+// Runs first (after the request ID), so the rate limiter, security and audit all see the visitor.
 @Component
-@Order(Ordered.HIGHEST_PRECEDENCE)
+@Order(Ordered.HIGHEST_PRECEDENCE + 1)
 @EnableConfigurationProperties(EdgeProxyProperties.class)
 public class EdgeProxyFilter extends OncePerRequestFilter {
 
