@@ -5,6 +5,7 @@
 //   RSS feeds   relayed too (/events/rss, /asbls/:slug/events/rss): Spring writes them
 //   /events/:id Angular's index.html with the event's link-preview tags filled in
 //
+// Each relayed request gets a fresh X-Request-Id (one a visitor sent is replaced).
 // The API trusts what we say about the visitor only because of the shared secret (see EdgeProxyFilter).
 
 const RSS_FEED = /^(\/asbls\/[a-z0-9-]{1,255})?\/events\/rss$/;
@@ -31,6 +32,8 @@ function proxyToApi(request: Request, url: URL, env: Env): Promise<Response> {
   headers.delete('x-edge-secret');
   headers.delete('x-edge-client-ip');
   headers.set('X-Edge-Secret', env.EDGE_PROXY_SECRET);
+  // A new ID for each request, on every log line Spring writes for it and sent back in the response (RequestIdFilter).
+  headers.set('X-Request-Id', crypto.randomUUID());
   const visitorIp = request.headers.get('CF-Connecting-IP'); // set by Cloudflare's edge, not by the visitor
   if (visitorIp) {
     headers.set('X-Edge-Client-Ip', visitorIp);
