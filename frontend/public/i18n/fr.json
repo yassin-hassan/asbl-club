@@ -31,7 +31,9 @@
     "noAccount": "Pas encore de compte",
     "createOne": "Créer un compte",
     "deleted": "Votre compte a été supprimé",
-    "forgot": "Mot de passe oublié ?"
+    "forgot": "Mot de passe oublié ?",
+    "notVerified": "Confirmez d'abord votre adresse e-mail : ouvrez le lien que nous vous avons envoyé.",
+    "linkResent": "Nous vous avons renvoyé le lien."
   },
   "account": {
     "title": "Mon compte",
@@ -166,11 +168,14 @@
     "password": "Mot de passe",
     "submit": "Créer le compte",
     "haveAccount": "J'ai déjà un compte",
-    "emailTaken": "Cette adresse e-mail est déjà utilisée",
     "passwordHint": "Au moins 8 caractères.",
     "nameRequired": "Entrez votre nom.",
     "passwordTooShort": "Au moins 8 caractères.",
-    "submitting": "Création…"
+    "submitting": "Création…",
+    "checkInbox": "Vérifiez votre boîte mail",
+    "sentTo": "Nous avons envoyé un e-mail à {{ email }}. Ouvrez le lien qu'il contient pour activer votre compte (il est valable 24 heures). Si vous avez déjà un compte, l'e-mail vous le dit.",
+    "resend": "Renvoyer le lien",
+    "resent": "Renvoyé. Pensez à vérifier vos indésirables."
   },
   "dashboard": {
     "title": "Vos associations",
@@ -432,5 +437,11 @@
     "done": "Votre mot de passe a été changé et vous avez été déconnecté partout. Connectez-vous avec le nouveau.",
     "invalidLink": "Ce lien n'est pas valable, a expiré ou a déjà servi.",
     "askAgain": "Demander un nouveau lien"
+  },
+  "verify": {
+    "title": "Confirmation de votre e-mail",
+    "checking": "Vérification du lien…",
+    "invalidLink": "Ce lien n'est pas valable, a expiré ou a déjà servi.",
+    "whatNow": "Connectez-vous pour en recevoir un nouveau :"
   }
 }

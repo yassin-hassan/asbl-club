@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { createAccount } from './mail';
 
 test("an administrator reads their association's audit log, without IP addresses", async ({ page }) => {
   const stamp = Date.now();
@@ -10,7 +11,7 @@ test("an administrator reads their association's audit log, without IP addresses
   await page.getByLabel('Name').fill('Secretary');
   await page.getByLabel('Email address').fill(email);
   await page.getByLabel('Password').fill('password123');
-  await page.getByRole('button', { name: 'Create account' }).click();
+  await createAccount(page);
   await page.getByRole('link', { name: 'Create an ASBL' }).click();
   await page.getByLabel('Name').fill(`Audited Club ${stamp}`);
   await page.getByLabel('BCE number').fill(`${digits.slice(0, 4)}.${digits.slice(4, 7)}.${digits.slice(7, 10)}`);

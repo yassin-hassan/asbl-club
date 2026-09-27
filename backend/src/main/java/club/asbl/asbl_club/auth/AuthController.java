@@ -1,6 +1,5 @@
 package club.asbl.asbl_club.auth;
 
-import club.asbl.asbl_club.user.EmailAlreadyUsedException;
 import club.asbl.asbl_club.user.User;
 import club.asbl.asbl_club.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,10 +11,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import java.time.Duration;
-import java.util.Map;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
+import java.util.Collection;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -25,6 +25,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,16 +47,19 @@ class AuthController {
     private final TokenService tokenService;
     private final UserService userService;
     private final RefreshTokenService refreshTokenService;
-    private final MessageSource messageSource;
+    private final EmailVerificationService emailVerificationService;
+    private final UserDetailsService userDetailsService;
     private final WebAuthenticationDetailsSource detailsSource = new WebAuthenticationDetailsSource();
 
     AuthController(AuthenticationManager authenticationManager, TokenService tokenService, UserService userService,
-            RefreshTokenService refreshTokenService, MessageSource messageSource) {
+            RefreshTokenService refreshTokenService, EmailVerificationService emailVerificationService,
+            UserDetailsService userDetailsService) {
         this.authenticationManager = authenticationManager;
         this.tokenService = tokenService;
         this.userService = userService;
         this.refreshTokenService = refreshTokenService;
-        this.messageSource = messageSource;
+        this.emailVerificationService = emailVerificationService;
+        this.userDetailsService = userDetailsService;
     }
 
     @Operation(operationId = "login", summary = "Log in with email and password, get a short-lived access token "
@@ -64,25 +69,53 @@ class AuthController {
         return logInAndIssueTokens(request.email(), request.password(), httpRequest, HttpStatus.OK);
     }
 
-    // No email verification yet (the app can't send email), so a taken address is reported (409) rather than
-    // hidden behind "check your inbox"; the rate limiter keeps this from being used to test many addresses.
-    @Operation(operationId = "register", summary = "Create an account and log straight in (same tokens as login)")
-    @ApiResponse(responseCode = "201", description = "Account created; logged in",
-            content = @Content(schema = @Schema(implementation = TokenResponse.class)))
-    @ApiResponse(responseCode = "409", description = "An account with this email already exists",
-            content = @Content(mediaType = "application/problem+json"))
+    // Always the same answer, "check your inbox", so this can't be used to find out who has an account: the email
+    // says the rest (a link to confirm, or "you already have an account").
+    @Operation(operationId = "register", summary = "Sign up: an email follows, with a link to confirm the address "
+            + "(the same answer whether or not the address already has an account)")
+    @ApiResponse(responseCode = "202", description = "Accepted: check your inbox")
     @PostMapping("/register")
-    ResponseEntity<TokenResponse> register(@Valid @RequestBody RegisterRequest request, HttpServletRequest httpRequest) {
+    ResponseEntity<Void> register(@Valid @RequestBody RegisterRequest request) {
+        emailVerificationService.signUp(request.name(), request.email(), request.password());
+        return ResponseEntity.accepted().build();
+    }
+
+    record VerifyRequest(@NotBlank @Size(max = 100) String token) {
+    }
+
+    record ResendRequest(@NotBlank @Email @Size(max = 255) String email) {
+    }
+
+    // The emailed link's token confirms the address and logs the person in (same tokens as a login).
+    @Operation(operationId = "verifyEmail", summary = "Confirm the email address with the emailed link's token, "
+            + "and log in")
+    @ApiResponse(responseCode = "200", description = "Confirmed and logged in",
+            content = @Content(schema = @Schema(implementation = TokenResponse.class)))
+    @ApiResponse(responseCode = "400", description = "Invalid, expired or already used link (INVALID_VERIFICATION_TOKEN)",
+            content = @Content(mediaType = "application/problem+json"))
+    @PostMapping("/verify-email")
+    ResponseEntity<TokenResponse> verifyEmail(@Valid @RequestBody VerifyRequest request) {
+        User user;
         try {
-            userService.register(request.name(), request.email(), request.password());
-        } catch (EmailAlreadyUsedException e) {
-            String message = messageSource.getMessage("email.duplicate", null, LocaleContextHolder.getLocale());
-            ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, message);
-            problem.setProperty("errors", Map.of("email", message));
-            throw new ErrorResponseException(HttpStatus.CONFLICT, problem, e);
+            user = emailVerificationService.verify(request.token());
+        } catch (InvalidVerificationTokenException e) {
+            ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,
+                    "This link is invalid, expired or already used.");
+            problem.setProperty("code", "INVALID_VERIFICATION_TOKEN");
+            throw new ErrorResponseException(HttpStatus.BAD_REQUEST, problem, e);
         }
-        // Log in through the same password check as the login endpoint: same rules, same audit trail.
-        return logInAndIssueTokens(request.email(), request.password(), httpRequest, HttpStatus.CREATED);
+        // The roles as a login would load them.
+        var authorities = userDetailsService.loadUserByUsername(user.getEmail()).getAuthorities();
+        return issueTokens(user, authorities, HttpStatus.OK);
+    }
+
+    @Operation(operationId = "resendVerificationEmail",
+            summary = "Send the confirmation link again (same answer whatever the address)")
+    @ApiResponse(responseCode = "202", description = "Accepted: if an account waits for confirmation, a link follows")
+    @PostMapping("/verify-email/resend")
+    ResponseEntity<Void> resendVerification(@Valid @RequestBody ResendRequest request) {
+        emailVerificationService.resend(request.email());
+        return ResponseEntity.accepted().build();
     }
 
     private ResponseEntity<TokenResponse> logInAndIssueTokens(String email, String password,
@@ -100,9 +133,22 @@ class AuthController {
         }
         // The password check only gives us the email; the token needs the user's public ID.
         User user = userService.getByEmail(authentication.getName());
-        TokenResponse accessToken = tokenService.issueAccessToken(user, authentication.getAuthorities());
+        // Checked only now, after the right password: someone without it learns nothing about the account.
+        if (user.getEmailVerifiedAt() == null) {
+            ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN,
+                    "Confirm your email address first: use the link we sent you.");
+            problem.setProperty("code", "EMAIL_NOT_VERIFIED");
+            throw new ErrorResponseException(HttpStatus.FORBIDDEN, problem, null);
+        }
+        return issueTokens(user, authentication.getAuthorities(), successStatus);
+    }
+
+    private ResponseEntity<TokenResponse> issueTokens(User user,
+            Collection<? extends GrantedAuthority> authorities,
+            HttpStatus status) {
+        TokenResponse accessToken = tokenService.issueAccessToken(user, authorities);
         String refreshToken = refreshTokenService.issue(user);
-        return ResponseEntity.status(successStatus)
+        return ResponseEntity.status(status)
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie(refreshToken).toString())
                 .body(accessToken);
     }

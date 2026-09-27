@@ -3,6 +3,17 @@
     <h1>{{ 'register.title' | transloco }}</h1>
 
   <div>
+    @if (sentTo(); as email) {
+      <div class="stack" role="status">
+        <p><strong>{{ 'register.checkInbox' | transloco }}</strong></p>
+        <p>{{ 'register.sentTo' | transloco: { email } }}</p>
+        @if (resent()) {
+          <p>{{ 'register.resent' | transloco }}</p>
+        } @else {
+          <button mat-stroked-button type="button" (click)="resend()">{{ 'register.resend' | transloco }}</button>
+        }
+      </div>
+    } @else {
     <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="stack">
       <mat-form-field appearance="outline">
         <mat-label>{{ 'register.name' | transloco }}</mat-label>
@@ -15,9 +26,7 @@
       <mat-form-field appearance="outline">
         <mat-label>{{ 'register.email' | transloco }}</mat-label>
         <input matInput type="email" formControlName="email" autocomplete="email" />
-        @if (form.controls.email.hasError('taken')) {
-          <mat-error>{{ 'register.emailTaken' | transloco }}</mat-error>
-        } @else if (form.controls.email.invalid) {
+        @if (form.controls.email.invalid) {
           <mat-error>{{ 'login.invalidEmail' | transloco }}</mat-error>
         }
       </mat-form-field>
@@ -41,6 +50,7 @@
       </button>
       <a mat-button routerLink="/login" queryParamsHandling="preserve">{{ 'register.haveAccount' | transloco }}</a>
     </form>
+    }
   </div>
 </div>
 </div>

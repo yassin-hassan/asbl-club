@@ -1,4 +1,5 @@
 import { expect, Page, test } from '@playwright/test';
+import { createAccount } from './mail';
 
 async function anAssociationWithAnEvent(page: Page, stamp: number, title: string) {
   const digits = String(stamp).slice(-10);
@@ -6,7 +7,7 @@ async function anAssociationWithAnEvent(page: Page, stamp: number, title: string
   await page.getByLabel('Name').fill('Organiser');
   await page.getByLabel('Email address').fill(`e2e-lifecycle-${stamp}@club.test`);
   await page.getByLabel('Password').fill('password123');
-  await page.getByRole('button', { name: 'Create account' }).click();
+  await createAccount(page);
   await page.getByRole('link', { name: 'Create an ASBL' }).click();
   await page.getByLabel('Name').fill(`Lifecycle Club ${stamp}`);
   await page.getByLabel('BCE number').fill(`${digits.slice(0, 4)}.${digits.slice(4, 7)}.${digits.slice(7, 10)}`);

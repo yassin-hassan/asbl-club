@@ -46,6 +46,39 @@ public class UserService {
         return userRepository.findByEmail(email.trim().toLowerCase(Locale.ROOT));
     }
 
+    // What a sign-up led to. alreadyVerified: the address already belongs to an account in use (the form still says
+    // "check your inbox"; the email then says "you already have an account").
+    public record SignUp(User user, boolean alreadyVerified) {
+    }
+
+    // The public sign-up: creates an account that can't log in until its email is confirmed. The password is hashed
+    // in every case, so the answer takes as long whether or not the address is taken (no timing hint). An address
+    // with an unconfirmed account is simply signed up again (new name and password): until someone proves they own
+    // the inbox, the account is nobody's.
+    @Transactional
+    public SignUp signUp(String name, String email, String rawPassword) {
+        String normalizedEmail = email.trim().toLowerCase(Locale.ROOT);
+        String passwordHash = passwordEncoder.encode(rawPassword);
+        Optional<User> existing = userRepository.findByEmail(normalizedEmail);
+        if (existing.isPresent() && existing.get().getEmailVerifiedAt() != null) {
+            return new SignUp(existing.get(), true);
+        }
+        User user = existing.orElseGet(User::new);
+        user.setName(name.trim());
+        user.setEmail(normalizedEmail);
+        user.setPassword(passwordHash);
+        user.setLanguage("fr");
+        return new SignUp(userRepository.save(user), false);
+    }
+
+    @Transactional
+    public void markEmailVerified(User user) {
+        user.setEmailVerifiedAt(Instant.now());
+        userRepository.save(user);
+    }
+
+    // An account whose email counts as confirmed from the start: demo data, and the tests' own accounts. People
+    // signing up on the site go through signUp.
     @Transactional
     public User register(String name, String email, String rawPassword) {
         String normalizedEmail = email.trim().toLowerCase(Locale.ROOT);
@@ -57,6 +90,7 @@ public class UserService {
         user.setEmail(normalizedEmail);
         user.setPassword(passwordEncoder.encode(rawPassword));
         user.setLanguage("fr");
+        user.setEmailVerifiedAt(Instant.now());
         return userRepository.save(user);
     }
 
