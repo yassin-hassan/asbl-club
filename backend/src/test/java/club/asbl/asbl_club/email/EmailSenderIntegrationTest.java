@@ -49,7 +49,9 @@ class EmailSenderIntegrationTest {
         assertThat(emailSender.sendDue()).as("not due yet").isZero();
 
         for (int attempt = 2; attempt <= EmailSender.RETRY_DELAYS.size() + 1; attempt++) {
-            jdbcTemplate.update("UPDATE email_outbox SET next_attempt_at = now()"); // time passes
+            // Time passes: due an hour ago. Not "now()": that's the database's clock, and Docker's can run seconds
+            // ahead of the JVM's, which would leave the email "not due yet" for the sender (it asks with Java's clock).
+            jdbcTemplate.update("UPDATE email_outbox SET next_attempt_at = now() - interval '1 hour'");
             emailSender.sendDue();
         }
         assertThat(row("status")).isEqualTo("FAILED");

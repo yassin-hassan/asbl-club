@@ -5,6 +5,26 @@
     <p class="muted">{{ user.email }}</p>
 
     <section class="box">
+      <h2>{{ 'account.nameTitle' | transloco }}</h2>
+      <form [formGroup]="nameForm" (ngSubmit)="saveName()" novalidate class="stack">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'account.name' | transloco }}</mat-label>
+          <input matInput formControlName="name" autocomplete="name" />
+          <mat-hint>{{ 'account.nameHint' | transloco }}</mat-hint>
+          @if (nameForm.controls.name.invalid) {
+            <mat-error>{{ 'register.nameRequired' | transloco }}</mat-error>
+          }
+        </mat-form-field>
+        <div class="toolbar">
+          <button mat-flat-button type="submit">{{ 'account.saveName' | transloco }}</button>
+          @if (nameSaved()) {
+            <span role="status">{{ 'account.nameSaved' | transloco }}</span>
+          }
+        </div>
+      </form>
+    </section>
+
+    <section class="box">
       <h2>{{ 'account.export' | transloco }}</h2>
       <button mat-stroked-button type="button" (click)="exportData()">{{ 'account.export' | transloco }}</button>
     </section>

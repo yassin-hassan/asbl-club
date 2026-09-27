@@ -34,7 +34,7 @@ describe('authInterceptor', () => {
   function logIn(): void {
     auth.login('alice@club.test', 'password123').subscribe();
     backend.expectOne('/api/v1/auth/login').flush(tokenResponse('token-123'));
-    backend.expectOne('/api/v1/me').flush({ id: 'some-uuid', email: 'alice@club.test', roles: ['USER'] });
+    backend.expectOne('/api/v1/me').flush({ id: 'some-uuid', email: 'alice@club.test', name: 'Alice', roles: ['USER'] });
   }
 
   function authorizationHeaderSentTo(url: string): string | null {

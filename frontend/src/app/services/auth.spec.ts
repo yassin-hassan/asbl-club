@@ -5,7 +5,7 @@ import { AuthService, CurrentUser, rememberAfterVerify, takeAfterVerify } from '
 import { provideApi } from '../api/generated';
 
 describe('AuthService', () => {
-  const alice: CurrentUser = { id: '3f2b8c1e-0000-4000-8000-000000000001', email: 'alice@club.test', roles: ['USER'] };
+  const alice: CurrentUser = { id: '3f2b8c1e-0000-4000-8000-000000000001', email: 'alice@club.test', name: 'Alice', roles: ['USER'] };
   const tokenResponse = (accessToken: string) => ({ accessToken, tokenType: 'Bearer', expiresIn: 900 });
 
   let auth: AuthService;

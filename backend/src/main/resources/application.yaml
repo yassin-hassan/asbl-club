@@ -22,6 +22,9 @@ spring:
     password: ${MAIL_PASSWORD:}
     properties:
       mail.smtp.starttls.enable: ${MAIL_STARTTLS:false}
+      # With TLS on, it's required: if the server doesn't offer it, the email isn't sent, rather than the SMTP key
+      # going over the network in clear (port 2525 starts unencrypted). Off locally: Mailpit has no TLS.
+      mail.smtp.starttls.required: ${MAIL_STARTTLS:false}
       mail.smtp.connectiontimeout: 5000
       mail.smtp.timeout: 10000
       mail.smtp.writetimeout: 10000

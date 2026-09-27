@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -70,6 +71,28 @@ class AccountApiIntegrationTest {
     }
 
     @Test
+    void myName_canBeChanged_andShowsAtOnce() throws Exception {
+        mockMvc.perform(put("/api/v1/me/name").header("Authorization", "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON).content("{\"name\": \"  Alice Martin  \"}"))
+                .andExpect(status().isNoContent());
+
+        // The same access token: the name comes from the database, not from the token.
+        mockMvc.perform(get("/api/v1/me").header("Authorization", "Bearer " + accessToken))
+                .andExpect(jsonPath("$.name").value("Alice Martin"))
+                .andExpect(jsonPath("$.email").value("alice@club.test"));
+    }
+
+    @Test
+    void anEmptyOrTooLongName_isRefused() throws Exception {
+        for (String name : new String[] {"", "   ", "x".repeat(256)}) {
+            mockMvc.perform(put("/api/v1/me/name").header("Authorization", "Bearer " + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON).content("{\"name\": \"" + name + "\"}"))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.errors.name").exists());
+        }
+    }
+
+    @Test
     void export_containsMyProfile() throws Exception {
         mockMvc.perform(get("/api/v1/me/export").header("Authorization", "Bearer " + accessToken))
                 .andExpect(status().isOk())
@@ -109,5 +132,7 @@ class AccountApiIntegrationTest {
         mockMvc.perform(get("/api/v1/me/associations")).andExpect(status().isUnauthorized());
         mockMvc.perform(get("/api/v1/me/export")).andExpect(status().isUnauthorized());
         mockMvc.perform(delete("/api/v1/me")).andExpect(status().isUnauthorized());
+        mockMvc.perform(put("/api/v1/me/name").contentType(MediaType.APPLICATION_JSON).content("{\"name\": \"X\"}"))
+                .andExpect(status().isUnauthorized());
     }
 }

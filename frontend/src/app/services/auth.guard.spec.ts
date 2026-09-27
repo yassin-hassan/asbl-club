@@ -38,7 +38,7 @@ describe('authGuard', () => {
     const auth = TestBed.inject(AuthService);
     auth.login('alice@club.test', 'password123').subscribe();
     backend.expectOne('/api/v1/auth/login').flush({ accessToken: 't', tokenType: 'Bearer', expiresIn: 900 });
-    backend.expectOne('/api/v1/me').flush({ id: 'some-uuid', email: 'alice@club.test', roles: ['USER'] });
+    backend.expectOne('/api/v1/me').flush({ id: 'some-uuid', email: 'alice@club.test', name: 'Alice', roles: ['USER'] });
 
     expect(runGuard('/account')).toBe(true);
   });
@@ -55,7 +55,7 @@ describe('authGuard', () => {
     expect(answer).toBeNull();
 
     backend.expectOne('/api/v1/auth/refresh').flush({ accessToken: 't', tokenType: 'Bearer', expiresIn: 900 });
-    backend.expectOne('/api/v1/me').flush({ id: 'some-uuid', email: 'alice@club.test', roles: ['USER'] });
+    backend.expectOne('/api/v1/me').flush({ id: 'some-uuid', email: 'alice@club.test', name: 'Alice', roles: ['USER'] });
 
     expect(answer).toBe(true);
   });

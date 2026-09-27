@@ -15,6 +15,24 @@ test('the dashboard lists my associations and my role', async ({ page }) => {
   await expect(page.getByRole('link', { name: /Club Démo.*Administrator/ })).toBeVisible();
 });
 
+test('a user changes their name on the account page', async ({ page }) => {
+  await page.goto('/register');
+  await page.getByLabel('Name').fill('Autofilled Wrong Name');
+  await page.getByLabel('Email address').fill(`e2e-rename-${Date.now()}@club.test`);
+  await page.getByLabel('Password').fill('password123');
+  await createAccount(page);
+
+  await page.getByRole('link', { name: 'My account' }).click();
+  const name = page.getByLabel('Name');
+  await expect(name).toHaveValue('Autofilled Wrong Name');
+  await name.fill('Alice Martin');
+  await page.getByRole('button', { name: 'Save' }).click();
+  await expect(page.getByText('Saved.')).toBeVisible();
+
+  await page.reload(); // stored, not just shown
+  await expect(page.getByLabel('Name')).toHaveValue('Alice Martin');
+});
+
 test('a user closes their account: confirmation, logged out, and the password no longer works', async ({ page }) => {
   const email = `e2e-delete-${Date.now()}@club.test`;
   await page.goto('/register');
