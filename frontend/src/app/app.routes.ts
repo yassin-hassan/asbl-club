@@ -70,6 +70,7 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/event-detail/event-detail').then((m) => m.EventDetail),
   },
   // An association's join link. Logged-in users only: the guard sends visitors to log in (or sign up) and back.
+  { path: 'invitation', loadComponent: () => import('./pages/invitation/invitation').then((m) => m.InvitationPage) },
   {
     path: 'join/:token',
     canActivate: [authGuard],

@@ -11,6 +11,7 @@ import { AsblMember, AsblMembers, AssociationsService, MemberManagementService, 
 import { errorMessageKey, problemOf } from '../../services/problem';
 import { AuthService } from '../../services/auth';
 import { ConfirmDialog, ConfirmDialogData } from '../../components/confirm-dialog/confirm-dialog';
+import { InviteByEmail } from './invite-by-email';
 
 // An association's member area (members only; the API enforces it). Administrators also manage who joins (the
 // invitation link and the requests it produces) and the members themselves (roles, exclusion). Anyone may leave.
@@ -18,7 +19,7 @@ import { ConfirmDialog, ConfirmDialogData } from '../../components/confirm-dialo
 @Component({
   selector: 'app-asbl-members',
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [RouterLink, TranslocoPipe, MatButtonModule, MatProgressSpinnerModule, MatTableModule],
+  imports: [InviteByEmail, RouterLink, TranslocoPipe, MatButtonModule, MatProgressSpinnerModule, MatTableModule],
   templateUrl: './asbl-members.html',
   styleUrl: './asbl-members.css',
 })

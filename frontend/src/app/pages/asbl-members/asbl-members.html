@@ -26,6 +26,7 @@
           <p>{{ 'invite.off' | transloco }}</p>
           <div><button mat-flat-button type="button" (click)="newLink()" [disabled]="busy()">{{ 'invite.create' | transloco }}</button></div>
         }
+        <app-invite-by-email [slug]="slug" />
       </section>
 
       @if (requests().length > 0) {

@@ -6,6 +6,7 @@ api/associations.service.ts
 api/audit.service.ts
 api/authentication.service.ts
 api/eventManagement.service.ts
+api/invitations.service.ts
 api/joining.service.ts
 api/memberManagement.service.ts
 api/paymentSetup.service.ts
@@ -14,6 +15,7 @@ api/registrations.service.ts
 configuration.ts
 encoder.ts
 index.ts
+model/acceptedInvitation.ts
 model/accountExport.ts
 model/addTicketRequest.ts
 model/asblMember.ts
@@ -31,6 +33,8 @@ model/checkout.ts
 model/createAsblRequest.ts
 model/createEventRequest.ts
 model/eventFeedItem.ts
+model/invitationPreview.ts
+model/inviteRequest.ts
 model/joinInvitation.ts
 model/joinLink.ts
 model/loginRequest.ts
@@ -47,6 +51,7 @@ model/nameRequest.ts
 model/newPassword.ts
 model/paymentExport.ts
 model/paymentSetupStatus.ts
+model/pendingInvitation.ts
 model/profileExport.ts
 model/publicEvent.ts
 model/publicTicket.ts
@@ -56,6 +61,7 @@ model/resetRequest.ts
 model/roleChange.ts
 model/seatAvailability.ts
 model/stripeOnboardingLink.ts
+model/tokenRequest.ts
 model/tokenResponse.ts
 model/verifyRequest.ts
 param.ts

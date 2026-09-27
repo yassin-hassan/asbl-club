@@ -1,0 +1,27 @@
+<div class="auth-page">
+<div class="auth-card">
+  <h1>{{ 'invitation.title' | transloco }}</h1>
+  @if (preview(); as invitation) {
+    <p><strong>{{ 'invitation.intro' | transloco: { name: invitation.invitedBy, association: invitation.association } }}</strong></p>
+    <p class="hint">{{ 'invitation.forAddress' | transloco: { email: invitation.email } }}</p>
+    @if (error(); as error) {
+      <p class="error" role="alert">{{ error | transloco }}</p>
+    }
+    @if (auth.user()) {
+      <button mat-flat-button type="button" (click)="join()" [disabled]="joining()">
+        {{ 'invitation.join' | transloco: { association: invitation.association } }}
+      </button>
+    } @else {
+      <p>{{ 'invitation.logInFirst' | transloco }}</p>
+      <div class="toolbar">
+        <a mat-flat-button routerLink="/login" [queryParams]="{ returnUrl: '/invitation' }">{{ 'login.submit' | transloco }}</a>
+        <a mat-stroked-button routerLink="/register" [queryParams]="{ returnUrl: '/invitation' }">{{ 'login.createOne' | transloco }}</a>
+      </div>
+    }
+  } @else if (error(); as error) {
+    <p class="error" role="alert">{{ error | transloco }}</p>
+  } @else {
+    <mat-spinner diameter="40" />
+  }
+</div>
+</div>

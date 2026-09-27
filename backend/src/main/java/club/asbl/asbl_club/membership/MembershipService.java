@@ -98,6 +98,27 @@ public class MembershipService {
         return MembershipStatus.PENDING;
     }
 
+    // Joining through a personal invitation: an administrator chose this person, so they're in at once, as a member.
+    // Whatever their past here (a pending request, left, even excluded): inviting them is the administrators' call.
+    @Transactional
+    public void joinByInvitation(User user, Asbl asbl) {
+        Membership membership = membershipRepository.findByUserAndAsbl(user, asbl).orElseGet(() -> {
+            Membership created = new Membership();
+            created.setUser(user);
+            created.setAsbl(asbl);
+            created.setCategory(MembershipCategory.FULL);
+            return created;
+        });
+        if (membership.getStatus() == MembershipStatus.ACTIVE) {
+            return;
+        }
+        membership.setRole(MembershipRole.MEMBER);
+        membership.setStatus(MembershipStatus.ACTIVE);
+        membership.setJoinedAt(LocalDate.now());
+        membership.setExcludedAt(null);
+        membershipRepository.save(membership);
+    }
+
     // An administrator accepts a pending request: the person becomes an active member from today.
     @Transactional
     public void approve(Asbl asbl, UUID userPublicId) {

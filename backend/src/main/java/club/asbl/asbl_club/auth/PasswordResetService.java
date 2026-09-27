@@ -4,10 +4,8 @@ import club.asbl.asbl_club.audit.AuditService;
 import club.asbl.asbl_club.email.EmailService;
 import club.asbl.asbl_club.user.User;
 import club.asbl.asbl_club.user.UserService;
-import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Base64;
 import java.util.Locale;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 class PasswordResetService {
 
     static final Duration VALIDITY = Duration.ofMinutes(30);
-    private static final int TOKEN_BYTES = 32; // 256 random bits
 
     private final PasswordResetTokenRepository tokens;
     private final UserService userService;
@@ -28,7 +25,6 @@ class PasswordResetService {
     private final EmailService emailService;
     private final AuditService auditService;
     private final String publicUrl;
-    private final SecureRandom secureRandom = new SecureRandom();
 
     PasswordResetService(PasswordResetTokenRepository tokens, UserService userService,
             RefreshTokenService refreshTokenService, EmailService emailService, AuditService auditService,
@@ -52,10 +48,8 @@ class PasswordResetService {
 
     private void sendLink(User user) {
         tokens.deleteUnusedOf(user.getId());
-        byte[] bytes = new byte[TOKEN_BYTES];
-        secureRandom.nextBytes(bytes);
-        String rawToken = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
-        tokens.save(new PasswordResetToken(user, RefreshTokenService.hash(rawToken), Instant.now().plus(VALIDITY)));
+        String rawToken = OneTimeTokens.newToken();
+        tokens.save(new PasswordResetToken(user, OneTimeTokens.hash(rawToken), Instant.now().plus(VALIDITY)));
         // The token after "#": browsers never send that part to a server, so it stays out of access logs (Worker,
         // Render) and Referer headers. The address comes from configuration, never from the request.
         String link = publicUrl + "/reset-password#token=" + rawToken;
@@ -69,7 +63,7 @@ class PasswordResetService {
     // the old password is logged out everywhere.
     @Transactional
     public void resetPassword(String rawToken, String newPassword) {
-        PasswordResetToken token = tokens.findByTokenHash(RefreshTokenService.hash(rawToken))
+        PasswordResetToken token = tokens.findByTokenHash(OneTimeTokens.hash(rawToken))
                 .orElseThrow(InvalidResetTokenException::new);
         if (tokens.use(token.getId(), Instant.now()) == 0) {
             throw new InvalidResetTokenException(); // expired or already used
