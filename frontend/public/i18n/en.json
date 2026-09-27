@@ -13,12 +13,6 @@
     "createAsbl": "Create my ASBL",
     "bookings": "My bookings"
   },
-  "home": {
-    "title": "Public events",
-    "subtitle": "Enter an association's short name to see its public events.",
-    "association": "Association",
-    "viewEvents": "View events"
-  },
   "login": {
     "title": "Log in",
     "email": "Email address",
@@ -160,10 +154,6 @@
       "title": "Ready to simplify managing your association?",
       "sub": "Free, no commitment. You only pay a commission on processed payments.",
       "button": "Create my ASBL for free"
-    },
-    "directory": {
-      "eyebrow": "Public directory",
-      "title": "Discover associations"
     }
   },
   "register": {

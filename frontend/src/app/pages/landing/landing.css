@@ -129,10 +129,6 @@
   padding: 56px 0;
 }
 
-.block.soft {
-  background: var(--asbl-slate-50);
-}
-
 .center {
   text-align: center;
 }
@@ -190,11 +186,6 @@
   align-items: center;
   justify-content: center;
   margin-bottom: 14px;
-}
-
-.directory {
-  max-width: 720px;
-  margin: 24px auto 0;
 }
 
 .steps {

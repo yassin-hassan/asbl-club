@@ -1,9 +1,8 @@
 import { expect, test } from '@playwright/test';
 
-test('a visitor finds an association and sees an event with live seat availability', async ({ page }) => {
-  await page.goto('/');
-  await page.getByLabel('Association').fill('club-demo');
-  await page.getByRole('link', { name: 'View events' }).click();
+// Visitors arrive through the link the association shares (its events page).
+test('a visitor opens an association\'s events and sees one with live seat availability', async ({ page }) => {
+  await page.goto('/asbls/club-demo/events');
 
   await expect(page.getByRole('heading', { name: 'Events for "club-demo"' })).toBeVisible();
   await page.getByRole('link', { name: /Concert de gala/ }).click();

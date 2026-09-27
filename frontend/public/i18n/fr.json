@@ -13,12 +13,6 @@
     "createAsbl": "Créer mon ASBL",
     "bookings": "Mes réservations"
   },
-  "home": {
-    "title": "Événements publics",
-    "subtitle": "Entrez le nom court d'une association pour voir ses événements publics.",
-    "association": "Association",
-    "viewEvents": "Voir les événements"
-  },
   "login": {
     "title": "Connexion",
     "email": "Adresse e-mail",
@@ -160,10 +154,6 @@
       "title": "Prêt à simplifier la gestion de votre association ?",
       "sub": "Gratuit, sans engagement. Vous ne payez qu'une commission sur les paiements traités.",
       "button": "Créer mon ASBL gratuitement"
-    },
-    "directory": {
-      "eyebrow": "Annuaire public",
-      "title": "Découvrez les associations"
     }
   },
   "register": {

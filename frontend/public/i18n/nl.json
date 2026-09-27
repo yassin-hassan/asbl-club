@@ -13,12 +13,6 @@
     "createAsbl": "Mijn VZW aanmaken",
     "bookings": "Mijn boekingen"
   },
-  "home": {
-    "title": "Openbare evenementen",
-    "subtitle": "Geef de korte naam van een vereniging in om haar openbare evenementen te zien.",
-    "association": "Vereniging",
-    "viewEvents": "Evenementen bekijken"
-  },
   "login": {
     "title": "Aanmelden",
     "email": "E-mailadres",
@@ -160,10 +154,6 @@
       "title": "Klaar om het beheer van uw vereniging te vereenvoudigen?",
       "sub": "Gratis, zonder verplichting. U betaalt enkel een commissie op verwerkte betalingen.",
       "button": "Mijn vzw gratis aanmaken"
-    },
-    "directory": {
-      "eyebrow": "Openbare gids",
-      "title": "Ontdek de verenigingen"
     }
   },
   "register": {
