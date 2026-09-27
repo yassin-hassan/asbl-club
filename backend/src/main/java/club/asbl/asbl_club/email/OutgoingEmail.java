@@ -48,6 +48,13 @@ class OutgoingEmail {
     @Column(name = "sent_at")
     private Instant sentAt;
 
+    // Optional: a ticket code to attach as a QR image, and the attachment's name (see V18).
+    @Column(name = "qr_code")
+    private String qrCode;
+
+    @Column(name = "qr_file_name")
+    private String qrFileName;
+
     protected OutgoingEmail() {
     }
 
@@ -57,11 +64,18 @@ class OutgoingEmail {
         this.body = body;
     }
 
+    OutgoingEmail withQrCode(String code, String fileName) {
+        this.qrCode = code;
+        this.qrFileName = fileName;
+        return this;
+    }
+
     // Sent: the body goes (it may hold a one-time link); who, what and when stay as a trace.
     void sent(Instant now) {
         status = Status.SENT;
         sentAt = now;
         body = null;
+        qrCode = null; // a ticket code lets someone in: it doesn't stay here either
         lastError = null;
     }
 
@@ -71,6 +85,7 @@ class OutgoingEmail {
         if (giveUp) {
             status = Status.FAILED;
             body = null;
+            qrCode = null;
         } else {
             nextAttemptAt = retryAt;
         }
@@ -90,6 +105,14 @@ class OutgoingEmail {
 
     String getBody() {
         return body;
+    }
+
+    String getQrCode() {
+        return qrCode;
+    }
+
+    String getQrFileName() {
+        return qrFileName;
     }
 
     Status getStatus() {

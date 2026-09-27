@@ -58,6 +58,8 @@ class RegisterIntegrationTest {
     JdbcTemplate jdbcTemplate;
     @Autowired
     EmailSender outbox;
+    @Autowired
+    jakarta.persistence.EntityManager entityManager;
 
     @Test
     void signingUp_sendsALink_whichConfirmsTheAddressAndLogsIn() throws Exception {
@@ -144,6 +146,21 @@ class RegisterIntegrationTest {
         userService.register("Bob", "bob@club.test", "bobs-password");
         resend("bob@club.test").andExpect(status().isAccepted()); // already confirmed: nothing to send
         assertThat(outbox.sendDue()).isZero();
+    }
+
+    // Emails sent without a request to take the language from (a ticket confirmed by Stripe) use the last one seen.
+    @Test
+    void theLanguageTheSiteIsUsedIn_isRememberedForLaterEmails() throws Exception {
+        userService.register("Bob", "bob@club.test", "bobs-password");
+
+        mockMvc.perform(post("/api/v1/auth/login").header("Accept-Language", "nl")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\": \"bob@club.test\", \"password\": \"bobs-password\"}"))
+                .andExpect(status().isOk());
+
+        entityManager.flush(); // written by JPA in this test's transaction; the SQL check reads the table
+        assertThat(jdbcTemplate.queryForObject("SELECT language FROM users WHERE email = 'bob@club.test'",
+                String.class)).isEqualTo("nl");
     }
 
     @Test

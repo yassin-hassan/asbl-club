@@ -3,6 +3,7 @@ package club.asbl.asbl_club.email;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 
 import club.asbl.asbl_club.TestcontainersConfiguration;
 import java.time.Duration;
@@ -14,7 +15,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mail.MailSendException;
-import org.springframework.mail.SimpleMailMessage;
+import jakarta.mail.Session;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +39,8 @@ class EmailSenderIntegrationTest {
 
     @Test
     void aFailedSend_isRetriedLater_thenGivenUpAfterTheLastAttempt() {
-        doThrow(new MailSendException("provider unreachable")).when(mailSender).send(any(SimpleMailMessage.class));
+        when(mailSender.createMimeMessage()).thenAnswer(invocation -> new MimeMessage((Session) null));
+        doThrow(new MailSendException("provider unreachable")).when(mailSender).send(any(MimeMessage.class));
         emailService.queue("alice@club.test", Locale.ENGLISH, "passwordReset", "Alice", "https://site.test/x", 30);
 
         emailSender.sendDue();

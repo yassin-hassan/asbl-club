@@ -35,11 +35,13 @@ public class PaymentService {
     private final AuditService auditService;
     private final EntityManager entityManager;
     private final EventService eventService;
+    private final BookingEmails bookingEmails;
 
     public PaymentService(StripeClient stripe, PaymentRepository paymentRepository,
             RegistrationRepository registrationRepository, AuditService auditService, EntityManager entityManager,
-            EventService eventService) {
+            EventService eventService, BookingEmails bookingEmails) {
         this.eventService = eventService;
+        this.bookingEmails = bookingEmails;
         this.stripe = stripe;
         this.paymentRepository = paymentRepository;
         this.registrationRepository = registrationRepository;
@@ -127,6 +129,7 @@ public class PaymentService {
             registration.ifPresent(r -> {
                 r.setStatus(RegistrationStatus.PAID);
                 r.setQrToken(UUID.randomUUID().toString().replace("-", ""));
+                bookingEmails.ticketReady(r);
             });
             auditService.recordSystem("PAYMENT_SUCCEEDED", payment.getAsbl(), "Payment", payment.getId(),
                     Map.of("paymentIntentId", paymentIntentId, "amount", payment.getAmount()));
@@ -164,7 +167,8 @@ public class PaymentService {
         } catch (StripeException e) {
             throw new IllegalStateException("Stripe refused to refund " + paymentIntentId, e);
         }
-        String bookingStatus = registration.getStatus().name();
+        RegistrationStatus bookingWas = registration.getStatus();
+        String bookingStatus = bookingWas.name();
         payment.setStatus(PaymentStatus.REFUNDED);
         payment.setPaidAt(Instant.now());
         registration.setStatus(RegistrationStatus.REFUNDED);
@@ -172,6 +176,7 @@ public class PaymentService {
                 Map.of("paymentIntentId", paymentIntentId, "amount", payment.getAmount()));
         auditService.recordSystem("PAYMENT_REFUNDED", payment.getAsbl(), "Payment", payment.getId(),
                 Map.of("paymentIntentId", paymentIntentId, "amount", payment.getAmount(), "booking", bookingStatus));
+        bookingEmails.paymentRefunded(registration, bookingWas);
     }
 
     @Transactional

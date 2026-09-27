@@ -16,6 +16,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.time.Duration;
 import java.util.Collection;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -106,6 +107,7 @@ class AuthController {
         }
         // The roles as a login would load them.
         var authorities = userDetailsService.loadUserByUsername(user.getEmail()).getAuthorities();
+        userService.rememberLanguage(user, LocaleContextHolder.getLocale());
         return issueTokens(user, authorities, HttpStatus.OK);
     }
 
@@ -140,6 +142,7 @@ class AuthController {
             problem.setProperty("code", "EMAIL_NOT_VERIFIED");
             throw new ErrorResponseException(HttpStatus.FORBIDDEN, problem, null);
         }
+        userService.rememberLanguage(user, LocaleContextHolder.getLocale());
         return issueTokens(user, authentication.getAuthorities(), successStatus);
     }
 
