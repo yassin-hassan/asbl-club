@@ -30,7 +30,8 @@
     "error": "Ongeldig e-mailadres of wachtwoord",
     "noAccount": "Nog geen account",
     "createOne": "Een account aanmaken",
-    "deleted": "Uw account is verwijderd"
+    "deleted": "Uw account is verwijderd",
+    "forgot": "Wachtwoord vergeten?"
   },
   "account": {
     "title": "Mijn account",
@@ -415,5 +416,21 @@
     "unknown": "Onbekend ticket voor dit evenement.",
     "notValid": "Dit ticket is niet meer geldig (terugbetaald of geannuleerd).",
     "eventNotOpen": "Dit evenement gaat niet door."
+  },
+  "reset": {
+    "forgotTitle": "Wachtwoord vergeten?",
+    "forgotHint": "Vul je e-mailadres in: we sturen je een link om een nieuw wachtwoord te kiezen.",
+    "sendLink": "Link versturen",
+    "sent": "Als er een account bestaat voor dit adres, hebben we er een link naartoe gestuurd. Die is 30 minuten geldig. Kijk ook in je spammap.",
+    "backToLogin": "Terug naar inloggen",
+    "newTitle": "Kies een nieuw wachtwoord",
+    "newPassword": "Nieuw wachtwoord",
+    "repeat": "Herhaal het nieuwe wachtwoord",
+    "rules": "Minstens 8 tekens.",
+    "mismatch": "De twee wachtwoorden zijn verschillend.",
+    "save": "Nieuw wachtwoord opslaan",
+    "done": "Je wachtwoord is gewijzigd en je bent overal afgemeld. Log in met je nieuwe wachtwoord.",
+    "invalidLink": "Deze link is ongeldig, verlopen of al gebruikt.",
+    "askAgain": "Vraag een nieuwe link"
   }
 }

@@ -30,7 +30,8 @@
     "error": "Invalid email or password",
     "noAccount": "No account yet",
     "createOne": "Create an account",
-    "deleted": "Your account has been deleted"
+    "deleted": "Your account has been deleted",
+    "forgot": "Forgot your password?"
   },
   "account": {
     "title": "My account",
@@ -415,5 +416,21 @@
     "unknown": "Unknown ticket for this event.",
     "notValid": "This ticket isn't valid any more (refunded or cancelled).",
     "eventNotOpen": "This event isn't taking place."
+  },
+  "reset": {
+    "forgotTitle": "Forgot your password?",
+    "forgotHint": "Enter your email address: we'll send you a link to choose a new password.",
+    "sendLink": "Send the link",
+    "sent": "If an account exists for this address, we've sent it a link. It works for 30 minutes. Check your spam folder too.",
+    "backToLogin": "Back to log in",
+    "newTitle": "Choose a new password",
+    "newPassword": "New password",
+    "repeat": "Repeat the new password",
+    "rules": "At least 8 characters.",
+    "mismatch": "The two passwords are different.",
+    "save": "Save the new password",
+    "done": "Your password has been changed, and you've been logged out everywhere. Log in with your new password.",
+    "invalidLink": "This link is invalid, expired or already used.",
+    "askAgain": "Ask for a new link"
   }
 }

@@ -89,6 +89,12 @@ jobs:
           - 5432:5432
         options: >-
           --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+      # A fake mail server: the API sends to it, the password-reset test reads the email through its API.
+      mailpit:
+        image: axllent/mailpit:latest
+        ports:
+          - 1025:1025
+          - 8025:8025
     steps:
       - uses: actions/checkout@v7
 
@@ -141,6 +147,9 @@ jobs:
           SPRING_DATASOURCE_PASSWORD: asbl
           # The flows sign up several accounts per run from one address; the limiter has its own tests.
           RATE_LIMIT_ENABLED: 'false'
+          MAIL_HOST: localhost
+          MAIL_PORT: '1025'
+          MAILPIT_URL: http://localhost:8025
 
       - name: Keep the report when it fails
         if: failure()

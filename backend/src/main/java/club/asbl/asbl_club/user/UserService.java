@@ -68,6 +68,12 @@ public class UserService {
     }
 
     @Transactional
+    public void changePassword(User user, String rawPassword) {
+        user.setPassword(passwordEncoder.encode(rawPassword));
+        userRepository.save(user);
+    }
+
+    @Transactional
     public void anonymizeAndClose(User user) {
         user.setName("Deleted account");
         user.setEmail("deleted-" + user.getId() + "@deleted.asbl.club");

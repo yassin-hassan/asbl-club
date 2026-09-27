@@ -30,7 +30,8 @@
     "error": "Adresse e-mail ou mot de passe invalide",
     "noAccount": "Pas encore de compte",
     "createOne": "Créer un compte",
-    "deleted": "Votre compte a été supprimé"
+    "deleted": "Votre compte a été supprimé",
+    "forgot": "Mot de passe oublié ?"
   },
   "account": {
     "title": "Mon compte",
@@ -415,5 +416,21 @@
     "unknown": "Billet inconnu pour cet événement.",
     "notValid": "Ce billet n'est plus valable (remboursé ou annulé).",
     "eventNotOpen": "Cet événement n'a pas lieu."
+  },
+  "reset": {
+    "forgotTitle": "Mot de passe oublié ?",
+    "forgotHint": "Entrez votre adresse e-mail : nous vous enverrons un lien pour choisir un nouveau mot de passe.",
+    "sendLink": "Envoyer le lien",
+    "sent": "Si un compte existe pour cette adresse, nous lui avons envoyé un lien. Il est valable 30 minutes. Pensez à vérifier vos indésirables.",
+    "backToLogin": "Retour à la connexion",
+    "newTitle": "Choisir un nouveau mot de passe",
+    "newPassword": "Nouveau mot de passe",
+    "repeat": "Répétez le nouveau mot de passe",
+    "rules": "Au moins 8 caractères.",
+    "mismatch": "Les deux mots de passe sont différents.",
+    "save": "Enregistrer le nouveau mot de passe",
+    "done": "Votre mot de passe a été changé et vous avez été déconnecté partout. Connectez-vous avec le nouveau.",
+    "invalidLink": "Ce lien n'est pas valable, a expiré ou a déjà servi.",
+    "askAgain": "Demander un nouveau lien"
   }
 }

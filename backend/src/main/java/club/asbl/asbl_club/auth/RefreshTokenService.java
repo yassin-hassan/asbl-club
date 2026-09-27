@@ -92,6 +92,11 @@ class RefreshTokenService {
                 .ifPresent(token -> refreshTokenRepository.revokeFamily(token.getFamilyId(), Instant.now()));
     }
 
+    // After a password reset: every session of the account ends, wherever it was.
+    void revokeAllSessionsOf(Long userId) {
+        refreshTokenRepository.revokeAllOfUser(userId, Instant.now());
+    }
+
     // A closed account keeps no session anywhere. (Refresh would refuse it anyway; this makes it immediate
     // and leaves no usable token behind.) Runs inside the closing transaction.
     @EventListener
