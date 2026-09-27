@@ -3,12 +3,11 @@ import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { EventSearch } from '../../components/event-search/event-search';
 
 @Component({
   selector: 'app-landing',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, TranslocoPipe, MatButtonModule, MatIconModule, EventSearch],
+  imports: [RouterLink, TranslocoPipe, MatButtonModule, MatIconModule],
   templateUrl: './landing.html',
   styleUrl: './landing.css',
 })
