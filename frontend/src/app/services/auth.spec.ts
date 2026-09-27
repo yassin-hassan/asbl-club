@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { AuthService, CurrentUser } from './auth';
+import { AuthService, CurrentUser, rememberAfterVerify, takeAfterVerify } from './auth';
 import { provideApi } from '../api/generated';
 
 describe('AuthService', () => {
@@ -54,16 +54,42 @@ describe('AuthService', () => {
   });
 
   describe('register', () => {
-    it('creates the account and logs straight in', () => {
+    it('signs up without logging in: the emailed link does that', () => {
       auth.register('Alice', 'alice@club.test', 'password123').subscribe();
 
       const register = http.expectOne('/api/v1/auth/register');
       expect(register.request.body).toEqual({ name: 'Alice', email: 'alice@club.test', password: 'password123' });
-      register.flush(tokenResponse('token-new'), { status: 201, statusText: 'Created' });
+      register.flush(null, { status: 202, statusText: 'Accepted' });
+
+      expect(auth.accessToken()).toBeNull();
+      expect(auth.user()).toBeNull();
+    });
+  });
+
+  describe('verifyEmail', () => {
+    it('confirms the address with the link\'s token and logs in', () => {
+      auth.verifyEmail('the-token').subscribe();
+
+      const verify = http.expectOne('/api/v1/auth/verify-email');
+      expect(verify.request.body).toEqual({ token: 'the-token' });
+      verify.flush(tokenResponse('token-new'));
       http.expectOne('/api/v1/me').flush(alice);
 
       expect(auth.accessToken()).toBe('token-new');
       expect(auth.user()).toEqual(alice);
+    });
+  });
+
+  describe('after-verify path', () => {
+    it('comes back once, and only as a path inside the site', () => {
+      rememberAfterVerify('/join/abc');
+      expect(takeAfterVerify()).toBe('/join/abc');
+      expect(takeAfterVerify()).toBe('/'); // used up
+
+      rememberAfterVerify('https://evil.test');
+      expect(takeAfterVerify()).toBe('/');
+      rememberAfterVerify('//evil.test');
+      expect(takeAfterVerify()).toBe('/');
     });
   });
 

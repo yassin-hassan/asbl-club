@@ -1,12 +1,12 @@
 import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { AuthService } from '../../services/auth';
+import { AuthService, rememberAfterVerify } from '../../services/auth';
 import { errorMessageKey } from '../../services/problem';
 
 @Component({
@@ -18,7 +18,6 @@ import { errorMessageKey } from '../../services/problem';
 })
 export class Register {
   private auth = inject(AuthService);
-  private router = inject(Router);
   private route = inject(ActivatedRoute);
   private fb = inject(NonNullableFormBuilder);
 
@@ -31,6 +30,9 @@ export class Register {
 
   readonly submitting = signal(false);
   readonly error = signal<string | null>(null);
+  // Set once the form is sent: the address the link went to (the same answer whether or not it has an account).
+  readonly sentTo = signal<string | null>(null);
+  readonly resent = signal(false);
 
   submit(): void {
     if (this.form.invalid) {
@@ -40,19 +42,21 @@ export class Register {
     this.submitting.set(true);
     this.error.set(null);
     const { name, email, password } = this.form.getRawValue();
+    // Where the visitor was going (e.g. an invitation link), for after they've confirmed their email.
+    rememberAfterVerify(this.route.snapshot.queryParamMap.get('returnUrl'));
     this.auth.register(name.trim(), email.trim(), password).subscribe({
-      // Back to where the visitor was going (e.g. a join link). navigateByUrl stays inside the app, so a crafted
-      // ?returnUrl=https://evil.example can't redirect anyone to another site.
-      next: () => this.router.navigateByUrl(this.route.snapshot.queryParamMap.get('returnUrl') ?? '/'),
+      next: () => this.sentTo.set(email.trim()),
       error: (err: HttpErrorResponse) => {
         this.submitting.set(false);
-        if (err.status === 409) {
-          // Shown on the email field itself, where the user will fix it.
-          this.form.controls.email.setErrors({ taken: true });
-        } else {
-          this.error.set(errorMessageKey(err));
-        }
+        this.error.set(errorMessageKey(err));
       },
     });
+  }
+
+  resend(): void {
+    const email = this.sentTo();
+    if (email) {
+      this.auth.resendVerification(email).subscribe({ next: () => this.resent.set(true) });
+    }
   }
 }

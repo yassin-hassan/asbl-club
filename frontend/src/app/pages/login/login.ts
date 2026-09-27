@@ -6,7 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth';
-import { errorMessageKey } from '../../services/problem';
+import { errorMessageKey, problemOf } from '../../services/problem';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
@@ -31,6 +31,8 @@ export class Login {
   readonly submitting = signal(false);
   readonly accountDeleted = this.route.snapshot.queryParamMap.has('deleted');
   readonly error = signal<string | null>(null);
+  readonly notVerified = signal(false);
+  readonly linkResent = signal(false);
 
   submit(): void {
     if (this.form.invalid) {
@@ -46,9 +48,17 @@ export class Login {
       next: () => this.router.navigateByUrl(this.route.snapshot.queryParamMap.get('returnUrl') ?? '/'),
       error: (err: HttpErrorResponse) => {
         this.submitting.set(false);
+        // Right password, email not confirmed yet: offer to send the link again.
+        this.notVerified.set(problemOf(err)?.code === 'EMAIL_NOT_VERIFIED');
         // 401 gets our own wording: the API deliberately doesn't say whether the email or the password was wrong.
-        this.error.set(err.status === 401 ? 'login.error' : errorMessageKey(err));
+        this.error.set(this.notVerified() ? 'login.notVerified' : err.status === 401 ? 'login.error' : errorMessageKey(err));
       },
+    });
+  }
+
+  resendLink(): void {
+    this.auth.resendVerification(this.form.getRawValue().email.trim()).subscribe({
+      next: () => this.linkResent.set(true),
     });
   }
 }

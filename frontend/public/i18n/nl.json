@@ -31,7 +31,9 @@
     "noAccount": "Nog geen account",
     "createOne": "Een account aanmaken",
     "deleted": "Uw account is verwijderd",
-    "forgot": "Wachtwoord vergeten?"
+    "forgot": "Wachtwoord vergeten?",
+    "notVerified": "Bevestig eerst je e-mailadres: open de link die we je stuurden.",
+    "linkResent": "We hebben de link opnieuw gestuurd."
   },
   "account": {
     "title": "Mijn account",
@@ -166,11 +168,14 @@
     "password": "Wachtwoord",
     "submit": "Account aanmaken",
     "haveAccount": "Ik heb al een account",
-    "emailTaken": "Dit e-mailadres is al in gebruik",
     "passwordHint": "Minstens 8 tekens.",
     "nameRequired": "Geef je naam in.",
     "passwordTooShort": "Minstens 8 tekens.",
-    "submitting": "Aanmaken…"
+    "submitting": "Aanmaken…",
+    "checkInbox": "Kijk in je mailbox",
+    "sentTo": "We hebben een e-mail gestuurd naar {{ email }}. Open de link erin om je account te activeren (24 uur geldig). Heb je al een account? Dan staat dat in de e-mail.",
+    "resend": "Link opnieuw sturen",
+    "resent": "Opnieuw verstuurd. Kijk ook in je spammap."
   },
   "dashboard": {
     "title": "Uw verenigingen",
@@ -432,5 +437,11 @@
     "done": "Je wachtwoord is gewijzigd en je bent overal afgemeld. Log in met je nieuwe wachtwoord.",
     "invalidLink": "Deze link is ongeldig, verlopen of al gebruikt.",
     "askAgain": "Vraag een nieuwe link"
+  },
+  "verify": {
+    "title": "Je e-mailadres bevestigen",
+    "checking": "De link wordt gecontroleerd…",
+    "invalidLink": "Deze link is ongeldig, verlopen of al gebruikt.",
+    "whatNow": "Log in om een nieuwe te krijgen:"
   }
 }

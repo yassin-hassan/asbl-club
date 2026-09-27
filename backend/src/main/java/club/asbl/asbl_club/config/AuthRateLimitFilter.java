@@ -41,7 +41,9 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
             "/api/v1/auth/register", 5,
             "/api/v1/auth/refresh", 30, // every page load of the Angular app refreshes once
             "/api/v1/auth/password-reset", 5, // each one sends an email: no mail bombing, no provider-quota burning
-            "/api/v1/auth/password-reset/confirm", 10);
+            "/api/v1/auth/password-reset/confirm", 10,
+            "/api/v1/auth/verify-email", 10,
+            "/api/v1/auth/verify-email/resend", 5); // sends an email, like sign-up and password reset
 
     private final boolean enabled;
     private final ProblemResponses problems;

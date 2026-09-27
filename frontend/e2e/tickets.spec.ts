@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { createAccount } from './mail';
 
 // A real ticket needs a real Stripe payment (not possible in CI): the backend tests cover paid tickets and
 // check-in. Here: the pages, their wiring through the Worker, and the refusals.
@@ -10,7 +11,7 @@ test('my bookings lists an unpaid booking with a way to pay, and the door refuse
   await page.getByLabel('Name').fill('Tess Ticket');
   await page.getByLabel('Email address').fill(`e2e-tickets-${stamp}@club.test`);
   await page.getByLabel('Password').fill('password123');
-  await page.getByRole('button', { name: 'Create account' }).click();
+  await createAccount(page);
   await page.getByRole('link', { name: 'Create an ASBL' }).click();
   await page.getByLabel('Name').fill(`Tickets Club ${stamp}`);
   await page.getByLabel('BCE number').fill(`${digits.slice(0, 4)}.${digits.slice(4, 7)}.${digits.slice(7, 10)}`);

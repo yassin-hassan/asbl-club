@@ -1,10 +1,11 @@
 import { Browser, expect, Page, test } from '@playwright/test';
+import { createAccount } from './mail';
 
 async function signUp(page: Page, name: string, email: string) {
   await page.getByLabel('Name').fill(name);
   await page.getByLabel('Email address').fill(email);
   await page.getByLabel('Password').fill('password123');
-  await page.getByRole('button', { name: 'Create account' }).click();
+  await createAccount(page);
 }
 
 async function newPerson(browser: Browser): Promise<Page> {

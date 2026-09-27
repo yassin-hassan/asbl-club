@@ -50,11 +50,13 @@ model/profileExport.ts
 model/publicEvent.ts
 model/publicTicket.ts
 model/registerRequest.ts
+model/resendRequest.ts
 model/resetRequest.ts
 model/roleChange.ts
 model/seatAvailability.ts
 model/stripeOnboardingLink.ts
 model/tokenResponse.ts
+model/verifyRequest.ts
 param.ts
 provide-api.ts
 query.params.ts

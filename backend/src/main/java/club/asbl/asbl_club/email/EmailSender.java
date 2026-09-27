@@ -3,7 +3,6 @@ package club.asbl.asbl_club.email;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailException;
@@ -39,7 +38,7 @@ public class EmailSender {
         this.transaction = transaction;
     }
 
-    @Scheduled(fixedDelay = 10, timeUnit = TimeUnit.SECONDS)
+    @Scheduled(fixedDelayString = "${email.send-every-ms}")
     void sendScheduled() {
         if (properties.senderEnabled()) {
             sendDue();

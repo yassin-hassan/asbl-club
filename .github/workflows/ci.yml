@@ -150,6 +150,7 @@ jobs:
           MAIL_HOST: localhost
           MAIL_PORT: '1025'
           MAILPIT_URL: http://localhost:8025
+          MAIL_SEND_EVERY_MS: '500'
 
       - name: Keep the report when it fails
         if: failure()

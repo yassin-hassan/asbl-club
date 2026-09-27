@@ -46,12 +46,22 @@ export class AuthService {
   }
 
   // A new account is logged in straight away: the API answers with the same tokens as a login.
-  register(name: string, email: string, password: string): Observable<CurrentUser> {
-    return this.api.register({ name, email, password }).pipe(
+  // Sign-up doesn't log in: the API always answers "check your inbox", and the emailed link does the rest.
+  register(name: string, email: string, password: string): Observable<void> {
+    return this.api.register({ name, email, password }).pipe(map(() => undefined));
+  }
+
+  // The emailed link's token confirms the address and logs in, like a login.
+  verifyEmail(token: string): Observable<CurrentUser> {
+    return this.api.verifyEmail({ token }).pipe(
       tap((response) => (this.token = response.accessToken)),
       switchMap(() => this.loadCurrentUser()),
       tap(() => setSessionHint(true)),
     );
+  }
+
+  resendVerification(email: string): Observable<void> {
+    return this.api.resendVerificationEmail({ email }).pipe(map(() => undefined));
   }
 
   // App start, without holding up the first page: if this browser had a session, log the user back in in the
@@ -123,6 +133,32 @@ export class AuthService {
 
   private loadCurrentUser(): Observable<CurrentUser> {
     return this.api.getCurrentUser().pipe(tap((user) => this.currentUser.set(user)));
+  }
+}
+
+// Where to go after confirming the email (e.g. back to the invitation link that led to sign-up). Kept in this
+// browser across the trip to the inbox; only a path inside the site is accepted, never another site.
+const AFTER_VERIFY_KEY = 'asbl.afterVerify';
+
+export function rememberAfterVerify(path: string | null): void {
+  try {
+    if (path && path.startsWith('/') && !path.startsWith('//')) {
+      localStorage.setItem(AFTER_VERIFY_KEY, path);
+    } else {
+      localStorage.removeItem(AFTER_VERIFY_KEY);
+    }
+  } catch {
+    // storage unavailable: the person lands on the home page instead
+  }
+}
+
+export function takeAfterVerify(): string {
+  try {
+    const path = localStorage.getItem(AFTER_VERIFY_KEY);
+    localStorage.removeItem(AFTER_VERIFY_KEY);
+    return path && path.startsWith('/') && !path.startsWith('//') ? path : '/';
+  } catch {
+    return '/';
   }
 }
 

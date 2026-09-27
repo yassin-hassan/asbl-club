@@ -1,4 +1,5 @@
 import { expect, Page, test } from '@playwright/test';
+import { createAccount } from './mail';
 
 async function logIn(page: Page, email: string, password = 'password123') {
   await page.goto('/login');
@@ -20,7 +21,7 @@ test('a user closes their account: confirmation, logged out, and the password no
   await page.getByLabel('Name').fill('To Be Deleted');
   await page.getByLabel('Email address').fill(email);
   await page.getByLabel('Password').fill('password123');
-  await page.getByRole('button', { name: 'Create account' }).click();
+  await createAccount(page);
   await expect(page.getByRole('heading', { name: 'Your associations' })).toBeVisible();
 
   await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'My account' }).click();

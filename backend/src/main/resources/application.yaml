@@ -67,6 +67,8 @@ email:
   from: ${MAIL_FROM:asbl.club <no-reply@asbl.club.local>}
   # The background sender; the test suite switches it off (only the email tests turn it on).
   sender-enabled: ${MAIL_SENDER_ENABLED:true}
+  # How often it looks at the outbox (the e2e runs use half a second, so sign-ups don't wait).
+  send-every-ms: ${MAIL_SEND_EVERY_MS:10000}
 
 bookings:
   # An unpaid booking gives its seat back after this long (Stripe's form, 3-D Secure included, takes a few minutes).

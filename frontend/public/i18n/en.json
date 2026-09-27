@@ -31,7 +31,9 @@
     "noAccount": "No account yet",
     "createOne": "Create an account",
     "deleted": "Your account has been deleted",
-    "forgot": "Forgot your password?"
+    "forgot": "Forgot your password?",
+    "notVerified": "Confirm your email address first: open the link we sent you.",
+    "linkResent": "We've sent the link again."
   },
   "account": {
     "title": "My account",
@@ -166,11 +168,14 @@
     "password": "Password",
     "submit": "Create account",
     "haveAccount": "I already have an account",
-    "emailTaken": "This email address is already in use",
     "passwordHint": "At least 8 characters.",
     "nameRequired": "Enter your name.",
     "passwordTooShort": "At least 8 characters.",
-    "submitting": "Creating…"
+    "submitting": "Creating…",
+    "checkInbox": "Check your inbox",
+    "sentTo": "We've sent an email to {{ email }}. Open the link in it to activate your account (it works for 24 hours). If you already have an account, the email says so.",
+    "resend": "Send the link again",
+    "resent": "Sent again. Check your spam folder too."
   },
   "dashboard": {
     "title": "Your associations",
@@ -432,5 +437,11 @@
     "done": "Your password has been changed, and you've been logged out everywhere. Log in with your new password.",
     "invalidLink": "This link is invalid, expired or already used.",
     "askAgain": "Ask for a new link"
+  },
+  "verify": {
+    "title": "Confirming your email",
+    "checking": "Checking the link…",
+    "invalidLink": "This link is invalid, expired or already used.",
+    "whatNow": "Log in to get a new one:"
   }
 }

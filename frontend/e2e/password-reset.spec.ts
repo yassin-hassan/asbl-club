@@ -1,24 +1,7 @@
 import { expect, test } from '@playwright/test';
+import { createAccount, linkFromEmail } from './mail';
 
-// The whole "forgot password" path, with a real email: the API sends it to Mailpit (a fake mail server, in
-// compose.yaml locally and as a CI service), and the test reads it through Mailpit's API like an inbox.
-const MAILPIT = process.env['MAILPIT_URL'] ?? 'http://localhost:8025';
-
-async function linkFromTheEmailTo(address: string): Promise<string> {
-  for (let attempt = 0; attempt < 30; attempt++) { // the background sender runs every 10 seconds
-    const search = await (await fetch(`${MAILPIT}/api/v1/search?query=${encodeURIComponent(`to:"${address}"`)}`)).json();
-    if (search.messages?.length) {
-      const message = await (await fetch(`${MAILPIT}/api/v1/message/${search.messages[0].ID}`)).json();
-      const link = /https?:\/\/\S+\/reset-password#token=[\w-]+/.exec(message.Text)?.[0];
-      if (link) {
-        return link;
-      }
-    }
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-  }
-  throw new Error(`No reset email for ${address}`);
-}
-
+// The whole "forgot password" path, with a real email (read from Mailpit, see mail.ts).
 test('someone who forgot their password gets a link by email and chooses a new one', async ({ page }) => {
   test.setTimeout(60_000);
   const email = `e2e-forgot-${Date.now()}@club.test`;
@@ -27,16 +10,18 @@ test('someone who forgot their password gets a link by email and chooses a new o
   await page.getByLabel('Name').fill('Forgetful Fred');
   await page.getByLabel('Email address').fill(email);
   await page.getByLabel('Password').fill('the-old-password');
-  await page.getByRole('button', { name: 'Create account' }).click();
+  await createAccount(page);
   await page.getByRole('button', { name: 'Log out' }).click();
 
   await page.goto('/login');
   await page.getByRole('link', { name: 'Forgot your password?' }).click();
+  // The new page first: typing too early would fill the login form's email field, which is still on screen.
+  await expect(page.getByRole('heading', { name: 'Forgot your password?' })).toBeVisible();
   await page.getByLabel('Email address').fill(email);
   await page.getByRole('button', { name: 'Send the link' }).click();
   await expect(page.getByText("If an account exists for this address, we've sent it a link.")).toBeVisible();
 
-  const link = await linkFromTheEmailTo(email);
+  const link = await linkFromEmail(email, 'reset-password');
   await page.goto(link);
   await expect(page).toHaveURL(/\/reset-password$/); // the token is gone from the address bar
   await page.getByLabel('New password', { exact: true }).fill('the-new-password');

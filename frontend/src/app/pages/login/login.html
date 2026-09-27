@@ -28,6 +28,13 @@
       @if (error(); as error) {
         <p class="error" role="alert">{{ error | transloco }}</p>
       }
+      @if (notVerified()) {
+        @if (linkResent()) {
+          <p role="status">{{ 'login.linkResent' | transloco }}</p>
+        } @else {
+          <button mat-stroked-button type="button" (click)="resendLink()">{{ 'register.resend' | transloco }}</button>
+        }
+      }
 
       <button mat-flat-button type="submit" [disabled]="submitting()">
         {{ (submitting() ? 'login.submitting' : 'login.submit') | transloco }}
