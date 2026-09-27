@@ -26,6 +26,7 @@ export * from './meResponse';
 export * from './myAssociation';
 export * from './myBooking';
 export * from './myRegistration';
+export * from './nameRequest';
 export * from './newPassword';
 export * from './paymentExport';
 export * from './paymentSetupStatus';

@@ -9,5 +9,6 @@ import java.util.UUID;
 record MeResponse(
         @Schema(requiredMode = REQUIRED) UUID id,
         @Schema(requiredMode = REQUIRED) String email,
+        @Schema(requiredMode = REQUIRED) String name,
         @Schema(requiredMode = REQUIRED) List<String> roles) {
 }

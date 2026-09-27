@@ -41,6 +41,37 @@
     "description" : "Connecting an association to Stripe (administrators)"
   } ],
   "paths" : {
+    "/api/v1/me/name" : {
+      "put" : {
+        "tags" : [ "Account" ],
+        "summary" : "Change the name shown to association administrators and in emails",
+        "operationId" : "changeMyName",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/NameRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "Changed"
+          },
+          "400" : {
+            "description" : "Empty, or longer than 255 characters",
+            "content" : {
+              "application/problem+json" : { }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      }
+    },
     "/api/v1/asbls/{slug}/manage/members/{userId}/role" : {
       "put" : {
         "tags" : [ "Member management" ],
@@ -1741,6 +1772,17 @@
   },
   "components" : {
     "schemas" : {
+      "NameRequest" : {
+        "required" : [ "name" ],
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "maxLength" : 255,
+            "minLength" : 0,
+            "type" : "string"
+          }
+        }
+      },
       "RoleChange" : {
         "required" : [ "role" ],
         "type" : "object",
@@ -2202,7 +2244,7 @@
         }
       },
       "MeResponse" : {
-        "required" : [ "email", "id", "roles" ],
+        "required" : [ "email", "id", "name", "roles" ],
         "type" : "object",
         "properties" : {
           "id" : {
@@ -2210,6 +2252,9 @@
             "format" : "uuid"
           },
           "email" : {
+            "type" : "string"
+          },
+          "name" : {
             "type" : "string"
           },
           "roles" : {

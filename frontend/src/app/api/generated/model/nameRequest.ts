@@ -9,10 +9,7 @@
  */
 
 
-export interface MeResponse { 
-    id: string;
-    email: string;
+export interface NameRequest { 
     name: string;
-    roles: Array<string>;
 }
 

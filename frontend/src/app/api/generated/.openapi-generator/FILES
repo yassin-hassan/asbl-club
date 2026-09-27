@@ -43,6 +43,7 @@ model/models.ts
 model/myAssociation.ts
 model/myBooking.ts
 model/myRegistration.ts
+model/nameRequest.ts
 model/newPassword.ts
 model/paymentExport.ts
 model/paymentSetupStatus.ts

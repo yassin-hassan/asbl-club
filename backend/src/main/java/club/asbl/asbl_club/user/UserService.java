@@ -101,6 +101,13 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    // The name shown to association administrators and in emails; the email address and identity don't change.
+    @Transactional
+    public void changeName(User user, String name) {
+        user.setName(name.trim());
+        userRepository.save(user);
+    }
+
     @Transactional
     public void changePassword(User user, String rawPassword) {
         user.setPassword(passwordEncoder.encode(rawPassword));

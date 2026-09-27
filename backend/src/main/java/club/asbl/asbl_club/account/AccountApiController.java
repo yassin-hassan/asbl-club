@@ -1,5 +1,12 @@
 package club.asbl.asbl_club.account;
 
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
+import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.media.Content;
 import club.asbl.asbl_club.membership.MembershipService;
 import club.asbl.asbl_club.user.User;
 import club.asbl.asbl_club.user.UserService;
@@ -50,6 +57,20 @@ class AccountApiController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"my-data.json\"")
                 .body(accountService.exportFor(user));
+    }
+
+    record NameRequest(@NotBlank @Size(max = 255) String name) {
+    }
+
+    @Operation(operationId = "changeMyName", summary = "Change the name shown to association administrators and in "
+            + "emails", security = @SecurityRequirement(name = "bearer"))
+    @ApiResponse(responseCode = "204", description = "Changed")
+    @ApiResponse(responseCode = "400", description = "Empty, or longer than 255 characters",
+            content = @Content(mediaType = "application/problem+json"))
+    @PutMapping("/name")
+    ResponseEntity<Void> changeName(@Valid @RequestBody NameRequest request, Authentication authentication) {
+        userService.changeName(userService.getAuthenticated(authentication), request.name());
+        return ResponseEntity.noContent().build();
     }
 
     // Anonymises the account and ends every login session. The access token in the caller's hands stays valid

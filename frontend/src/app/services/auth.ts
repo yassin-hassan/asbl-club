@@ -131,6 +131,11 @@ export class AuthService {
     setSessionHint(false);
   }
 
+  // After a change to the account (e.g. its name): read it again, so every page shows the new value.
+  reloadUser(): Observable<CurrentUser> {
+    return this.loadCurrentUser();
+  }
+
   private loadCurrentUser(): Observable<CurrentUser> {
     return this.api.getCurrentUser().pipe(tap((user) => this.currentUser.set(user)));
   }

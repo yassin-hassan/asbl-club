@@ -43,7 +43,12 @@
     "deleteConfirm": "Are you sure you want to permanently delete your account? This action cannot be undone.",
     "cancel": "Cancel",
     "delete": "Delete permanently",
-    "back": "Back to home"
+    "back": "Back to home",
+    "nameTitle": "Your name",
+    "name": "Name",
+    "nameHint": "Shown to the administrators of your associations and in our emails.",
+    "saveName": "Save",
+    "nameSaved": "Saved."
   },
   "events": {
     "back": "Home",

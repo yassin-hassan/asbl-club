@@ -43,7 +43,12 @@
     "deleteConfirm": "Êtes-vous sûr de vouloir supprimer définitivement votre compte ? Cette action est irréversible.",
     "cancel": "Annuler",
     "delete": "Supprimer définitivement",
-    "back": "Retour à l'accueil"
+    "back": "Retour à l'accueil",
+    "nameTitle": "Votre nom",
+    "name": "Nom",
+    "nameHint": "Visible par les administrateurs de vos associations et dans nos e-mails.",
+    "saveName": "Enregistrer",
+    "nameSaved": "Enregistré."
   },
   "events": {
     "back": "Accueil",

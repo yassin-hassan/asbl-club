@@ -43,7 +43,12 @@
     "deleteConfirm": "Weet u zeker dat u uw account definitief wilt verwijderen? Deze actie is onomkeerbaar.",
     "cancel": "Annuleren",
     "delete": "Definitief verwijderen",
-    "back": "Terug naar de startpagina"
+    "back": "Terug naar de startpagina",
+    "nameTitle": "Je naam",
+    "name": "Naam",
+    "nameHint": "Zichtbaar voor de beheerders van je verenigingen en in onze e-mails.",
+    "saveName": "Opslaan",
+    "nameSaved": "Opgeslagen."
   },
   "events": {
     "back": "Home",
