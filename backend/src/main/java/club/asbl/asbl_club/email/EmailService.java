@@ -24,9 +24,20 @@ public class EmailService {
     // MANDATORY: always part of the caller's transaction, so the email exists if and only if the action committed.
     @Transactional(propagation = Propagation.MANDATORY)
     public void queue(String recipient, Locale locale, String template, Object... args) {
+        outbox.save(render(recipient, locale, template, args));
+    }
+
+    // The same, with a ticket attached as a QR image (a PNG, drawn when the email is sent).
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void queueWithQrCode(String recipient, Locale locale, String template, String qrCode, String qrFileName,
+            Object... args) {
+        outbox.save(render(recipient, locale, template, args).withQrCode(qrCode, qrFileName));
+    }
+
+    private OutgoingEmail render(String recipient, Locale locale, String template, Object... args) {
         String subject = messages.getMessage("email." + template + ".subject", args, locale);
         String body = messages.getMessage("email." + template + ".body", args, locale)
                 + "\n\n" + messages.getMessage("email.signature", null, locale);
-        outbox.save(new OutgoingEmail(recipient, subject, body));
+        return new OutgoingEmail(recipient, subject, body);
     }
 }

@@ -50,6 +50,9 @@ class PaymentServiceTest {
     @Mock
     EventService eventService;
 
+    @Mock
+    BookingEmails bookingEmails;
+
     @InjectMocks
     PaymentService paymentService;
 

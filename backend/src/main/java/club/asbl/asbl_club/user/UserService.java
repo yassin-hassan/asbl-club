@@ -3,6 +3,7 @@ package club.asbl.asbl_club.user;
 import java.time.Instant;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.Authentication;
@@ -102,6 +103,17 @@ public class UserService {
     }
 
     // The name shown to association administrators and in emails; the email address and identity don't change.
+    // The language the person uses the site in (fr, nl or en), for emails sent without a request to take it from,
+    // such as a ticket confirmed by Stripe's webhook.
+    @Transactional
+    public void rememberLanguage(User user, Locale locale) {
+        String language = locale.getLanguage();
+        if (Set.of("fr", "nl", "en").contains(language) && !language.equals(user.getLanguage())) {
+            user.setLanguage(language);
+            userRepository.save(user);
+        }
+    }
+
     @Transactional
     public void changeName(User user, String name) {
         user.setName(name.trim());

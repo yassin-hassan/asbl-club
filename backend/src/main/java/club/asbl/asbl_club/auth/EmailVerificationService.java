@@ -48,6 +48,7 @@ class EmailVerificationService {
                     user.getName(), publicUrl + "/login", publicUrl + "/forgot-password");
             auditService.recordSecurityEvent("SIGN_UP_WITH_EXISTING_EMAIL", user, null);
         } else {
+            userService.rememberLanguage(user, LocaleContextHolder.getLocale());
             sendLink(user);
         }
     }

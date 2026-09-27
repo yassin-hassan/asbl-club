@@ -6,7 +6,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -54,18 +57,30 @@ public class EmailSender {
         return handled;
     }
 
+    // Plain text, UTF-8; with a ticket, a second part: the QR code as a PNG attachment (works in every mail program,
+    // unlike an image embedded in HTML).
+    private MimeMessage mimeMessage(OutgoingEmail email) throws MessagingException {
+        MimeMessage message = mailSender.createMimeMessage();
+        boolean withTicket = email.getQrCode() != null;
+        MimeMessageHelper helper = new MimeMessageHelper(message, withTicket, "UTF-8");
+        helper.setFrom(properties.from());
+        helper.setTo(email.getRecipient());
+        helper.setSubject(email.getSubject());
+        helper.setText(email.getBody(), false);
+        if (withTicket) {
+            helper.addAttachment(email.getQrFileName(), new ByteArrayResource(QrCodes.png(email.getQrCode())),
+                    "image/png");
+        }
+        return message;
+    }
+
     private boolean sendNext() {
         Instant now = Instant.now();
         return outbox.claimNextDue(now).map(email -> {
             try {
-                SimpleMailMessage message = new SimpleMailMessage();
-                message.setFrom(properties.from());
-                message.setTo(email.getRecipient());
-                message.setSubject(email.getSubject());
-                message.setText(email.getBody());
-                mailSender.send(message);
+                mailSender.send(mimeMessage(email));
                 email.sent(now);
-            } catch (MailException e) {
+            } catch (MailException | MessagingException e) {
                 boolean giveUp = email.getAttempts() >= RETRY_DELAYS.size();
                 Instant retryAt = giveUp ? now : now.plus(RETRY_DELAYS.get(email.getAttempts()));
                 email.failedAttempt(e.getMessage(), retryAt, giveUp);
