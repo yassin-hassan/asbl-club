@@ -504,6 +504,56 @@
         }
       }
     },
+    "/api/v1/auth/password-reset" : {
+      "post" : {
+        "tags" : [ "Authentication" ],
+        "summary" : "Email a link to choose a new password (same answer whether or not the account exists)",
+        "operationId" : "requestPasswordReset",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ResetRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "202" : {
+            "description" : "Accepted: if an account exists, an email is on its way"
+          }
+        }
+      }
+    },
+    "/api/v1/auth/password-reset/confirm" : {
+      "post" : {
+        "tags" : [ "Authentication" ],
+        "summary" : "Choose a new password with the emailed link's token; every session of the account is ended",
+        "operationId" : "resetPassword",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/NewPassword"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "Password changed; log in with the new one"
+          },
+          "400" : {
+            "description" : "Invalid, expired or already used link (INVALID_RESET_TOKEN), or a password that breaks the rules",
+            "content" : {
+              "application/problem+json" : { }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/auth/logout" : {
       "post" : {
         "tags" : [ "Authentication" ],
@@ -1853,6 +1903,34 @@
           "expiresIn" : {
             "type" : "integer",
             "format" : "int64"
+          }
+        }
+      },
+      "ResetRequest" : {
+        "required" : [ "email" ],
+        "type" : "object",
+        "properties" : {
+          "email" : {
+            "maxLength" : 255,
+            "minLength" : 0,
+            "type" : "string",
+            "format" : "email"
+          }
+        }
+      },
+      "NewPassword" : {
+        "required" : [ "password", "token" ],
+        "type" : "object",
+        "properties" : {
+          "token" : {
+            "maxLength" : 100,
+            "minLength" : 0,
+            "type" : "string"
+          },
+          "password" : {
+            "maxLength" : 100,
+            "minLength" : 8,
+            "type" : "string"
           }
         }
       },

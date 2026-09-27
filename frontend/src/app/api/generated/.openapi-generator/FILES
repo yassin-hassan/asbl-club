@@ -43,12 +43,14 @@ model/models.ts
 model/myAssociation.ts
 model/myBooking.ts
 model/myRegistration.ts
+model/newPassword.ts
 model/paymentExport.ts
 model/paymentSetupStatus.ts
 model/profileExport.ts
 model/publicEvent.ts
 model/publicTicket.ts
 model/registerRequest.ts
+model/resetRequest.ts
 model/roleChange.ts
 model/seatAvailability.ts
 model/stripeOnboardingLink.ts

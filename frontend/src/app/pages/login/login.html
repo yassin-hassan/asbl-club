@@ -15,13 +15,15 @@
         }
       </mat-form-field>
 
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
         <mat-label>{{ 'login.password' | transloco }}</mat-label>
         <input matInput type="password" formControlName="password" autocomplete="current-password" />
         @if (form.controls.password.invalid) {
           <mat-error>{{ 'login.passwordRequired' | transloco }}</mat-error>
         }
       </mat-form-field>
+
+      <a routerLink="/forgot-password" class="forgot">{{ 'login.forgot' | transloco }}</a>
 
       @if (error(); as error) {
         <p class="error" role="alert">{{ error | transloco }}</p>

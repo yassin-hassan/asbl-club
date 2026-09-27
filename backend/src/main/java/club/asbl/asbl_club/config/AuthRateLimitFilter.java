@@ -39,7 +39,9 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
     private static final Map<String, Integer> LIMITS_PER_MINUTE = Map.of(
             "/api/v1/auth/login", 10,
             "/api/v1/auth/register", 5,
-            "/api/v1/auth/refresh", 30); // every page load of the Angular app refreshes once
+            "/api/v1/auth/refresh", 30, // every page load of the Angular app refreshes once
+            "/api/v1/auth/password-reset", 5, // each one sends an email: no mail bombing, no provider-quota burning
+            "/api/v1/auth/password-reset/confirm", 10);
 
     private final boolean enabled;
     private final ProblemResponses problems;
