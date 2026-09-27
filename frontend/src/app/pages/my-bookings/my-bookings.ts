@@ -22,7 +22,7 @@ export function splitByDate(bookings: MyBooking[], now: Date): { upcoming: MyBoo
 // The logged-in person's bookings: a paid one is a ticket with its QR code; an unpaid one links to paying.
 @Component({
   selector: 'app-my-bookings',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CurrencyPipe, DatePipe, NgTemplateOutlet, RouterLink, TranslocoPipe, MatButtonModule, MatProgressSpinnerModule, TicketQr],
   templateUrl: './my-bookings.html',
   styleUrl: './my-bookings.css',

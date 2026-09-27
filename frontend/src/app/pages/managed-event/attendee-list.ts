@@ -15,7 +15,7 @@ const PAID = new Set(['PAID', 'CONFIRMED', 'ATTENDED']);
 // the event is shown and loads again whenever the page's event changes (a ticket edited, the event cancelled…).
 @Component({
   selector: 'app-attendee-list',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CurrencyPipe, DatePipe, TranslocoPipe, MatButtonModule, MatProgressSpinnerModule, MatTableModule],
   templateUrl: './attendee-list.html',
 })

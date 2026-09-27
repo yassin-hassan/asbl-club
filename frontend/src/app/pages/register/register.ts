@@ -11,7 +11,7 @@ import { errorMessageKey } from '../../services/problem';
 
 @Component({
   selector: 'app-register',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ReactiveFormsModule, RouterLink, TranslocoPipe, MatFormFieldModule, MatInputModule, MatButtonModule],
   templateUrl: './register.html',
   styles: '.narrow { max-width: 420px; margin: 0 auto; }',

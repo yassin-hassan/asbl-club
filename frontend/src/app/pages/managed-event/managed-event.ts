@@ -29,7 +29,7 @@ const LIFECYCLE_ERRORS: Record<string, string> = {
 // event, which simply replaces the one on screen. The API enforces every rule; the page only offers what makes sense.
 @Component({
   selector: 'app-managed-event',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterLink, DatePipe, AttendeeList, CurrencyPipe, ReactiveFormsModule, TranslocoPipe,
     MatButtonModule, MatFormFieldModule, MatInputModule, MatProgressSpinnerModule, MatTableModule,

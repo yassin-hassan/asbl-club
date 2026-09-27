@@ -12,7 +12,7 @@ import { errorMessageKey } from '../../services/problem';
 // Coming back with ?resume means that link had expired: we ask for a fresh one straight away.
 @Component({
   selector: 'app-payment-setup',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, TranslocoPipe, MatButtonModule, MatProgressSpinnerModule],
   templateUrl: './payment-setup.html',
 })

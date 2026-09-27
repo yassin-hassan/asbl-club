@@ -13,7 +13,7 @@ import { errorMessageKey } from '../../services/problem';
 // An association's events as its members see them: drafts included. Administrators can create more.
 @Component({
   selector: 'app-managed-events',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, DatePipe, TranslocoPipe, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
   templateUrl: './managed-events.html',
 })

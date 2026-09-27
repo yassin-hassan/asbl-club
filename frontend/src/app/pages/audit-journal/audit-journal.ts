@@ -19,7 +19,7 @@ type State = { journal: AuditJournal } | { error: string } | { loading: true };
 // The page number lives in the URL (?page=), so reloading or going back keeps the reader's place.
 @Component({
   selector: 'app-audit-journal',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [DatePipe, RouterLink, TranslocoPipe, MatButtonModule, MatProgressSpinnerModule, MatTableModule],
   templateUrl: './audit-journal.html',
 })

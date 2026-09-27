@@ -14,7 +14,7 @@ import { LANGUAGES } from '../../i18n/language';
 
 @Component({
   selector: 'app-create-asbl',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ReactiveFormsModule, RouterLink, TranslocoPipe, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule],
   templateUrl: './create-asbl.html',
   styles: '.narrow { max-width: 520px; margin: 0 auto; }',

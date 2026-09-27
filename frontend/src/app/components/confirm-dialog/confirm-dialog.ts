@@ -16,7 +16,7 @@ export interface ConfirmDialogData {
 // Reusable "are you sure?" dialog for irreversible actions.
 @Component({
   selector: 'app-confirm-dialog',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatDialogModule, MatButtonModule, TranslocoPipe],
   template: `
     <h2 mat-dialog-title>{{ data.title | transloco: data.params }}</h2>

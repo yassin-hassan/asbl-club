@@ -12,7 +12,7 @@ import { tokenFromFragment } from '../reset-password/reset-password';
 // removes it from the address bar at once, confirms the address and logs in, then goes where the person was heading.
 @Component({
   selector: 'app-verify-email',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, TranslocoPipe, MatProgressSpinnerModule],
   template: `
     <div class="auth-page">

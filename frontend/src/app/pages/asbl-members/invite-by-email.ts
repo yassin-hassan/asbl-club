@@ -15,7 +15,7 @@ import { errorMessageKey, problemOf } from '../../services/problem';
 // invitations not accepted yet, which can be cancelled.
 @Component({
   selector: 'app-invite-by-email',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [DatePipe, ReactiveFormsModule, TranslocoPipe, MatButtonModule, MatFormFieldModule, MatInputModule],
   template: `
     <h3>{{ 'invite.byEmail' | transloco }}</h3>

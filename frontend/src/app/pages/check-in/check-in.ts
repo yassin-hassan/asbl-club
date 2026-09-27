@@ -21,7 +21,7 @@ type Scan =
 // big and coloured, and keeps a short history of the last scans.
 @Component({
   selector: 'app-check-in',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [DatePipe, ReactiveFormsModule, RouterLink, TranslocoPipe, MatButtonModule, MatFormFieldModule, MatInputModule],
   templateUrl: './check-in.html',
   styleUrl: './check-in.css',

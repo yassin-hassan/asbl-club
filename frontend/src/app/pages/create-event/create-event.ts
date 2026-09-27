@@ -13,7 +13,7 @@ import { errorMessageKey, problemOf } from '../../services/problem';
 
 @Component({
   selector: 'app-create-event',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ReactiveFormsModule, RouterLink, TranslocoPipe, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule],
   templateUrl: './create-event.html',
   styles: '.narrow { max-width: 560px; margin: 0 auto; }',

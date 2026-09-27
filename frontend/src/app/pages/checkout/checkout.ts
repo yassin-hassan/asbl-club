@@ -14,7 +14,7 @@ import { errorMessageKey, problemOf } from '../../services/problem';
 // card details go from the browser straight to Stripe and never reach our server.
 @Component({
   selector: 'app-checkout',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CurrencyPipe, TranslocoPipe, MatButtonModule, MatProgressSpinnerModule],
   templateUrl: './checkout.html',
   styles: '.narrow { max-width: 480px; margin: 0 auto; } .amount { font: var(--mat-sys-headline-small); }',

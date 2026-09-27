@@ -12,7 +12,7 @@ import { errorMessageKey } from '../../services/problem';
 // answers the same either way), so this page can't be used to find out who is registered.
 @Component({
   selector: 'app-forgot-password',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ReactiveFormsModule, RouterLink, TranslocoPipe, MatButtonModule, MatFormFieldModule, MatInputModule],
   templateUrl: './forgot-password.html',
 })
