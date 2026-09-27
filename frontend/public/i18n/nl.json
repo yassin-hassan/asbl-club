@@ -378,7 +378,17 @@
     "copy": "Kopiëren",
     "copied": "Gekopieerd",
     "renewHint": "Een nieuwe link vervangt deze: de oude werkt dan niet meer.",
-    "off": "Geen actieve uitnodigingslink."
+    "off": "Geen actieve uitnodigingslink.",
+    "byEmail": "Of nodig iemand uit per e-mail",
+    "byEmailHint": "De persoon krijgt een persoonlijke link die meteen lid maakt, zonder goedkeuring. Die werkt alleen voor dat adres.",
+    "emailLabel": "E-mailadres",
+    "send": "Uitnodiging versturen",
+    "sent": "Uitnodiging verstuurd naar {{ email }}.",
+    "pending": "Uitnodigingen die op antwoord wachten",
+    "until": "geldig tot {{ date }}",
+    "cancel": "Annuleren",
+    "alreadyMember": "Deze persoon is al lid.",
+    "limit": "Je hebt het maximum aantal uitnodigingen voor vandaag verstuurd. Probeer morgen opnieuw."
   },
   "requests": {
     "title": "Lidmaatschapsaanvragen",
@@ -448,5 +458,14 @@
     "checking": "De link wordt gecontroleerd…",
     "invalidLink": "Deze link is ongeldig, verlopen of al gebruikt.",
     "whatNow": "Log in om een nieuwe te krijgen:"
+  },
+  "invitation": {
+    "title": "Uitnodiging",
+    "intro": "{{ name }} nodigt je uit om lid te worden van {{ association }}.",
+    "forAddress": "Deze uitnodiging is voor {{ email }}.",
+    "join": "Lid worden van {{ association }}",
+    "logInFirst": "Log in, of maak een account aan, met dat adres om te aanvaarden.",
+    "invalid": "Deze uitnodiging is ongeldig, verlopen of al gebruikt.",
+    "wrongAccount": "Deze uitnodiging werd naar een ander e-mailadres gestuurd. Meld je af en log in met dat adres."
   }
 }

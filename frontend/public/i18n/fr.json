@@ -378,7 +378,17 @@
     "copy": "Copier",
     "copied": "Copié",
     "renewHint": "Un nouveau lien remplace celui-ci : l’ancien ne fonctionne plus.",
-    "off": "Pas de lien d’invitation actif."
+    "off": "Pas de lien d’invitation actif.",
+    "byEmail": "Ou invitez quelqu'un par e-mail",
+    "byEmailHint": "La personne reçoit un lien personnel qui la rend membre tout de suite, sans validation. Il ne fonctionne que pour cette adresse.",
+    "emailLabel": "Adresse e-mail",
+    "send": "Envoyer l'invitation",
+    "sent": "Invitation envoyée à {{ email }}.",
+    "pending": "Invitations en attente de réponse",
+    "until": "valable jusqu'au {{ date }}",
+    "cancel": "Annuler",
+    "alreadyMember": "Cette personne est déjà membre.",
+    "limit": "Vous avez envoyé le maximum d'invitations pour aujourd'hui. Réessayez demain."
   },
   "requests": {
     "title": "Demandes d’adhésion",
@@ -448,5 +458,14 @@
     "checking": "Vérification du lien…",
     "invalidLink": "Ce lien n'est pas valable, a expiré ou a déjà servi.",
     "whatNow": "Connectez-vous pour en recevoir un nouveau :"
+  },
+  "invitation": {
+    "title": "Invitation",
+    "intro": "{{ name }} vous invite à rejoindre {{ association }}.",
+    "forAddress": "Cette invitation est pour {{ email }}.",
+    "join": "Rejoindre {{ association }}",
+    "logInFirst": "Connectez-vous, ou créez un compte, avec cette adresse pour accepter.",
+    "invalid": "Cette invitation n'est pas valable, a expiré ou a déjà servi.",
+    "wrongAccount": "Cette invitation a été envoyée à une autre adresse. Déconnectez-vous et connectez-vous avec cette adresse."
   }
 }
