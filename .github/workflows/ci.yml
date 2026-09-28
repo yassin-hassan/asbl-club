@@ -197,6 +197,22 @@ jobs:
         working-directory: frontend
         run: npm run build
 
+      # Readable browser stack traces in Sentry. The build writes hidden source maps (the JS doesn't point to them);
+      # each file and its map get the same Debug ID, the maps are uploaded, then deleted, so the site never serves
+      # its source code. Fails the deploy rather than shipping traces nobody can read.
+      - name: Upload source maps to Sentry
+        working-directory: frontend
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: asbl-club
+          SENTRY_PROJECT: asbl-club-frontend
+        run: |
+          [ -n "$SENTRY_AUTH_TOKEN" ] || { echo "::error::SENTRY_AUTH_TOKEN is not set"; exit 1; }
+          node scripts/strip-angular-debug-ids.mjs dist/frontend/browser
+          npx sentry-cli sourcemaps inject dist/frontend/browser
+          npx sentry-cli sourcemaps upload dist/frontend/browser
+          find dist/frontend/browser -name '*.map' -delete
+
       # Cloudflare's official action, using the project's own Wrangler version and wrangler.jsonc.
       # The Worker's secret (EDGE_PROXY_SECRET) is already stored in Cloudflare and kept across deploys.
       - name: Deploy to Cloudflare
@@ -214,6 +230,12 @@ jobs:
           SITE: https://asbl-club.ynhassan22.workers.dev
         run: |
           curl --fail --silent --show-error --max-time 30 "$SITE/" | grep -q '<app-root'
+          # The app's code carries its Debug ID (source maps work), and its source map isn't served to visitors.
+          main=$(curl --fail --silent --max-time 30 "$SITE/" | grep -o 'main-[A-Za-z0-9_-]*\.js' | head -1)
+          curl --fail --silent --max-time 30 "$SITE/$main" | grep -q '_sentryDebugIds'
+          if curl --silent --max-time 30 "$SITE/$main.map" | grep -q '"mappings"'; then
+            echo "::error::$main.map is publicly served"; exit 1
+          fi
           for attempt in 1 2 3; do
             type=$(curl --silent --output /dev/null --max-time 120 --write-out '%{http_code} %{content_type}' \
               "$SITE/api/v1/asbls/smoke-test-does-not-exist") || true
