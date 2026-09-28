@@ -108,6 +108,17 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./pages/payment-complete/payment-complete').then((m) => m.PaymentComplete),
   },
+  // Paying this year's dues: the same Stripe form; Stripe returns to /asbls/{slug}/dues/paid.
+  {
+    path: 'asbls/:slug/dues/pay',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/checkout/checkout').then((m) => m.CheckoutPage),
+  },
+  {
+    path: 'asbls/:slug/dues/paid',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/dues-paid/dues-paid').then((m) => m.DuesPaid),
+  },
   { path: 'legal', loadComponent: legal, data: { page: 'notice' } },
   { path: 'privacy', loadComponent: legal, data: { page: 'privacy' } },
   { path: 'cookies', loadComponent: legal, data: { page: 'cookies' } },

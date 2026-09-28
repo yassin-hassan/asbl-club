@@ -29,6 +29,11 @@
         <app-invite-by-email [slug]="slug" />
       </section>
 
+      <section class="box" aria-labelledby="dues-title">
+        <h2 id="dues-title">{{ 'dues.adminTitle' | transloco }}</h2>
+        <app-dues-fee [slug]="slug" />
+      </section>
+
       @if (requests().length > 0) {
         <section class="box" aria-labelledby="requests-title">
           <h2 id="requests-title">{{ 'requests.title' | transloco }}</h2>

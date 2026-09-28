@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "asbls")
@@ -45,6 +46,10 @@ public class Asbl {
     // The join link's token (see V13); null when the association has no active link.
     @Column(name = "join_token", length = 64, unique = true)
     private String joinToken;
+
+    // The yearly membership fee (see V20); null when the association doesn't collect dues.
+    @Column(name = "annual_fee", precision = 8, scale = 2)
+    private BigDecimal annualFee;
 
     protected Asbl() {
     }
@@ -123,5 +128,13 @@ public class Asbl {
 
     public void setJoinToken(String joinToken) {
         this.joinToken = joinToken;
+    }
+
+    public BigDecimal getAnnualFee() {
+        return annualFee;
+    }
+
+    public void setAnnualFee(BigDecimal annualFee) {
+        this.annualFee = annualFee;
     }
 }

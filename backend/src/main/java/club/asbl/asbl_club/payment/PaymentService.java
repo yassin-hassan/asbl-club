@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,10 +37,12 @@ public class PaymentService {
     private final EntityManager entityManager;
     private final EventService eventService;
     private final BookingEmails bookingEmails;
+    private final ApplicationEventPublisher events;
 
     public PaymentService(StripeClient stripe, PaymentRepository paymentRepository,
             RegistrationRepository registrationRepository, AuditService auditService, EntityManager entityManager,
-            EventService eventService, BookingEmails bookingEmails) {
+            EventService eventService, BookingEmails bookingEmails, ApplicationEventPublisher events) {
+        this.events = events;
         this.eventService = eventService;
         this.bookingEmails = bookingEmails;
         this.stripe = stripe;
@@ -133,7 +136,16 @@ public class PaymentService {
             });
             auditService.recordSystem("PAYMENT_SUCCEEDED", payment.getAsbl(), "Payment", payment.getId(),
                     Map.of("paymentIntentId", paymentIntentId, "amount", payment.getAmount()));
+            events.publishEvent(new PaymentSucceeded(payment.getId(), payment.getPayable().getId()));
         });
+    }
+
+    // When this was paid, or empty while it isn't (not started, waiting for Stripe, failed or refunded).
+    @Transactional(readOnly = true)
+    public Optional<Instant> paidAt(Payable payable) {
+        return paymentRepository.findByPayableId(payable.getId())
+                .filter(payment -> payment.getStatus() == PaymentStatus.SUCCEEDED)
+                .map(Payment::getPaidAt);
     }
 
     // Paid a little late: the booking had just expired and given its seat back. If the event is still on and a seat

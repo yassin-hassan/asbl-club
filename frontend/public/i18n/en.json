@@ -457,5 +457,25 @@
     "logInFirst": "Log in, or create an account, with that address to accept.",
     "invalid": "This invitation is invalid, expired or already used.",
     "wrongAccount": "This invitation was sent to another email address. Log out and log in with that address."
+  },
+  "dues": {
+    "title": "Your dues",
+    "adminTitle": "Membership dues",
+    "forYear": "Dues {{year}}",
+    "paid": "Paid",
+    "pay": "Pay",
+    "alreadyPaid": "This year's dues are already paid.",
+    "none": "This association doesn't collect dues.",
+    "paidConfirmed": "Payment confirmed: your dues are paid. A receipt is on its way by email.",
+    "backToDashboard": "Back to my dashboard",
+    "needsPayments": "To collect dues online, first connect the association's Stripe account.",
+    "setUpPayments": "Set up payments",
+    "current": "Members pay {{amount}} for {{year}}.",
+    "off": "The association doesn't collect dues yet.",
+    "feeLabel": "Yearly fee",
+    "feeInvalid": "Between €1 and €9,999.99.",
+    "save": "Save",
+    "stop": "Stop collecting dues",
+    "saved": "Saved."
   }
 }

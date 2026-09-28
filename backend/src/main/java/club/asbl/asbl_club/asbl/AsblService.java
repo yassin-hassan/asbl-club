@@ -3,6 +3,7 @@ package club.asbl.asbl_club.asbl;
 import club.asbl.asbl_club.audit.AuditService;
 import club.asbl.asbl_club.membership.MembershipService;
 import club.asbl.asbl_club.user.User;
+import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.Map;
@@ -52,6 +53,12 @@ public class AsblService {
     @Transactional
     public void linkStripeAccount(Asbl asbl, String stripeAccountId) {
         asbl.setStripeAccountId(stripeAccountId);
+        asblRepository.save(asbl);
+    }
+
+    @Transactional
+    public void setAnnualFee(Asbl asbl, BigDecimal annualFee) {
+        asbl.setAnnualFee(annualFee);
         asblRepository.save(asbl);
     }
 

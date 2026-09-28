@@ -457,5 +457,25 @@
     "logInFirst": "Log in, of maak een account aan, met dat adres om te aanvaarden.",
     "invalid": "Deze uitnodiging is ongeldig, verlopen of al gebruikt.",
     "wrongAccount": "Deze uitnodiging werd naar een ander e-mailadres gestuurd. Meld je af en log in met dat adres."
+  },
+  "dues": {
+    "title": "Je lidgeld",
+    "adminTitle": "Lidgeld",
+    "forYear": "Lidgeld {{year}}",
+    "paid": "Betaald",
+    "pay": "Betalen",
+    "alreadyPaid": "Het lidgeld van dit jaar is al betaald.",
+    "none": "Deze vereniging vraagt geen lidgeld.",
+    "paidConfirmed": "Betaling bevestigd: je lidgeld is betaald. Een ontvangstbewijs komt per e-mail.",
+    "backToDashboard": "Terug naar mijn dashboard",
+    "needsPayments": "Om lidgeld online te innen, koppel eerst de Stripe-account van de vereniging.",
+    "setUpPayments": "Betalingen instellen",
+    "current": "Leden betalen {{amount}} voor {{year}}.",
+    "off": "De vereniging vraagt nog geen lidgeld.",
+    "feeLabel": "Jaarlijks lidgeld",
+    "feeInvalid": "Tussen € 1 en € 9.999,99.",
+    "save": "Opslaan",
+    "stop": "Geen lidgeld meer vragen",
+    "saved": "Opgeslagen."
   }
 }
