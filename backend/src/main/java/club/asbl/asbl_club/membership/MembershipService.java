@@ -44,6 +44,15 @@ public class MembershipService {
                 .toList();
     }
 
+    // The associations the user is an ACTIVE member of (what they may owe dues to).
+    @Transactional(readOnly = true)
+    public List<Asbl> activeAssociationsOf(User user) {
+        return membershipRepository.findByUser(user).stream()
+                .filter(m -> m.getStatus() == MembershipStatus.ACTIVE)
+                .map(Membership::getAsbl)
+                .toList();
+    }
+
     // The user's role in this association, or empty when they aren't an ACTIVE member. Every access decision goes
     // through here or isAdmin: a pending request, an excluded member or someone who left gets no access.
     @Transactional(readOnly = true)

@@ -11,14 +11,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 // Webhook requests as Stripe sends them: a JSON event with its own ID, signed with the endpoint's secret.
-final class StripeWebhooks {
+public final class StripeWebhooks {
 
-    static final String SECRET = "whsec_test_secret_abcdef0123456789";
+    public static final String SECRET = "whsec_test_secret_abcdef0123456789";
 
     private StripeWebhooks() {
     }
 
-    static MockHttpServletRequestBuilder signed(String eventId, String type, String intentId) {
+    public static MockHttpServletRequestBuilder signed(String eventId, String type, String intentId) {
         return request(payload(eventId, type, intentId), SECRET);
     }
 
