@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Runs Terraform with the tokens it needs, without writing them anywhere: GitHub's from the gh CLI login, the others
+# from .env (gitignored; see README.md).
+set -euo pipefail
+cd "$(dirname "$0")"
+if [ -f .env ]; then set -a; source .env; set +a; fi
+GITHUB_TOKEN="$(gh auth token)"
+export GITHUB_TOKEN
+exec terraform "$@"
