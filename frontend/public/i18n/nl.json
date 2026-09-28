@@ -469,13 +469,18 @@
     "paidConfirmed": "Betaling bevestigd: je lidgeld is betaald. Een ontvangstbewijs komt per e-mail.",
     "backToDashboard": "Terug naar mijn dashboard",
     "needsPayments": "Om lidgeld online te innen, koppel eerst de Stripe-account van de vereniging.",
-    "setUpPayments": "Betalingen instellen",
+    "setUpPayments": "Stripe koppelen",
     "current": "Leden betalen {{amount}} voor {{year}}.",
     "off": "De vereniging vraagt nog geen lidgeld.",
     "feeLabel": "Jaarlijks lidgeld",
     "feeInvalid": "Tussen € 1 en € 9.999,99.",
     "save": "Opslaan",
     "stop": "Geen lidgeld meer vragen",
-    "saved": "Opgeslagen."
+    "saved": "Opgeslagen.",
+    "unpaid": "Niet betaald",
+    "summary": "{{paid}} van de {{total}} leden hebben betaald voor {{year}}.",
+    "download": "Downloaden (CSV)",
+    "listLabel": "Wie zijn lidgeld betaalde",
+    "paidAt": "Betaald op"
   }
 }

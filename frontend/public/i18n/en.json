@@ -469,13 +469,18 @@
     "paidConfirmed": "Payment confirmed: your dues are paid. A receipt is on its way by email.",
     "backToDashboard": "Back to my dashboard",
     "needsPayments": "To collect dues online, first connect the association's Stripe account.",
-    "setUpPayments": "Set up payments",
+    "setUpPayments": "Connect Stripe",
     "current": "Members pay {{amount}} for {{year}}.",
     "off": "The association doesn't collect dues yet.",
     "feeLabel": "Yearly fee",
     "feeInvalid": "Between €1 and €9,999.99.",
     "save": "Save",
     "stop": "Stop collecting dues",
-    "saved": "Saved."
+    "saved": "Saved.",
+    "unpaid": "Unpaid",
+    "summary": "{{paid}} of {{total}} members have paid for {{year}}.",
+    "download": "Download (CSV)",
+    "listLabel": "Who paid their dues",
+    "paidAt": "Paid on"
   }
 }

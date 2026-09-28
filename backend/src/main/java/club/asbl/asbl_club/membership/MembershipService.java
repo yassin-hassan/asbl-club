@@ -5,6 +5,7 @@ import club.asbl.asbl_club.asbl.AsblSummary;
 import club.asbl.asbl_club.audit.AuditService;
 import club.asbl.asbl_club.user.User;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -50,6 +51,16 @@ public class MembershipService {
         return membershipRepository.findByUser(user).stream()
                 .filter(m -> m.getStatus() == MembershipStatus.ACTIVE)
                 .map(Membership::getAsbl)
+                .toList();
+    }
+
+    // The association's ACTIVE members, by name (who owes dues this year).
+    @Transactional(readOnly = true)
+    public List<User> activeMembersOf(Asbl asbl) {
+        return membershipRepository.findByAsbl(asbl).stream()
+                .filter(m -> m.getStatus() == MembershipStatus.ACTIVE)
+                .map(Membership::getUser)
+                .sorted(Comparator.comparing(User::getName, String.CASE_INSENSITIVE_ORDER))
                 .toList();
     }
 

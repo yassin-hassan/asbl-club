@@ -8,6 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { DuesService } from '../../api/generated';
+import { DuesReport } from './dues-report';
 import { LanguageService } from '../../i18n/language';
 import { errorMessageKey } from '../../services/problem';
 
@@ -16,7 +17,7 @@ import { errorMessageKey } from '../../services/problem';
 @Component({
   selector: 'app-dues-fee',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CurrencyPipe, ReactiveFormsModule, RouterLink, TranslocoPipe, MatButtonModule, MatFormFieldModule,
+  imports: [CurrencyPipe, DuesReport, ReactiveFormsModule, RouterLink, TranslocoPipe, MatButtonModule, MatFormFieldModule,
     MatInputModule],
   template: `
     @if (settings.value(); as settings) {
@@ -50,6 +51,9 @@ import { errorMessageKey } from '../../services/problem';
     }
     @if (error(); as error) {
       <p class="error" role="alert">{{ error | transloco }}</p>
+    }
+    @if (settings.value()?.annualFee) {
+      <app-dues-report [slug]="slug()" />
     }
   `,
   styles: '.fee-form { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; } .fee-form mat-form-field { flex: 0 1 200px; }',

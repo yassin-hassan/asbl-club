@@ -1955,6 +1955,79 @@
         } ]
       }
     },
+    "/api/v1/asbls/{slug}/manage/dues/members" : {
+      "get" : {
+        "tags" : [ "Dues" ],
+        "summary" : "Who paid this year's dues (administrators and treasurers)",
+        "operationId" : "getDuesReport",
+        "parameters" : [ {
+          "name" : "slug",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Current members, by name",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DuesReport"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Not an administrator or treasurer of this association",
+            "content" : {
+              "application/problem+json" : { }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/asbls/{slug}/manage/dues/members/export" : {
+      "get" : {
+        "tags" : [ "Dues" ],
+        "summary" : "Who paid this year's dues, as a CSV file for Excel (administrators and treasurers)",
+        "operationId" : "exportDuesReport",
+        "parameters" : [ {
+          "name" : "slug",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Semicolon-separated, UTF-8 with a byte-order mark",
+            "content" : {
+              "text/csv" : {
+                "schema" : {
+                  "type" : "string",
+                  "format" : "binary"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Not an administrator or treasurer of this association",
+            "content" : {
+              "application/problem+json" : { }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      }
+    },
     "/api/v1/asbls/{slug}/manage/audit" : {
       "get" : {
         "tags" : [ "Audit" ],
@@ -3035,6 +3108,53 @@
           "paymentsEnabled" : {
             "type" : "boolean",
             "description" : "Whether the association can receive payments (Stripe)"
+          }
+        }
+      },
+      "DuesMember" : {
+        "required" : [ "email", "name", "paid" ],
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "email" : {
+            "type" : "string"
+          },
+          "paid" : {
+            "type" : "boolean"
+          },
+          "amount" : {
+            "type" : "number",
+            "description" : "Amount paid in euros; absent while unpaid"
+          },
+          "paidAt" : {
+            "type" : "string",
+            "description" : "When it was paid; absent while unpaid",
+            "format" : "date-time"
+          }
+        },
+        "description" : "Current members, by name"
+      },
+      "DuesReport" : {
+        "required" : [ "members", "paid", "year" ],
+        "type" : "object",
+        "properties" : {
+          "year" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "paid" : {
+            "type" : "integer",
+            "description" : "How many of the members have paid",
+            "format" : "int32"
+          },
+          "members" : {
+            "type" : "array",
+            "description" : "Current members, by name",
+            "items" : {
+              "$ref" : "#/components/schemas/DuesMember"
+            }
           }
         }
       },

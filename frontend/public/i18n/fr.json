@@ -469,13 +469,18 @@
     "paidConfirmed": "Paiement confirmé : votre cotisation est payée. Un reçu vous est envoyé par email.",
     "backToDashboard": "Retour à mon tableau de bord",
     "needsPayments": "Pour encaisser les cotisations en ligne, connectez d'abord le compte Stripe de l'association.",
-    "setUpPayments": "Configurer les paiements",
+    "setUpPayments": "Connecter Stripe",
     "current": "Les membres paient {{amount}} pour {{year}}.",
     "off": "L'association ne demande pas encore de cotisation.",
     "feeLabel": "Cotisation annuelle",
     "feeInvalid": "Entre 1 € et 9 999,99 €.",
     "save": "Enregistrer",
     "stop": "Ne plus demander de cotisation",
-    "saved": "Enregistré."
+    "saved": "Enregistré.",
+    "unpaid": "Non payée",
+    "summary": "{{paid}} membres sur {{total}} ont payé pour {{year}}.",
+    "download": "Télécharger (CSV)",
+    "listLabel": "Qui a payé sa cotisation",
+    "paidAt": "Payée le"
   }
 }
