@@ -35,3 +35,10 @@ build/
 .DS_Store
 # Angular build cache, if an ng command runs from the repository root
 .angular/
+
+### Terraform (infra/): provider cache, state (holds a database password) and tokens ###
+infra/.terraform/
+infra/*.tfstate
+infra/*.tfstate.*
+infra/.env
+infra/crash.log
