@@ -89,7 +89,7 @@
     },
     "privacy": {
       "title": "Privacy (GDPR)",
-      "body": "asbl.club processes personal data in accordance with the General Data Protection Regulation. The data collected is used solely to manage accounts, memberships and payments. You have the right to access, correct and delete your data, which you can exercise from your account area or on request."
+      "body": "asbl.club processes personal data in accordance with the General Data Protection Regulation. The data collected is used solely to manage accounts, memberships and payments. You have the right to access, correct and delete your data, which you can exercise from your account area or on request. When the site hits a technical error, a report (the error, the page and the browser, with no personal data) is sent to our error tracking service, Sentry, hosted in the European Union."
     },
     "cookies": {
       "title": "Cookies",

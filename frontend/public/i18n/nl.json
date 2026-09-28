@@ -89,7 +89,7 @@
     },
     "privacy": {
       "title": "Privacy (AVG)",
-      "body": "asbl.club verwerkt persoonsgegevens met inachtneming van de Algemene Verordening Gegevensbescherming. De verzamelde gegevens dienen uitsluitend voor het beheer van accounts, lidmaatschappen en betalingen. U heeft recht op inzage, verbetering en verwijdering van uw gegevens, uit te oefenen via uw account of op eenvoudig verzoek."
+      "body": "asbl.club verwerkt persoonsgegevens met inachtneming van de Algemene Verordening Gegevensbescherming. De verzamelde gegevens dienen uitsluitend voor het beheer van accounts, lidmaatschappen en betalingen. U heeft recht op inzage, verbetering en verwijdering van uw gegevens, uit te oefenen via uw account of op eenvoudig verzoek. Wanneer de site een technische fout tegenkomt, wordt een rapport (de fout, de pagina en de browser, zonder persoonsgegevens) verstuurd naar onze dienst voor foutopvolging, Sentry, gehost in de Europese Unie."
     },
     "cookies": {
       "title": "Cookies",

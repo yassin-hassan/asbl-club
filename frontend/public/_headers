@@ -4,9 +4,10 @@
 # Content-Security-Policy: a static site can't get a fresh nonce per request, so no inline scripts at all
 # (index.html has none: critical-CSS inlining is off in angular.json, it added an inline onload handler).
 # Styles need 'unsafe-inline': Angular and Material inject component styles at runtime (lower risk than
-# scripts). Stripe entries as listed in Stripe's security guide (Stripe.js, 3-D Secure, Link).
+# scripts). Stripe entries as listed in Stripe's security guide (Stripe.js, 3-D Secure, Link). Error reports go to
+# Sentry's EU region (src/app/error-tracking.ts).
 /*
-  Content-Security-Policy: default-src 'self'; script-src 'self' https://js.stripe.com https://*.js.stripe.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.stripe.com https://link.com https://*.link.com; frame-src https://js.stripe.com https://*.js.stripe.com https://hooks.stripe.com https://link.com https://*.link.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://js.stripe.com https://*.js.stripe.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.stripe.com https://link.com https://*.link.com https://*.ingest.de.sentry.io; frame-src https://js.stripe.com https://*.js.stripe.com https://hooks.stripe.com https://link.com https://*.link.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'
   Strict-Transport-Security: max-age=31536000
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
