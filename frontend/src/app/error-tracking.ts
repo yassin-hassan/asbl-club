@@ -6,8 +6,9 @@ import type { Breadcrumb, BrowserOptions, ErrorEvent, EventHint } from '@sentry/
 // alert. The backend reports its own errors (with the request ID), so API errors aren't reported again from here.
 //
 // The DSN only says where to send reports: it's public by design (it ships in every visitor's JavaScript). Empty
-// means off. Paste the browser project's DSN here (Sentry → Project settings → Client Keys).
-export const SENTRY_DSN = '';
+// means off. The asbl-club-frontend project's DSN (Sentry → Project settings → Client Keys).
+export const SENTRY_DSN =
+  'https://e2d3a7d29df89cf586de7354246ba6ba@o4512162632368128.ingest.de.sentry.io/4512162662449232';
 
 // Where reports are sent from: only the live site. Local runs and the e2e tests (localhost) report nothing.
 export function errorTrackingOptions(dsn: string, hostname: string): BrowserOptions | null {
