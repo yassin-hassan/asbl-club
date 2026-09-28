@@ -252,6 +252,33 @@ jobs:
           done
           exit 1
 
+  # The Terraform code (infra/) is checked on every change: formatting, syntax, references and the providers' own
+  # schemas. No token and no state: plan and apply stay manual (see infra/README.md), since applying repository
+  # settings from CI would need an admin token able to weaken the protection of this very pipeline.
+  terraform:
+    name: Terraform checks
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: infra
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_version: 1.16.4
+          terraform_wrapper: false
+
+      - name: Formatting
+        run: terraform fmt -check -diff
+
+      - name: Validate (providers from the lock file, no backend)
+        run: |
+          terraform init -backend=false -input=false -lockfile=readonly
+          terraform validate
+
   dependency-review:
     name: Dependency review
     if: github.event_name == 'pull_request'
