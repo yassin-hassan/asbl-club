@@ -43,6 +43,20 @@ logging:
   pattern:
     correlation: "[%X{requestId:-}] "
 
+# Error tracking (Sentry, EU region): anything logged at ERROR becomes an issue in Sentry, which emails an alert;
+# unexpected API errors (ApiExceptionHandler) and emails given up on (EmailSender). Tagged with the request ID, so an
+# issue leads to that request's log lines. Off unless SENTRY_DSN is set (only in production). Nothing personal is
+# sent: no request bodies, cookies, headers carrying credentials or user details (send-default-pii off).
+sentry:
+  dsn: ${SENTRY_DSN:}
+  environment: ${SENTRY_ENVIRONMENT:production}
+  send-default-pii: false
+  context-tags: requestId
+  in-app-includes: club.asbl.asbl_club
+  logging:
+    minimum-event-level: error
+    minimum-breadcrumb-level: info
+
 management:
   endpoints:
     web:
