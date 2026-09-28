@@ -457,5 +457,25 @@
     "logInFirst": "Connectez-vous, ou créez un compte, avec cette adresse pour accepter.",
     "invalid": "Cette invitation n'est pas valable, a expiré ou a déjà servi.",
     "wrongAccount": "Cette invitation a été envoyée à une autre adresse. Déconnectez-vous et connectez-vous avec cette adresse."
+  },
+  "dues": {
+    "title": "Vos cotisations",
+    "adminTitle": "Cotisations",
+    "forYear": "Cotisation {{year}}",
+    "paid": "Payée",
+    "pay": "Payer",
+    "alreadyPaid": "La cotisation de cette année est déjà payée.",
+    "none": "Cette association ne demande pas de cotisation.",
+    "paidConfirmed": "Paiement confirmé : votre cotisation est payée. Un reçu vous est envoyé par email.",
+    "backToDashboard": "Retour à mon tableau de bord",
+    "needsPayments": "Pour encaisser les cotisations en ligne, connectez d'abord le compte Stripe de l'association.",
+    "setUpPayments": "Configurer les paiements",
+    "current": "Les membres paient {{amount}} pour {{year}}.",
+    "off": "L'association ne demande pas encore de cotisation.",
+    "feeLabel": "Cotisation annuelle",
+    "feeInvalid": "Entre 1 € et 9 999,99 €.",
+    "save": "Enregistrer",
+    "stop": "Ne plus demander de cotisation",
+    "saved": "Enregistré."
   }
 }

@@ -1,0 +1,28 @@
+<div class="auth-page">
+<div class="auth-card">
+    <h1>{{ 'payment.title' | transloco }}</h1>
+  <div class="stack">
+    @if (error(); as error) {
+      <p class="error" role="alert">{{ error | transloco }}</p>
+    } @else {
+      @switch (outcome()) {
+        @case ('checking') {
+          <mat-spinner diameter="40" />
+          <p role="status">{{ 'payment.checking' | transloco }}</p>
+        }
+        @case ('paid') {
+          <p role="status">{{ 'dues.paidConfirmed' | transloco }}</p>
+        }
+        @case ('processing') {
+          <p role="status">{{ 'payment.stillProcessing' | transloco }}</p>
+        }
+        @case ('failed') {
+          <p class="error" role="alert">{{ 'payment.failed' | transloco }}</p>
+          <a mat-flat-button [routerLink]="['/asbls', slug, 'dues', 'pay']">{{ 'payment.retry' | transloco }}</a>
+        }
+      }
+      <a mat-button routerLink="/">{{ 'dues.backToDashboard' | transloco }}</a>
+    }
+  </div>
+</div>
+</div>

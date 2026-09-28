@@ -28,6 +28,9 @@
     "name" : "Member management",
     "description" : "The join link and join requests (administrators)"
   }, {
+    "name" : "Dues",
+    "description" : "Membership dues (cotisations)"
+  }, {
     "name" : "Joining",
     "description" : "Asking to join an association through its join link"
   }, {
@@ -355,6 +358,73 @@
           },
           "409" : {
             "description" : "Already booked (TICKET_IN_USE), or event not editable",
+            "content" : {
+              "application/problem+json" : { }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/asbls/{slug}/manage/dues" : {
+      "get" : {
+        "tags" : [ "Dues" ],
+        "summary" : "The association's yearly fee (administrators)",
+        "operationId" : "getDuesSettings",
+        "parameters" : [ {
+          "name" : "slug",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DuesSettings"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      },
+      "put" : {
+        "tags" : [ "Dues" ],
+        "summary" : "Set or remove the yearly fee (administrators)",
+        "operationId" : "setDuesFee",
+        "parameters" : [ {
+          "name" : "slug",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/DuesFeeRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "Saved"
+          },
+          "409" : {
+            "description" : "The association can't receive payments yet (PAYMENTS_DISABLED)",
             "content" : {
               "application/problem+json" : { }
             }
@@ -1439,6 +1509,48 @@
         } ]
       }
     },
+    "/api/v1/asbls/{slug}/dues/checkout" : {
+      "post" : {
+        "tags" : [ "Dues" ],
+        "summary" : "Start paying this year's dues: what the browser needs to show Stripe's payment form",
+        "operationId" : "startDuesCheckout",
+        "parameters" : [ {
+          "name" : "slug",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Ready to pay",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Checkout"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "No dues to pay (NO_DUES), already paid (ALREADY_PAID), or the association can't receive payments yet (PAYMENTS_DISABLED)",
+            "content" : {
+              "application/problem+json" : { }
+            }
+          },
+          "502" : {
+            "description" : "The payment provider couldn't be reached",
+            "content" : {
+              "application/problem+json" : { }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      }
+    },
     "/api/v1/registrations" : {
       "get" : {
         "tags" : [ "Registrations" ],
@@ -1542,6 +1654,31 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/AccountExport"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/me/dues" : {
+      "get" : {
+        "tags" : [ "Dues" ],
+        "summary" : "This year's dues in each of my associations that collects them",
+        "operationId" : "listMyDues",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/MyDues"
+                  }
                 }
               }
             }
@@ -2097,6 +2234,19 @@
           }
         }
       },
+      "DuesFeeRequest" : {
+        "type" : "object",
+        "properties" : {
+          "annualFee" : {
+            "maximum" : 9999.99,
+            "exclusiveMaximum" : false,
+            "minimum" : 1.0,
+            "exclusiveMinimum" : false,
+            "type" : "number",
+            "description" : "The yearly fee in euros; absent or null to stop collecting dues"
+          }
+        }
+      },
       "Checkout" : {
         "required" : [ "amount", "clientSecret", "currency", "publishableKey", "stripeAccount" ],
         "type" : "object",
@@ -2569,6 +2719,34 @@
           }
         }
       },
+      "MyDues" : {
+        "required" : [ "amount", "association", "paid", "slug", "year" ],
+        "type" : "object",
+        "properties" : {
+          "slug" : {
+            "type" : "string"
+          },
+          "association" : {
+            "type" : "string"
+          },
+          "year" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "amount" : {
+            "type" : "number",
+            "description" : "Amount in euros"
+          },
+          "paid" : {
+            "type" : "boolean"
+          },
+          "paidAt" : {
+            "type" : "string",
+            "description" : "When it was paid; absent while it isn't",
+            "format" : "date-time"
+          }
+        }
+      },
       "MyAssociation" : {
         "required" : [ "denomination", "role", "slug", "status" ],
         "type" : "object",
@@ -2838,6 +3016,25 @@
             "items" : {
               "$ref" : "#/components/schemas/Attendee"
             }
+          }
+        }
+      },
+      "DuesSettings" : {
+        "required" : [ "paymentsEnabled", "year" ],
+        "type" : "object",
+        "properties" : {
+          "annualFee" : {
+            "type" : "number",
+            "description" : "The yearly fee in euros; absent when the association doesn't collect dues"
+          },
+          "year" : {
+            "type" : "integer",
+            "description" : "The year dues are currently paid for",
+            "format" : "int32"
+          },
+          "paymentsEnabled" : {
+            "type" : "boolean",
+            "description" : "Whether the association can receive payments (Stripe)"
           }
         }
       },

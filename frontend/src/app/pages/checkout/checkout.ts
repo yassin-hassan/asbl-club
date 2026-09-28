@@ -6,12 +6,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { loadStripe, Stripe, StripeElements } from '@stripe/stripe-js';
-import { Checkout, RegistrationsService } from '../../api/generated';
+import { Checkout, DuesService, RegistrationsService } from '../../api/generated';
 import { LanguageService } from '../../i18n/language';
 import { errorMessageKey, problemOf } from '../../services/problem';
 
-// Paying for a booking with Stripe's own payment form (cards, Bancontact…). The form runs in Stripe's iframe:
-// card details go from the browser straight to Stripe and never reach our server.
+// Paying with Stripe's own payment form (cards, Bancontact…), for a booking (/pay/:id) or for this year's dues
+// (/asbls/:slug/dues/pay). The form runs in Stripe's iframe: card details go from the browser straight to Stripe
+// and never reach our server.
 @Component({
   selector: 'app-checkout',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,10 +21,12 @@ import { errorMessageKey, problemOf } from '../../services/problem';
   styles: '.narrow { max-width: 480px; margin: 0 auto; } .amount { font: var(--mat-sys-headline-small); }',
 })
 export class CheckoutPage {
-  private api = inject(RegistrationsService);
   private document = inject(DOCUMENT);
   readonly lang = inject(LanguageService).active;
-  readonly registrationId = Number(inject(ActivatedRoute).snapshot.paramMap.get('id'));
+  private readonly params = inject(ActivatedRoute).snapshot.paramMap;
+  // Dues when the address names an association, otherwise a booking.
+  readonly duesOf = this.params.get('slug');
+  readonly registrationId = Number(this.params.get('id'));
 
   private readonly paymentElement = viewChild.required<ElementRef<HTMLElement>>('paymentElement');
   private stripe: Stripe | null = null;
@@ -36,7 +39,10 @@ export class CheckoutPage {
   readonly stripeError = signal<string | null>(null); // Stripe's own message, already in the right language
 
   constructor() {
-    this.api.startCheckout(this.registrationId).subscribe({
+    const start = this.duesOf
+      ? inject(DuesService).startDuesCheckout(this.duesOf)
+      : inject(RegistrationsService).startCheckout(this.registrationId);
+    start.subscribe({
       next: (checkout) => {
         this.checkout.set(checkout);
         this.mountPaymentForm(checkout);
@@ -65,10 +71,11 @@ export class CheckoutPage {
     this.paying.set(true);
     this.stripeError.set(null);
     // On success Stripe sends the browser to the "complete" page. That redirect proves nothing by itself: the
-    // booking is marked paid only when Stripe's signed webhook reaches the server.
+    // payment counts only once Stripe's signed webhook reaches the server.
+    const complete = this.duesOf ? `/asbls/${this.duesOf}/dues/paid` : `/pay/${this.registrationId}/complete`;
     const { error } = await this.stripe.confirmPayment({
       elements: this.elements,
-      confirmParams: { return_url: `${this.document.location.origin}/pay/${this.registrationId}/complete` },
+      confirmParams: { return_url: `${this.document.location.origin}${complete}` },
     });
     this.paying.set(false);
     if (error) {
@@ -83,6 +90,10 @@ export class CheckoutPage {
           return 'payment.paymentsDisabled';
         case 'BOOKING_EXPIRED':
           return 'payment.expired';
+        case 'ALREADY_PAID':
+          return 'dues.alreadyPaid';
+        case 'NO_DUES':
+          return 'dues.none';
         default:
           return 'payment.notPayable';
       }

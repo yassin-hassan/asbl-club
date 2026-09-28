@@ -32,6 +32,27 @@
         }
       </div>
     }
+    @if (dues().length > 0) {
+      <h2>{{ 'dues.title' | transloco }}</h2>
+      <div class="row-list">
+        @for (due of dues(); track due.slug) {
+          <div class="row-link">
+            <div>
+              <div class="title">{{ due.association }}</div>
+              <div class="meta">
+                {{ 'dues.forYear' | transloco: { year: due.year } }} ·
+                {{ due.amount | currency: 'EUR' : 'symbol' : '1.2-2' : lang() }}
+              </div>
+            </div>
+            @if (due.paid) {
+              <span class="tag ok">{{ 'dues.paid' | transloco }}</span>
+            } @else {
+              <a mat-flat-button [routerLink]="['/asbls', due.slug, 'dues', 'pay']">{{ 'dues.pay' | transloco }}</a>
+            }
+          </div>
+        }
+      </div>
+    }
   } @else {
     <mat-spinner diameter="40" />
   }

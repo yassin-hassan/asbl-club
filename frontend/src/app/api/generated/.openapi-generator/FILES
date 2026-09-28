@@ -5,6 +5,7 @@ api/api.ts
 api/associations.service.ts
 api/audit.service.ts
 api/authentication.service.ts
+api/dues.service.ts
 api/eventManagement.service.ts
 api/invitations.service.ts
 api/joining.service.ts
@@ -32,6 +33,8 @@ model/checkInRequest.ts
 model/checkout.ts
 model/createAsblRequest.ts
 model/createEventRequest.ts
+model/duesFeeRequest.ts
+model/duesSettings.ts
 model/eventFeedItem.ts
 model/invitationPreview.ts
 model/inviteRequest.ts
@@ -46,6 +49,7 @@ model/meResponse.ts
 model/models.ts
 model/myAssociation.ts
 model/myBooking.ts
+model/myDues.ts
 model/myRegistration.ts
 model/nameRequest.ts
 model/newPassword.ts
