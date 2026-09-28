@@ -84,8 +84,13 @@ public class EmailSender {
                 boolean giveUp = email.getAttempts() >= RETRY_DELAYS.size();
                 Instant retryAt = giveUp ? now : now.plus(RETRY_DELAYS.get(email.getAttempts()));
                 email.failedAttempt(e.getMessage(), retryAt, giveUp);
-                log.warn("Email {} not sent (attempt {}){}: {}", email.getId(), email.getAttempts(),
-                        giveUp ? ", giving up" : "", e.getMessage());
+                if (giveUp) { // an error: someone never got their link or ticket (alerted, see application.yaml)
+                    log.error("Email {} not sent after {} attempts, giving up: {}", email.getId(),
+                            email.getAttempts(), e.getMessage());
+                } else { // a warning: it will be retried
+                    log.warn("Email {} not sent (attempt {}): {}", email.getId(), email.getAttempts(),
+                            e.getMessage());
+                }
             }
             return true;
         }).orElse(false);

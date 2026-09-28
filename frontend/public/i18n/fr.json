@@ -89,7 +89,7 @@
     },
     "privacy": {
       "title": "Confidentialité (RGPD)",
-      "body": "asbl.club traite les données personnelles dans le respect du Règlement général sur la protection des données. Les données collectées servent uniquement à la gestion des comptes, des adhésions et des paiements. Vous disposez d'un droit d'accès, de rectification et de suppression de vos données, exerçable depuis votre espace compte ou sur simple demande."
+      "body": "asbl.club traite les données personnelles dans le respect du Règlement général sur la protection des données. Les données collectées servent uniquement à la gestion des comptes, des adhésions et des paiements. Vous disposez d'un droit d'accès, de rectification et de suppression de vos données, exerçable depuis votre espace compte ou sur simple demande. Lorsque le site rencontre une erreur technique, un rapport (l'erreur, la page et le navigateur, sans donnée personnelle) est envoyé à notre service de suivi des erreurs, Sentry, hébergé dans l'Union européenne."
     },
     "cookies": {
       "title": "Cookies",
