@@ -22,7 +22,7 @@
           <span class="avatar" [style.background]="fee.colour">{{ fee.initials }}</span>
           <span>
             <span class="name">{{ fee.name }}</span><br />
-            <span class="kind">{{ 'landing.panel.' + fee.kind | transloco }}</span>
+            <span class="kind">{{ 'landing.panel.annualFee' | transloco }}</span>
           </span>
           @if (fee.amount) {
             <span class="amount">{{ fee.amount }}</span>

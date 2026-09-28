@@ -101,16 +101,14 @@
     "hero": {
       "badge": "Gratuit pour les associations, sans abonnement",
       "title": "Gérez votre ASBL,<br><b>simplement et gratuitement.</b>",
-      "lead": "Registre des membres, cotisations en ligne, événements, billetterie et dons, depuis un back-office sécurisé en français, néerlandais et anglais.",
+      "lead": "Registre des membres, cotisations en ligne, événements et billetterie, depuis un back-office sécurisé en français, néerlandais et anglais.",
       "ctaPrimary": "Créer mon ASBL gratuitement",
       "ctaSecondary": "Se connecter",
-      "trust": "Paiements via Stripe et Bancontact, aucun frais fixe"
+      "trust": "Paiements via Stripe et Bancontact, directement sur votre compte"
     },
     "panel": {
       "title": "Cotisations 2026",
-      "effective": "Membre effectif",
       "annualFee": "Cotisation annuelle",
-      "student": "Étudiant",
       "paid": "Payé"
     },
     "features": {
@@ -120,19 +118,19 @@
     },
     "feature1": {
       "title": "Membres et cotisations",
-      "desc": "Registre à jour, paiement en ligne, rappels automatiques et reçus PDF."
+      "desc": "Registre à jour, cotisations payées en ligne et reçu par e-mail."
     },
     "feature2": {
       "title": "Événements et billetterie",
       "desc": "Billets, catégories tarifaires et contrôle des présences."
     },
     "feature3": {
-      "title": "Dons et reçus",
-      "desc": "Page de don personnalisée, dons anonymes et attestations fiscales."
+      "title": "Paiements en ligne",
+      "desc": "Cotisations et billets par carte ou Bancontact, versés directement sur le compte Stripe de l'association."
     },
     "feature4": {
       "title": "Sécurité et audit",
-      "desc": "Back-office sécurisé, journal d'audit et conformité RGPD."
+      "desc": "Back-office sécurisé, journal d'audit, export et suppression des données."
     },
     "steps": {
       "eyebrow": "Simple",
@@ -144,11 +142,11 @@
     },
     "step2": {
       "title": "Invitez vos membres",
-      "desc": "Importez votre liste ou envoyez des invitations par e-mail."
+      "desc": "Partagez un lien d'adhésion ou invitez-les par e-mail."
     },
     "step3": {
       "title": "Encaissez en ligne",
-      "desc": "Cotisations, billets et dons arrivent directement sur votre compte."
+      "desc": "Cotisations et billets arrivent directement sur votre compte."
     },
     "cta": {
       "title": "Prêt à simplifier la gestion de votre association ?",

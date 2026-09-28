@@ -101,16 +101,14 @@
     "hero": {
       "badge": "Free for non-profits, no subscription",
       "title": "Manage your non-profit,<br><b>simply and for free.</b>",
-      "lead": "Member registry, online dues, events, ticketing and donations, from a secure back-office in French, Dutch and English.",
+      "lead": "Member registry, online dues, events and ticketing, from a secure back-office in French, Dutch and English.",
       "ctaPrimary": "Create my ASBL for free",
       "ctaSecondary": "Log in",
-      "trust": "Payments via Stripe and Bancontact, no fixed fees"
+      "trust": "Payments via Stripe and Bancontact, straight to your account"
     },
     "panel": {
       "title": "Dues 2026",
-      "effective": "Full member",
       "annualFee": "Annual fee",
-      "student": "Student",
       "paid": "Paid"
     },
     "features": {
@@ -120,19 +118,19 @@
     },
     "feature1": {
       "title": "Members and dues",
-      "desc": "Up-to-date registry, online payment, automatic reminders and PDF receipts."
+      "desc": "Up-to-date registry, dues paid online and a receipt by email."
     },
     "feature2": {
       "title": "Events and ticketing",
       "desc": "Tickets, price categories and attendance control."
     },
     "feature3": {
-      "title": "Donations and receipts",
-      "desc": "Custom donation page, anonymous donations and tax receipts."
+      "title": "Online payments",
+      "desc": "Dues and tickets by card or Bancontact, straight into the association's own Stripe account."
     },
     "feature4": {
       "title": "Security and audit",
-      "desc": "Secure back-office, audit log and GDPR compliance."
+      "desc": "Secure back-office, audit log, data export and account deletion."
     },
     "steps": {
       "eyebrow": "Simple",
@@ -144,11 +142,11 @@
     },
     "step2": {
       "title": "Invite your members",
-      "desc": "Import your list or send invitations by e-mail."
+      "desc": "Share a join link or invite them by email."
     },
     "step3": {
       "title": "Collect online",
-      "desc": "Dues, tickets and donations arrive directly in your account."
+      "desc": "Dues and tickets arrive directly in your account."
     },
     "cta": {
       "title": "Ready to simplify managing your association?",
