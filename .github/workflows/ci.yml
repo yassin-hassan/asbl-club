@@ -229,10 +229,17 @@ jobs:
         env:
           SITE: https://asbl-club.ynhassan22.workers.dev
         run: |
-          curl --fail --silent --show-error --max-time 30 "$SITE/" | grep -q '<app-root'
+          curl --fail --silent --show-error --max-time 30 "$SITE/" | grep -q '<app-root' \
+            || { echo "::error::the site doesn't answer with the app"; exit 1; }
           # The app's code carries its Debug ID (source maps work), and its source map isn't served to visitors.
+          # A file whose name didn't change can take a moment to replace the old copy in Cloudflare's cache (the
+          # Debug ID is added after Angular names the file): a few tries.
           main=$(curl --fail --silent --max-time 30 "$SITE/" | grep -o 'main-[A-Za-z0-9_-]*\.js' | head -1)
-          curl --fail --silent --max-time 30 "$SITE/$main" | grep -q '_sentryDebugIds'
+          for attempt in 1 2 3 4 5 6; do
+            curl --fail --silent --max-time 30 "$SITE/$main" | grep -q '_sentryDebugIds' && break
+            [ "$attempt" = 6 ] && { echo "::error::$main has no Debug ID (source maps won't match)"; exit 1; }
+            echo "attempt $attempt: $main has no Debug ID yet"; sleep 10
+          done
           if curl --silent --max-time 30 "$SITE/$main.map" | grep -q '"mappings"'; then
             echo "::error::$main.map is publicly served"; exit 1
           fi
