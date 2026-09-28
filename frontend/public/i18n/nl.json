@@ -101,16 +101,14 @@
     "hero": {
       "badge": "Gratis voor verenigingen, zonder abonnement",
       "title": "Beheer uw vzw,<br><b>eenvoudig en gratis.</b>",
-      "lead": "Ledenregister, online lidgelden, evenementen, ticketverkoop en giften, vanuit een beveiligde back-office in het Frans, Nederlands en Engels.",
+      "lead": "Ledenregister, online lidgelden, evenementen en ticketverkoop, vanuit een beveiligde back-office in het Frans, Nederlands en Engels.",
       "ctaPrimary": "Mijn vzw gratis aanmaken",
       "ctaSecondary": "Inloggen",
-      "trust": "Betalingen via Stripe en Bancontact, geen vaste kosten"
+      "trust": "Betalingen via Stripe en Bancontact, rechtstreeks op uw rekening"
     },
     "panel": {
       "title": "Lidgelden 2026",
-      "effective": "Effectief lid",
       "annualFee": "Jaarlijkse bijdrage",
-      "student": "Student",
       "paid": "Betaald"
     },
     "features": {
@@ -120,19 +118,19 @@
     },
     "feature1": {
       "title": "Leden en lidgelden",
-      "desc": "Actueel register, online betaling, automatische herinneringen en pdf-ontvangstbewijzen."
+      "desc": "Actueel register, lidgeld online betaald en een ontvangstbewijs per e-mail."
     },
     "feature2": {
       "title": "Evenementen en ticketverkoop",
       "desc": "Tickets, tariefcategorieën en aanwezigheidscontrole."
     },
     "feature3": {
-      "title": "Giften en ontvangstbewijzen",
-      "desc": "Gepersonaliseerde giftpagina, anonieme giften en fiscale attesten."
+      "title": "Online betalingen",
+      "desc": "Lidgeld en tickets met kaart of Bancontact, rechtstreeks op de Stripe-rekening van de vereniging."
     },
     "feature4": {
       "title": "Veiligheid en audit",
-      "desc": "Beveiligde back-office, auditlogboek en AVG-conformiteit."
+      "desc": "Beveiligde back-office, auditlogboek, export en verwijdering van gegevens."
     },
     "steps": {
       "eyebrow": "Eenvoudig",
@@ -144,11 +142,11 @@
     },
     "step2": {
       "title": "Nodig uw leden uit",
-      "desc": "Importeer uw lijst of stuur uitnodigingen per e-mail."
+      "desc": "Deel een aansluitlink of nodig ze uit per e-mail."
     },
     "step3": {
       "title": "Ontvang online",
-      "desc": "Lidgelden, tickets en giften komen rechtstreeks op uw rekening."
+      "desc": "Lidgelden en tickets komen rechtstreeks op uw rekening."
     },
     "cta": {
       "title": "Klaar om het beheer van uw vereniging te vereenvoudigen?",
