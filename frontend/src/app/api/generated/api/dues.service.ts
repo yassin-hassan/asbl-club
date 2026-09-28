@@ -21,6 +21,8 @@ import { Checkout } from '../model/checkout';
 // @ts-ignore
 import { DuesFeeRequest } from '../model/duesFeeRequest';
 // @ts-ignore
+import { DuesReport } from '../model/duesReport';
+// @ts-ignore
 import { DuesSettings } from '../model/duesSettings';
 // @ts-ignore
 import { MyDues } from '../model/myDues';
@@ -39,6 +41,115 @@ export class DuesService extends BaseService {
 
     constructor(protected httpClient: HttpClient, @Optional() @Inject(BASE_PATH) basePath: string|string[], @Optional() configuration?: Configuration) {
         super(basePath, configuration);
+    }
+
+    /**
+     * Who paid this year\&#39;s dues, as a CSV file for Excel (administrators and treasurers)
+     * @endpoint get /api/v1/asbls/{slug}/manage/dues/members/export
+     * @param slug 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public exportDuesReport(slug: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/csv' | 'application/problem+json', context?: HttpContext, transferCache?: boolean}): Observable<Blob>;
+    public exportDuesReport(slug: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/csv' | 'application/problem+json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Blob>>;
+    public exportDuesReport(slug: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/csv' | 'application/problem+json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Blob>>;
+    public exportDuesReport(slug: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/csv' | 'application/problem+json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (slug === null || slug === undefined) {
+            throw new Error('Required parameter slug was null or undefined when calling exportDuesReport.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        // authentication (bearer) required
+        localVarHeaders = this.configuration.addCredentialToHeaders('bearer', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'text/csv',
+            'application/problem+json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let localVarPath = `/api/v1/asbls/${this.configuration.encodeParam({name: "slug", value: slug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/manage/dues/members/export`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request('get', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: "blob",
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Who paid this year\&#39;s dues (administrators and treasurers)
+     * @endpoint get /api/v1/asbls/{slug}/manage/dues/members
+     * @param slug 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public getDuesReport(slug: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json' | 'application/problem+json', context?: HttpContext, transferCache?: boolean}): Observable<DuesReport>;
+    public getDuesReport(slug: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json' | 'application/problem+json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<DuesReport>>;
+    public getDuesReport(slug: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json' | 'application/problem+json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<DuesReport>>;
+    public getDuesReport(slug: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json' | 'application/problem+json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (slug === null || slug === undefined) {
+            throw new Error('Required parameter slug was null or undefined when calling getDuesReport.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        // authentication (bearer) required
+        localVarHeaders = this.configuration.addCredentialToHeaders('bearer', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json',
+            'application/problem+json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/asbls/${this.configuration.encodeParam({name: "slug", value: slug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/manage/dues/members`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<DuesReport>('get', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**

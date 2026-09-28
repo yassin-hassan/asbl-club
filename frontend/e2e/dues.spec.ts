@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { expect, Page, test } from '@playwright/test';
 
 // Membership dues. Paying for real needs Stripe (not possible in CI): the backend tests cover the payment, its
@@ -21,6 +22,18 @@ test('an administrator sets the yearly fee, members see it on their dashboard wi
   await dues.getByRole('button', { name: 'Save' }).click();
   await expect(dues.getByRole('status')).toHaveText('Saved.');
   await expect(dues).toContainText(`Members pay €25.00 for ${year}.`);
+
+  // Who paid: every current member (nobody yet), and the same list as a spreadsheet.
+  await expect(dues).toContainText(new RegExp(`0 of \\d+ members have paid for ${year}\\.`));
+  const list = dues.getByRole('table', { name: 'Who paid their dues' });
+  await expect(list.getByRole('row', { name: /demo@asbl\.club/ })).toContainText('Unpaid');
+  const downloading = page.waitForEvent('download');
+  await dues.getByRole('button', { name: 'Download (CSV)' }).click();
+  const file = await downloading;
+  expect(file.suggestedFilename()).toBe(`dues-club-demo-${year}.csv`);
+  const csv = readFileSync(await file.path(), 'utf8');
+  expect(csv).toMatch(/^\uFEFFName;Email;Dues;Amount \(EUR\);Paid at\r\n/);
+  expect(csv).toContain(';demo@asbl.club;Unpaid;;');
 
   // The administrator is a member too: this year's dues are on their dashboard.
   await page.goto('/');

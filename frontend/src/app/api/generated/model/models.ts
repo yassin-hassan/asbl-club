@@ -16,6 +16,8 @@ export * from './checkout';
 export * from './createAsblRequest';
 export * from './createEventRequest';
 export * from './duesFeeRequest';
+export * from './duesMember';
+export * from './duesReport';
 export * from './duesSettings';
 export * from './eventFeedItem';
 export * from './invitationPreview';

@@ -34,6 +34,8 @@ model/checkout.ts
 model/createAsblRequest.ts
 model/createEventRequest.ts
 model/duesFeeRequest.ts
+model/duesMember.ts
+model/duesReport.ts
 model/duesSettings.ts
 model/eventFeedItem.ts
 model/invitationPreview.ts
