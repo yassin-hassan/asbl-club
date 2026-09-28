@@ -4,6 +4,8 @@ import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
 
 import club.asbl.asbl_club.asbl.Asbl;
 import club.asbl.asbl_club.asbl.AsblService;
+import club.asbl.asbl_club.audit.AuditService;
+import club.asbl.asbl_club.csv.ExcelCsv;
 import club.asbl.asbl_club.dues.DuesService.AlreadyPaidException;
 import club.asbl.asbl_club.dues.DuesService.NoDuesException;
 import club.asbl.asbl_club.dues.DuesService.NotAMemberException;
@@ -26,10 +28,20 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.http.CacheControl;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -49,20 +61,27 @@ import org.springframework.web.server.ResponseStatusException;
 class DuesController {
 
     private static final Logger log = LoggerFactory.getLogger(DuesController.class);
+    // Who sees who paid: the people who run the association's money (as for the attendee list).
+    private static final Set<String> FOLLOW_UP_ROLES = Set.of("ADMIN", "TREASURER");
 
     private final DuesService duesService;
     private final AsblService asblService;
     private final UserService userService;
     private final MembershipService membershipService;
     private final StripeProperties stripeProperties;
+    private final AuditService auditService;
+    private final MessageSource messages;
 
     DuesController(DuesService duesService, AsblService asblService, UserService userService,
-            MembershipService membershipService, StripeProperties stripeProperties) {
+            MembershipService membershipService, StripeProperties stripeProperties, AuditService auditService,
+            MessageSource messages) {
         this.duesService = duesService;
         this.asblService = asblService;
         this.userService = userService;
         this.membershipService = membershipService;
         this.stripeProperties = stripeProperties;
+        this.auditService = auditService;
+        this.messages = messages;
     }
 
     @Schema(name = "DuesSettings")
@@ -88,6 +107,19 @@ class DuesController {
             @Schema(description = "When it was paid; absent while it isn't") Instant paidAt) {
     }
 
+    @Schema(name = "DuesMember")
+    record Member(@Schema(requiredMode = REQUIRED) String name, @Schema(requiredMode = REQUIRED) String email,
+            @Schema(requiredMode = REQUIRED) boolean paid,
+            @Schema(description = "Amount paid in euros; absent while unpaid") BigDecimal amount,
+            @Schema(description = "When it was paid; absent while unpaid") Instant paidAt) {
+    }
+
+    @Schema(name = "DuesReport")
+    record Report(@Schema(requiredMode = REQUIRED) int year,
+            @Schema(requiredMode = REQUIRED, description = "How many of the members have paid") int paid,
+            @Schema(requiredMode = REQUIRED, description = "Current members, by name") List<Member> members) {
+    }
+
     @Operation(operationId = "getDuesSettings", summary = "The association's yearly fee (administrators)",
             security = @SecurityRequirement(name = "bearer"))
     @GetMapping("/api/v1/asbls/{slug}/manage/dues")
@@ -111,6 +143,50 @@ class DuesController {
             throw paymentsDisabled();
         }
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(operationId = "getDuesReport", summary = "Who paid this year's dues (administrators and treasurers)",
+            security = @SecurityRequirement(name = "bearer"))
+    @ApiResponse(responseCode = "200", description = "Current members, by name",
+            content = @Content(schema = @Schema(implementation = Report.class)))
+    @ApiResponse(responseCode = "403", description = "Not an administrator or treasurer of this association",
+            content = @Content(mediaType = "application/problem+json"))
+    @GetMapping("/api/v1/asbls/{slug}/manage/dues/members")
+    Report report(@PathVariable String slug, Authentication authentication) {
+        Asbl asbl = forFollowUp(slug, userService.getAuthenticated(authentication));
+        int year = duesService.currentYear();
+        List<Member> members = duesService.statusOfMembers(asbl, year).stream()
+                .map(m -> new Member(m.name(), m.email(), m.paid(), m.amount(), m.paidAt())).toList();
+        return new Report(year, (int) members.stream().filter(Member::paid).count(), members);
+    }
+
+    // The download is audited: personal data leaving the platform, in a file nobody can recall.
+    @Operation(operationId = "exportDuesReport", summary = "Who paid this year's dues, as a CSV file for Excel "
+            + "(administrators and treasurers)", security = @SecurityRequirement(name = "bearer"))
+    @ApiResponse(responseCode = "200", description = "Semicolon-separated, UTF-8 with a byte-order mark",
+            content = @Content(mediaType = "text/csv", schema = @Schema(type = "string", format = "binary")))
+    @ApiResponse(responseCode = "403", description = "Not an administrator or treasurer of this association",
+            content = @Content(mediaType = "application/problem+json"))
+    @GetMapping(value = "/api/v1/asbls/{slug}/manage/dues/members/export", produces = "text/csv")
+    ResponseEntity<byte[]> export(@PathVariable String slug, Authentication authentication) {
+        Asbl asbl = forFollowUp(slug, userService.getAuthenticated(authentication));
+        int year = duesService.currentYear();
+        List<DuesService.MemberStatus> members = duesService.statusOfMembers(asbl, year);
+        Locale locale = LocaleContextHolder.getLocale();
+        List<String> header = List.of(text("dues.csv.name", locale), text("dues.csv.email", locale),
+                text("dues.csv.status", locale), text("dues.csv.amount", locale), text("dues.csv.paidAt", locale));
+        List<List<String>> rows = members.stream()
+                .map(m -> List.of(ExcelCsv.text(m.name()), ExcelCsv.text(m.email()),
+                        text(m.paid() ? "dues.status.PAID" : "dues.status.UNPAID", locale),
+                        ExcelCsv.amount(m.amount(), locale), ExcelCsv.when(m.paidAt())))
+                .toList();
+        auditService.record("DUES_EXPORTED", asbl, "Asbl", asbl.getId(), Map.of("rows", rows.size(), "year", year));
+        return ResponseEntity.ok()
+                .contentType(new MediaType("text", "csv", StandardCharsets.UTF_8))
+                .header(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment()
+                        .filename("dues-" + slug + "-" + year + ".csv").build().toString())
+                .cacheControl(CacheControl.noStore()) // personal data: no copy in any cache
+                .body(ExcelCsv.write(header, rows));
     }
 
     @Operation(operationId = "listMyDues", summary = "This year's dues in each of my associations that collects them",
@@ -160,6 +236,21 @@ class DuesController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
         return asbl;
+    }
+
+    // Not a member, or a member without the role → 403.
+    private Asbl forFollowUp(String slug, User user) {
+        Asbl asbl = asblService.findBySlug(slug).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        String role = membershipService.roleOf(user, asbl)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN));
+        if (!FOLLOW_UP_ROLES.contains(role)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+        return asbl;
+    }
+
+    private String text(String key, Locale locale) {
+        return messages.getMessage(key, null, key, locale);
     }
 
     private static ErrorResponseException paymentsDisabled() {

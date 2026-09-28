@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -71,6 +73,23 @@ public class DuesService {
                 .map(asbl -> dueRepository.findByAsblAndUserAndYear(asbl, user, year)
                         .map(due -> new MemberDues(asbl, year, due.getAmount(), paymentService.paidAt(due)))
                         .orElseGet(() -> new MemberDues(asbl, year, asbl.getAnnualFee(), Optional.empty())))
+                .toList();
+    }
+
+    // Each current (active) member and whether they paid that year's dues: the treasurer's follow-up list.
+    public record MemberStatus(String name, String email, boolean paid, BigDecimal amount, Instant paidAt) {
+    }
+
+    @Transactional(readOnly = true)
+    public List<MemberStatus> statusOfMembers(Asbl asbl, int year) {
+        Map<Long, PaidDue> paid = dueRepository.findPaid(asbl, year).stream()
+                .collect(Collectors.toMap(PaidDue::userId, Function.identity()));
+        return membershipService.activeMembersOf(asbl).stream()
+                .map(member -> {
+                    PaidDue due = paid.get(member.getId());
+                    return new MemberStatus(member.getName(), member.getEmail(), due != null,
+                            due == null ? null : due.amount(), due == null ? null : due.paidAt());
+                })
                 .toList();
     }
 
