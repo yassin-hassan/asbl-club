@@ -80,7 +80,7 @@
 		<dependency>
 			<groupId>com.google.zxing</groupId>
 			<artifactId>javase</artifactId>
-			<version>3.5.3</version>
+			<version>3.5.4</version>
 		</dependency>
 		<!-- Error tracking: unexpected errors (anything logged at ERROR) become Sentry issues, with an email alert.
 		     Off unless SENTRY_DSN is set (production only). -->
@@ -138,7 +138,7 @@
 		<dependency>
 			<groupId>com.icegreen</groupId>
 			<artifactId>greenmail-junit5</artifactId>
-			<version>2.1.7</version>
+			<version>2.1.14</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
