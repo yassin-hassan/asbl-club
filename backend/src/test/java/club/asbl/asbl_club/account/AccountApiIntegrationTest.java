@@ -13,7 +13,9 @@ import club.asbl.asbl_club.asbl.AsblService;
 import club.asbl.asbl_club.user.User;
 import club.asbl.asbl_club.user.UserService;
 import com.jayway.jsonpath.JsonPath;
+import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.Cookie;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +45,9 @@ class AccountApiIntegrationTest {
 
     @Autowired
     JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    EntityManager entityManager;
 
     User alice;
     String accessToken;
@@ -125,6 +130,35 @@ class AccountApiIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"email\": \"alice@club.test\", \"password\": \"password123\"}"))
                 .andExpect(status().isUnauthorized());
+    }
+
+    // Right to be forgotten vs keeping accounting records 10 years: the account is anonymised and marked deleted
+    // (soft delete), but each payment keeps its frozen copy of who paid, so the receipt stays valid (rule 24).
+    @Test
+    void delete_anonymisesTheAccount_butPaymentsKeepWhoPaid() throws Exception {
+        var club = asblService.createAsbl(alice, "Mon Club", "0123.456.789", "mon-club", "fr");
+        Long payable = jdbcTemplate.queryForObject(
+                "INSERT INTO payables (type, amount, currency) VALUES ('MEMBERSHIP', 25.00, 'EUR') RETURNING id",
+                Long.class);
+        jdbcTemplate.update("INSERT INTO payments (asbl_id, user_id, payer_name, payer_email, payable_id, amount, "
+                + "commission, status, paid_at) VALUES (?, ?, 'Alice', 'alice@club.test', ?, 25.00, 1.05, "
+                + "'SUCCEEDED', now())", club.getId(), alice.getId(), payable);
+
+        mockMvc.perform(delete("/api/v1/me").header("Authorization", "Bearer " + accessToken))
+                .andExpect(status().isNoContent());
+        entityManager.flush(); // written by JPA in this test's transaction; the checks below read the tables
+
+        Map<String, Object> account = jdbcTemplate.queryForMap(
+                "SELECT name, email, deleted_at FROM users WHERE id = ?", alice.getId());
+        assertThat(account.get("name")).isEqualTo("Deleted account");
+        assertThat((String) account.get("email")).doesNotContain("alice");
+        assertThat(account.get("deleted_at")).isNotNull(); // still there: payments point to it
+
+        Map<String, Object> payment = jdbcTemplate.queryForMap(
+                "SELECT payer_name, payer_email, amount, user_id FROM payments WHERE payable_id = ?", payable);
+        assertThat(payment.get("payer_name")).isEqualTo("Alice");
+        assertThat(payment.get("payer_email")).isEqualTo("alice@club.test");
+        assertThat(payment.get("user_id")).isEqualTo(alice.getId());
     }
 
     @Test
