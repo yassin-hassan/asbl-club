@@ -37,7 +37,9 @@ public class AccountService {
         // Audit first, while the user's email still resolves the current actor.
         auditService.record("ACCOUNT_DELETED", null, "User", user.getId(), null);
         membershipService.removeAllFor(user);
-        paymentService.anonymizePaymentsOf(user);
+        // Payments are left as they are: each keeps a frozen copy of who paid (payer name and email), required to
+        // keep the association's accounting records valid for 10 years. GDPR allows it (art. 17.3.b, legal
+        // obligation); only the account itself is anonymised.
         userService.anonymizeAndClose(user);
     }
 }

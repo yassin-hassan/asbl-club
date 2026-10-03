@@ -12,7 +12,6 @@ import static org.mockito.Mockito.when;
 
 import club.asbl.asbl_club.asbl.Asbl;
 import club.asbl.asbl_club.audit.AuditService;
-import club.asbl.asbl_club.user.User;
 import club.asbl.asbl_club.event.EventService;
 import com.stripe.StripeClient;
 import com.stripe.exception.ApiConnectionException;
@@ -21,7 +20,6 @@ import com.stripe.param.RefundCreateParams;
 import com.stripe.service.RefundService;
 import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -123,22 +121,5 @@ class PaymentServiceTest {
 
         assertThat(payment.getStatus()).isEqualTo(PaymentStatus.FAILED);
         verify(auditService).recordSystem(eq("PAYMENT_FAILED"), any(), eq("Payment"), any(), anyMap());
-    }
-
-    @Test
-    void anonymizePaymentsOf_neutralizesPayerIdentity_keepsAmount() {
-        Payment payment = new Payment();
-        payment.setPayerName("Alice Dupont");
-        payment.setPayerEmail("alice@club.test");
-        payment.setAmount(new BigDecimal("10.00"));
-        User user = mock(User.class);
-        when(user.getId()).thenReturn(7L);
-        when(paymentRepository.findByUser(user)).thenReturn(List.of(payment));
-
-        paymentService.anonymizePaymentsOf(user);
-
-        assertThat(payment.getPayerName()).doesNotContain("Alice");
-        assertThat(payment.getPayerEmail()).doesNotContain("alice@club.test");
-        assertThat(payment.getAmount()).isEqualByComparingTo("10.00");
     }
 }
