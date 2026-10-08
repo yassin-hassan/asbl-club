@@ -95,7 +95,7 @@ class DemoDataSeeder implements ApplicationRunner {
     record Category(long id, String label, BigDecimal price) {
     }
 
-    record Event(long id, Club club, String title, Instant startsAt) {
+    record Event(long id, Club club, String title, Instant startsAt, Instant createdAt) {
     }
 
     /** What became of a booking. */
@@ -233,7 +233,7 @@ class DemoDataSeeder implements ApplicationRunner {
                 "Une soirée conviviale autour de jeux de plateau, du plus simple au plus stratégique. "
                         + "Jeux fournis, boissons et petite restauration au bar.",
                 at(-75, 19, 0), "Maison des Associations, Place Colignon 1, 1030 Schaerbeek", "PUBLIC", daysAgo(110));
-        Category gamesEntry = category(games, sophie, "Entrée", "5.00", 40, daysAgo(110));
+        Category gamesEntry = category(games, sophie, "Entrée", "5.00", 40);
         publish(games, sophie, daysAgo(108));
         sell(games, gamesEntry, pick(buyers, 28, thomas, julie, kevin), daysAgo(100), at(-76, 12, 0),
                 List.of(Outcome.ATTENDED, Outcome.ATTENDED, Outcome.ATTENDED, Outcome.ATTENDED, Outcome.ATTENDED,
@@ -243,7 +243,7 @@ class DemoDataSeeder implements ApplicationRunner {
                 "Visite commentée de cette maison bourgeoise Art nouveau, première réalisation de Victor Horta, "
                         + "suivie d'un verre dans le quartier.",
                 at(-30, 14, 0), "Chaussée de Haecht 266, 1030 Schaerbeek", "MEMBERS", daysAgo(60));
-        Category visitTicket = category(visit, sophie, "Membre", "8.00", 25, daysAgo(60));
+        Category visitTicket = category(visit, sophie, "Membre", "8.00", 25);
         publish(visit, sophie, daysAgo(59));
         sell(visit, visitTicket, pick(memberList, 18, julie), daysAgo(55), at(-31, 12, 0),
                 List.of(Outcome.ATTENDED, Outcome.ATTENDED, Outcome.ATTENDED, Outcome.ATTENDED, Outcome.ATTENDED,
@@ -254,8 +254,8 @@ class DemoDataSeeder implements ApplicationRunner {
                         + "Ennio Morricone. Placement libre, ouverture des portes à 19 h 30.",
                 at(38, 20, 0), "Salle des fêtes communale, Rue de la Ruche 30, 1030 Schaerbeek", "PUBLIC",
                 daysAgo(30));
-        Category presale = category(concert, sophie, "Prévente", "12.00", 80, daysAgo(30));
-        Category student = category(concert, sophie, "Étudiant", "8.00", 20, daysAgo(30));
+        Category presale = category(concert, sophie, "Prévente", "12.00", 80);
+        Category student = category(concert, sophie, "Étudiant", "8.00", 20);
         publish(concert, sophie, daysAgo(29));
         List<Account> concertBuyers = pick(buyers, 34, julie);
         concertBuyers.remove(thomas); // he buys his ticket live, in the demo
@@ -266,7 +266,7 @@ class DemoDataSeeder implements ApplicationRunner {
                 "Trois heures pour apprendre les bases de l'aquarelle avec une illustratrice du quartier. "
                         + "Matériel compris, aucune expérience requise.",
                 at(18, 10, 0), "Local du Cercle, Avenue Louis Bertrand 35, 1030 Schaerbeek", "MEMBERS", daysAgo(21));
-        Category workshop = category(watercolour, sophie, "Participation", "15.00", 12, daysAgo(21));
+        Category workshop = category(watercolour, sophie, "Participation", "15.00", 12);
         publish(watercolour, sophie, daysAgo(20));
         sell(watercolour, workshop, pick(memberList, 11, julie), daysAgo(19), daysAgo(3), List.of(Outcome.PAID), 0,
                 null);
@@ -274,7 +274,7 @@ class DemoDataSeeder implements ApplicationRunner {
         Event fleaMarket = event(club, sophie, "Brocante de quartier",
                 "Brocante annuelle dans les allées du parc. Un emplacement de 3 mètres par réservation.",
                 at(9, 8, 0), "Parc Josaphat (allée centrale), 1030 Schaerbeek", "PUBLIC", daysAgo(40));
-        Category pitch = category(fleaMarket, sophie, "Emplacement", "10.00", 30, daysAgo(40));
+        Category pitch = category(fleaMarket, sophie, "Emplacement", "10.00", 30);
         publish(fleaMarket, sophie, daysAgo(39));
         sell(fleaMarket, pitch, pick(buyers, 6), daysAgo(35), daysAgo(8),
                 List.of(Outcome.PAID, Outcome.PAID, Outcome.PAID, Outcome.CANCELLED, Outcome.CANCELLED,
@@ -286,8 +286,8 @@ class DemoDataSeeder implements ApplicationRunner {
         Event barbecue = event(club, sophie, "Barbecue d'été",
                 "Le barbecue de fin de saison, ouvert aux membres et à leur famille.",
                 at(230, 12, 0), "Jardin de la Maison des Associations, 1030 Schaerbeek", "MEMBERS", daysAgo(6));
-        category(barbecue, sophie, "Adulte", "15.00", 60, daysAgo(6));
-        category(barbecue, sophie, "Enfant (moins de 12 ans)", "7.00", 30, daysAgo(6));
+        category(barbecue, sophie, "Adulte", "15.00", 60);
+        category(barbecue, sophie, "Enfant (moins de 12 ans)", "7.00", 30);
 
         audit(marc, club, "ATTENDEES_EXPORTED", "Event", games.id(), Map.of("rows", 26), at(-74, 10, 0));
         audit(marc, club, "DUES_EXPORTED", "Asbl", club.id(), Map.of("rows", memberList.size(), "year", year),
@@ -343,7 +343,7 @@ class DemoDataSeeder implements ApplicationRunner {
                                 + "les équipes sont formées sur place.",
                         at(-45, 10, 0), "Complexe sportif d'Evere, Rue Stroobants 51, 1140 Evere", "PUBLIC",
                         daysAgo(80));
-                Category player = category(tournament, admin, "Joueur", "10.00", 60, daysAgo(80));
+                Category player = category(tournament, admin, "Joueur", "10.00", 60);
                 publish(tournament, admin, daysAgo(79));
                 sell(tournament, player, pick(buyers, 30), daysAgo(70), at(-46, 18, 0),
                         List.of(Outcome.ATTENDED, Outcome.ATTENDED, Outcome.ATTENDED, Outcome.ATTENDED, Outcome.PAID),
@@ -352,8 +352,8 @@ class DemoDataSeeder implements ApplicationRunner {
                         "Le souper du club avec remise des trophées de la saison. Menu boulettes-frites ou "
                                 + "végétarien, dessert compris.",
                         at(25, 19, 30), "Cafétéria du club, Rue Stroobants 51, 1140 Evere", "PUBLIC", daysAgo(26));
-                Category adult = category(dinner, admin, "Adulte", "28.00", 100, daysAgo(26));
-                Category child = category(dinner, admin, "Enfant (moins de 12 ans)", "14.00", 30, daysAgo(26));
+                Category adult = category(dinner, admin, "Adulte", "28.00", 100);
+                Category child = category(dinner, admin, "Enfant (moins de 12 ans)", "14.00", 30);
                 publish(dinner, admin, daysAgo(25));
                 List<Account> diners = pick(buyers, 32);
                 sell(dinner, adult, diners.subList(0, 25), daysAgo(24), daysAgo(1), List.of(Outcome.PAID), 1, null);
@@ -363,14 +363,14 @@ class DemoDataSeeder implements ApplicationRunner {
                 Event camp = event(club, admin, "Jeugdkamp krokusvakantie",
                         "Een dag basketbal voor jongeren van 10 tot 16 jaar, met training, wedstrijdjes en lunch.",
                         at(-120, 9, 0), "Sporthal Ridderstraat, 3000 Leuven", "MEMBERS", daysAgo(160));
-                Category day = category(camp, admin, "Kampdag", "25.00", 30, daysAgo(160));
+                Category day = category(camp, admin, "Kampdag", "25.00", 30);
                 publish(camp, admin, daysAgo(159));
                 sell(camp, day, pick(new ArrayList<>(joined.keySet()), 12), daysAgo(150), at(-121, 12, 0),
                         List.of(Outcome.ATTENDED, Outcome.ATTENDED, Outcome.ATTENDED, Outcome.PAID), 0, admin);
                 Event party = event(club, admin, "Clubfeest",
                         "Het jaarlijkse clubfeest met dj, bar en tombola ten voordele van de jeugdwerking.",
                         at(32, 20, 0), "Sporthal Ridderstraat, 3000 Leuven", "PUBLIC", daysAgo(18));
-                Category entry = category(party, admin, "Toegang", "10.00", 120, daysAgo(18));
+                Category entry = category(party, admin, "Toegang", "10.00", 120);
                 publish(party, admin, daysAgo(17));
                 sell(party, entry, pick(buyers, 24), daysAgo(16), daysAgo(1), List.of(Outcome.PAID), 1, null);
             }
@@ -379,26 +379,26 @@ class DemoDataSeeder implements ApplicationRunner {
                         "Chants de Noël traditionnels et gospel, suivis d'un vin chaud offert.",
                         at(70, 18, 0), "Église Saint-Gilles, Parvis de Saint-Gilles, 1060 Saint-Gilles", "PUBLIC",
                         daysAgo(4));
-                category(christmas, admin, "Entrée", "10.00", 150, daysAgo(4));
+                category(christmas, admin, "Entrée", "10.00", 150);
             }
             case "repair-cafe-ixelles" -> {
                 Event repair = event(club, admin, "Repair Café du mois",
                         "Apportez vos objets en panne : des bénévoles vous aident à les réparer.",
                         at(12, 14, 0), "Rue Gray 101, 1050 Ixelles", "PUBLIC", daysAgo(9));
-                category(repair, admin, "Participation aux frais", "2.00", 40, daysAgo(9));
+                category(repair, admin, "Participation aux frais", "2.00", 40);
             }
             case "toneelgroep-kameleon" -> {
                 Event play = event(club, admin, "Première: De Vrek (Molière)",
                         "De nieuwe productie van de toneelgroep, in een eigentijdse vertaling.",
                         at(95, 20, 0), "Zaal Kerkstraat 14, 9000 Gent", "PUBLIC", daysAgo(3));
-                category(play, admin, "Volwassene", "14.00", 90, daysAgo(3));
-                category(play, admin, "Student", "9.00", 30, daysAgo(3));
+                category(play, admin, "Volwassene", "14.00", 90);
+                category(play, admin, "Student", "9.00", 30);
             }
             case "brussels-book-club" -> {
                 Event evening = event(club, admin, "Author evening: crime fiction in Brussels",
                         "A conversation with a Brussels crime writer, followed by a signing.",
                         at(45, 19, 0), "Rue du Trône 60, 1050 Ixelles", "MEMBERS", daysAgo(2));
-                category(evening, admin, "Member", "6.00", 35, daysAgo(2));
+                category(evening, admin, "Member", "6.00", 35);
             }
             default -> {
                 // The community garden has no events yet.
@@ -560,15 +560,17 @@ class DemoDataSeeder implements ApplicationRunner {
                 updated_at) VALUES (?, ?, ?, ?, ?, ?, 'DRAFT', ?, ?)""",
                 club.id(), title, description, ts(startsAt), location, visibility, ts(createdAt), ts(createdAt));
         audit(by, club, "EVENT_CREATED", "Event", id, Map.of("title", title), createdAt);
-        return new Event(id, club, title, startsAt);
+        return new Event(id, club, title, startsAt, createdAt);
     }
 
-    private Category category(Event event, Account by, String label, String price, int seats, Instant when) {
+    // Ticket categories are added right after the event is created.
+    private Category category(Event event, Account by, String label, String price, int seats) {
         BigDecimal amount = new BigDecimal(price);
         long id = insert("INSERT INTO ticket_categories (event_id, label, price, total_seats) VALUES (?, ?, ?, ?)",
                 event.id(), label, amount, seats);
         audit(by, event.club(), "TICKET_ADDED", "Event", event.id(),
-                Map.of("label", label, "price", amount, "seats", seats), when.plus(Duration.ofMinutes(3)));
+                Map.of("label", label, "price", amount, "seats", seats),
+                event.createdAt().plus(Duration.ofMinutes(2 + random.nextInt(8))));
         return new Category(id, label, amount);
     }
 

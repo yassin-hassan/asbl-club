@@ -1,0 +1,30 @@
+meta {
+  name: 3 POST create event
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/asbls/{{slug}}/manage/events
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+body:json {
+  {
+    "title": "Assemblée générale ordinaire",
+    "description": "Approbation des comptes et élection du conseil d'administration.",
+    "startsAt": "2027-03-20T18:30:00Z",
+    "location": "Local du Cercle, Avenue Louis Bertrand 35, 1030 Schaerbeek",
+    "visibility": "MEMBERS"
+  }
+}
+
+script:post-response {
+  // 201 Created: the new draft's id is kept for the PUT and the DELETE.
+  bru.setVar("eventId", res.body.id);
+}
