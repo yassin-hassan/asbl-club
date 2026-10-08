@@ -14,7 +14,6 @@ import club.asbl.asbl_club.payment.Registrations.Checkout;
 import club.asbl.asbl_club.payment.Registrations.Mine;
 import club.asbl.asbl_club.user.User;
 import club.asbl.asbl_club.user.UserService;
-import com.stripe.exception.StripeException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -24,10 +23,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.ErrorResponseException;
@@ -45,24 +41,20 @@ import org.springframework.web.server.ResponseStatusException;
 @Tag(name = "Registrations", description = "Booking tickets and paying for them")
 class RegistrationApiController {
 
-    private static final Logger log = LoggerFactory.getLogger(RegistrationApiController.class);
-
     private final ReservationService reservationService;
     private final RegistrationRepository registrationRepository;
-    private final PaymentService paymentService;
-    private final StripeProperties stripeProperties;
+    private final BookingCheckout bookingCheckout;
     private final EventService eventService;
     private final AsblService asblService;
     private final MembershipService membershipService;
     private final UserService userService;
 
     RegistrationApiController(ReservationService reservationService, RegistrationRepository registrationRepository,
-            PaymentService paymentService, StripeProperties stripeProperties, EventService eventService,
-            AsblService asblService, MembershipService membershipService, UserService userService) {
+            BookingCheckout bookingCheckout, EventService eventService, AsblService asblService,
+            MembershipService membershipService, UserService userService) {
         this.reservationService = reservationService;
         this.registrationRepository = registrationRepository;
-        this.paymentService = paymentService;
-        this.stripeProperties = stripeProperties;
+        this.bookingCheckout = bookingCheckout;
         this.eventService = eventService;
         this.asblService = asblService;
         this.membershipService = membershipService;
@@ -90,9 +82,31 @@ class RegistrationApiController {
         if (event.getStatus() != EventStatus.PUBLISHED) {
             throw conflict("NOT_BOOKABLE", "This event isn't open for booking.");
         }
+        return bookAs(user, event, request.ticketCategoryId());
+    }
+
+    // Anyone with an account books a seat on a public event, from its public page (no membership needed). Events
+    // for members only are booked from the association's space, above.
+    @Operation(operationId = "bookPublicEvent", summary = "Book a seat on a public event (any account)",
+            security = @SecurityRequirement(name = "bearer"))
+    @ApiResponse(responseCode = "201", description = "Booked; pay next",
+            content = @Content(schema = @Schema(implementation = Mine.class)))
+    @ApiResponse(responseCode = "409", description = "Sold out (SOLD_OUT), or the association can't receive payments yet (PAYMENTS_DISABLED)",
+            content = @Content(mediaType = "application/problem+json"))
+    @PostMapping("/api/v1/events/{eventId}/registrations")
+    ResponseEntity<Mine> bookPublic(@PathVariable Long eventId, @Valid @RequestBody BookRequest request,
+            Authentication authentication) {
+        User user = userService.getAuthenticated(authentication);
+        Event event = eventService.findPublicEvent(eventId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        BookingCheckout.requirePayments(event.getAsbl());
+        return bookAs(user, event, request.ticketCategoryId());
+    }
+
+    private ResponseEntity<Mine> bookAs(User user, Event event, Long ticketCategoryId) {
         Registration registration;
         try {
-            registration = reservationService.reserve(event, request.ticketCategoryId(), user);
+            registration = reservationService.reserve(event, ticketCategoryId, user);
         } catch (TicketNotInEventException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         } catch (TicketSoldOutException e) {
@@ -129,34 +143,11 @@ class RegistrationApiController {
     @PostMapping("/api/v1/registrations/{id}/checkout")
     Checkout checkout(@PathVariable Long id, Authentication authentication) {
         User user = userService.getAuthenticated(authentication);
-        Registration registration = own(id, user);
-        if (registration.getStatus() == RegistrationStatus.EXPIRED) {
-            throw conflict("BOOKING_EXPIRED", "This booking wasn't paid in time; its seat was given back.");
-        }
-        if (registration.getStatus() != RegistrationStatus.RESERVED) {
-            throw conflict("NOTHING_TO_PAY", "This booking has nothing left to pay.");
-        }
-        Asbl asbl = registration.getEvent().getAsbl();
-        if (asbl.getStripeAccountId() == null) {
-            throw conflict("PAYMENTS_DISABLED", "This association can't receive payments yet.");
-        }
-        try {
-            PaymentInitiation initiation =
-                    paymentService.initiate(registration, asbl, user.getName(), user.getEmail(), user);
-            return new Checkout(stripeProperties.publishableKey(), asbl.getStripeAccountId(),
-                    initiation.clientSecret(), registration.getAmount(), registration.getCurrency());
-        } catch (StripeException e) {
-            log.warn("Stripe refused or failed to start a payment for registration {}: {}", id, e.getMessage());
-            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "The payment provider couldn't be reached.");
-        }
+        return bookingCheckout.start(own(id, user), user.getName(), user.getEmail(), user);
     }
 
-    // Several different conflicts share status 409: a stable "code" tells clients which one, independent of the
-    // human-readable (and changeable) detail text.
     private static ErrorResponseException conflict(String code, String detail) {
-        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, detail);
-        problem.setProperty("code", code);
-        return new ErrorResponseException(HttpStatus.CONFLICT, problem, null);
+        return BookingCheckout.conflict(code, detail);
     }
 
     // Someone else's booking is "not found": IDs are sequential, so without this check anyone could open (and

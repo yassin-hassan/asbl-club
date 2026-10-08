@@ -3,8 +3,10 @@ package club.asbl.asbl_club.payment;
 import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -16,6 +18,43 @@ public final class Registrations {
     }
 
     public record BookRequest(@NotNull Long ticketCategoryId) {
+    }
+
+    // A visitor without an account books a seat on a public event: who they are, and the language of their emails.
+    public record GuestBookRequest(
+            @NotNull Long eventId,
+            @NotNull Long ticketCategoryId,
+            @NotBlank @Size(max = 255) String name,
+            @NotBlank @Email @Size(max = 255) String email,
+            @NotBlank @Pattern(regexp = "fr|nl|en") String language) {
+    }
+
+    // The secret link's token is returned once, here (and emailed): only its hash is kept.
+    @Schema(name = "GuestBooked")
+    public record GuestBooked(
+            @Schema(requiredMode = REQUIRED, description = "Opens the booking: /tickets/{accessToken}. Shown once.")
+            String accessToken,
+            @Schema(requiredMode = REQUIRED) GuestBooking booking) {
+    }
+
+    // A guest's booking, as its secret link shows it.
+    @Schema(name = "GuestBooking")
+    public record GuestBooking(
+            @Schema(requiredMode = REQUIRED,
+                    allowableValues = {"RESERVED", "PAID", "CONFIRMED", "ATTENDED", "CANCELLED", "REFUNDED", "EXPIRED"})
+            String status,
+            @Schema(requiredMode = REQUIRED) String name,
+            @Schema(requiredMode = REQUIRED) String email,
+            @Schema(requiredMode = REQUIRED, description = "Amount in euros") BigDecimal amount,
+            @Schema(requiredMode = REQUIRED) String currency,
+            @Schema(requiredMode = REQUIRED) Long eventId,
+            @Schema(requiredMode = REQUIRED) String eventTitle,
+            @Schema(requiredMode = REQUIRED) Instant startsAt,
+            String location,
+            @Schema(requiredMode = REQUIRED) String asblName,
+            @Schema(requiredMode = REQUIRED) String ticketLabel,
+            @Schema(description = "The code in the ticket's QR code; present once the booking is paid") String ticketCode,
+            Instant checkedInAt) {
     }
 
     @Schema(name = "MyRegistration")

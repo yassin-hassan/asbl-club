@@ -11,7 +11,7 @@ export type Outcome = 'checking' | 'confirmed' | 'refunded' | 'processing' | 'fa
 
 // Statuses in which Stripe's answer is still awaited. CANCELLED and EXPIRED too: the event was cancelled, or the
 // booking ran out of time, while the person was paying; a payment that went through is refunded (ends as REFUNDED).
-const WAITING = new Set(['RESERVED', 'CANCELLED', 'EXPIRED']);
+export const WAITING = new Set(['RESERVED', 'CANCELLED', 'EXPIRED']);
 
 // Where Stripe sends the browser after a payment attempt. Stripe's redirect only *suggests* the outcome (anyone can
 // type this URL); the truth is the booking's status on our server, set by Stripe's signed webhook. So: ask the

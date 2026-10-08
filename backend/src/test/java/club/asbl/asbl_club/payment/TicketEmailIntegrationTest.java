@@ -164,6 +164,40 @@ class TicketEmailIntegrationTest {
                 + "AND body IS NULL AND qr_code IS NULL", Integer.class)).isEqualTo(1);
     }
 
+    // A guest has no account: the ticket goes to the address they gave, in their language, and the email itself is
+    // the ticket (no "My bookings" link). It comes after the email with their secret link.
+    @Test
+    void aGuestsPaidBooking_sendsTheTicket_toTheirAddress_inTheirLanguage() throws Exception {
+        ReservationService.GuestReservation guest = reservationService.reserveForGuest(concert,
+                eventService.ticketCategoriesOf(concert).get(0).id(), "Zoé Martin", "zoe@mail.test", "nl");
+        Payment payment = new Payment();
+        payment.setAsbl(concert.getAsbl());
+        payment.setPayerName("Zoé Martin");
+        payment.setPayerEmail("zoe@mail.test");
+        payment.setPayable(guest.registration());
+        payment.setStripePaymentIntentId("pi_guest");
+        payment.setIdempotencyKey("payable-" + guest.registration().getId());
+        payment.setAmount(new BigDecimal("12.50"));
+        payment.setCommission(new BigDecimal("0.68"));
+        payment.setStatus(PaymentStatus.INITIATED);
+        paymentRepository.save(payment);
+        entityManager.flush();
+        entityManager.clear();
+
+        paymentService.handleSucceeded("pi_guest");
+        outbox.sendDue();
+
+        MimeMessage[] emails = mailServer.getReceivedMessages();
+        assertThat(emails).hasSize(2);
+        assertThat(emails[0].getSubject()).isEqualTo("Je reservering voor Concert");
+        assertThat(textOf(emails[0])).contains("Hallo Zoé Martin", "https://site.test/tickets/" + guest.accessToken());
+        assertThat(emails[1].getAllRecipients()[0].toString()).isEqualTo("zoe@mail.test");
+        assertThat(emails[1].getSubject()).isEqualTo("Je ticket voor Concert");
+        assertThat(textOf(emails[1])).contains("Hallo Zoé Martin", "Bewaar deze e-mail")
+                .doesNotContain("https://site.test/bookings");
+        assertThat(attachmentOf(emails[1]).getContentType()).startsWith("image/png");
+    }
+
     @Test
     void aPaymentRefundedBecauseTheEventWasCancelled_saysSo_inTheMembersLanguage() throws Exception {
         eventService.cancel(eventService.findEvent(concert.getAsbl(), concert.getId()).orElseThrow());

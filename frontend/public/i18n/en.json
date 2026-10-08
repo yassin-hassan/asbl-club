@@ -62,7 +62,20 @@
     "price": "Price",
     "seatsLeft": "Seats left",
     "share": "Share",
-    "email": "Email"
+    "email": "Email",
+    "book": "Book",
+    "full": "Full",
+    "soldOut": "No seats left in this category.",
+    "guestTitle": "Book: {{ ticket }}",
+    "guestHint": "No account needed: give your name and email address. You'll get a link to pay, then to find your ticket.",
+    "guestName": "Name",
+    "guestEmail": "Email address",
+    "nameRequired": "Enter your name.",
+    "invalidEmail": "Enter a valid email address.",
+    "continue": "Continue to payment",
+    "cancel": "Cancel",
+    "haveAccount": "Have an account?",
+    "login": "Log in"
   },
   "errors": {
     "generic": "Something went wrong. Please try again.",
@@ -480,5 +493,15 @@
     "download": "Download (CSV)",
     "listLabel": "Who paid their dues",
     "paidAt": "Paid on"
+  },
+  "guestTicket": {
+    "ticket": "Ticket",
+    "holder": "In the name of",
+    "status": "Status",
+    "pay": "Pay",
+    "keepLink": "Keep this link: it opens your booking (it was also emailed to you). Without a quick payment, the seat goes back on sale.",
+    "showAtDoor": "Show this QR code at the entrance. It is also attached to the confirmation email.",
+    "cancelled": "The event was cancelled: this booking is no longer valid.",
+    "notFound": "This booking link is unknown."
   }
 }

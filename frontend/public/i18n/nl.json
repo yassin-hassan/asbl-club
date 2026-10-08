@@ -62,7 +62,20 @@
     "price": "Prijs",
     "seatsLeft": "Resterende plaatsen",
     "share": "Delen",
-    "email": "E-mail"
+    "email": "E-mail",
+    "book": "Reserveren",
+    "full": "Volzet",
+    "soldOut": "Geen plaats meer in deze categorie.",
+    "guestTitle": "Reserveren: {{ ticket }}",
+    "guestHint": "Geen account nodig: geef je naam en e-mailadres. Je krijgt een link om te betalen en daarna je ticket terug te vinden.",
+    "guestName": "Naam",
+    "guestEmail": "E-mailadres",
+    "nameRequired": "Vul je naam in.",
+    "invalidEmail": "Vul een geldig e-mailadres in.",
+    "continue": "Verder naar betalen",
+    "cancel": "Annuleren",
+    "haveAccount": "Heb je een account?",
+    "login": "Aanmelden"
   },
   "errors": {
     "generic": "Er ging iets mis. Probeer het opnieuw.",
@@ -480,5 +493,15 @@
     "download": "Downloaden (CSV)",
     "listLabel": "Wie zijn lidgeld betaalde",
     "paidAt": "Betaald op"
+  },
+  "guestTicket": {
+    "ticket": "Ticket",
+    "holder": "Op naam van",
+    "status": "Status",
+    "pay": "Betalen",
+    "keepLink": "Bewaar deze link: hij geeft toegang tot je reservering (je kreeg hem ook per e-mail). Zonder snelle betaling komt de plaats weer vrij.",
+    "showAtDoor": "Toon deze QR-code aan de ingang. Hij zit ook als bijlage bij de bevestigingsmail.",
+    "cancelled": "Het evenement is geannuleerd: deze reservering is niet meer geldig.",
+    "notFound": "Deze reserveringslink is onbekend."
   }
 }

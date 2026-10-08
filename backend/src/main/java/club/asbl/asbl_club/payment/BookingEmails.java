@@ -30,13 +30,25 @@ class BookingEmails {
         this.publicUrl = publicUrl;
     }
 
+    // A guest's booking: the link back to it (the only way to pay later, or to see the ticket), sent at once.
+    void guestBooked(Registration booking, String accessToken) {
+        Recipient to = recipientOf(booking);
+        Event event = booking.getEvent();
+        emailService.queue(to.email(), to.locale(), "guestBooked", to.name(), event.getTitle(),
+                when(event.getStartsAt(), to.locale()), booking.getTicketCategory().getLabel(),
+                money(booking.getAmount(), to.locale()), publicUrl + "/tickets/" + accessToken,
+                event.getAsbl().getDenomination());
+    }
+
     void ticketReady(Registration booking) {
         Recipient to = recipientOf(booking);
         if (to == null) {
             return;
         }
         Event event = booking.getEvent();
-        emailService.queueWithQrCode(to.email(), to.locale(), "ticketReady", booking.getQrToken(),
+        // A guest has no "My bookings" page: their email says the attached QR code is the ticket.
+        String template = booking.getUser() == null ? "ticketReadyGuest" : "ticketReady";
+        emailService.queueWithQrCode(to.email(), to.locale(), template, booking.getQrToken(),
                 "ticket-" + booking.getId() + ".png",
                 to.name(), event.getTitle(), when(event.getStartsAt(), to.locale()),
                 event.getLocation() == null ? "–" : event.getLocation(), booking.getTicketCategory().getLabel(),
@@ -66,7 +78,8 @@ class BookingEmails {
             return user.getDeletedAt() != null ? null
                     : new Recipient(user.getEmail(), user.getName(), Locale.forLanguageTag(user.getLanguage()));
         }
-        return booking.getGuestEmail() == null ? null : new Recipient(booking.getGuestEmail(), "", Locale.FRENCH);
+        return booking.getGuestEmail() == null ? null : new Recipient(booking.getGuestEmail(), booking.getGuestName(),
+                Locale.forLanguageTag(booking.getGuestLanguage()));
     }
 
     static String when(Instant instant, Locale locale) {

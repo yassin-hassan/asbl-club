@@ -24,7 +24,7 @@ import org.springframework.web.util.UrlPathHelper;
 
 /**
  * Limits how often one client IP may call the credential endpoints (brute force, credential stuffing,
- * mass sign-ups). Token bucket per (endpoint, IP): short bursts are fine, the sustained rate is capped.
+ * mass sign-ups) and guest booking (seats held and emails sent without a login). Token bucket per (endpoint, IP): short bursts are fine, the sustained rate is capped.
  * Over the limit: 429 Too Many Requests with a Retry-After header.
  *
  * <p>Runs before Spring Security, so refused attempts never reach the password check. Counters live in this instance's memory; with several instances each counts
@@ -43,7 +43,8 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
             "/api/v1/auth/password-reset", 5, // each one sends an email: no mail bombing, no provider-quota burning
             "/api/v1/auth/password-reset/confirm", 10,
             "/api/v1/auth/verify-email", 10,
-            "/api/v1/auth/verify-email/resend", 5); // sends an email, like sign-up and password reset
+            "/api/v1/auth/verify-email/resend", 5, // sends an email, like sign-up and password reset
+            "/api/v1/guest-bookings", 10); // no login: holds a seat and sends an email
 
     private final boolean enabled;
     private final ProblemResponses problems;

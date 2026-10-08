@@ -25,11 +25,17 @@
     "name" : "Authentication",
     "description" : "Exchange credentials for tokens"
   }, {
-    "name" : "Member management",
-    "description" : "The join link and join requests (administrators)"
-  }, {
     "name" : "Dues",
     "description" : "Membership dues (cotisations)"
+  }, {
+    "name" : "Guest bookings",
+    "description" : "Buying a ticket for a public event without an account"
+  }, {
+    "name" : "Associations",
+    "description" : "Creating and managing associations (logged-in users)"
+  }, {
+    "name" : "Member management",
+    "description" : "The join link and join requests (administrators)"
   }, {
     "name" : "Joining",
     "description" : "Asking to join an association through its join link"
@@ -39,9 +45,6 @@
   }, {
     "name" : "Registrations",
     "description" : "Booking tickets and paying for them"
-  }, {
-    "name" : "Associations",
-    "description" : "Creating and managing associations (logged-in users)"
   }, {
     "name" : "Payment setup",
     "description" : "Connecting an association to Stripe (administrators)"
@@ -623,6 +626,133 @@
           },
           "403" : {
             "description" : "Sent to another address (WRONG_ACCOUNT)",
+            "content" : {
+              "application/problem+json" : { }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/guest-bookings" : {
+      "post" : {
+        "tags" : [ "Guest bookings" ],
+        "summary" : "Book a seat on a public event, without an account",
+        "operationId" : "bookAsGuest",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/GuestBookRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Booked; the secret link to pay and to see the ticket is in the body and was emailed",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/GuestBooked"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "No such public event, or a ticket of another event",
+            "content" : {
+              "application/problem+json" : { }
+            }
+          },
+          "409" : {
+            "description" : "Sold out (SOLD_OUT), or the association can't receive payments yet (PAYMENTS_DISABLED)",
+            "content" : {
+              "application/problem+json" : { }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/guest-bookings/{token}/checkout" : {
+      "post" : {
+        "tags" : [ "Guest bookings" ],
+        "summary" : "Start (or resume) paying for a guest's booking",
+        "operationId" : "startGuestCheckout",
+        "parameters" : [ {
+          "name" : "token",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Ready to pay",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Checkout"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Nothing to pay (NOTHING_TO_PAY), not paid in time (BOOKING_EXPIRED), or the association can't receive payments yet (PAYMENTS_DISABLED)",
+            "content" : {
+              "application/problem+json" : { }
+            }
+          },
+          "502" : {
+            "description" : "The payment provider couldn't be reached",
+            "content" : {
+              "application/problem+json" : { }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/events/{eventId}/registrations" : {
+      "post" : {
+        "tags" : [ "Registrations" ],
+        "summary" : "Book a seat on a public event (any account)",
+        "operationId" : "bookPublicEvent",
+        "parameters" : [ {
+          "name" : "eventId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BookRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Booked; pay next",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MyRegistration"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Sold out (SOLD_OUT), or the association can't receive payments yet (PAYMENTS_DISABLED)",
             "content" : {
               "application/problem+json" : { }
             }
@@ -1714,6 +1844,29 @@
         } ]
       }
     },
+    "/api/v1/guest-bookings/{token}" : {
+      "get" : {
+        "tags" : [ "Guest bookings" ],
+        "summary" : "A guest's booking, through its secret link",
+        "operationId" : "getGuestBooking",
+        "parameters" : [ {
+          "name" : "token",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "404" : {
+            "description" : "Unknown link",
+            "content" : {
+              "application/problem+json" : { }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/events/{eventId}" : {
       "get" : {
         "tags" : [ "Public" ],
@@ -2399,6 +2552,144 @@
           }
         }
       },
+      "GuestBookRequest" : {
+        "required" : [ "email", "eventId", "language", "name", "ticketCategoryId" ],
+        "type" : "object",
+        "properties" : {
+          "eventId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "ticketCategoryId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "name" : {
+            "maxLength" : 255,
+            "minLength" : 0,
+            "type" : "string"
+          },
+          "email" : {
+            "maxLength" : 255,
+            "minLength" : 0,
+            "type" : "string",
+            "format" : "email"
+          },
+          "language" : {
+            "minLength" : 1,
+            "pattern" : "fr|nl|en",
+            "type" : "string"
+          }
+        }
+      },
+      "GuestBooked" : {
+        "required" : [ "accessToken", "booking" ],
+        "type" : "object",
+        "properties" : {
+          "accessToken" : {
+            "type" : "string",
+            "description" : "Opens the booking: /tickets/{accessToken}. Shown once."
+          },
+          "booking" : {
+            "$ref" : "#/components/schemas/GuestBooking"
+          }
+        }
+      },
+      "GuestBooking" : {
+        "required" : [ "amount", "asblName", "currency", "email", "eventId", "eventTitle", "name", "startsAt", "status", "ticketLabel" ],
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "enum" : [ "RESERVED", "PAID", "CONFIRMED", "ATTENDED", "CANCELLED", "REFUNDED", "EXPIRED" ]
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "email" : {
+            "type" : "string"
+          },
+          "amount" : {
+            "type" : "number",
+            "description" : "Amount in euros"
+          },
+          "currency" : {
+            "type" : "string"
+          },
+          "eventId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "eventTitle" : {
+            "type" : "string"
+          },
+          "startsAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "location" : {
+            "type" : "string"
+          },
+          "asblName" : {
+            "type" : "string"
+          },
+          "ticketLabel" : {
+            "type" : "string"
+          },
+          "ticketCode" : {
+            "type" : "string",
+            "description" : "The code in the ticket's QR code; present once the booking is paid"
+          },
+          "checkedInAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
+      "BookRequest" : {
+        "required" : [ "ticketCategoryId" ],
+        "type" : "object",
+        "properties" : {
+          "ticketCategoryId" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
+      "MyRegistration" : {
+        "required" : [ "amount", "asblSlug", "currency", "eventId", "eventTitle", "id", "status", "ticketLabel" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "RESERVED", "PAID", "CONFIRMED", "ATTENDED", "CANCELLED", "REFUNDED", "EXPIRED" ]
+          },
+          "amount" : {
+            "type" : "number",
+            "description" : "Amount in euros"
+          },
+          "currency" : {
+            "type" : "string"
+          },
+          "eventId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "eventTitle" : {
+            "type" : "string"
+          },
+          "ticketLabel" : {
+            "type" : "string"
+          },
+          "asblSlug" : {
+            "type" : "string"
+          }
+        }
+      },
       "VerifyRequest" : {
         "required" : [ "token" ],
         "type" : "object",
@@ -2569,50 +2860,6 @@
             "minLength" : 0,
             "type" : "string",
             "format" : "email"
-          }
-        }
-      },
-      "BookRequest" : {
-        "required" : [ "ticketCategoryId" ],
-        "type" : "object",
-        "properties" : {
-          "ticketCategoryId" : {
-            "type" : "integer",
-            "format" : "int64"
-          }
-        }
-      },
-      "MyRegistration" : {
-        "required" : [ "amount", "asblSlug", "currency", "eventId", "eventTitle", "id", "status", "ticketLabel" ],
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "integer",
-            "format" : "int64"
-          },
-          "status" : {
-            "type" : "string",
-            "enum" : [ "RESERVED", "PAID", "CONFIRMED", "ATTENDED", "CANCELLED", "REFUNDED", "EXPIRED" ]
-          },
-          "amount" : {
-            "type" : "number",
-            "description" : "Amount in euros"
-          },
-          "currency" : {
-            "type" : "string"
-          },
-          "eventId" : {
-            "type" : "integer",
-            "format" : "int64"
-          },
-          "eventTitle" : {
-            "type" : "string"
-          },
-          "ticketLabel" : {
-            "type" : "string"
-          },
-          "asblSlug" : {
-            "type" : "string"
           }
         }
       },

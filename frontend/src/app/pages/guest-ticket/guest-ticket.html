@@ -1,0 +1,58 @@
+<div class="page">
+  @if (error(); as error) {
+    <p class="error" role="alert">{{ error | transloco }}</p>
+  } @else if (booking(); as booking) {
+    <h1>{{ booking.eventTitle }}</h1>
+    <p class="muted">{{ 'event.organisedBy' | transloco: { name: booking.asblName } }}</p>
+
+    <dl class="facts">
+      <div><dt>{{ 'event.startsAt' | transloco }}</dt><dd>{{ booking.startsAt | date: 'fullDate' : undefined : lang() }} · {{ booking.startsAt | date: 'shortTime' : undefined : lang() }}</dd></div>
+      @if (booking.location) {
+        <div><dt>{{ 'event.location' | transloco }}</dt><dd>{{ booking.location }}</dd></div>
+      }
+      <div><dt>{{ 'guestTicket.ticket' | transloco }}</dt><dd>{{ booking.ticketLabel }} · {{ booking.amount | currency: booking.currency : 'symbol' : '1.2-2' : lang() }}</dd></div>
+      <div><dt>{{ 'guestTicket.holder' | transloco }}</dt><dd>{{ booking.name }} ({{ booking.email }})</dd></div>
+      <div><dt>{{ 'guestTicket.status' | transloco }}</dt><dd><span class="tag">{{ 'attendees.statuses.' + booking.status | transloco }}</span></dd></div>
+    </dl>
+
+    @if (checking()) {
+      <mat-spinner diameter="40" />
+      <p role="status">{{ 'payment.checking' | transloco }}</p>
+    } @else {
+      @switch (booking.status) {
+        @case ('RESERVED') {
+          @if (failed) {
+            <p class="error" role="alert">{{ 'payment.failed' | transloco }}</p>
+          } @else if (backFromPaying) {
+            <p role="status">{{ 'payment.stillProcessing' | transloco }}</p>
+          }
+          <a mat-flat-button [routerLink]="['/tickets', token, 'pay']">{{ 'guestTicket.pay' | transloco }}</a>
+          <p class="hint">{{ 'guestTicket.keepLink' | transloco }}</p>
+        }
+        @case ('EXPIRED') {
+          <p class="error" role="alert">{{ 'payment.expired' | transloco }}</p>
+          <a mat-button [routerLink]="['/events', booking.eventId]">{{ 'payment.backToEvent' | transloco }}</a>
+        }
+        @case ('REFUNDED') {
+          <p role="status">{{ 'payment.refunded' | transloco }}</p>
+        }
+        @case ('CANCELLED') {
+          <p role="status">{{ 'guestTicket.cancelled' | transloco }}</p>
+        }
+        @default {
+          @if (booking.ticketCode && booking.status !== 'ATTENDED') {
+            <div class="ticket">
+              <app-ticket-qr [code]="booking.ticketCode" [label]="'bookings.qrLabel' | transloco: { event: booking.eventTitle }" />
+            </div>
+            <p class="hint">{{ 'guestTicket.showAtDoor' | transloco }}</p>
+          }
+          @if (booking.checkedInAt) {
+            <p>{{ 'bookings.checkedInAt' | transloco: { time: (booking.checkedInAt | date: 'short' : undefined : lang()) } }}</p>
+          }
+        }
+      }
+    }
+  } @else {
+    <mat-spinner diameter="40" />
+  }
+</div>

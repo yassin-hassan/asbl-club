@@ -7,6 +7,7 @@ api/audit.service.ts
 api/authentication.service.ts
 api/dues.service.ts
 api/eventManagement.service.ts
+api/guestBookings.service.ts
 api/invitations.service.ts
 api/joining.service.ts
 api/memberManagement.service.ts
@@ -38,6 +39,9 @@ model/duesMember.ts
 model/duesReport.ts
 model/duesSettings.ts
 model/eventFeedItem.ts
+model/guestBookRequest.ts
+model/guestBooked.ts
+model/guestBooking.ts
 model/invitationPreview.ts
 model/inviteRequest.ts
 model/joinInvitation.ts
