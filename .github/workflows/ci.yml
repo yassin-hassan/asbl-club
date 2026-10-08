@@ -74,7 +74,7 @@ jobs:
 
   # A real browser through the real stack, shaped like production: Chromium → the Cloudflare Worker
   # (run locally by Wrangler: the built app, security headers, link previews, the /api proxy and its secret)
-  # → Spring → PostgreSQL, with the backend's demo data. Catches what unit tests with a faked other side can't.
+  # → Spring → PostgreSQL, with the backend's e2e data. Catches what unit tests with a faked other side can't.
   e2e:
     name: End-to-end tests
     runs-on: ubuntu-latest
@@ -136,7 +136,7 @@ jobs:
           CI: 'true'
           E2E_BACKEND_COMMAND: >-
             java -jar ../backend/target/asbl-club-0.0.1-SNAPSHOT.jar
-            --spring.profiles.active=demo --spring.docker.compose.enabled=false
+            --spring.profiles.active=e2e --spring.docker.compose.enabled=false
           E2E_FRONTEND_COMMAND: npm run build && npx wrangler dev --port 4200
           E2E_THROUGH_WORKER: 'true'
           WRANGLER_SEND_METRICS: 'false'

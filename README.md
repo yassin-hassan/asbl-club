@@ -135,15 +135,19 @@ npm install --legacy-peer-deps
 npm start
 ```
 
-Open http://localhost:4200 and log in as `demo@asbl.club` / `password123` (the demo profile creates it, with an
-association and a published event). Paying needs Stripe test keys (`STRIPE_SECRET_KEY`, `STRIPE_PUBLISHABLE_KEY`,
+Open http://localhost:4200 and log in with password `demo-asbl-2026`. The demo profile fills an empty database with a
+year of realistic history (every table has rows) around the association `cercle-josaphat`:
+`sophie.lambert@demo.asbl.club` (its administrator), `thomas.dubois@demo.asbl.club` (a member who hasn't bought a
+ticket for the coming concert nor paid this year's dues), `julie.peeters@demo.asbl.club` (a member with payments, to
+close the account) and `admin@demo.asbl.club` (platform administrator). Paying needs Stripe test keys (`STRIPE_SECRET_KEY`, `STRIPE_PUBLISHABLE_KEY`,
 `STRIPE_WEBHOOK_SECRET`) and the Stripe CLI from `compose.yaml` to forward webhooks; everything else works
 without them.
 
 ```bash
 cd backend && ./mvnw test      # backend tests (Testcontainers starts its own PostgreSQL through Docker)
 cd frontend && npm test        # frontend unit tests
-cd frontend && npm run e2e     # end-to-end tests, with the API from step 2 running (starts the app itself)
+cd frontend && npm run e2e     # end-to-end tests, with the API from step 2 running with the e2e profile instead
+                               # (-Dspring-boot.run.profiles=e2e: fixed test data, demo@asbl.club / password123)
 ```
 
 ## Roadmap
