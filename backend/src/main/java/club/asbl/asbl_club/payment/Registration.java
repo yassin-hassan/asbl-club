@@ -31,8 +31,18 @@ public class Registration extends Payable {
     @JoinColumn(name = "user_id")
     private User user;
 
+    // A guest (no account): who they are, and the hash of their secret link back to the booking.
     @Column(name = "guest_email")
     private String guestEmail;
+
+    @Column(name = "guest_name")
+    private String guestName;
+
+    @Column(name = "guest_language", length = 5)
+    private String guestLanguage;
+
+    @Column(name = "access_token_hash", length = 64)
+    private String accessTokenHash;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
@@ -80,6 +90,30 @@ public class Registration extends Payable {
 
     public void setGuestEmail(String guestEmail) {
         this.guestEmail = guestEmail;
+    }
+
+    public String getGuestName() {
+        return guestName;
+    }
+
+    public void setGuestName(String guestName) {
+        this.guestName = guestName;
+    }
+
+    public String getGuestLanguage() {
+        return guestLanguage;
+    }
+
+    public void setGuestLanguage(String guestLanguage) {
+        this.guestLanguage = guestLanguage;
+    }
+
+    public String getAccessTokenHash() {
+        return accessTokenHash;
+    }
+
+    public void setAccessTokenHash(String accessTokenHash) {
+        this.accessTokenHash = accessTokenHash;
     }
 
     public RegistrationStatus getStatus() {

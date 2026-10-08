@@ -6,12 +6,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { loadStripe, Stripe, StripeElements } from '@stripe/stripe-js';
-import { Checkout, DuesService, RegistrationsService } from '../../api/generated';
+import { Checkout, DuesService, GuestBookingsService, RegistrationsService } from '../../api/generated';
 import { LanguageService } from '../../i18n/language';
 import { errorMessageKey, problemOf } from '../../services/problem';
 
-// Paying with Stripe's own payment form (cards, Bancontact…), for a booking (/pay/:id) or for this year's dues
-// (/asbls/:slug/dues/pay). The form runs in Stripe's iframe: card details go from the browser straight to Stripe
+// Paying with Stripe's own payment form (cards, Bancontact…), for a booking (/pay/:id), a guest's booking
+// (/tickets/:token/pay, no account) or this year's dues (/asbls/:slug/dues/pay). The form runs in Stripe's iframe: card details go from the browser straight to Stripe
 // and never reach our server.
 @Component({
   selector: 'app-checkout',
@@ -24,8 +24,9 @@ export class CheckoutPage {
   private document = inject(DOCUMENT);
   readonly lang = inject(LanguageService).active;
   private readonly params = inject(ActivatedRoute).snapshot.paramMap;
-  // Dues when the address names an association, otherwise a booking.
+  // Dues when the address names an association, a guest's booking when it holds its secret link, otherwise a booking.
   readonly duesOf = this.params.get('slug');
+  readonly guestToken = this.params.get('token');
   readonly registrationId = Number(this.params.get('id'));
 
   private readonly paymentElement = viewChild.required<ElementRef<HTMLElement>>('paymentElement');
@@ -41,7 +42,9 @@ export class CheckoutPage {
   constructor() {
     const start = this.duesOf
       ? inject(DuesService).startDuesCheckout(this.duesOf)
-      : inject(RegistrationsService).startCheckout(this.registrationId);
+      : this.guestToken
+        ? inject(GuestBookingsService).startGuestCheckout(this.guestToken)
+        : inject(RegistrationsService).startCheckout(this.registrationId);
     start.subscribe({
       next: (checkout) => {
         this.checkout.set(checkout);
@@ -72,7 +75,11 @@ export class CheckoutPage {
     this.stripeError.set(null);
     // On success Stripe sends the browser to the "complete" page. That redirect proves nothing by itself: the
     // payment counts only once Stripe's signed webhook reaches the server.
-    const complete = this.duesOf ? `/asbls/${this.duesOf}/dues/paid` : `/pay/${this.registrationId}/complete`;
+    const complete = this.duesOf
+      ? `/asbls/${this.duesOf}/dues/paid`
+      : this.guestToken
+        ? `/tickets/${this.guestToken}`
+        : `/pay/${this.registrationId}/complete`;
     const { error } = await this.stripe.confirmPayment({
       elements: this.elements,
       confirmParams: { return_url: `${this.document.location.origin}${complete}` },

@@ -28,8 +28,8 @@ record Attendees(
             @Schema(requiredMode = REQUIRED) Instant bookedAt) {
 
         static Attendee of(Registration r) {
-            // A booking belongs to a member (a closed account stays linked, anonymised) or, later, to a guest.
-            String name = r.getUser() != null ? r.getUser().getName() : "";
+            // A booking belongs to an account (a closed account stays linked, anonymised) or to a guest.
+            String name = r.getUser() != null ? r.getUser().getName() : r.getGuestName();
             String email = r.getUser() != null ? r.getUser().getEmail() : r.getGuestEmail();
             return new Attendee(r.getId(), name, email, r.getTicketCategory().getLabel(), r.getStatus().name(),
                     r.getAmount(), r.getCurrency(), r.getRegisteredAt());

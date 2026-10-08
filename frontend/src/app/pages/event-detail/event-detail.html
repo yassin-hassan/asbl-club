@@ -36,11 +36,54 @@
             <th mat-header-cell *matHeaderCellDef>{{ 'event.seatsLeft' | transloco }}</th>
             <td mat-cell *matCellDef="let ticket">{{ ticket.remaining }}</td>
           </ng-container>
+          <ng-container matColumnDef="book">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let ticket">
+              @if (ticket.remaining > 0) {
+                <button mat-flat-button type="button" (click)="book(ticket)" [disabled]="saving()">{{ 'event.book' | transloco }}</button>
+              } @else {
+                <span class="tag">{{ 'event.full' | transloco }}</span>
+              }
+            </td>
+          </ng-container>
           <tr mat-header-row *matHeaderRowDef="columns"></tr>
           <tr mat-row *matRowDef="let row; columns: columns"></tr>
         </table>
       </div>
       <p class="hint">{{ 'event.refreshHint' | transloco }}</p>
+
+      @if (bookError(); as error) {
+        <p class="error" role="alert">{{ error | transloco }}</p>
+      }
+
+      <!-- Without an account: a name and an email address, then payment. -->
+      @if (chosen(); as ticket) {
+        <section class="box">
+          <h2>{{ 'event.guestTitle' | transloco: { ticket: ticket.label } }} · {{ ticket.price | currency: 'EUR' : 'symbol' : '1.2-2' : lang() }}</h2>
+          <p class="hint">{{ 'event.guestHint' | transloco }}</p>
+          <form [formGroup]="guestForm" (ngSubmit)="bookAsGuest()" novalidate class="stack">
+            <mat-form-field appearance="outline">
+              <mat-label>{{ 'event.guestName' | transloco }}</mat-label>
+              <input matInput formControlName="name" autocomplete="name" />
+              @if (guestForm.controls.name.invalid) {
+                <mat-error>{{ 'event.nameRequired' | transloco }}</mat-error>
+              }
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>{{ 'event.guestEmail' | transloco }}</mat-label>
+              <input matInput type="email" formControlName="email" autocomplete="email" />
+              @if (guestForm.controls.email.invalid) {
+                <mat-error>{{ 'event.invalidEmail' | transloco }}</mat-error>
+              }
+            </mat-form-field>
+            <div class="toolbar">
+              <button mat-flat-button type="submit" [disabled]="saving()">{{ 'event.continue' | transloco }}</button>
+              <button mat-button type="button" (click)="cancelGuest()">{{ 'event.cancel' | transloco }}</button>
+            </div>
+          </form>
+          <p class="hint">{{ 'event.haveAccount' | transloco }} <a routerLink="/login">{{ 'event.login' | transloco }}</a></p>
+        </section>
+      }
     }
 
     <h2 class="section">{{ 'event.share' | transloco }}</h2>

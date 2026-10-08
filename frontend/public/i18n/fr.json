@@ -62,7 +62,20 @@
     "price": "Prix",
     "seatsLeft": "Places restantes",
     "share": "Partager",
-    "email": "E-mail"
+    "email": "E-mail",
+    "book": "Réserver",
+    "full": "Complet",
+    "soldOut": "Plus de place dans cette catégorie.",
+    "guestTitle": "Réserver : {{ ticket }}",
+    "guestHint": "Pas besoin de compte : indiquez votre nom et votre adresse e-mail. Vous recevrez un lien pour payer, puis retrouver votre billet.",
+    "guestName": "Nom",
+    "guestEmail": "Adresse e-mail",
+    "nameRequired": "Entrez votre nom.",
+    "invalidEmail": "Entrez une adresse e-mail valide.",
+    "continue": "Continuer vers le paiement",
+    "cancel": "Annuler",
+    "haveAccount": "Vous avez un compte ?",
+    "login": "Se connecter"
   },
   "errors": {
     "generic": "Une erreur est survenue. Réessayez.",
@@ -480,5 +493,15 @@
     "download": "Télécharger (CSV)",
     "listLabel": "Qui a payé sa cotisation",
     "paidAt": "Payée le"
+  },
+  "guestTicket": {
+    "ticket": "Billet",
+    "holder": "Au nom de",
+    "status": "Statut",
+    "pay": "Payer",
+    "keepLink": "Gardez ce lien : c'est votre accès à la réservation (il vous a aussi été envoyé par e-mail). Sans paiement rapide, la place est remise en vente.",
+    "showAtDoor": "Montrez ce QR code à l'entrée. Il est aussi joint à l'e-mail de confirmation.",
+    "cancelled": "L'événement a été annulé : cette réservation n'est plus valable.",
+    "notFound": "Ce lien de réservation est inconnu."
   }
 }

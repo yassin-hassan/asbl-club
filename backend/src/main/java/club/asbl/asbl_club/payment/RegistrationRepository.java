@@ -13,6 +13,11 @@ interface RegistrationRepository extends JpaRepository<Registration, Long> {
     @Query("select r from Registration r join fetch r.event e join fetch e.asbl join fetch r.ticketCategory where r.id = :id")
     Optional<Registration> findByIdWithEventAndAsbl(@Param("id") Long id);
 
+    // A guest's booking, found by the hash of the secret link they were sent.
+    @Query("select r from Registration r join fetch r.event e join fetch e.asbl join fetch r.ticketCategory "
+            + "where r.accessTokenHash = :hash")
+    Optional<Registration> findByAccessTokenHash(@Param("hash") String hash);
+
     // The conditional updates below are plain SQL on purpose. Registration is a joined-inheritance entity (payables +
     // registrations), and for those Hibernate turns a JPQL bulk update into "select the ids (a snapshot), then update
     // by id": the condition isn't re-checked when the row is finally locked, and the count is the snapshot's. Two

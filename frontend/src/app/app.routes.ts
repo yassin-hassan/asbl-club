@@ -108,6 +108,15 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./pages/payment-complete/payment-complete').then((m) => m.PaymentComplete),
   },
+  // A guest's booking (no account), through its secret link: no login guard, the link is the access.
+  {
+    path: 'tickets/:token',
+    loadComponent: () => import('./pages/guest-ticket/guest-ticket').then((m) => m.GuestTicket),
+  },
+  {
+    path: 'tickets/:token/pay',
+    loadComponent: () => import('./pages/checkout/checkout').then((m) => m.CheckoutPage),
+  },
   // Paying this year's dues: the same Stripe form; Stripe returns to /asbls/{slug}/dues/paid.
   {
     path: 'asbls/:slug/dues/pay',

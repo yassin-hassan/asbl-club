@@ -39,7 +39,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Public reads, listed one by one: anything else under /api needs a login (deny by default).
                         .requestMatchers(HttpMethod.GET, "/api/v1/asbls/*", "/api/v1/asbls/*/events",
-                                "/api/v1/events/*", "/api/v1/events/*/availability").permitAll()
+                                "/api/v1/events/*", "/api/v1/events/*/availability",
+                                "/api/v1/guest-bookings/*").permitAll()
+                        // Buying a ticket without an account: the booking is then reached through its secret link.
+                        .requestMatchers(HttpMethod.POST, "/api/v1/guest-bookings", "/api/v1/guest-bookings/*/checkout")
+                        .permitAll()
                         .requestMatchers(HttpMethod.POST,
                                 "/api/v1/auth/login", "/api/v1/auth/register", "/api/v1/auth/refresh", "/api/v1/auth/logout",
                                 "/api/v1/auth/password-reset", "/api/v1/auth/password-reset/confirm",

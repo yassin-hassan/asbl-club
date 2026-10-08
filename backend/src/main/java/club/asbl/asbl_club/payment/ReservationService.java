@@ -1,12 +1,14 @@
 package club.asbl.asbl_club.payment;
 
 import club.asbl.asbl_club.audit.AuditService;
+import club.asbl.asbl_club.auth.OneTimeTokens;
 import club.asbl.asbl_club.event.Event;
 import club.asbl.asbl_club.event.EventCancelled;
 import club.asbl.asbl_club.event.EventService;
 import club.asbl.asbl_club.event.TicketCategory;
 import club.asbl.asbl_club.user.User;
 import java.time.Instant;
+import java.util.Locale;
 import java.util.Map;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -18,12 +20,44 @@ public class ReservationService {
     private final EventService eventService;
     private final RegistrationRepository registrationRepository;
     private final AuditService auditService;
+    private final BookingEmails bookingEmails;
 
     ReservationService(EventService eventService, RegistrationRepository registrationRepository,
-            AuditService auditService) {
+            AuditService auditService, BookingEmails bookingEmails) {
         this.eventService = eventService;
         this.registrationRepository = registrationRepository;
         this.auditService = auditService;
+        this.bookingEmails = bookingEmails;
+    }
+
+    /** A guest's booking and the secret link back to it (returned once, then only its hash is kept). */
+    public record GuestReservation(Registration registration, String accessToken) {
+    }
+
+    // A visitor without an account books a seat on a public event, the same way (the seat is taken at once). The
+    // link back to the booking is emailed in the same transaction: if they close the tab, they can still pay.
+    @Transactional
+    public GuestReservation reserveForGuest(Event event, Long ticketCategoryId, String name, String email,
+            String language) {
+        TicketCategory category = eventService.reserveSeat(event, ticketCategoryId);
+        String accessToken = OneTimeTokens.newToken();
+
+        Registration registration = new Registration();
+        registration.setEvent(category.getEvent());
+        registration.setTicketCategory(category);
+        registration.setGuestName(name.trim());
+        registration.setGuestEmail(email.trim().toLowerCase(Locale.ROOT));
+        registration.setGuestLanguage(language);
+        registration.setAccessTokenHash(OneTimeTokens.hash(accessToken));
+        registration.setStatus(RegistrationStatus.RESERVED);
+        registration.setRegisteredAt(Instant.now());
+        registration.setAmount(category.getPrice());
+        registration.setCurrency("EUR");
+        Registration saved = registrationRepository.save(registration);
+        auditService.record("BOOKING_CREATED", category.getEvent().getAsbl(), "Registration", saved.getId(),
+                Map.of("event", category.getEvent().getId(), "ticket", category.getLabel(), "guest", true));
+        bookingEmails.guestBooked(saved, accessToken);
+        return new GuestReservation(saved, accessToken);
     }
 
     @Transactional
