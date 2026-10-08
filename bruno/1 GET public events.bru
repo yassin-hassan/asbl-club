@@ -1,0 +1,15 @@
+meta {
+  name: 1 GET public events
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/asbls/{{slug}}/events
+  body: none
+  auth: none
+}
+
+docs {
+  Public: the association's published events, no token needed.
+}

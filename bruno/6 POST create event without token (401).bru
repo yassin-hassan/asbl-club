@@ -1,0 +1,23 @@
+meta {
+  name: 6 POST create event without token (401)
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/asbls/{{slug}}/manage/events
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "title": "Tentative sans jeton",
+    "startsAt": "2027-03-20T18:30:00Z",
+    "visibility": "PUBLIC"
+  }
+}
+
+docs {
+  401 Unauthorized: no token, the request never reaches the controller.
+}

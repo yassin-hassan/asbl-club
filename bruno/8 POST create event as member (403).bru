@@ -1,0 +1,27 @@
+meta {
+  name: 8 POST create event as member (403)
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{baseUrl}}/asbls/{{slug}}/manage/events
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{memberToken}}
+}
+
+body:json {
+  {
+    "title": "Tentative d'un simple membre",
+    "startsAt": "2027-03-20T18:30:00Z",
+    "visibility": "PUBLIC"
+  }
+}
+
+docs {
+  403 Forbidden: authenticated, but only the association's administrators may create events.
+}

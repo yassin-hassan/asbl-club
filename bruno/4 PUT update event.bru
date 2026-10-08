@@ -1,0 +1,25 @@
+meta {
+  name: 4 PUT update event
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/asbls/{{slug}}/manage/events/{{eventId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+body:json {
+  {
+    "title": "Assemblée générale ordinaire 2027",
+    "description": "Approbation des comptes 2026 et élection du conseil d'administration.",
+    "startsAt": "2027-03-20T18:30:00Z",
+    "location": "Local du Cercle, Avenue Louis Bertrand 35, 1030 Schaerbeek",
+    "visibility": "MEMBERS"
+  }
+}

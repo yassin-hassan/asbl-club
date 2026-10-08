@@ -1,0 +1,23 @@
+meta {
+  name: 2 POST login (admin)
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "{{adminEmail}}",
+    "password": "{{password}}"
+  }
+}
+
+script:post-response {
+  // The access token (a JWT, valid 15 minutes) is kept for the next requests.
+  bru.setVar("adminToken", res.body.accessToken);
+}
