@@ -18,7 +18,7 @@
     <ng-template #membersTab>
       <!-- 30, 40 members and more: a search narrows the list. -->
       <mat-form-field appearance="outline" class="search" subscriptSizing="dynamic">
-        <mat-label>{{ 'members.search' | transloco }}</mat-label>
+        <mat-label>{{ (seesEmails() ? 'members.search' : 'members.searchByName') | transloco }}</mat-label>
         <input matInput type="search" [value]="query()" (input)="query.set($any($event.target).value)" />
       </mat-form-field>
       <div class="data-table">
@@ -131,16 +131,20 @@
 
             </div>
           </mat-tab>
-          <mat-tab [label]="'members.tabs.dues' | transloco">
-            <div class="tab-body">
-              <section class="box" aria-labelledby="dues-title">
-                <h2 id="dues-title">{{ 'dues.adminTitle' | transloco }}</h2>
-                <app-dues-fee [slug]="slug" />
-              </section>
-
-            </div>
-          </mat-tab>
         }
+        <mat-tab [label]="'members.tabs.dues' | transloco">
+          <div class="tab-body">
+            <section class="box" aria-labelledby="dues-title">
+              <h2 id="dues-title">{{ 'dues.adminTitle' | transloco }}</h2>
+              <!-- Administrators set the fee (and see who paid); treasurers only see who paid. -->
+              @if (isAdmin()) {
+                <app-dues-fee [slug]="slug" />
+              } @else {
+                <app-dues-report [slug]="slug" />
+              }
+            </section>
+          </div>
+        </mat-tab>
         <mat-tab [label]="'members.tabs.finances' | transloco">
           <section class="tab-body" aria-labelledby="finances-title">
             <h2 id="finances-title" class="visually-hidden">{{ 'finances.title' | transloco }}</h2>

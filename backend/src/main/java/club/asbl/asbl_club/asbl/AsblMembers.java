@@ -20,7 +20,8 @@ public record AsblMembers(
             @Schema(requiredMode = REQUIRED, description = "The person's public ID (used to approve or decline a request)")
             UUID id,
             @Schema(requiredMode = REQUIRED) String name,
-            @Schema(requiredMode = REQUIRED) String email,
+            @Schema(description = "Only for administrators and treasurers: the other members see who is in, not how "
+                    + "to reach them (GDPR minimisation)") String email,
             @Schema(requiredMode = REQUIRED, allowableValues = {"ADMIN", "TREASURER", "VIEWER", "MEMBER"}) String role,
             @Schema(requiredMode = REQUIRED, allowableValues = {"PENDING", "ACTIVE", "EXCLUDED", "LEFT"}) String status) {
     }

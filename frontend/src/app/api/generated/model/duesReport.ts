@@ -13,6 +13,10 @@ import { DuesMember } from './duesMember';
 export interface DuesReport { 
     year: number;
     /**
+     * The yearly fee in euros; absent when the association doesn\'t collect dues
+     */
+    annualFee?: number;
+    /**
      * How many of the members have paid
      */
     paid: number;

@@ -25,8 +25,8 @@ describe('tabsFor', () => {
     expect(tabsFor('ADMIN')).toEqual(['members', 'requests', 'invitations', 'dues', 'finances']);
   });
 
-  it('gives treasurers the members and the finances', () => {
-    expect(tabsFor('TREASURER')).toEqual(['members', 'finances']);
+  it('gives treasurers the members, the dues and the finances', () => {
+    expect(tabsFor('TREASURER')).toEqual(['members', 'dues', 'finances']);
   });
 
   it('gives no tabs to the other roles, nor before the page has loaded', () => {
