@@ -2,6 +2,7 @@ package club.asbl.asbl_club.payment;
 
 import club.asbl.asbl_club.auth.OneTimeTokens;
 import club.asbl.asbl_club.event.Event;
+import club.asbl.asbl_club.event.EventOverException;
 import club.asbl.asbl_club.event.EventService;
 import club.asbl.asbl_club.event.TicketNotInEventException;
 import club.asbl.asbl_club.event.TicketSoldOutException;
@@ -53,7 +54,7 @@ class GuestBookingController {
             + "body and was emailed", content = @Content(schema = @Schema(implementation = GuestBooked.class)))
     @ApiResponse(responseCode = "404", description = "No such public event, or a ticket of another event",
             content = @Content(mediaType = "application/problem+json"))
-    @ApiResponse(responseCode = "409", description = "Sold out (SOLD_OUT), or the association can't receive payments yet (PAYMENTS_DISABLED)",
+    @ApiResponse(responseCode = "409", description = "Sold out (SOLD_OUT), the event has started (EVENT_OVER), or the association can't receive payments yet (PAYMENTS_DISABLED)",
             content = @Content(mediaType = "application/problem+json"))
     @PostMapping("/api/v1/guest-bookings")
     ResponseEntity<GuestBooked> book(@Valid @RequestBody GuestBookRequest request) {
@@ -69,6 +70,8 @@ class GuestBookingController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         } catch (TicketSoldOutException e) {
             throw BookingCheckout.conflict("SOLD_OUT", "Sold out.");
+        } catch (EventOverException e) {
+            throw BookingCheckout.conflict("EVENT_OVER", "This event has started: it can't be booked any more.");
         }
         GuestBooking booking = view(byToken(reservation.accessToken()));
         return ResponseEntity.status(HttpStatus.CREATED).body(new GuestBooked(reservation.accessToken(), booking));

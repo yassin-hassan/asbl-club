@@ -21,7 +21,7 @@ test('an administrator creates a draft event, adds tickets, publishes it, and th
   await expect(page.getByText('No events yet')).toBeVisible();
   await page.getByRole('link', { name: 'Create an event' }).click();
   await page.getByLabel('Title').fill('Spring gala');
-  await page.getByLabel('Start').fill('2026-12-01T20:00');
+  await page.getByLabel('Start').fill('2030-12-01T20:00');
   await page.getByLabel('Location').fill('Namur');
   await page.getByRole('button', { name: 'Create event' }).click();
 

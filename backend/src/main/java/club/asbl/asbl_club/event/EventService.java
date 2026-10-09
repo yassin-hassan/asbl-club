@@ -163,6 +163,12 @@ public class EventService {
                 .toList();
     }
 
+    // What a visitor can browse: every association's public events still to come, soonest first.
+    @Transactional(readOnly = true)
+    public List<Event> upcomingPublicEvents() {
+        return eventRepository.findUpcomingPublic(Instant.now());
+    }
+
     @Transactional(readOnly = true)
     public List<EventFeedItem> publicFeedOf(Asbl asbl) {
         return eventRepository.findByAsblAndVisibilityAndStatusOrderByStartsAtDesc(
@@ -237,6 +243,11 @@ public class EventService {
         TicketCategory category = ticketCategoryRepository.findById(ticketCategoryId)
                 .filter(c -> c.getEvent().getId().equals(event.getId()))
                 .orElseThrow(() -> new TicketNotInEventException(ticketCategoryId));
+        // A published event stays published once it's over (its history, its attendees): only the date says that
+        // it can't be booked any more.
+        if (!event.getStartsAt().isAfter(Instant.now())) {
+            throw new EventOverException();
+        }
         if (ticketCategoryRepository.reserveOneSeat(ticketCategoryId) == 0) {
             throw new TicketSoldOutException(ticketCategoryId);
         }

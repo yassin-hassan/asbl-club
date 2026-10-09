@@ -85,7 +85,7 @@ class TicketEmailIntegrationTest {
         Asbl club = asblService.createAsbl(admin, "Mon Club", "0123.456.789", "mon-club", "fr");
         jdbcTemplate.update("UPDATE asbls SET stripe_account_id = 'acct_test' WHERE id = ?", club.getId());
         club.setStripeAccountId("acct_test");
-        concert = eventService.createEvent(club, "Concert", null, Instant.parse("2026-12-01T19:00:00Z"), "Hall",
+        concert = eventService.createEvent(club, "Concert", null, Instant.parse("2030-12-01T19:00:00Z"), "Hall",
                 "PUBLIC");
         eventService.addTicketCategory(concert, "Standard", new BigDecimal("12.50"), 10);
         eventService.publish(concert);
@@ -147,7 +147,7 @@ class TicketEmailIntegrationTest {
         String text = textOf(email);
         String code = jdbcTemplate.queryForObject("SELECT qr_token FROM registrations WHERE id = ?", String.class,
                 booking.getId());
-        assertThat(text).contains("Hello Bob", "Concert", "Organised by Mon Club", "December 1, 2026", "8:00",
+        assertThat(text).contains("Hello Bob", "Concert", "Organised by Mon Club", "December 1, 2030", "8:00",
                 "Hall", "Standard", "€12.50", code.substring(0, 4) + " " + code.substring(4, 8),
                 "https://site.test/bookings");
 

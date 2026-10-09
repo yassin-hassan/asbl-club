@@ -3,6 +3,7 @@ package club.asbl.asbl_club.payment;
 import club.asbl.asbl_club.asbl.Asbl;
 import club.asbl.asbl_club.asbl.AsblService;
 import club.asbl.asbl_club.event.Event;
+import club.asbl.asbl_club.event.EventOverException;
 import club.asbl.asbl_club.event.EventService;
 import club.asbl.asbl_club.event.EventStatus;
 import club.asbl.asbl_club.event.TicketNotInEventException;
@@ -68,7 +69,7 @@ class RegistrationApiController {
             security = @SecurityRequirement(name = "bearer"))
     @ApiResponse(responseCode = "201", description = "Booked; pay next",
             content = @Content(schema = @Schema(implementation = Mine.class)))
-    @ApiResponse(responseCode = "409", description = "Sold out, or the event isn't open for booking",
+    @ApiResponse(responseCode = "409", description = "Sold out (SOLD_OUT), the event has started (EVENT_OVER), or it isn't open for booking",
             content = @Content(mediaType = "application/problem+json"))
     @PostMapping("/api/v1/asbls/{slug}/manage/events/{eventId}/registrations")
     ResponseEntity<Mine> book(@PathVariable String slug, @PathVariable Long eventId,
@@ -92,7 +93,7 @@ class RegistrationApiController {
             security = @SecurityRequirement(name = "bearer"))
     @ApiResponse(responseCode = "201", description = "Booked; pay next",
             content = @Content(schema = @Schema(implementation = Mine.class)))
-    @ApiResponse(responseCode = "409", description = "Sold out (SOLD_OUT), or the association can't receive payments yet (PAYMENTS_DISABLED)",
+    @ApiResponse(responseCode = "409", description = "Sold out (SOLD_OUT), the event has started (EVENT_OVER), or the association can't receive payments yet (PAYMENTS_DISABLED)",
             content = @Content(mediaType = "application/problem+json"))
     @PostMapping("/api/v1/events/{eventId}/registrations")
     ResponseEntity<Mine> bookPublic(@PathVariable Long eventId, @Valid @RequestBody BookRequest request,
@@ -112,6 +113,8 @@ class RegistrationApiController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         } catch (TicketSoldOutException e) {
             throw conflict("SOLD_OUT", "Sold out.");
+        } catch (EventOverException e) {
+            throw conflict("EVENT_OVER", "This event has started: it can't be booked any more.");
         }
         Mine booked = mine(own(registration.getId(), user));
         return ResponseEntity.created(URI.create("/api/v1/registrations/" + booked.id())).body(booked);

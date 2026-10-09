@@ -89,7 +89,7 @@ class WebhookIdempotencyTest {
                 + unique.substring(3, 6) + "." + unique.substring(6, 9), "hook-club-" + unique, "fr");
         jdbcTemplate.update("UPDATE asbls SET stripe_account_id = ? WHERE id = ?", "acct_" + unique, club.getId());
         club.setStripeAccountId("acct_" + unique);
-        Event event = eventService.createEvent(club, "Soirée", null, Instant.parse("2026-12-01T19:00:00Z"), null,
+        Event event = eventService.createEvent(club, "Soirée", null, Instant.parse("2030-12-01T19:00:00Z"), null,
                 "PUBLIC");
         eventService.addTicketCategory(event, "Standard", new BigDecimal("12.00"), 50);
         Registration registration = reservationService.reserve(event,

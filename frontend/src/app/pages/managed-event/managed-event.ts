@@ -80,6 +80,11 @@ export class ManagedEventPage {
     });
   }
 
+  // Started (or over): its tickets can't be booked any more.
+  over(event: ManagedEvent): boolean {
+    return new Date(event.startsAt).getTime() <= Date.now();
+  }
+
   book(ticket: ManagedTicket): void {
     this.saving.set(true);
     this.error.set(null);
@@ -87,7 +92,8 @@ export class ManagedEventPage {
       next: (registration) => this.router.navigate(['/pay', registration.id]),
       error: (err: HttpErrorResponse) => {
         this.saving.set(false);
-        this.error.set(problemOf(err)?.code === 'SOLD_OUT' ? 'manage.soldOut' : errorMessageKey(err));
+        const code = problemOf(err)?.code;
+        this.error.set(code === 'SOLD_OUT' ? 'manage.soldOut' : code === 'EVENT_OVER' ? 'event.overError' : errorMessageKey(err));
       },
     });
   }

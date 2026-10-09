@@ -56,7 +56,7 @@ class CheckInRaceTest {
         User admin = userService.register("Door", "door-" + unique + "@race.test", "password123");
         Asbl club = asblService.createAsbl(admin, "Door Club", "0" + unique.substring(0, 3) + "."
                 + unique.substring(3, 6) + "." + unique.substring(6, 9), "door-club-" + unique, "fr");
-        Event event = eventService.createEvent(club, "Gala", null, Instant.parse("2026-12-01T19:00:00Z"), null, "PUBLIC");
+        Event event = eventService.createEvent(club, "Gala", null, Instant.parse("2030-12-01T19:00:00Z"), null, "PUBLIC");
         eventService.addTicketCategory(event, "Standard", new BigDecimal("10.00"), 100);
         eventService.publish(event);
         Long category = eventService.ticketCategoriesOf(event).get(0).id();

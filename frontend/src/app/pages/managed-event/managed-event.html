@@ -62,7 +62,9 @@
           <ng-container matColumnDef="book">
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let ticket">
-              @if (ticket.soldSeats < ticket.totalSeats) {
+              @if (over(event)) {
+                <span class="tag">{{ 'event.over' | transloco }}</span>
+              } @else if (ticket.soldSeats < ticket.totalSeats) {
                 <button mat-flat-button type="button" (click)="book(ticket)" [disabled]="saving()">{{ 'manage.book' | transloco }}</button>
               } @else {
                 <span class="tag">{{ 'manage.full' | transloco }}</span>

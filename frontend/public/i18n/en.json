@@ -11,7 +11,8 @@
     "account": "My account",
     "logout": "Log out",
     "createAsbl": "Create my ASBL",
-    "bookings": "My bookings"
+    "bookings": "My bookings",
+    "events": "Events"
   },
   "login": {
     "title": "Log in",
@@ -46,9 +47,10 @@
   },
   "events": {
     "back": "Home",
-    "title": "Events for \"{{ slug }}\"",
+    "title": "Events for \"{{ name }}\"",
     "none": "No public events.",
-    "loadError": "Could not load events."
+    "loadError": "Could not load events.",
+    "past": "over"
   },
   "event": {
     "loadError": "Could not load this event.",
@@ -77,7 +79,9 @@
     "haveAccount": "Have an account?",
     "login": "Log in",
     "cancellableUntil": "Tickets can be cancelled and refunded until {{ date }}.",
-    "notRefundable": "Tickets are not refundable."
+    "notRefundable": "Tickets are not refundable.",
+    "over": "Over",
+    "overError": "This event has started or is over: it can no longer be booked."
   },
   "errors": {
     "generic": "Something went wrong. Please try again.",
@@ -119,7 +123,8 @@
       "lead": "Member registry, online dues, events and ticketing, from a secure back-office in French, Dutch and English.",
       "ctaPrimary": "Create my ASBL for free",
       "ctaSecondary": "Log in",
-      "trust": "Payments via Stripe and Bancontact, straight to your account"
+      "trust": "Payments via Stripe and Bancontact, straight to your account",
+      "browseEvents": "See upcoming events"
     },
     "panel": {
       "title": "Dues 2026",
@@ -229,7 +234,8 @@
     "leaveConfirm": "You lose access to the association. You can ask to join again through its invitation link.",
     "lastAdmin": "An association needs at least one administrator: appoint another one first.",
     "notOnYourself": "You can’t exclude yourself: leave the association instead.",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "publicPage": "Public page"
   },
   "statuses": {
     "PENDING": "Pending",
@@ -520,5 +526,11 @@
     "cancelled": "The event was cancelled: this booking is no longer valid.",
     "notFound": "This booking link is unknown.",
     "refunded": "This booking was refunded. The refund usually reaches your account within 5 to 10 days."
+  },
+  "catalogue": {
+    "title": "Upcoming events",
+    "intro": "Concerts, evenings, workshops, tournaments… organised by the associations on asbl.club. Book online, with or without an account.",
+    "none": "No upcoming events yet.",
+    "loadError": "The events could not be loaded."
   }
 }

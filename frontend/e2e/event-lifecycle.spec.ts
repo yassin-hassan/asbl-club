@@ -19,7 +19,7 @@ async function anAssociationWithAnEvent(page: Page, stamp: number, title: string
 async function createEvent(page: Page, title: string) {
   await page.getByRole('link', { name: 'Create an event' }).click();
   await page.getByLabel('Title').fill(title);
-  await page.getByLabel('Start').fill('2026-12-01T20:00');
+  await page.getByLabel('Start').fill('2030-12-01T20:00');
   await page.getByRole('button', { name: 'Create event' }).click();
   await expect(page.getByRole('heading', { name: title })).toBeVisible();
 }
@@ -61,7 +61,7 @@ test('an administrator edits a published event and its tickets, then cancels it'
   // The event itself: a new title, seen by the public.
   await page.getByRole('link', { name: 'Edit the event' }).click();
   await expect(page.getByLabel('Title')).toHaveValue('Autumn fair');
-  await expect(page.getByLabel('Start')).toHaveValue('2026-12-01T20:00'); // the same local time comes back
+  await expect(page.getByLabel('Start')).toHaveValue('2030-12-01T20:00'); // the same local time comes back
   await page.getByLabel('Title').fill('Autumn fair (new venue)');
   await page.getByRole('button', { name: 'Save changes' }).click();
   await expect(page.getByRole('heading', { name: 'Autumn fair (new venue)' })).toBeVisible();

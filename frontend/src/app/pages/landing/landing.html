@@ -9,6 +9,8 @@
         <a mat-flat-button class="big" routerLink="/register">{{ 'landing.hero.ctaPrimary' | transloco }}</a>
         <a mat-stroked-button class="big" routerLink="/login">{{ 'landing.hero.ctaSecondary' | transloco }}</a>
       </div>
+      <!-- A link only: the landing page itself never calls the API (it must show at once, even while it wakes up). -->
+      <p><a class="text-link" routerLink="/events">{{ 'landing.hero.browseEvents' | transloco }} →</a></p>
       <p class="trust">{{ 'landing.hero.trust' | transloco }}</p>
     </div>
 

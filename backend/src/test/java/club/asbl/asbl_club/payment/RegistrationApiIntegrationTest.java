@@ -67,7 +67,7 @@ class RegistrationApiIntegrationTest {
     void aPublishedEventAndTwoMembersOfItsAssociation() throws Exception {
         User alice = userService.register("Alice", "alice@club.test", "password123");
         club = asblService.createAsbl(alice, "Mon Club", "0123.456.789", "mon-club", "fr");
-        concert = eventService.createEvent(club, "Concert", null, Instant.parse("2026-12-01T19:00:00Z"), null, "PUBLIC");
+        concert = eventService.createEvent(club, "Concert", null, Instant.parse("2030-12-01T19:00:00Z"), null, "PUBLIC");
         eventService.addTicketCategory(concert, "Standard", new BigDecimal("12.50"), 1);
         standardTicket = eventService.ticketCategoriesOf(concert).get(0).id();
         eventService.publish(concert);
@@ -107,7 +107,7 @@ class RegistrationApiIntegrationTest {
 
     @Test
     void drafts_cannotBeBooked() throws Exception {
-        Event draft = eventService.createEvent(club, "Draft", null, Instant.parse("2026-12-02T19:00:00Z"), null, "PUBLIC");
+        Event draft = eventService.createEvent(club, "Draft", null, Instant.parse("2030-12-02T19:00:00Z"), null, "PUBLIC");
         eventService.addTicketCategory(draft, "Standard", new BigDecimal("5.00"), 10);
         Long draftTicket = eventService.ticketCategoriesOf(draft).get(0).id();
 
@@ -119,7 +119,7 @@ class RegistrationApiIntegrationTest {
     void aTicketOfAnotherEvent_cannotBeBookedThroughThisOne() throws Exception {
         User carol = userService.register("Carol", "carol@club.test", "password123");
         Asbl otherClub = asblService.createAsbl(carol, "Other", "0987.654.321", "other-club", "fr");
-        Event otherEvent = eventService.createEvent(otherClub, "Other", null, Instant.parse("2026-12-03T19:00:00Z"), null, "PUBLIC");
+        Event otherEvent = eventService.createEvent(otherClub, "Other", null, Instant.parse("2030-12-03T19:00:00Z"), null, "PUBLIC");
         eventService.addTicketCategory(otherEvent, "Theirs", new BigDecimal("1.00"), 10);
         eventService.publish(otherEvent);
         Long theirTicket = eventService.ticketCategoriesOf(otherEvent).get(0).id();

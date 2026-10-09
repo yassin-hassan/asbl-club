@@ -69,7 +69,7 @@ class GuestBookingIntegrationTest {
         User alice = userService.register("Alice", "alice@club.test", "password123");
         club = asblService.createAsbl(alice, "Mon Club", "0123.456.789", "mon-club", "fr");
         asblService.linkStripeAccount(club, "acct_test123");
-        concert = eventService.createEvent(club, "Concert", null, Instant.parse("2026-12-01T19:00:00Z"), "Hall",
+        concert = eventService.createEvent(club, "Concert", null, Instant.parse("2030-12-01T19:00:00Z"), "Hall",
                 "PUBLIC");
         eventService.addTicketCategory(concert, "Standard", new BigDecimal("12.50"), 2);
         ticket = eventService.ticketCategoriesOf(concert).get(0).id();
@@ -127,11 +127,11 @@ class GuestBookingIntegrationTest {
 
     @Test
     void membersOnlyEvents_draftsAndOtherEventsTickets_cannotBeBookedByGuests() throws Exception {
-        Event members = eventService.createEvent(club, "AG", null, Instant.parse("2026-12-02T19:00:00Z"), null, "MEMBERS");
+        Event members = eventService.createEvent(club, "AG", null, Instant.parse("2030-12-02T19:00:00Z"), null, "MEMBERS");
         eventService.addTicketCategory(members, "Membre", new BigDecimal("5.00"), 10);
         eventService.publish(members);
         Long membersTicket = eventService.ticketCategoriesOf(members).get(0).id();
-        Event draft = eventService.createEvent(club, "Draft", null, Instant.parse("2026-12-03T19:00:00Z"), null, "PUBLIC");
+        Event draft = eventService.createEvent(club, "Draft", null, Instant.parse("2030-12-03T19:00:00Z"), null, "PUBLIC");
         eventService.addTicketCategory(draft, "Standard", new BigDecimal("5.00"), 10);
         Long draftTicket = eventService.ticketCategoriesOf(draft).get(0).id();
 
@@ -139,6 +139,23 @@ class GuestBookingIntegrationTest {
         bookAsGuest(draft.getId(), draftTicket, "Zoé", "zoe@mail.test", "fr").andExpect(status().isNotFound());
         // IDOR: a ticket of another event, through this public one.
         bookAsGuest(concert.getId(), membersTicket, "Zoé", "zoe@mail.test", "fr").andExpect(status().isNotFound());
+    }
+
+    // A published event stays published once it's over: only its date closes bookings, with or without an account.
+    @Test
+    void anEventThatHasStarted_cannotBeBookedAnyMore() throws Exception {
+        Event past = eventService.createEvent(club, "Last summer", null, Instant.now().minusSeconds(3600), null, "PUBLIC");
+        eventService.addTicketCategory(past, "Standard", new BigDecimal("5.00"), 10);
+        eventService.publish(past);
+        Long pastTicket = eventService.ticketCategoriesOf(past).get(0).id();
+        userService.register("Bob", "bob@club.test", "password123");
+
+        bookAsGuest(past.getId(), pastTicket, "Zoé", "zoe@mail.test", "fr").andExpect(status().isConflict())
+                .andExpect(jsonPath("$.code").value("EVENT_OVER"));
+        bookPublic(tokenFor("bob@club.test"), past.getId(), pastTicket).andExpect(status().isConflict())
+                .andExpect(jsonPath("$.code").value("EVENT_OVER"));
+        assertThat(jdbcTemplate.queryForObject("SELECT sold_seats FROM ticket_categories WHERE id = ?", Integer.class,
+                pastTicket)).isZero();
     }
 
     @Test
@@ -172,7 +189,7 @@ class GuestBookingIntegrationTest {
     void anyAccount_booksAPublicEvent_butNotAMembersOnlyOne() throws Exception {
         userService.register("Bob", "bob@club.test", "password123");
         String bob = tokenFor("bob@club.test");
-        Event members = eventService.createEvent(club, "AG", null, Instant.parse("2026-12-02T19:00:00Z"), null, "MEMBERS");
+        Event members = eventService.createEvent(club, "AG", null, Instant.parse("2030-12-02T19:00:00Z"), null, "MEMBERS");
         eventService.addTicketCategory(members, "Membre", new BigDecimal("5.00"), 10);
         eventService.publish(members);
         Long membersTicket = eventService.ticketCategoriesOf(members).get(0).id();

@@ -73,7 +73,7 @@ class EventManagementIntegrationTest {
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", startsWith(BASE + "/")))
                 .andExpect(jsonPath("$.status").value("DRAFT"))
-                .andExpect(jsonPath("$.startsAt").value("2026-12-01T19:00:00Z"))
+                .andExpect(jsonPath("$.startsAt").value("2030-12-01T19:00:00Z"))
                 .andReturn().getResponse().getContentAsString();
         Integer id = JsonPath.read(body, "$.id");
 
@@ -137,13 +137,13 @@ class EventManagementIntegrationTest {
     }
 
     private Event eventServiceCreate(Asbl asbl) {
-        return eventService.createEvent(asbl, "Foreign", null, Instant.parse("2026-12-01T19:00:00Z"),
+        return eventService.createEvent(asbl, "Foreign", null, Instant.parse("2030-12-01T19:00:00Z"),
                 null, "PUBLIC");
     }
 
     private ResultActions createEvent(String token) throws Exception {
         return send(post(BASE), token, """
-                {"title": "Concert", "description": "A concert", "startsAt": "2026-12-01T19:00:00Z",
+                {"title": "Concert", "description": "A concert", "startsAt": "2030-12-01T19:00:00Z",
                  "location": "Hall", "visibility": "PUBLIC"}
                 """);
     }

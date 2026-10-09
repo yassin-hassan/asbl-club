@@ -44,7 +44,7 @@ class EventLifecycleIntegrationTest {
 
     private static final String BASE = "/api/v1/asbls/mon-club/manage/events";
     private static final String EDIT = """
-            {"title": "Concert (new date)", "description": "Moved", "startsAt": "2026-12-08T19:00:00Z",
+            {"title": "Concert (new date)", "description": "Moved", "startsAt": "2030-12-08T19:00:00Z",
              "location": "Big hall", "visibility": "PUBLIC"}
             """;
 
@@ -83,7 +83,7 @@ class EventLifecycleIntegrationTest {
         member = userService.register("Member", "member@club.test", "password123");
         jdbcTemplate.update("INSERT INTO memberships (user_id, asbl_id, role, status) VALUES (?, ?, 'MEMBER', 'ACTIVE')",
                 member.getId(), club.getId());
-        concert = eventService.createEvent(club, "Concert", null, Instant.parse("2026-12-01T19:00:00Z"), null, "PUBLIC");
+        concert = eventService.createEvent(club, "Concert", null, Instant.parse("2030-12-01T19:00:00Z"), null, "PUBLIC");
         eventService.addTicketCategory(concert, "Standard", new BigDecimal("12.50"), 10);
         standard = eventService.ticketCategoriesOf(concert).get(0).id();
         eventService.publish(concert);
@@ -96,7 +96,7 @@ class EventLifecycleIntegrationTest {
         send(put(BASE + "/" + concert.getId()), adminToken, EDIT)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Concert (new date)"))
-                .andExpect(jsonPath("$.startsAt").value("2026-12-08T19:00:00Z"));
+                .andExpect(jsonPath("$.startsAt").value("2030-12-08T19:00:00Z"));
 
         mockMvc.perform(get("/api/v1/events/" + concert.getId()))
                 .andExpect(jsonPath("$.title").value("Concert (new date)"));
@@ -135,18 +135,18 @@ class EventLifecycleIntegrationTest {
                 .andExpect(jsonPath("$.cancellableUntil").doesNotExist()); // created without a delay: 0
         send(put(BASE + "/" + concert.getId()), adminToken, editWithDelay(7)).andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/events/" + concert.getId()))
-                .andExpect(jsonPath("$.cancellableUntil").value("2026-11-24T19:00:00Z")); // 7 days before
+                .andExpect(jsonPath("$.cancellableUntil").value("2030-11-24T19:00:00Z")); // 7 days before
         send(post(BASE), adminToken, """
-                {"title": "Quiz", "startsAt": "2026-12-05T19:00:00Z", "visibility": "PUBLIC", "cancellationDays": 2}""")
+                {"title": "Quiz", "startsAt": "2030-12-05T19:00:00Z", "visibility": "PUBLIC", "cancellationDays": 2}""")
                 .andExpect(status().isCreated()).andExpect(jsonPath("$.cancellationDays").value(2));
         send(post(BASE), adminToken, """
-                {"title": "Quiz", "startsAt": "2026-12-05T19:00:00Z", "visibility": "PUBLIC", "cancellationDays": -1}""")
+                {"title": "Quiz", "startsAt": "2030-12-05T19:00:00Z", "visibility": "PUBLIC", "cancellationDays": -1}""")
                 .andExpect(status().isBadRequest());
     }
 
     private static String editWithDelay(int days) {
         return """
-                {"title": "Concert", "startsAt": "2026-12-01T19:00:00Z", "visibility": "PUBLIC", "cancellationDays": %d}"""
+                {"title": "Concert", "startsAt": "2030-12-01T19:00:00Z", "visibility": "PUBLIC", "cancellationDays": %d}"""
                 .formatted(days);
     }
 
@@ -202,7 +202,7 @@ class EventLifecycleIntegrationTest {
 
     @Test
     void onlyADraft_canBeDeleted() throws Exception {
-        Event draft = eventService.createEvent(club, "Draft", null, Instant.parse("2026-12-02T19:00:00Z"), null, "PUBLIC");
+        Event draft = eventService.createEvent(club, "Draft", null, Instant.parse("2030-12-02T19:00:00Z"), null, "PUBLIC");
         eventService.addTicketCategory(draft, "Standard", new BigDecimal("5.00"), 10);
 
         send(delete(BASE + "/" + concert.getId()), adminToken, "")
@@ -216,7 +216,7 @@ class EventLifecycleIntegrationTest {
 
     @Test
     void aDraft_cannotBeCancelled_andAPublishedEventCannotBePublishedAgain() throws Exception {
-        Event draft = eventService.createEvent(club, "Draft", null, Instant.parse("2026-12-02T19:00:00Z"), null, "PUBLIC");
+        Event draft = eventService.createEvent(club, "Draft", null, Instant.parse("2030-12-02T19:00:00Z"), null, "PUBLIC");
 
         send(post(BASE + "/" + draft.getId() + "/cancel"), adminToken, "").andExpect(status().isConflict());
         send(post(BASE + "/" + concert.getId() + "/publish"), adminToken, "")
@@ -225,7 +225,7 @@ class EventLifecycleIntegrationTest {
 
     @Test
     void aTicketOfAnotherEvent_isNotFoundThroughThisOne() throws Exception {
-        Event other = eventService.createEvent(club, "Other", null, Instant.parse("2026-12-02T19:00:00Z"), null, "PUBLIC");
+        Event other = eventService.createEvent(club, "Other", null, Instant.parse("2030-12-02T19:00:00Z"), null, "PUBLIC");
         eventService.addTicketCategory(other, "Theirs", new BigDecimal("1.00"), 10);
         Long theirs = eventService.ticketCategoriesOf(other).get(0).id();
 
