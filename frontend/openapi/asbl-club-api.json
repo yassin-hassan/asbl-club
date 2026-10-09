@@ -34,6 +34,9 @@
     "name" : "Associations",
     "description" : "Creating and managing associations (logged-in users)"
   }, {
+    "name" : "Finances",
+    "description" : "An association's payments, year by year"
+  }, {
     "name" : "Member management",
     "description" : "The join link and join requests (administrators)"
   }, {
@@ -2123,6 +2126,107 @@
         } ]
       }
     },
+    "/api/v1/asbls/{slug}/manage/finances" : {
+      "get" : {
+        "tags" : [ "Finances" ],
+        "summary" : "A year of the association's payments, with its totals (administrators and treasurers)",
+        "operationId" : "getFinances",
+        "parameters" : [ {
+          "name" : "slug",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "year",
+          "in" : "query",
+          "description" : "Calendar year; the current one by default",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "description" : "Page, from 0",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "The totals and one page of payments, the most recent first",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/FinanceReport"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Not an administrator or treasurer of this association",
+            "content" : {
+              "application/problem+json" : { }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/asbls/{slug}/manage/finances/export" : {
+      "get" : {
+        "tags" : [ "Finances" ],
+        "summary" : "A year of the association's payments, as a CSV file for Excel (administrators and treasurers)",
+        "operationId" : "exportFinances",
+        "parameters" : [ {
+          "name" : "slug",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "year",
+          "in" : "query",
+          "description" : "Calendar year; the current one by default",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Semicolon-separated, UTF-8 with a byte-order mark",
+            "content" : {
+              "text/csv" : {
+                "schema" : {
+                  "type" : "string",
+                  "format" : "binary"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Not an administrator or treasurer of this association",
+            "content" : {
+              "application/problem+json" : { }
+            }
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ]
+      }
+    },
     "/api/v1/asbls/{slug}/manage/events/{eventId}/attendees" : {
       "get" : {
         "tags" : [ "Event management" ],
@@ -3397,6 +3501,135 @@
             "format" : "date-time"
           }
         }
+      },
+      "FinancePayment" : {
+        "required" : [ "amount", "commission", "id", "kind", "paidAt", "payerEmail", "payerName", "status" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "paidAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "payerName" : {
+            "type" : "string"
+          },
+          "payerEmail" : {
+            "type" : "string"
+          },
+          "kind" : {
+            "type" : "string",
+            "enum" : [ "TICKET", "DUES" ]
+          },
+          "eventTitle" : {
+            "type" : "string",
+            "description" : "The event, for a ticket"
+          },
+          "ticketLabel" : {
+            "type" : "string",
+            "description" : "The ticket category, for a ticket"
+          },
+          "duesYear" : {
+            "type" : "integer",
+            "description" : "The year paid for, for dues",
+            "format" : "int32"
+          },
+          "amount" : {
+            "type" : "number",
+            "description" : "Amount in euros"
+          },
+          "commission" : {
+            "type" : "number",
+            "description" : "Kept by the platform, in euros (0 when refunded with the payment)"
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "PAID", "REFUNDED" ]
+          },
+          "refundedAt" : {
+            "type" : "string",
+            "description" : "When it was refunded",
+            "format" : "date-time"
+          }
+        },
+        "description" : "This page's payments, the most recent first"
+      },
+      "FinanceReport" : {
+        "required" : [ "page", "payments", "totalPages", "totals", "year", "years" ],
+        "type" : "object",
+        "properties" : {
+          "year" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "years" : {
+            "type" : "array",
+            "description" : "Years with payments, and the current one, most recent first",
+            "items" : {
+              "type" : "integer",
+              "description" : "Years with payments, and the current one, most recent first",
+              "format" : "int32"
+            }
+          },
+          "totals" : {
+            "$ref" : "#/components/schemas/FinanceTotals"
+          },
+          "payments" : {
+            "type" : "array",
+            "description" : "This page's payments, the most recent first",
+            "items" : {
+              "$ref" : "#/components/schemas/FinancePayment"
+            }
+          },
+          "page" : {
+            "type" : "integer",
+            "description" : "From 0",
+            "format" : "int32"
+          },
+          "totalPages" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "FinanceTotals" : {
+        "required" : [ "collected", "commission", "dues", "net", "payments", "refunded", "tickets" ],
+        "type" : "object",
+        "properties" : {
+          "payments" : {
+            "type" : "integer",
+            "description" : "How many payments",
+            "format" : "int32"
+          },
+          "tickets" : {
+            "type" : "number",
+            "description" : "Paid for tickets"
+          },
+          "dues" : {
+            "type" : "number",
+            "description" : "Paid as membership dues"
+          },
+          "collected" : {
+            "type" : "number",
+            "description" : "Tickets and dues"
+          },
+          "refunded" : {
+            "type" : "number",
+            "description" : "Given back to buyers"
+          },
+          "commission" : {
+            "type" : "number",
+            "description" : "Kept by the platform"
+          },
+          "net" : {
+            "type" : "number",
+            "description" : "Collected, less refunds and commission"
+          }
+        },
+        "description" : "Amounts in euros, before Stripe's own fees"
       },
       "ManagedEventItem" : {
         "required" : [ "id", "startsAt", "status", "title", "visibility" ],

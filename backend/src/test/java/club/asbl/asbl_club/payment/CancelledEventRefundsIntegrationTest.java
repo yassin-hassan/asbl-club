@@ -113,6 +113,8 @@ class CancelledEventRefundsIntegrationTest {
 
         assertThat(status("registrations", ticket.getId())).isEqualTo("REFUNDED");
         assertThat(status("payments", payment.getId())).isEqualTo("REFUNDED");
+        assertThat(jdbcTemplate.queryForObject("SELECT refunded_at IS NOT NULL AND commission_refunded "
+                + "FROM payments WHERE id = ?", Boolean.class, payment.getId())).as("its commission too").isTrue();
         assertThat(jdbcTemplate.queryForObject("SELECT count(*) FROM audit_logs WHERE action = 'PAYMENT_REFUNDED' "
                 + "AND payload ->> 'reason' = 'event cancelled'", Integer.class)).isEqualTo(1);
         assertThat(jdbcTemplate.queryForObject("SELECT subject FROM email_outbox WHERE recipient = 'bob@club.test' "

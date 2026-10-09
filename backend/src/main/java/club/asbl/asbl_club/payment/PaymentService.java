@@ -169,8 +169,9 @@ public class PaymentService {
         refundAtStripe(payment, true);
         RegistrationStatus bookingWas = registration.getStatus();
         String bookingStatus = bookingWas.name();
-        payment.setStatus(PaymentStatus.REFUNDED);
-        payment.setPaidAt(Instant.now());
+        Instant now = Instant.now();
+        payment.setPaidAt(now);
+        payment.markRefunded(now, true);
         registration.setStatus(RegistrationStatus.REFUNDED);
         auditService.recordSystem("PAYMENT_SUCCEEDED", payment.getAsbl(), "Payment", payment.getId(),
                 Map.of("paymentIntentId", paymentIntentId, "amount", payment.getAmount()));
@@ -195,7 +196,7 @@ public class PaymentService {
                 .filter(p -> p.getStatus() == PaymentStatus.SUCCEEDED)
                 .orElseThrow(() -> new IllegalStateException("Paid ticket " + registrationId + " has no payment"));
         refundAtStripe(payment, true);
-        payment.setStatus(PaymentStatus.REFUNDED);
+        payment.markRefunded(Instant.now(), true);
         ticket.setStatus(RegistrationStatus.REFUNDED);
         auditService.recordSystem("PAYMENT_REFUNDED", payment.getAsbl(), "Payment", payment.getId(),
                 Map.of("paymentIntentId", payment.getStripePaymentIntentId(), "amount", payment.getAmount(),
@@ -223,7 +224,7 @@ public class PaymentService {
                 .filter(p -> p.getStatus() == PaymentStatus.SUCCEEDED)
                 .orElseThrow(() -> new IllegalStateException("Paid ticket " + registrationId + " has no payment"));
         refundAtStripe(payment, false);
-        payment.setStatus(PaymentStatus.REFUNDED);
+        payment.markRefunded(Instant.now(), false);
         ticket.setStatus(RegistrationStatus.REFUNDED);
         eventService.releaseSeat(ticket.getTicketCategory().getId());
         auditService.record("BOOKING_CANCELLED", ticket.getEvent().getAsbl(), "Registration", ticket.getId(),

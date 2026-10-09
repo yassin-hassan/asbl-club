@@ -242,7 +242,8 @@
       "members": "Members ({{ count }})",
       "requests": "Join requests ({{ count }})",
       "invitations": "Invitations",
-      "dues": "Dues"
+      "dues": "Dues",
+      "finances": "Finances"
     }
   },
   "statuses": {
@@ -358,7 +359,7 @@
     "stripeDown": "Stripe can't be reached right now. Try again in a moment.",
     "adminsOnly": "Only the association's administrators manage payments.",
     "back": "Back to the association",
-    "link": "Payments"
+    "link": "Stripe account"
   },
   "audit": {
     "title": "Audit log",
@@ -541,5 +542,31 @@
     "intro": "Concerts, evenings, workshops, tournaments… organised by the associations on asbl.club. Book online, with or without an account.",
     "none": "No upcoming events yet.",
     "loadError": "The events could not be loaded."
+  },
+  "finances": {
+    "title": "Finances",
+    "year": "Year",
+    "collected": "Collected",
+    "collectedDetail": "Tickets {{ tickets }} · dues {{ dues }}",
+    "refunded": "Refunded",
+    "commission": "Platform commission",
+    "net": "Net for the association",
+    "stripeFees": "Amounts before Stripe’s fees, which Stripe takes from your account and details in your Stripe account.",
+    "count": "{{ count }} payment(s) in {{ year }}",
+    "none": "No payments in {{ year }}.",
+    "download": "Download the year (CSV)",
+    "listLabel": "The year’s payments",
+    "date": "Date",
+    "payer": "Payer",
+    "what": "For",
+    "amount": "Amount",
+    "status": "Status",
+    "dues": "Dues {{ year }}",
+    "paid": "Paid",
+    "refundedOn": "Refunded on {{ date }}",
+    "commissionBack": "commission returned",
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page {{ page }} of {{ total }}"
   }
 }

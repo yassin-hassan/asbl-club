@@ -1,4 +1,4 @@
-import { matchesSearch } from './asbl-members';
+import { matchesSearch, tabsFor } from './asbl-members';
 
 describe('matchesSearch', () => {
   const member = 'Élise Van den Broeck elise.vandenbroeck@demo.asbl.club';
@@ -17,5 +17,21 @@ describe('matchesSearch', () => {
   it('matches everyone when the search is empty', () => {
     expect(matchesSearch(member, '')).toBe(true);
     expect(matchesSearch(member, '   ')).toBe(true);
+  });
+});
+
+describe('tabsFor', () => {
+  it('gives administrators every tab, the finances last', () => {
+    expect(tabsFor('ADMIN')).toEqual(['members', 'requests', 'invitations', 'dues', 'finances']);
+  });
+
+  it('gives treasurers the members and the finances', () => {
+    expect(tabsFor('TREASURER')).toEqual(['members', 'finances']);
+  });
+
+  it('gives no tabs to the other roles, nor before the page has loaded', () => {
+    expect(tabsFor('VIEWER')).toEqual([]);
+    expect(tabsFor('MEMBER')).toEqual([]);
+    expect(tabsFor(undefined)).toEqual([]);
   });
 });

@@ -242,7 +242,8 @@
       "members": "Membres ({{ count }})",
       "requests": "Demandes ({{ count }})",
       "invitations": "Invitations",
-      "dues": "Cotisations"
+      "dues": "Cotisations",
+      "finances": "Finances"
     }
   },
   "statuses": {
@@ -358,7 +359,7 @@
     "stripeDown": "Stripe est injoignable pour le moment. Réessayez dans un instant.",
     "adminsOnly": "Seuls les administrateurs de l'association gèrent les paiements.",
     "back": "Retour à l'association",
-    "link": "Paiements"
+    "link": "Compte Stripe"
   },
   "audit": {
     "title": "Journal d'audit",
@@ -541,5 +542,31 @@
     "intro": "Concerts, soirées, ateliers, tournois… organisés par les associations d'asbl.club. Réservez en ligne, avec ou sans compte.",
     "none": "Aucun événement à venir pour l'instant.",
     "loadError": "Impossible de charger les événements."
+  },
+  "finances": {
+    "title": "Finances",
+    "year": "Année",
+    "collected": "Encaissé",
+    "collectedDetail": "Billets {{ tickets }} · cotisations {{ dues }}",
+    "refunded": "Remboursé",
+    "commission": "Commission plateforme",
+    "net": "Net pour l’association",
+    "stripeFees": "Montants avant les frais de Stripe, que Stripe prélève sur votre compte et détaille dans votre compte Stripe.",
+    "count": "{{ count }} paiement(s) en {{ year }}",
+    "none": "Aucun paiement en {{ year }}.",
+    "download": "Télécharger l’année (CSV)",
+    "listLabel": "Paiements de l’année",
+    "date": "Date",
+    "payer": "Payeur",
+    "what": "Objet",
+    "amount": "Montant",
+    "status": "Statut",
+    "dues": "Cotisation {{ year }}",
+    "paid": "Payé",
+    "refundedOn": "Remboursé le {{ date }}",
+    "commissionBack": "commission rendue",
+    "previous": "Précédents",
+    "next": "Suivants",
+    "page": "Page {{ page }} sur {{ total }}"
   }
 }

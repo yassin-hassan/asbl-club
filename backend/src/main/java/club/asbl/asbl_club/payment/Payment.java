@@ -62,6 +62,13 @@ public class Payment {
     @Column(name = "paid_at")
     private Instant paidAt;
 
+    // A refund: when, and whether the platform's commission went back too (see V23).
+    @Column(name = "refunded_at")
+    private Instant refundedAt;
+
+    @Column(name = "commission_refunded", nullable = false)
+    private boolean commissionRefunded;
+
     @Version
     @Column(nullable = false)
     private long version;
@@ -163,5 +170,20 @@ public class Payment {
 
     public long getVersion() {
         return version;
+    }
+
+    public Instant getRefundedAt() {
+        return refundedAt;
+    }
+
+    public boolean isCommissionRefunded() {
+        return commissionRefunded;
+    }
+
+    // The payment went back to the payer; withCommission: the platform's commission too.
+    public void markRefunded(Instant when, boolean withCommission) {
+        this.status = PaymentStatus.REFUNDED;
+        this.refundedAt = when;
+        this.commissionRefunded = withCommission;
     }
 }

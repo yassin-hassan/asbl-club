@@ -203,6 +203,7 @@ class WebhookIdempotencyTest {
                 assertThat(bookingStatus).isEqualTo("REFUNDED");
                 assertThat(sold).as("an expired booking gives its seat back").isZero();
                 assertThat(paymentStatus).isEqualTo(PaymentStatus.REFUNDED);
+                assertThat(paymentRepository.findById(racing.getId()).orElseThrow().isCommissionRefunded()).isTrue();
             }
         }
     }
