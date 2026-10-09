@@ -516,7 +516,7 @@
             }
           },
           "502" : {
-            "description" : "The payment provider couldn't be reached",
+            "description" : "The payment provider couldn't be reached (try again), or refused the refund (REFUND_REFUSED: trying again won't help)",
             "content" : {
               "application/problem+json" : { }
             }
@@ -793,7 +793,7 @@
             }
           },
           "502" : {
-            "description" : "The payment provider couldn't be reached",
+            "description" : "The payment provider couldn't be reached (try again), or refused the refund (REFUND_REFUSED: trying again won't help)",
             "content" : {
               "application/problem+json" : { }
             }

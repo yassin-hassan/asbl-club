@@ -22,6 +22,7 @@ import club.asbl.asbl_club.user.UserService;
 import com.jayway.jsonpath.JsonPath;
 import com.stripe.StripeClient;
 import com.stripe.exception.ApiConnectionException;
+import com.stripe.exception.InvalidRequestException;
 import com.stripe.model.Refund;
 import com.stripe.net.RequestOptions;
 import com.stripe.param.RefundCreateParams;
@@ -187,11 +188,25 @@ class BuyerCancellationIntegrationTest {
                 .thenThrow(new ApiConnectionException("Stripe is down"))
                 .thenReturn(new Refund());
 
-        cancel(ticket).andExpect(status().isBadGateway());
+        cancel(ticket).andExpect(status().isBadGateway()).andExpect(jsonPath("$.code").doesNotExist());
         assertThat(statusOf("registrations", ticket.getId())).isEqualTo("PAID");
         assertThat(soldSeats()).isEqualTo(1);
 
         cancel(ticket).andExpect(status().isOk()).andExpect(jsonPath("$.status").value("REFUNDED"));
+    }
+
+    // Stripe answers no (here: a payment it doesn't know): nothing changes either, and the person is told that
+    // trying again won't help, rather than "try again in a moment".
+    @Test
+    void whenStripeRefuses_nothingChanges_andTheReasonSaysSo() throws Exception {
+        Registration ticket = paidTicket("pi_unknown");
+        when(refundService.create(any(RefundCreateParams.class), any(RequestOptions.class)))
+                .thenThrow(new InvalidRequestException("No such payment_intent: 'pi_unknown'", "payment_intent",
+                        "req_1", "resource_missing", 404, null));
+
+        cancel(ticket).andExpect(status().isBadGateway()).andExpect(jsonPath("$.code").value("REFUND_REFUSED"));
+        assertThat(statusOf("registrations", ticket.getId())).isEqualTo("PAID");
+        assertThat(soldSeats()).isEqualTo(1);
     }
 
     @Test

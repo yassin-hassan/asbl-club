@@ -28,7 +28,11 @@ export function cancellationErrorKey(err: HttpErrorResponse): string {
   if (err.status === 409) {
     return problemOf(err)?.code === 'CANCELLATION_CLOSED' ? 'bookings.cancellationClosed' : 'bookings.notCancellable';
   }
-  return err.status === 502 ? 'payment.providerDown' : errorMessageKey(err);
+  if (err.status === 502) {
+    // Stripe out of reach (try again), or Stripe refusing the refund (trying again won't help).
+    return problemOf(err)?.code === 'REFUND_REFUSED' ? 'bookings.refundRefused' : 'payment.providerDown';
+  }
+  return errorMessageKey(err);
 }
 
 // The logged-in person's bookings: a paid one is a ticket with its QR code; an unpaid one links to paying. A paid
