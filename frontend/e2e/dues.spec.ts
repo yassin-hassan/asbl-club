@@ -16,7 +16,7 @@ test('an administrator sets the yearly fee, members see it on their dashboard wi
   const year = new Date().getFullYear();
   await logInAsDemoAdmin(page);
 
-  await page.goto('/asbls/club-demo/members');
+  await page.goto('/asbls/club-demo/members?tab=dues'); // the open tab is kept in the address
   const dues = page.getByRole('region', { name: 'Membership dues' });
   await dues.getByLabel('Yearly fee').fill('25');
   await dues.getByRole('button', { name: 'Save' }).click();
@@ -45,7 +45,7 @@ test('an administrator sets the yearly fee, members see it on their dashboard wi
   await expect(page.getByRole('heading', { name: 'Payment' })).toBeVisible();
 
   // Stop collecting: the dues leave the dashboard.
-  await page.goto('/asbls/club-demo/members');
+  await page.goto('/asbls/club-demo/members?tab=dues');
   await dues.getByRole('button', { name: 'Stop collecting dues' }).click();
   await expect(dues).toContainText("The association doesn't collect dues yet.");
   await page.goto('/');

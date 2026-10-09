@@ -67,3 +67,14 @@ tr.inactive td {
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+.shortcuts {
+  margin: 4px 0 20px;
+}
+.search {
+  width: min(100%, 360px);
+  margin: 16px 0 4px;
+}
+.tab-body {
+  padding-top: 16px;
+}

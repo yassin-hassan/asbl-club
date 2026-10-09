@@ -1,10 +1,14 @@
 import { Component, DOCUMENT, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
+import { MatTabsModule } from '@angular/material/tabs';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { Observable, filter } from 'rxjs';
 import { AsblMember, AsblMembers, AssociationsService, MemberManagementService, RoleChange } from '../../api/generated';
@@ -17,10 +21,14 @@ import { DuesFee } from './dues-fee';
 // An association's member area (members only; the API enforces it). Administrators also manage who joins (the
 // invitation link and the requests it produces) and the members themselves (roles, exclusion). Anyone may leave.
 // The API enforces every rule, including "at least one active administrator"; the page only offers what makes sense.
+// Administrators get one tab per job (members, join requests, invitations, dues) rather than one long page.
 @Component({
   selector: 'app-asbl-members',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [InviteByEmail, DuesFee, RouterLink, TranslocoPipe, MatButtonModule, MatProgressSpinnerModule, MatTableModule],
+  imports: [
+    InviteByEmail, DuesFee, NgTemplateOutlet, RouterLink, TranslocoPipe, MatButtonModule, MatFormFieldModule, MatInputModule,
+    MatProgressSpinnerModule, MatTableModule, MatTabsModule,
+  ],
   templateUrl: './asbl-members.html',
   styleUrl: './asbl-members.css',
 })
@@ -31,7 +39,8 @@ export class AsblMembersPage {
   private readonly dialog = inject(MatDialog);
   private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
-  readonly slug = inject(ActivatedRoute).snapshot.paramMap.get('slug') ?? '';
+  private readonly route = inject(ActivatedRoute);
+  readonly slug = this.route.snapshot.paramMap.get('slug') ?? '';
   readonly asbl = signal<AsblMembers | null>(null);
   readonly error = signal<string | null>(null);
   readonly roles = ['ADMIN', 'TREASURER', 'VIEWER', 'MEMBER'] as const;
@@ -43,6 +52,15 @@ export class AsblMembersPage {
   readonly myId = computed(() => this.auth.user()?.id);
   readonly members = computed(() => (this.asbl()?.members ?? []).filter((m) => m.status !== 'PENDING'));
   readonly requests = computed(() => (this.asbl()?.members ?? []).filter((m) => m.status === 'PENDING'));
+  readonly activeCount = computed(() => this.members().filter((m) => m.status === 'ACTIVE').length);
+
+  // The members list, narrowed by the search (name or email, accents and case ignored).
+  readonly query = signal('');
+  readonly shownMembers = computed(() => this.members().filter((m) => matchesSearch(`${m.name} ${m.email}`, this.query())));
+
+  // The open tab, kept in the address (?tab=dues) so a reload or a shared link opens the same one.
+  readonly tabs = ['members', 'requests', 'invitations', 'dues'] as const;
+  readonly tabIndex = signal(Math.max(0, this.tabs.indexOf(this.route.snapshot.queryParamMap.get('tab') as never)));
   readonly joinToken = signal<string | null>(null);
   readonly joinUrl = computed(() => {
     const token = this.joinToken();
@@ -53,6 +71,14 @@ export class AsblMembersPage {
 
   constructor() {
     this.load();
+  }
+
+  selectTab(index: number): void {
+    this.tabIndex.set(index);
+    this.router.navigate([], {
+      relativeTo: this.route, queryParams: { tab: index === 0 ? null : this.tabs[index] },
+      queryParamsHandling: 'merge', replaceUrl: true,
+    });
   }
 
   newLink(): void {
@@ -154,4 +180,12 @@ export class AsblMembersPage {
         return errorMessageKey(err);
     }
   }
+}
+
+// Whether a member's name and email match a search: every word typed must appear, case and accents ignored
+// ("elise van" finds "Élise Van den Broeck"). An empty search matches everyone.
+export function matchesSearch(text: string, query: string): boolean {
+  const fold = (value: string) => value.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
+  const haystack = fold(text);
+  return fold(query).split(/\s+/).filter(Boolean).every((word) => haystack.includes(word));
 }

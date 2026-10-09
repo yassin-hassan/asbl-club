@@ -25,6 +25,7 @@ test('an administrator changes a member’s role, can’t leave as the only admi
   await admin.getByLabel('Name').fill(club);
   await admin.getByLabel('BCE number').fill(`${digits.slice(0, 4)}.${digits.slice(4, 7)}.${digits.slice(7, 10)}`);
   await admin.getByRole('button', { name: 'Create ASBL' }).click();
+  await admin.getByRole('tab', { name: 'Invitations' }).click();
   await admin.getByRole('button', { name: 'Create an invitation link' }).click();
   const link = (await admin.getByTestId('join-link').textContent())!.trim();
 
@@ -35,7 +36,9 @@ test('an administrator changes a member’s role, can’t leave as the only admi
   await member.goto(link);
   await member.getByRole('button', { name: 'Ask to join' }).click();
   await admin.reload();
+  await admin.getByRole('tab', { name: /^Join requests/ }).click();
   await admin.getByRole('button', { name: 'Approve Treasurer To Be' }).click();
+  await admin.getByRole('tab', { name: /^Members/ }).click();
   await expect(admin.getByRole('row', { name: /Treasurer To Be/ })).toBeVisible();
 
   // A new role, seen by the member.
@@ -58,4 +61,19 @@ test('an administrator changes a member’s role, can’t leave as the only admi
   await member.reload();
   await expect(member.getByText('Excluded')).toBeVisible();
   await expect(member.getByRole('link', { name: new RegExp(club) })).toHaveCount(0);
+});
+
+// Thirty, forty members: the list can be searched, by name or email, whatever the accents.
+test('an administrator finds a member with the search', async ({ page }) => {
+  await page.goto('/login');
+  await page.getByLabel('Email address').fill('demo@asbl.club');
+  await page.getByLabel('Password').fill('password123');
+  await page.getByRole('button', { name: 'Log in' }).click();
+  await expect(page.getByRole('heading', { name: 'Your associations' })).toBeVisible();
+
+  await page.goto('/asbls/club-demo/members');
+  await page.getByLabel('Search members (name or email)').fill('DEMO ADMIN');
+  await expect(page.getByRole('row', { name: /Demo Admin/ })).toBeVisible();
+  await page.getByLabel('Search members (name or email)').fill('nobody-by-this-name');
+  await expect(page.getByText('No member matches this search.')).toBeVisible();
 });
