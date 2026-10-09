@@ -41,6 +41,9 @@ test('the cancellation policy is set per event, shown before buying, and can onl
   await page.getByRole('row', { name: /Standard/ }).getByRole('button', { name: 'Book' }).click();
   await expect(page).toHaveURL(/\/pay\/\d+$/);
   await page.goto(`${eventUrl}/edit`);
+  // The form shows its defaults until the event arrives: wait for the event itself before typing (the delay's
+  // default is 7 too, so it can't tell).
+  await expect(page.getByLabel('Title')).toHaveValue('Spring concert');
   const delay = page.getByLabel('Cancellation by the buyer (days before the event)');
   await expect(delay).toHaveValue('7');
   await delay.fill('2');

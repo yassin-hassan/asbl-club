@@ -37,6 +37,6 @@ test('a visitor goes from the home page to the upcoming events, then to one of t
   await expect(page.getByRole('row', { name: /Place standard/ }).getByRole('button', { name: 'Book' })).toBeVisible();
 
   // The same list from the menu, on any page.
-  await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Events' }).click();
+  await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: "What's on" }).click();
   await expect(page.getByRole('heading', { name: 'Upcoming events' })).toBeVisible();
 });
