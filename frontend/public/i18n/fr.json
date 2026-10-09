@@ -235,7 +235,15 @@
     "lastAdmin": "Une association a besoin d’au moins un administrateur : nommez-en un autre d’abord.",
     "notOnYourself": "Vous ne pouvez pas vous exclure vous-même : quittez l’association.",
     "cancel": "Annuler",
-    "publicPage": "Page publique"
+    "publicPage": "Page publique",
+    "search": "Rechercher un membre (nom ou e-mail)",
+    "noMatch": "Aucun membre ne correspond à cette recherche.",
+    "tabs": {
+      "members": "Membres ({{ count }})",
+      "requests": "Demandes ({{ count }})",
+      "invitations": "Invitations",
+      "dues": "Cotisations"
+    }
   },
   "statuses": {
     "PENDING": "En attente",
@@ -387,7 +395,7 @@
   },
   "invite": {
     "title": "Inviter des membres",
-    "intro": "Partagez ce lien avec les personnes à inviter. Elles demandent à rejoindre, et vous les acceptez ci-dessous.",
+    "intro": "Partagez ce lien avec les personnes à inviter. Elles demandent à rejoindre, et vous les acceptez dans l'onglet « Demandes ».",
     "create": "Créer un lien d’invitation",
     "renew": "Nouveau lien",
     "disable": "Désactiver",
@@ -409,7 +417,8 @@
   "requests": {
     "title": "Demandes d’adhésion",
     "approve": "Accepter",
-    "decline": "Refuser"
+    "decline": "Refuser",
+    "none": "Aucune demande d'adhésion en attente."
   },
   "attendees": {
     "title": "Participants",

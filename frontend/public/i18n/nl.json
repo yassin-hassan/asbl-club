@@ -235,7 +235,15 @@
     "lastAdmin": "Een vereniging heeft minstens één beheerder nodig: stel eerst iemand anders aan.",
     "notOnYourself": "U kunt uzelf niet uitsluiten: verlaat de vereniging.",
     "cancel": "Annuleren",
-    "publicPage": "Openbare pagina"
+    "publicPage": "Openbare pagina",
+    "search": "Een lid zoeken (naam of e-mail)",
+    "noMatch": "Geen enkel lid komt overeen met deze zoekopdracht.",
+    "tabs": {
+      "members": "Leden ({{ count }})",
+      "requests": "Aanvragen ({{ count }})",
+      "invitations": "Uitnodigingen",
+      "dues": "Lidgeld"
+    }
   },
   "statuses": {
     "PENDING": "In afwachting",
@@ -387,7 +395,7 @@
   },
   "invite": {
     "title": "Leden uitnodigen",
-    "intro": "Deel deze link met wie u wilt uitnodigen. Zij vragen het lidmaatschap aan, u keurt het hieronder goed.",
+    "intro": "Deel deze link met wie u wilt uitnodigen. Zij vragen het lidmaatschap aan, u keurt het goed in het tabblad “Aanvragen”.",
     "create": "Uitnodigingslink aanmaken",
     "renew": "Nieuwe link",
     "disable": "Uitschakelen",
@@ -409,7 +417,8 @@
   "requests": {
     "title": "Lidmaatschapsaanvragen",
     "approve": "Goedkeuren",
-    "decline": "Weigeren"
+    "decline": "Weigeren",
+    "none": "Geen openstaande lidmaatschapsaanvragen."
   },
   "attendees": {
     "title": "Deelnemers",

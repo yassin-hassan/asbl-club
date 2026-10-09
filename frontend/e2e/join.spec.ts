@@ -25,6 +25,7 @@ test('someone joins an association through its invitation link, once an administ
   await admin.getByLabel('Name').fill(`Joinable Club ${stamp}`);
   await admin.getByLabel('BCE number').fill(`${digits.slice(0, 4)}.${digits.slice(4, 7)}.${digits.slice(7, 10)}`);
   await admin.getByRole('button', { name: 'Create ASBL' }).click();
+  await admin.getByRole('tab', { name: 'Invitations' }).click();
   await expect(admin.getByRole('heading', { name: 'Invite members' })).toBeVisible();
   await admin.getByRole('button', { name: 'Create an invitation link' }).click();
   const link = (await admin.getByTestId('join-link').textContent())!.trim();
@@ -48,9 +49,11 @@ test('someone joins an association through its invitation link, once an administ
 
   // The administrator approves the request.
   await admin.reload();
-  await expect(admin.getByRole('heading', { name: 'Join requests' })).toBeVisible();
+  await admin.getByRole('tab', { name: 'Join requests (1)' }).click();
   await admin.getByRole('button', { name: 'Approve Newcomer' }).click();
-  await expect(admin.getByRole('heading', { name: 'Join requests' })).toHaveCount(0);
+  await expect(admin.getByText('No pending join requests.')).toBeVisible();
+  await expect(admin.getByRole('tab', { name: 'Join requests (0)' })).toBeVisible();
+  await admin.getByRole('tab', { name: /^Members/ }).click();
   await expect(admin.getByRole('row', { name: /Newcomer.*Member.*Active/ })).toBeVisible();
 
   // The newcomer is in.

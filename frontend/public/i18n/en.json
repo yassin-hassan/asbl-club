@@ -235,7 +235,15 @@
     "lastAdmin": "An association needs at least one administrator: appoint another one first.",
     "notOnYourself": "You can’t exclude yourself: leave the association instead.",
     "cancel": "Cancel",
-    "publicPage": "Public page"
+    "publicPage": "Public page",
+    "search": "Search members (name or email)",
+    "noMatch": "No member matches this search.",
+    "tabs": {
+      "members": "Members ({{ count }})",
+      "requests": "Join requests ({{ count }})",
+      "invitations": "Invitations",
+      "dues": "Dues"
+    }
   },
   "statuses": {
     "PENDING": "Pending",
@@ -387,7 +395,7 @@
   },
   "invite": {
     "title": "Invite members",
-    "intro": "Share this link with the people you want to invite. They ask to join, and you approve them below.",
+    "intro": "Share this link with the people you want to invite. They ask to join, and you approve them in the “Join requests” tab.",
     "create": "Create an invitation link",
     "renew": "New link",
     "disable": "Turn off",
@@ -409,7 +417,8 @@
   "requests": {
     "title": "Join requests",
     "approve": "Approve",
-    "decline": "Decline"
+    "decline": "Decline",
+    "none": "No pending join requests."
   },
   "attendees": {
     "title": "Attendees",

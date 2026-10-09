@@ -24,6 +24,7 @@ test('an administrator invites someone by email, who signs up and joins without 
   await admin.getByRole('button', { name: 'Create ASBL' }).click();
 
   // Invite by email; it appears among the pending invitations.
+  await admin.getByRole('tab', { name: 'Invitations' }).click();
   await admin.getByRole('textbox', { name: 'Email address' }).fill(invitee);
   await admin.getByRole('button', { name: 'Send the invitation' }).click();
   await expect(admin.getByText(`Invitation sent to ${invitee}.`)).toBeVisible();
