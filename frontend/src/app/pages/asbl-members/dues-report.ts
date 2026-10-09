@@ -17,14 +17,17 @@ import { errorMessageKey } from '../../services/problem';
   imports: [CurrencyPipe, DatePipe, TranslocoPipe, MatButtonModule, MatProgressSpinnerModule, MatTableModule],
   template: `
     @if (report.value(); as report) {
-      <div class="toolbar">
-        <p class="hint">{{ 'dues.summary' | transloco: { paid: report.paid, total: report.members.length, year: report.year } }}</p>
-        <button mat-stroked-button type="button" (click)="download(report.year)" [disabled]="downloading()">
-          {{ 'dues.download' | transloco }}
-        </button>
-      </div>
-      @if (downloadError(); as error) {
-        <p class="error" role="alert">{{ error | transloco }}</p>
+      @if (!report.annualFee) {
+        <p>{{ 'dues.off' | transloco }}</p>
+      } @else {
+        <div class="toolbar">
+          <p class="hint">{{ 'dues.summary' | transloco: { paid: report.paid, total: report.members.length, year: report.year } }}</p>
+          <button mat-stroked-button type="button" (click)="download(report.year)" [disabled]="downloading()">
+            {{ 'dues.download' | transloco }}
+          </button>
+        </div>
+        @if (downloadError(); as error) {
+          <p class="error" role="alert">{{ error | transloco }}</p>
       }
       <div class="data-table">
         <table mat-table [dataSource]="report.members" [attr.aria-label]="'dues.listLabel' | transloco">
@@ -56,6 +59,7 @@ import { errorMessageKey } from '../../services/problem';
           <tr mat-row *matRowDef="let row; columns: columns"></tr>
         </table>
       </div>
+      }
     } @else if (report.error(); as error) {
       <p class="error" role="alert">{{ errorKey(error) | transloco }}</p>
     } @else {

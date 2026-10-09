@@ -116,6 +116,8 @@ class DuesController {
 
     @Schema(name = "DuesReport")
     record Report(@Schema(requiredMode = REQUIRED) int year,
+            @Schema(description = "The yearly fee in euros; absent when the association doesn't collect dues")
+            BigDecimal annualFee,
             @Schema(requiredMode = REQUIRED, description = "How many of the members have paid") int paid,
             @Schema(requiredMode = REQUIRED, description = "Current members, by name") List<Member> members) {
     }
@@ -157,7 +159,7 @@ class DuesController {
         int year = duesService.currentYear();
         List<Member> members = duesService.statusOfMembers(asbl, year).stream()
                 .map(m -> new Member(m.name(), m.email(), m.paid(), m.amount(), m.paidAt())).toList();
-        return new Report(year, (int) members.stream().filter(Member::paid).count(), members);
+        return new Report(year, asbl.getAnnualFee(), (int) members.stream().filter(Member::paid).count(), members);
     }
 
     // The download is audited: personal data leaving the platform, in a file nobody can recall.

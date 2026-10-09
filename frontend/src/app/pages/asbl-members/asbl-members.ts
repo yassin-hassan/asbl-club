@@ -17,18 +17,19 @@ import { AuthService } from '../../services/auth';
 import { ConfirmDialog, ConfirmDialogData } from '../../components/confirm-dialog/confirm-dialog';
 import { InviteByEmail } from './invite-by-email';
 import { DuesFee } from './dues-fee';
+import { DuesReport } from './dues-report';
 import { Finances } from './finances';
 
 // An association's member area (members only; the API enforces it). Administrators also manage who joins (the
 // invitation link and the requests it produces) and the members themselves (roles, exclusion). Anyone may leave.
 // The API enforces every rule, including "at least one active administrator"; the page only offers what makes sense.
 // Administrators get one tab per job (members, join requests, invitations, dues, finances) rather than one long page;
-// treasurers get the members and the finances.
+// treasurers get the members, who paid their dues, and the finances.
 @Component({
   selector: 'app-asbl-members',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    InviteByEmail, DuesFee, Finances, NgTemplateOutlet, RouterLink, TranslocoPipe, MatButtonModule, MatFormFieldModule, MatInputModule,
+    InviteByEmail, DuesFee, DuesReport, Finances, NgTemplateOutlet, RouterLink, TranslocoPipe, MatButtonModule, MatFormFieldModule, MatInputModule,
     MatProgressSpinnerModule, MatTableModule, MatTabsModule,
   ],
   templateUrl: './asbl-members.html',
@@ -188,14 +189,14 @@ export class AsblMembersPage {
 
 export type MemberTab = 'members' | 'requests' | 'invitations' | 'dues' | 'finances';
 
-// The tabs a role sees: administrators run everything; treasurers follow the money; the others only see the members
+// The tabs a role sees: administrators run everything; treasurers follow the money (dues read-only); the others only see the members
 // (no tabs at all). The API enforces each of these on its own.
 export function tabsFor(role: string | undefined): MemberTab[] {
   switch (role) {
     case 'ADMIN':
       return ['members', 'requests', 'invitations', 'dues', 'finances'];
     case 'TREASURER':
-      return ['members', 'finances'];
+      return ['members', 'dues', 'finances'];
     default:
       return [];
   }
