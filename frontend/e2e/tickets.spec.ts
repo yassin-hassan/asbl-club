@@ -3,7 +3,7 @@ import { createAccount } from './mail';
 
 // A real ticket needs a real Stripe payment (not possible in CI): the backend tests cover paid tickets and
 // check-in. Here: the pages, their wiring through the Worker, and the refusals.
-test('my bookings lists an unpaid booking with a way to pay, and the door refuses an unknown ticket', async ({ page }) => {
+test('my bookings lists an unpaid booking with a way to pay or to give it up, and the door refuses an unknown ticket', async ({ page }) => {
   const stamp = Date.now();
   const digits = String(stamp).slice(-10);
 
@@ -50,4 +50,17 @@ test('my bookings lists an unpaid booking with a way to pay, and the door refuse
   await expect(page.getByText('Unknown ticket for this event.')).toBeVisible();
   await expect(code).toHaveValue('');
   await expect(code).toBeFocused();
+
+  // Giving up the unpaid booking: confirmed first, then cancelled, its seat freed at once (not 30 minutes later).
+  await page.getByRole('link', { name: 'My bookings' }).click();
+  await booking.getByRole('button', { name: /Cancel the booking/ }).click();
+  await expect(page.getByRole('dialog')).toContainText('there is nothing to refund');
+  await page.getByRole('button', { name: 'Keep my booking' }).click();
+  await expect(booking).toContainText('Awaiting payment');
+  await booking.getByRole('button', { name: /Cancel the booking/ }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Cancel the booking' }).click();
+  await expect(booking).toContainText('Cancelled');
+  await expect(booking.getByRole('link', { name: 'Pay' })).toHaveCount(0);
+  await page.goto(eventUrl);
+  await expect(page.getByRole('cell', { name: '0 / 100' })).toBeVisible();
 });

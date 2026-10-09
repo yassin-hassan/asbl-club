@@ -8,11 +8,11 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { filter, Observable, switchMap, take, takeWhile, timer } from 'rxjs';
 import { GuestBooking, GuestBookingsService } from '../../api/generated';
-import { ConfirmDialog, ConfirmDialogData } from '../../components/confirm-dialog/confirm-dialog';
+import { ConfirmDialog } from '../../components/confirm-dialog/confirm-dialog';
 import { TicketQr } from '../../components/ticket-qr/ticket-qr';
 import { LanguageService } from '../../i18n/language';
 import { errorMessageKey } from '../../services/problem';
-import { cancellationErrorKey } from '../my-bookings/my-bookings';
+import { cancelDialog, cancellationErrorKey } from '../my-bookings/my-bookings';
 import { WAITING } from '../payment-complete/payment-complete';
 
 // A guest's booking (bought without an account), opened through its secret link: /tickets/:token. From here they
@@ -65,12 +65,10 @@ export class GuestTicket {
     });
   }
 
-  // Cancel the paid ticket (within the event's cancellation delay) and be refunded.
+  // Give up the unpaid booking (its seat freed at once), or cancel the paid ticket (within the event's cancellation
+  // delay) and be refunded.
   cancel(booking: GuestBooking): void {
-    const data: ConfirmDialogData = {
-      title: 'bookings.cancelTitle', message: 'bookings.cancelConfirm', confirm: 'bookings.cancel', cancel: 'bookings.keep',
-      params: { event: booking.eventTitle },
-    };
+    const data = cancelDialog(booking.status === 'RESERVED', booking.eventTitle);
     this.dialog.open(ConfirmDialog, { data }).afterClosed().pipe(
       filter((confirmed) => confirmed === true),
       switchMap(() => {

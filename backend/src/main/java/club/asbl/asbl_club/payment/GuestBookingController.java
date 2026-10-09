@@ -99,8 +99,8 @@ class GuestBookingController {
         return bookingCheckout.start(registration, registration.getGuestName(), registration.getGuestEmail(), null);
     }
 
-    @Operation(operationId = "cancelGuestBooking", summary = "Cancel a guest's paid ticket and be refunded")
-    @ApiResponse(responseCode = "200", description = "Cancelled and refunded",
+    @Operation(operationId = "cancelGuestBooking", summary = "Cancel a guest's booking: an unpaid one frees its seat, a paid one is refunded")
+    @ApiResponse(responseCode = "200", description = "Cancelled (and refunded, if it was paid)",
             content = @Content(schema = @Schema(implementation = GuestBooking.class)))
     @ApiResponse(responseCode = "409", description = "The delay has passed or tickets aren't refundable (CANCELLATION_CLOSED), or not a paid unused ticket of an event still on (NOT_CANCELLABLE)",
             content = @Content(mediaType = "application/problem+json"))

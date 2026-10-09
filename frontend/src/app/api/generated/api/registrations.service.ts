@@ -194,7 +194,7 @@ export class RegistrationsService extends BaseService {
     }
 
     /**
-     * Cancel one of my paid tickets and be refunded
+     * Cancel one of my bookings: an unpaid one frees its seat, a paid one is refunded
      * @endpoint post /api/v1/registrations/{id}/cancel
      * @param id 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.

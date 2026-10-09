@@ -487,7 +487,7 @@
     "/api/v1/registrations/{id}/cancel" : {
       "post" : {
         "tags" : [ "Registrations" ],
-        "summary" : "Cancel one of my paid tickets and be refunded",
+        "summary" : "Cancel one of my bookings: an unpaid one frees its seat, a paid one is refunded",
         "operationId" : "cancelMyBooking",
         "parameters" : [ {
           "name" : "id",
@@ -500,7 +500,7 @@
         } ],
         "responses" : {
           "200" : {
-            "description" : "Cancelled and refunded",
+            "description" : "Cancelled (and refunded, if it was paid)",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -765,7 +765,7 @@
     "/api/v1/guest-bookings/{token}/cancel" : {
       "post" : {
         "tags" : [ "Guest bookings" ],
-        "summary" : "Cancel a guest's paid ticket and be refunded",
+        "summary" : "Cancel a guest's booking: an unpaid one frees its seat, a paid one is refunded",
         "operationId" : "cancelGuestBooking",
         "parameters" : [ {
           "name" : "token",
@@ -777,7 +777,7 @@
         } ],
         "responses" : {
           "200" : {
-            "description" : "Cancelled and refunded",
+            "description" : "Cancelled (and refunded, if it was paid)",
             "content" : {
               "application/json" : {
                 "schema" : {

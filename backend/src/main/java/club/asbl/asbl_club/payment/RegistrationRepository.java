@@ -30,6 +30,13 @@ interface RegistrationRepository extends JpaRepository<Registration, Long> {
             nativeQuery = true)
     int cancelUnpaid(@Param("eventId") Long eventId);
 
+    // The person gives up a booking they haven't paid: only while it's still unpaid (a payment confirmed at that very
+    // moment wins, and this changes nothing).
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query(value = "UPDATE registrations SET status = 'CANCELLED' WHERE id = :id AND status = 'RESERVED'",
+            nativeQuery = true)
+    int cancelIfReserved(@Param("id") Long id);
+
     // My bookings, soonest event first, with what the page shows, in one query.
     @Query("select r from Registration r join fetch r.event e join fetch e.asbl join fetch r.ticketCategory "
             + "where r.user.id = :userId order by e.startsAt")

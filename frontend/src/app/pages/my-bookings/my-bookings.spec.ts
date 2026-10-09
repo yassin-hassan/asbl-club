@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { MyBooking } from '../../api/generated';
-import { cancellationErrorKey, splitByDate } from './my-bookings';
+import { cancelDialog, cancellationErrorKey, splitByDate } from './my-bookings';
 
 const booking = (id: number, startsAt: string) => ({ id, startsAt }) as MyBooking;
 
@@ -39,5 +39,16 @@ describe('cancellationErrorKey', () => {
 
   it('says when the payment provider refused the refund (trying again won\'t help)', () => {
     expect(cancellationErrorKey(refused(502, 'REFUND_REFUSED'))).toBe('bookings.refundRefused');
+  });
+});
+
+describe('cancelDialog', () => {
+  it('speaks of freeing the seat for an unpaid booking, of a refund for a paid ticket', () => {
+    expect(cancelDialog(true, 'Concert')).toEqual(expect.objectContaining({
+      message: 'bookings.cancelUnpaidConfirm', confirm: 'bookings.cancelUnpaid', params: { event: 'Concert' },
+    }));
+    expect(cancelDialog(false, 'Concert')).toEqual(expect.objectContaining({
+      message: 'bookings.cancelConfirm', confirm: 'bookings.cancel',
+    }));
   });
 });

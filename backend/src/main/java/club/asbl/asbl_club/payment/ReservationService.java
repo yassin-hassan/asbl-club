@@ -86,4 +86,19 @@ public class ReservationService {
     void onEventCancelled(EventCancelled cancelled) {
         registrationRepository.cancelUnpaid(cancelled.eventId());
     }
+
+    // The person gives up a booking they haven't paid: its seat goes back on sale at once, instead of when the
+    // booking expires. False when it was paid (or expired) in the meantime. A payment Stripe confirms afterwards
+    // (a payment form left open in another tab) finds the booking cancelled and is refunded in full (PaymentService).
+    @Transactional
+    public boolean cancelUnpaid(Registration booking) {
+        if (registrationRepository.cancelIfReserved(booking.getId()) == 0) {
+            return false;
+        }
+        eventService.releaseSeat(booking.getTicketCategory().getId());
+        auditService.record("BOOKING_CANCELLED", booking.getEvent().getAsbl(), "Registration", booking.getId(),
+                Map.of("event", booking.getEvent().getId(), "ticket", booking.getTicketCategory().getLabel(),
+                        "reason", "unpaid"));
+        return true;
+    }
 }

@@ -154,9 +154,12 @@ class BuyerCancellationIntegrationTest {
     }
 
     @Test
-    void onlyAPaidUnusedTicket_canBeCancelled_andOnlyOnce() throws Exception {
-        Registration unpaid = reservationService.reserve(concert, standard, bob);
-        cancel(unpaid).andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("NOT_CANCELLABLE"));
+    void aPaidTicket_isCancelledOnlyOnce_andAUsedOneNever() throws Exception {
+        Registration expired = reservationService.reserve(concert, standard, bob);
+        entityManager.flush(); // the setup's changes, before the plain SQL below and the clear()
+        jdbcTemplate.update("UPDATE registrations SET status = 'EXPIRED' WHERE id = ?", expired.getId());
+        entityManager.clear();
+        cancel(expired).andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("NOT_CANCELLABLE"));
 
         Registration ticket = paidTicket("pi_once");
         cancel(ticket).andExpect(status().isOk());
@@ -207,6 +210,53 @@ class BuyerCancellationIntegrationTest {
         cancel(ticket).andExpect(status().isBadGateway()).andExpect(jsonPath("$.code").value("REFUND_REFUSED"));
         assertThat(statusOf("registrations", ticket.getId())).isEqualTo("PAID");
         assertThat(soldSeats()).isEqualTo(1);
+    }
+
+    // An unpaid booking: given up at once, its seat back on sale, nothing asked of Stripe.
+    @Test
+    void anUnpaidBooking_isCancelled_andItsSeatFreedAtOnce() throws Exception {
+        Registration booking = reservationService.reserve(concert, standard, bob);
+        entityManager.flush();
+        assertThat(soldSeats()).isEqualTo(1);
+
+        cancel(booking).andExpect(status().isOk()).andExpect(jsonPath("$.status").value("CANCELLED"));
+        assertThat(statusOf("registrations", booking.getId())).isEqualTo("CANCELLED");
+        assertThat(soldSeats()).as("the seat is back on sale").isZero();
+        assertThat(jdbcTemplate.queryForObject("SELECT count(*) FROM audit_logs WHERE action = 'BOOKING_CANCELLED' "
+                + "AND payload ->> 'reason' = 'unpaid'", Integer.class)).isEqualTo(1);
+        verify(refundService, never()).create(any(RefundCreateParams.class), any(RequestOptions.class));
+
+        cancel(booking).andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("NOT_CANCELLABLE"));
+        assertThat(soldSeats()).as("freed once, not twice").isZero();
+    }
+
+    // A payment form left open in another tab, paid after the booking was given up: the money goes back in full.
+    @Test
+    void aPaymentArrivingAfterTheCancellation_isRefundedInFull() throws Exception {
+        Registration booking = reservationService.reserve(concert, standard, bob);
+        entityManager.flush();
+        cancel(booking).andExpect(status().isOk());
+
+        pay(booking, "pi_late", bob);
+        assertThat(statusOf("registrations", booking.getId())).isEqualTo("REFUNDED");
+        assertThat(statusOf("payments", paymentRepository.findByPayableId(booking.getId()).orElseThrow().getId()))
+                .isEqualTo("REFUNDED");
+        ArgumentCaptor<RefundCreateParams> params = ArgumentCaptor.forClass(RefundCreateParams.class);
+        verify(refundService).create(params.capture(), any(RequestOptions.class));
+        assertThat(params.getValue().getRefundApplicationFee()).as("the commission too").isTrue();
+        assertThat(soldSeats()).isZero();
+    }
+
+    @Test
+    void aGuest_cancelsAnUnpaidBooking_throughTheirLink() throws Exception {
+        ReservationService.GuestReservation guest =
+                reservationService.reserveForGuest(concert, standard, "Zoé", "zoe@mail.test", "fr");
+        entityManager.flush();
+
+        mockMvc.perform(post("/api/v1/guest-bookings/" + guest.accessToken() + "/cancel"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("CANCELLED"));
+        assertThat(soldSeats()).isZero();
     }
 
     @Test

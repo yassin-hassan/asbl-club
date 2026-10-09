@@ -20,10 +20,13 @@ class BookingCheckout {
     private static final Logger log = LoggerFactory.getLogger(BookingCheckout.class);
 
     private final PaymentService paymentService;
+    private final ReservationService reservationService;
     private final StripeProperties stripeProperties;
 
-    BookingCheckout(PaymentService paymentService, StripeProperties stripeProperties) {
+    BookingCheckout(PaymentService paymentService, ReservationService reservationService,
+            StripeProperties stripeProperties) {
         this.paymentService = paymentService;
+        this.reservationService = reservationService;
         this.stripeProperties = stripeProperties;
     }
 
@@ -48,8 +51,16 @@ class BookingCheckout {
         }
     }
 
-    // The buyer cancels their paid ticket (account holder or guest): refunded, or a stable reason why not.
+    // The buyer cancels their booking (account holder or guest): an unpaid one frees its seat at once; a paid one is
+    // refunded, within the event's cancellation delay. Or a stable reason why not.
     void cancel(Registration registration) {
+        if (registration.getStatus() == RegistrationStatus.RESERVED) {
+            if (!reservationService.cancelUnpaid(registration)) {
+                // Paid (or expired) a moment ago: the page is out of date.
+                throw conflict("NOT_CANCELLABLE", "This booking changed in the meantime; reload it.");
+            }
+            return;
+        }
         try {
             paymentService.cancelByBuyer(registration.getId());
         } catch (NotCancellableException e) {
