@@ -3778,6 +3778,10 @@
             "type" : "integer",
             "format" : "int32"
           },
+          "annualFee" : {
+            "type" : "number",
+            "description" : "The yearly fee in euros; absent when the association doesn't collect dues"
+          },
           "paid" : {
             "type" : "integer",
             "description" : "How many of the members have paid",

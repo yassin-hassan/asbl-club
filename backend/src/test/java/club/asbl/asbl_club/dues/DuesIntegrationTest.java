@@ -201,6 +201,7 @@ class DuesIntegrationTest {
 
         report(daveToken).andExpect(status().isOk())
                 .andExpect(jsonPath("$.year").value(duesService.currentYear()))
+                .andExpect(jsonPath("$.annualFee").value(25.00))
                 .andExpect(jsonPath("$.paid").value(1))
                 .andExpect(jsonPath("$.members[*].name").value(org.hamcrest.Matchers.contains("Alice", "Bob", "Dave")))
                 .andExpect(jsonPath("$.members[1].paid").value(true))
@@ -220,6 +221,12 @@ class DuesIntegrationTest {
         entityManager.flush();
         assertThat(jdbcTemplate.queryForObject("SELECT count(*) FROM audit_logs WHERE action = 'DUES_EXPORTED'",
                 Integer.class)).isEqualTo(1);
+    }
+
+    // Not collecting dues: the treasurer is told so, rather than "nobody paid".
+    @Test
+    void withoutAFee_theReportSaysSo() throws Exception {
+        report(aliceToken).andExpect(status().isOk()).andExpect(jsonPath("$.annualFee").doesNotExist());
     }
 
     @Test

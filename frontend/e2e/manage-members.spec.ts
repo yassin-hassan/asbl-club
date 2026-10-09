@@ -46,9 +46,12 @@ test('an administrator changes a member’s role, can’t leave as the only admi
   await member.goto('/');
   await expect(member.getByRole('link', { name: new RegExp(`${club}.*Treasurer`) })).toBeVisible();
 
-  // A treasurer follows the money: the members and the finances, nothing of the administrators' tabs.
+  // A treasurer follows the money: the members, who paid their dues (read-only) and the finances.
   await member.getByRole('link', { name: new RegExp(`${club}.*Treasurer`) }).click();
-  await expect(member.getByRole('tab')).toHaveText([/^Members/, 'Finances']);
+  await expect(member.getByRole('tab')).toHaveText([/^Members/, 'Dues', 'Finances']);
+  await member.getByRole('tab', { name: 'Dues' }).click();
+  await expect(member.getByText("The association doesn't collect dues yet.")).toBeVisible();
+  await expect(member.getByLabel('Yearly fee')).toHaveCount(0);
   await member.getByRole('tab', { name: 'Finances' }).click();
   await expect(member.getByText(`No payments in ${new Date().getFullYear()}.`)).toBeVisible();
   await member.goto('/');
