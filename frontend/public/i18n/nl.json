@@ -281,7 +281,7 @@
     "backToEvent": "Terug naar het evenement",
     "cancelEvent": "Evenement annuleren",
     "cancelTitle": "Dit evenement annuleren?",
-    "cancelConfirm": "Het wordt verborgen voor het publiek en kan niet meer geboekt worden. Nog niet betaalde boekingen worden geannuleerd; betaalde moeten via je Stripe-dashboard terugbetaald worden. Dit kan niet ongedaan gemaakt worden.",
+    "cancelConfirm": "Het wordt verborgen voor het publiek en kan niet meer geboekt worden. Nog niet betaalde boekingen worden geannuleerd; betaalde tickets worden binnen de minuut automatisch volledig terugbetaald en de kopers krijgen een e-mail. Dit kan niet ongedaan gemaakt worden.",
     "cancelledHint": "Geannuleerd: verborgen voor het publiek en niet meer te boeken.",
     "delete": "Concept verwijderen",
     "deleteTitle": "Dit concept verwijderen?",

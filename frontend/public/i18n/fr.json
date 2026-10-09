@@ -281,7 +281,7 @@
     "backToEvent": "Retour à l'événement",
     "cancelEvent": "Annuler l'événement",
     "cancelTitle": "Annuler cet événement ?",
-    "cancelConfirm": "Il sera masqué au public et ne pourra plus être réservé. Les réservations non payées sont annulées ; les payées doivent être remboursées depuis votre tableau de bord Stripe. Cette action est définitive.",
+    "cancelConfirm": "Il sera masqué au public et ne pourra plus être réservé. Les réservations non payées sont annulées ; les billets payés sont remboursés automatiquement, en totalité, dans la minute, et leurs acheteurs prévenus par e-mail. Cette action est définitive.",
     "cancelledHint": "Annulé : masqué au public et plus réservable.",
     "delete": "Supprimer le brouillon",
     "deleteTitle": "Supprimer ce brouillon ?",

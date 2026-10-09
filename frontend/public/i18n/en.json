@@ -281,7 +281,7 @@
     "backToEvent": "Back to the event",
     "cancelEvent": "Cancel the event",
     "cancelTitle": "Cancel this event?",
-    "cancelConfirm": "It will be hidden from the public and can no longer be booked. Bookings not yet paid are cancelled; paid ones must be refunded from your Stripe dashboard. This can't be undone.",
+    "cancelConfirm": "It will be hidden from the public and can no longer be booked. Bookings not yet paid are cancelled; paid tickets are refunded in full automatically within a minute, and their buyers are told by email. This can't be undone.",
     "cancelledHint": "Cancelled: hidden from the public and no longer bookable.",
     "delete": "Delete the draft",
     "deleteTitle": "Delete this draft?",

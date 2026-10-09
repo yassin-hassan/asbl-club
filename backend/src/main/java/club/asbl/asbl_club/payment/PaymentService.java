@@ -166,19 +166,7 @@ public class PaymentService {
     // fails, nothing here changes, the webhook answers 5xx and Stripe sends it again. The idempotency key makes that
     // retried refund return the first one instead of refunding twice.
     private void refundUnwanted(Payment payment, Registration registration, String paymentIntentId) {
-        RequestOptions options = RequestOptions.builder()
-                .setStripeAccount(payment.getAsbl().getStripeAccountId())
-                .setIdempotencyKey("refund-" + payment.getId())
-                .build();
-        RefundCreateParams params = RefundCreateParams.builder()
-                .setPaymentIntent(paymentIntentId)
-                .setRefundApplicationFee(true)
-                .build();
-        try {
-            stripe.refunds().create(params, options);
-        } catch (StripeException e) {
-            throw new IllegalStateException("Stripe refused to refund " + paymentIntentId, e);
-        }
+        refundAtStripe(payment);
         RegistrationStatus bookingWas = registration.getStatus();
         String bookingStatus = bookingWas.name();
         payment.setStatus(PaymentStatus.REFUNDED);
@@ -189,6 +177,49 @@ public class PaymentService {
         auditService.recordSystem("PAYMENT_REFUNDED", payment.getAsbl(), "Payment", payment.getId(),
                 Map.of("paymentIntentId", paymentIntentId, "amount", payment.getAmount(), "booking", bookingStatus));
         bookingEmails.paymentRefunded(registration, bookingWas);
+    }
+
+    // A paid ticket whose event the association cancelled: the whole amount goes back, the platform's commission
+    // included (the association didn't hold the event). Stripe is called first, inside the transaction: if it fails,
+    // nothing here changes and the next run tries again; the idempotency key makes a retry return the first refund
+    // instead of refunding twice. The row is locked first, so two runs can't both refund the same ticket.
+    @Transactional
+    public boolean refundCancelledEventTicket(Long registrationId) {
+        Registration ticket = registrationRepository.findById(registrationId).orElseThrow();
+        entityManager.refresh(ticket, LockModeType.PESSIMISTIC_WRITE);
+        if (ticket.getStatus() != RegistrationStatus.PAID
+                || ticket.getEvent().getStatus() != EventStatus.CANCELLED) {
+            return false; // refunded (or checked in) since the list was read
+        }
+        Payment payment = paymentRepository.findByPayableId(ticket.getId())
+                .filter(p -> p.getStatus() == PaymentStatus.SUCCEEDED)
+                .orElseThrow(() -> new IllegalStateException("Paid ticket " + registrationId + " has no payment"));
+        refundAtStripe(payment);
+        payment.setStatus(PaymentStatus.REFUNDED);
+        ticket.setStatus(RegistrationStatus.REFUNDED);
+        auditService.recordSystem("PAYMENT_REFUNDED", payment.getAsbl(), "Payment", payment.getId(),
+                Map.of("paymentIntentId", payment.getStripePaymentIntentId(), "amount", payment.getAmount(),
+                        "reason", "event cancelled"));
+        bookingEmails.eventCancelledRefund(ticket);
+        return true;
+    }
+
+    // The whole payment back to the payer, the platform's commission included. The idempotency key makes a retried
+    // call return the first refund instead of making a second one.
+    private void refundAtStripe(Payment payment) {
+        RequestOptions options = RequestOptions.builder()
+                .setStripeAccount(payment.getAsbl().getStripeAccountId())
+                .setIdempotencyKey("refund-" + payment.getId())
+                .build();
+        RefundCreateParams params = RefundCreateParams.builder()
+                .setPaymentIntent(payment.getStripePaymentIntentId())
+                .setRefundApplicationFee(true)
+                .build();
+        try {
+            stripe.refunds().create(params, options);
+        } catch (StripeException e) {
+            throw new IllegalStateException("Stripe refused to refund " + payment.getStripePaymentIntentId(), e);
+        }
     }
 
     @Transactional

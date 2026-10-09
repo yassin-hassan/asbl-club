@@ -68,6 +68,18 @@ class BookingEmails {
                 money(booking.getAmount(), to.locale()), booking.getEvent().getAsbl().getDenomination());
     }
 
+    // The association cancelled an event this ticket was paid for: the money went back.
+    void eventCancelledRefund(Registration booking) {
+        Recipient to = recipientOf(booking);
+        if (to == null) {
+            return;
+        }
+        Event event = booking.getEvent();
+        emailService.queue(to.email(), to.locale(), "eventCancelledRefund", to.name(), event.getTitle(),
+                money(booking.getAmount(), to.locale()), event.getAsbl().getDenomination(),
+                when(event.getStartsAt(), to.locale()));
+    }
+
     private record Recipient(String email, String name, Locale locale) {
     }
 
