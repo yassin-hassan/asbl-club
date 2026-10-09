@@ -39,6 +39,8 @@ public final class ManagedEvents {
             String location,
             @Schema(requiredMode = REQUIRED, allowableValues = {"DRAFT", "PUBLISHED", "CANCELLED", "ENDED"}) String status,
             @Schema(requiredMode = REQUIRED, allowableValues = {"PUBLIC", "MEMBERS"}) String visibility,
+            @Schema(requiredMode = REQUIRED, description = "Until how many days before the start buyers may cancel; 0: never")
+            int cancellationDays,
             @Schema(requiredMode = REQUIRED) boolean canManage,
             @Schema(requiredMode = REQUIRED, description = "Administrators and treasurers see who booked")
             boolean canSeeAttendees,

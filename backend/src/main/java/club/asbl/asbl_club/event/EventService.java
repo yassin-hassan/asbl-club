@@ -32,6 +32,13 @@ public class EventService {
     @Transactional
     public Event createEvent(Asbl asbl, String title, String description, Instant startsAt,
             String location, String visibility) {
+        return createEvent(asbl, title, description, startsAt, location, visibility, 0);
+    }
+
+    // cancellationDays: until how many days before the start buyers may cancel and be refunded (0: never).
+    @Transactional
+    public Event createEvent(Asbl asbl, String title, String description, Instant startsAt,
+            String location, String visibility, int cancellationDays) {
         Event event = new Event();
         event.setAsbl(asbl);
         event.setTitle(title);
@@ -39,6 +46,7 @@ public class EventService {
         event.setStartsAt(startsAt);
         event.setLocation(location);
         event.setVisibility(EventVisibility.valueOf(visibility));
+        event.setCancellationDays(cancellationDays);
         event.setStatus(EventStatus.DRAFT);
         eventRepository.save(event);
         audit("EVENT_CREATED", event, Map.of("title", title));
@@ -59,13 +67,29 @@ public class EventService {
     @Transactional
     public void update(Event event, String title, String description, Instant startsAt, String location,
             String visibility) {
+        update(event, title, description, startsAt, location, visibility, null);
+    }
+
+    // cancellationDays: null keeps the current delay. Once a ticket is sold it can only grow (a longer delay is more
+    // generous to buyers; a shorter one would take back the policy they paid under).
+    @Transactional
+    public void update(Event event, String title, String description, Instant startsAt, String location,
+            String visibility, Integer cancellationDays) {
         requireEditable(event);
+        if (cancellationDays != null && cancellationDays < event.getCancellationDays()
+                && ticketCategoryRepository.anySeatTaken(event)) {
+            throw new CancellationDaysLockedException();
+        }
         Map<String, Object> changed = new LinkedHashMap<>();
         if (!Objects.equals(event.getTitle(), title)) changed.put("title", title);
         if (!Objects.equals(event.getDescription(), description)) changed.put("description", "changed");
         if (!Objects.equals(event.getStartsAt(), startsAt)) changed.put("startsAt", startsAt.toString());
         if (!Objects.equals(event.getLocation(), location)) changed.put("location", String.valueOf(location));
         if (event.getVisibility() != EventVisibility.valueOf(visibility)) changed.put("visibility", visibility);
+        if (cancellationDays != null && cancellationDays != event.getCancellationDays()) {
+            changed.put("cancellationDays", cancellationDays);
+            event.setCancellationDays(cancellationDays);
+        }
         event.setTitle(title);
         event.setDescription(description);
         event.setStartsAt(startsAt);
@@ -78,8 +102,8 @@ public class EventService {
     }
 
     // Cancel a published event: it disappears from public pages and can't be booked. Other parts react on their own
-    // terms through the EventCancelled message (bookings not yet paid are cancelled with it). A draft is deleted
-    // instead. Paid bookings are refunded from the association's Stripe dashboard for now.
+    // terms through the EventCancelled message (bookings not yet paid are cancelled with it, paid ones refunded by
+    // CancelledEventRefunds). A draft is deleted instead.
     @Transactional
     public void cancel(Event event) {
         if (event.getStatus() != EventStatus.PUBLISHED) {

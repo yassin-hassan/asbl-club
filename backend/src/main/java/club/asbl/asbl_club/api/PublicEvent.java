@@ -15,5 +15,7 @@ public record PublicEvent(
         @Schema(requiredMode = REQUIRED) Instant startsAt,
         String location,
         @Schema(requiredMode = REQUIRED) AsblResource asbl,
+        @Schema(description = "Until when buyers may cancel their ticket and be refunded; absent: not refundable on request")
+        Instant cancellableUntil,
         @Schema(requiredMode = REQUIRED) List<PublicTicket> tickets) {
 }

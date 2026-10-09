@@ -1,5 +1,6 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { MyBooking } from '../../api/generated';
-import { splitByDate } from './my-bookings';
+import { cancellationErrorKey, splitByDate } from './my-bookings';
 
 const booking = (id: number, startsAt: string) => ({ id, startsAt }) as MyBooking;
 
@@ -21,5 +22,18 @@ describe('splitByDate', () => {
 
     expect(upcoming.map((b) => b.id)).toEqual([3, 4]);
     expect(past.map((b) => b.id)).toEqual([2, 1]);
+  });
+});
+
+describe('cancellationErrorKey', () => {
+  const refused = (status: number, code?: string) => new HttpErrorResponse({ status, error: code ? { code } : null });
+
+  it('says whether the delay has passed or the ticket simply can\'t be cancelled', () => {
+    expect(cancellationErrorKey(refused(409, 'CANCELLATION_CLOSED'))).toBe('bookings.cancellationClosed');
+    expect(cancellationErrorKey(refused(409, 'NOT_CANCELLABLE'))).toBe('bookings.notCancellable');
+  });
+
+  it('says when the payment provider is unreachable (nothing was changed: try again)', () => {
+    expect(cancellationErrorKey(refused(502))).toBe('payment.providerDown');
   });
 });

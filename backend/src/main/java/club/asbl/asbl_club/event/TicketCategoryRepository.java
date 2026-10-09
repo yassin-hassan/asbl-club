@@ -31,4 +31,9 @@ interface TicketCategoryRepository extends JpaRepository<TicketCategory, Long> {
     @Modifying
     @Query("update TicketCategory t set t.soldSeats = t.soldSeats - 1 where t.id = :id and t.soldSeats > 0")
     int releaseOneSeat(@Param("id") Long id);
+
+    // Whether any seat of the event is taken (sold or being paid for), read from the database: seats are taken by an
+    // atomic UPDATE that the entities already loaded don't see.
+    @Query("select count(t) > 0 from TicketCategory t where t.event = :event and t.soldSeats > 0")
+    boolean anySeatTaken(@Param("event") Event event);
 }

@@ -80,6 +80,18 @@ class BookingEmails {
                 when(event.getStartsAt(), to.locale()));
     }
 
+    // The buyer cancelled their ticket: confirmation of the refund.
+    void cancelledByBuyer(Registration booking) {
+        Recipient to = recipientOf(booking);
+        if (to == null) {
+            return;
+        }
+        Event event = booking.getEvent();
+        emailService.queue(to.email(), to.locale(), "bookingCancelled", to.name(), event.getTitle(),
+                money(booking.getAmount(), to.locale()), event.getAsbl().getDenomination(),
+                when(event.getStartsAt(), to.locale()));
+    }
+
     private record Recipient(String email, String name, Locale locale) {
     }
 

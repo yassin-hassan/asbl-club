@@ -75,7 +75,9 @@
     "continue": "Continue to payment",
     "cancel": "Cancel",
     "haveAccount": "Have an account?",
-    "login": "Log in"
+    "login": "Log in",
+    "cancellableUntil": "Tickets can be cancelled and refunded until {{ date }}.",
+    "notRefundable": "Tickets are not refundable."
   },
   "errors": {
     "generic": "Something went wrong. Please try again.",
@@ -297,7 +299,14 @@
     "priceHint": "A new price applies to new bookings only.",
     "notEditable": "This event can no longer be changed.",
     "seatsBelowSold": "There can't be fewer seats than those already booked.",
-    "ticketInUse": "This category has bookings, so it can't be removed."
+    "ticketInUse": "This category has bookings, so it can't be removed.",
+    "cancellationDays": "Cancellation by the buyer (days before the event)",
+    "cancellationDaysHint": "Until how many days before the start a buyer can cancel their ticket and be refunded. 0: tickets not refundable. Once a ticket is sold, this delay can be made longer, no longer shorter.",
+    "cancellationDaysInvalid": "Between 0 and 365 days.",
+    "cancellationLocked": "Tickets are already sold: the cancellation delay can be made longer, but not shorter.",
+    "cancellation": "Cancellation",
+    "notRefundable": "Tickets not refundable",
+    "refundableDays": "Refundable until {{ days }} day(s) before the start"
   },
   "payment": {
     "title": "Payment",
@@ -425,7 +434,14 @@
     "past": "Past",
     "pay": "Pay",
     "checkedInAt": "checked in {{ time }}",
-    "qrLabel": "Ticket QR code for {{ event }}"
+    "qrLabel": "Ticket QR code for {{ event }}",
+    "cancellableUntil": "Can be cancelled until {{ date }}",
+    "cancel": "Cancel and get a refund",
+    "cancelTitle": "Cancel your ticket?",
+    "cancelConfirm": "Your ticket for “{{ event }}” will be cancelled and its price refunded to you (within 5 to 10 days). This can’t be undone.",
+    "keep": "Keep my ticket",
+    "cancellationClosed": "This ticket can no longer be cancelled.",
+    "notCancellable": "This ticket can’t be cancelled."
   },
   "checkIn": {
     "title": "Check-in",
@@ -502,6 +518,7 @@
     "keepLink": "Keep this link: it opens your booking (it was also emailed to you). Without a quick payment, the seat goes back on sale.",
     "showAtDoor": "Show this QR code at the entrance. It is also attached to the confirmation email.",
     "cancelled": "The event was cancelled: this booking is no longer valid.",
-    "notFound": "This booking link is unknown."
+    "notFound": "This booking link is unknown.",
+    "refunded": "This booking was refunded. The refund usually reaches your account within 5 to 10 days."
   }
 }

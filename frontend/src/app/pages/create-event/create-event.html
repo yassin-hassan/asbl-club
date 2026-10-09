@@ -36,6 +36,15 @@
         </mat-select>
       </mat-form-field>
 
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>{{ 'manage.cancellationDays' | transloco }}</mat-label>
+        <input matInput type="number" min="0" max="365" formControlName="cancellationDays" />
+        <mat-hint>{{ 'manage.cancellationDaysHint' | transloco }}</mat-hint>
+        @if (form.controls.cancellationDays.invalid) {
+          <mat-error>{{ 'manage.cancellationDaysInvalid' | transloco }}</mat-error>
+        }
+      </mat-form-field>
+
       @if (error(); as error) {
         <p class="error" role="alert">{{ error | transloco }}</p>
       }

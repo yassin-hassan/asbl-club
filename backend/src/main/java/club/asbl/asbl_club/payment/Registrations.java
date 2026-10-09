@@ -54,7 +54,9 @@ public final class Registrations {
             @Schema(requiredMode = REQUIRED) String asblName,
             @Schema(requiredMode = REQUIRED) String ticketLabel,
             @Schema(description = "The code in the ticket's QR code; present once the booking is paid") String ticketCode,
-            Instant checkedInAt) {
+            Instant checkedInAt,
+            @Schema(description = "Until when this ticket can still be cancelled and refunded; absent: it can't")
+            Instant cancellableUntil) {
     }
 
     @Schema(name = "MyRegistration")
@@ -90,7 +92,9 @@ public final class Registrations {
             @Schema(description = "The code in the ticket's QR code; present once the booking is paid. Whoever has it "
                     + "gets in, so it's only ever shown to the booking's owner.")
             String ticketCode,
-            Instant checkedInAt) {
+            Instant checkedInAt,
+            @Schema(description = "Until when this ticket can still be cancelled and refunded; absent: it can't")
+            Instant cancellableUntil) {
     }
 
     // A ticket code typed or scanned at the door (a handheld scanner types it like a keyboard).

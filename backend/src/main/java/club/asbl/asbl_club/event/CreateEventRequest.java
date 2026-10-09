@@ -1,5 +1,8 @@
 package club.asbl.asbl_club.event;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -13,5 +16,9 @@ record CreateEventRequest(
         @Size(max = 5000) String description,
         @NotNull Instant startsAt,
         @Size(max = 255) String location,
-        @NotBlank @Pattern(regexp = "PUBLIC|MEMBERS") String visibility) {
+        @NotBlank @Pattern(regexp = "PUBLIC|MEMBERS") String visibility,
+        @Schema(description = "Until how many days before the start buyers may cancel their ticket and be refunded; "
+                + "0: not refundable. Optional: 0 when creating, unchanged when editing. Once a ticket is sold, it "
+                + "can only grow.")
+        @Min(0) @Max(365) Integer cancellationDays) {
 }

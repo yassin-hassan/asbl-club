@@ -11,6 +11,7 @@
         <div><dt>{{ 'manage.location' | transloco }}</dt><dd>{{ event.location }}</dd></div>
       }
       <div><dt>{{ 'manage.visibility' | transloco }}</dt><dd><span class="tag warm">{{ 'manage.visibilities.' + event.visibility | transloco }}</span></dd></div>
+      <div><dt>{{ 'manage.cancellation' | transloco }}</dt><dd>{{ (event.cancellationDays === 0 ? 'manage.notRefundable' : 'manage.refundableDays') | transloco: { days: event.cancellationDays } }}</dd></div>
       <div><dt>{{ 'manage.status' | transloco }}</dt><dd><span class="tag" [class.ok]="event.status === 'PUBLISHED'" [class.warm]="event.status === 'CANCELLED'">{{ 'manage.statuses.' + event.status | transloco }}</span></dd></div>
     </dl>
 

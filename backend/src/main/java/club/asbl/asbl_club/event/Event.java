@@ -12,7 +12,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.Duration;
 import java.time.Instant;
+import java.util.Optional;
 
 @Entity
 @Table(name = "events")
@@ -45,6 +47,10 @@ public class Event {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private EventStatus status;
+
+    // Buyers may cancel their ticket (and be refunded) until this many days before the start; 0: never.
+    @Column(name = "cancellation_days", nullable = false)
+    private int cancellationDays;
 
     protected Event() {
     }
@@ -107,5 +113,19 @@ public class Event {
 
     public void setStatus(EventStatus status) {
         this.status = status;
+    }
+
+    public int getCancellationDays() {
+        return cancellationDays;
+    }
+
+    public void setCancellationDays(int cancellationDays) {
+        this.cancellationDays = cancellationDays;
+    }
+
+    // The last moment a buyer may cancel their ticket, or empty when tickets aren't refundable on request.
+    public Optional<Instant> cancellableUntil() {
+        return cancellationDays == 0 ? Optional.empty()
+                : Optional.of(startsAt.minus(Duration.ofDays(cancellationDays)));
     }
 }

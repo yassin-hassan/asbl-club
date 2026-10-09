@@ -1,6 +1,7 @@
 package club.asbl.asbl_club.payment;
 
 import club.asbl.asbl_club.event.Event;
+import club.asbl.asbl_club.event.EventStatus;
 import club.asbl.asbl_club.event.TicketCategory;
 import club.asbl.asbl_club.user.User;
 import jakarta.persistence.Column;
@@ -13,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.Instant;
+import java.util.Optional;
 
 @Entity
 @Table(name = "registrations")
@@ -146,5 +148,14 @@ public class Registration extends Payable {
 
     public void setCheckinAt(Instant checkinAt) {
         this.checkinAt = checkinAt;
+    }
+
+    // Until when its buyer may still cancel this ticket and be refunded: a paid ticket of an event still on, within
+    // the event's cancellation delay. Empty otherwise.
+    public Optional<Instant> cancellableUntil(Instant now) {
+        if (status != RegistrationStatus.PAID || event.getStatus() != EventStatus.PUBLISHED) {
+            return Optional.empty();
+        }
+        return event.cancellableUntil().filter(until -> !now.isAfter(until));
     }
 }
