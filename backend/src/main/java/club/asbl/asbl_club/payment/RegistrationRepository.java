@@ -56,6 +56,11 @@ interface RegistrationRepository extends JpaRepository<Registration, Long> {
             + "and r.registeredAt < :before")
     List<Long> findReservedBefore(@Param("before") Instant before);
 
+    // Paid tickets of cancelled events: their money goes back (CancelledEventRefunds).
+    @Query("select r.id from Registration r where r.status = club.asbl.asbl_club.payment.RegistrationStatus.PAID "
+            + "and r.event.status = club.asbl.asbl_club.event.EventStatus.CANCELLED")
+    List<Long> findPaidOfCancelledEvents();
+
     // Only if the booking is still waiting for payment, checked by the database in the same statement: if Stripe's
     // webhook marked it paid a moment ago, this changes nothing (see PaymentService for the other side).
     @Modifying(flushAutomatically = true, clearAutomatically = true)

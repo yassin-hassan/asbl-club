@@ -100,6 +100,20 @@ class DemoDataSeederIntegrationTest {
         assertThat(mismatches).isZero();
     }
 
+    // As the application does: a cancelled event's paid tickets are refunded (and the refund job, which would call
+    // Stripe with the demo's made-up payment IDs, finds nothing to do).
+    @Test
+    void cancelledEventsHaveNoPaidTicketsLeft() {
+        Integer paid = jdbc.queryForObject("""
+                SELECT count(*) FROM registrations r JOIN events e ON e.id = r.event_id
+                WHERE e.status = 'CANCELLED' AND r.status = 'PAID'""", Integer.class);
+        Integer refunded = jdbc.queryForObject("""
+                SELECT count(*) FROM registrations r JOIN events e ON e.id = r.event_id
+                WHERE e.status = 'CANCELLED' AND r.status = 'REFUNDED'""", Integer.class);
+        assertThat(paid).isZero();
+        assertThat(refunded).isPositive();
+    }
+
     @Test
     void enterpriseNumbersAreValid() {
         for (String bce : jdbc.queryForList("SELECT bce_number FROM asbls", String.class)) {

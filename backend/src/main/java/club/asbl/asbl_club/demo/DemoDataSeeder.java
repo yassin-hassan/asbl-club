@@ -279,9 +279,11 @@ class DemoDataSeeder implements ApplicationRunner {
         sell(fleaMarket, pitch, pick(buyers, 6), daysAgo(35), daysAgo(8),
                 List.of(Outcome.PAID, Outcome.PAID, Outcome.PAID, Outcome.CANCELLED, Outcome.CANCELLED,
                         Outcome.REFUNDED), 0, null);
-        jdbc.update("UPDATE events SET status = 'CANCELLED', updated_at = ? WHERE id = ?", ts(daysAgo(7)),
+        Instant cancelled = daysAgo(7);
+        jdbc.update("UPDATE events SET status = 'CANCELLED', updated_at = ? WHERE id = ?", ts(cancelled),
                 fleaMarket.id());
-        audit(sophie, club, "EVENT_CANCELLED", "Event", fleaMarket.id(), null, daysAgo(7));
+        audit(sophie, club, "EVENT_CANCELLED", "Event", fleaMarket.id(), null, cancelled);
+        refundPaidTickets(fleaMarket, cancelled);
 
         Event barbecue = event(club, sophie, "Barbecue d'été",
                 "Le barbecue de fin de saison, ouvert aux membres et à leur famille.",
@@ -675,6 +677,25 @@ class DemoDataSeeder implements ApplicationRunner {
             case CANCELLED -> {
                 // Not paid when the event was cancelled: the booking is cancelled with it.
             }
+        }
+    }
+
+    // A cancelled event's paid tickets are refunded within a minute (CancelledEventRefunds), the buyers told by email.
+    private void refundPaidTickets(Event event, Instant cancelled) {
+        List<Map<String, Object>> tickets = jdbc.queryForList("""
+                SELECT r.id AS ticket, p.id AS payment, p.stripe_payment_intent_id AS intent, p.amount, u.email, u.name,
+                       u.language
+                FROM registrations r JOIN payments p ON p.payable_id = r.id JOIN users u ON u.id = r.user_id
+                WHERE r.event_id = ? AND r.status = 'PAID'""", event.id());
+        for (Map<String, Object> ticket : tickets) {
+            Instant refunded = cancelled.plus(Duration.ofSeconds(20 + random.nextInt(40)));
+            jdbc.update("UPDATE registrations SET status = 'REFUNDED' WHERE id = ?", ticket.get("ticket"));
+            jdbc.update("UPDATE payments SET status = 'REFUNDED' WHERE id = ?", ticket.get("payment"));
+            auditSystem(event.club(), "PAYMENT_REFUNDED", "Payment", (Long) ticket.get("payment"),
+                    Map.of("paymentIntentId", ticket.get("intent"), "amount", ticket.get("amount"),
+                            "reason", "event cancelled"), refunded);
+            sentEmail((String) ticket.get("email"), subject("email.eventCancelledRefund.subject",
+                    (String) ticket.get("language"), ticket.get("name"), event.title()), refunded);
         }
     }
 
