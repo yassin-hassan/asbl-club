@@ -12,7 +12,7 @@
       }
       <div><dt>{{ 'guestTicket.ticket' | transloco }}</dt><dd>{{ booking.ticketLabel }} · {{ booking.amount | currency: booking.currency : 'symbol' : '1.2-2' : lang() }}</dd></div>
       <div><dt>{{ 'guestTicket.holder' | transloco }}</dt><dd>{{ booking.name }} ({{ booking.email }})</dd></div>
-      <div><dt>{{ 'guestTicket.status' | transloco }}</dt><dd><span class="tag">{{ 'attendees.statuses.' + booking.status | transloco }}</span></dd></div>
+      <div><dt>{{ 'guestTicket.status' | transloco }}</dt><dd><span class="tag" [class.ok]="booking.status === 'PAID'" [class.warm]="booking.status === 'RESERVED'">{{ 'attendees.statuses.' + booking.status | transloco }}</span></dd></div>
     </dl>
 
     @if (checking()) {

@@ -19,6 +19,7 @@ import { errorMessageKey, problemOf } from '../../services/problem';
   imports: [CurrencyPipe, TranslocoPipe, MatButtonModule, MatProgressSpinnerModule],
   templateUrl: './checkout.html',
   styles: '.narrow { max-width: 480px; margin: 0 auto; } .amount { font: var(--mat-sys-headline-small); }',
+  host: { '(window:pageshow)': 'restored($event)' },
 })
 export class CheckoutPage {
   private document = inject(DOCUMENT);
@@ -87,6 +88,15 @@ export class CheckoutPage {
     this.paying.set(false);
     if (error) {
       this.stripeError.set(error.message ?? null);
+    }
+  }
+
+  // Back from Stripe's page (Bancontact, 3-D Secure…) with the browser's Back button: the browser shows this page
+  // exactly as it was left, mid-payment, so the button would stay on "Paying…" for good. Paying again is fine:
+  // it's the same Stripe payment.
+  restored(event: PageTransitionEvent): void {
+    if (event.persisted) {
+      this.paying.set(false);
     }
   }
 
