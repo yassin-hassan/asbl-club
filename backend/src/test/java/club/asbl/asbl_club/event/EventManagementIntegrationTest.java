@@ -13,6 +13,7 @@ import club.asbl.asbl_club.asbl.AsblService;
 import club.asbl.asbl_club.user.User;
 import club.asbl.asbl_club.user.UserService;
 import com.jayway.jsonpath.JsonPath;
+import jakarta.persistence.EntityManager;
 import java.time.Instant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,6 +51,9 @@ class EventManagementIntegrationTest {
     @Autowired
     EventService eventService;
 
+    @Autowired
+    EntityManager entityManager;
+
     String adminToken;
     String memberToken;
     String outsiderToken;
@@ -80,16 +84,31 @@ class EventManagementIntegrationTest {
         // A draft isn't public yet.
         mockMvc.perform(get("/api/v1/events/" + id)).andExpect(status().isNotFound());
 
-        send(post(BASE + "/" + id + "/tickets"), adminToken,
+        String withTicket = send(post(BASE + "/" + id + "/tickets"), adminToken,
                 "{\"label\": \"Standard\", \"price\": 12.50, \"totalSeats\": 100}")
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.tickets[0].label").value("Standard"))
-                .andExpect(jsonPath("$.tickets[0].soldSeats").value(0));
+                .andExpect(jsonPath("$.tickets[0].soldSeats").value(0))
+                .andExpect(jsonPath("$.tickets[0].pendingSeats").value(0))
+                .andReturn().getResponse().getContentAsString();
+        Integer ticket = JsonPath.read(withTicket, "$.tickets[0].id");
 
         send(post(BASE + "/" + id + "/publish"), adminToken, "")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("PUBLISHED"));
         mockMvc.perform(get("/api/v1/events/" + id)).andExpect(status().isOk());
+
+        // A booking holds its seat while it's being paid: taken, but not paid yet.
+        send(post(BASE + "/" + id + "/registrations"), memberToken, "{\"ticketCategoryId\": " + ticket + "}")
+                .andExpect(status().isCreated());
+        entityManager.clear(); // the seat count is updated in SQL: read it afresh, as the next request would
+        mockMvc.perform(get(BASE + "/" + id).header("Authorization", "Bearer " + adminToken))
+                .andExpect(jsonPath("$.tickets[0].soldSeats").value(1))
+                .andExpect(jsonPath("$.tickets[0].pendingSeats").value(1));
+        jdbcTemplate.update("UPDATE registrations SET status = 'PAID' WHERE ticket_category_id = ?", ticket);
+        mockMvc.perform(get(BASE + "/" + id).header("Authorization", "Bearer " + adminToken))
+                .andExpect(jsonPath("$.tickets[0].soldSeats").value(1))
+                .andExpect(jsonPath("$.tickets[0].pendingSeats").value(0));
     }
 
     @Test

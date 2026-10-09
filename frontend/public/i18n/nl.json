@@ -276,7 +276,7 @@
     "ticketLabel": "Label",
     "price": "Prijs",
     "seats": "Plaatsen",
-    "sold": "Verkocht",
+    "sold": "Plaatsen",
     "draftHint": "Concept: onzichtbaar voor het publiek tot publicatie.",
     "submitting": "Opslaan…",
     "required": "Dit veld is verplicht.",
@@ -322,7 +322,10 @@
     "cancellationLocked": "Er zijn al tickets verkocht: de annuleringstermijn kan verlengd worden, maar niet meer ingekort.",
     "cancellation": "Annulering",
     "notRefundable": "Tickets niet terugbetaalbaar",
-    "refundableDays": "Terugbetaalbaar tot {{ days }} dag(en) voor de start"
+    "refundableDays": "Terugbetaalbaar tot {{ days }} dag(en) voor de start",
+    "seatsPaid": "{{ count }} betaald",
+    "seatsPending": "{{ count }} in betaling",
+    "seatsFree": "{{ count }} vrij van {{ total }}"
   },
   "payment": {
     "title": "Betaling",

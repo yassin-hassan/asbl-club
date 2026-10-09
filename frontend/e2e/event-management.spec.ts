@@ -34,7 +34,7 @@ test('an administrator creates a draft event, adds tickets, publishes it, and th
   await page.getByLabel('Price').fill('12,50');
   await page.getByLabel('Seats').fill('80');
   await page.getByRole('button', { name: 'Add a ticket category' }).click();
-  await expect(page.getByRole('row', { name: /Adult.*€12\.50.*0 \/ 80/ })).toBeVisible();
+  await expect(page.getByRole('row', { name: /Adult.*€12\.50.*0 paid · 0 being paid · 80 free of 80/ })).toBeVisible();
   // The emptied form is ready for the next category, without error messages on fields nobody touched yet.
   await expect(page.getByLabel('Label')).toHaveValue('');
   await expect(page.getByText('This field is required.')).toHaveCount(0);
@@ -55,5 +55,5 @@ test('an administrator creates a draft event, adds tickets, publishes it, and th
   await expect(page.getByRole('alert')).toHaveText("This association can't receive payments yet.");
 
   await page.goBack();
-  await expect(page.getByRole('row', { name: /Adult.*1 \/ 80/ })).toBeVisible();
+  await expect(page.getByRole('row', { name: /Adult.*0 paid · 1 being paid · 79 free of 80/ })).toBeVisible();
 });

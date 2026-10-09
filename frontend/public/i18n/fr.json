@@ -276,7 +276,7 @@
     "ticketLabel": "Libellé",
     "price": "Prix",
     "seats": "Places",
-    "sold": "Vendues",
+    "sold": "Places",
     "draftHint": "Brouillon : invisible pour le public jusqu'à la publication.",
     "submitting": "Enregistrement…",
     "required": "Ce champ est obligatoire.",
@@ -322,7 +322,10 @@
     "cancellationLocked": "Des billets sont déjà vendus : le délai d'annulation peut être allongé, mais plus raccourci.",
     "cancellation": "Annulation",
     "notRefundable": "Billets non remboursables",
-    "refundableDays": "Remboursable jusqu'à {{ days }} jour(s) avant le début"
+    "refundableDays": "Remboursable jusqu'à {{ days }} jour(s) avant le début",
+    "seatsPaid": "{{ count }} payée(s)",
+    "seatsPending": "{{ count }} en cours de paiement",
+    "seatsFree": "{{ count }} libre(s) sur {{ total }}"
   },
   "payment": {
     "title": "Paiement",

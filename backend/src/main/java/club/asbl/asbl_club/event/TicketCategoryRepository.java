@@ -1,7 +1,6 @@
 package club.asbl.asbl_club.event;
 
 import java.math.BigDecimal;
-
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -11,6 +10,12 @@ import org.springframework.data.repository.query.Param;
 interface TicketCategoryRepository extends JpaRepository<TicketCategory, Long> {
 
     List<TicketCategory> findByEvent(Event event);
+
+    // Per category of an event: the seats taken by bookings still being paid (their seat is held until they're
+    // paid, cancelled or expired).
+    @Query(value = "select ticket_category_id, count(*) from registrations where event_id = :eventId "
+            + "and status = 'RESERVED' group by ticket_category_id", nativeQuery = true)
+    List<Object[]> countPendingByCategory(@Param("eventId") Long eventId);
 
     // One statement: the new seat count applies only if it isn't below the seats already taken.
     @Modifying(flushAutomatically = true, clearAutomatically = true)

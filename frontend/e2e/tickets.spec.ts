@@ -62,5 +62,5 @@ test('my bookings lists an unpaid booking with a way to pay or to give it up, an
   await expect(booking).toContainText('Cancelled');
   await expect(booking.getByRole('link', { name: 'Pay' })).toHaveCount(0);
   await page.goto(eventUrl);
-  await expect(page.getByRole('cell', { name: '0 / 100' })).toBeVisible();
+  await expect(page.getByRole('cell', { name: '0 paid · 0 being paid · 100 free of 100' })).toBeVisible();
 });

@@ -43,7 +43,8 @@ test('an administrator edits a published event and its tickets, then cancels it'
   await page.getByRole('row', { name: /Adult/ }).getByRole('button', { name: 'Book' }).click();
   await expect(page).toHaveURL(/\/pay\/\d+$/);
   await page.goBack();
-  const adult = page.getByRole('row', { name: /Adult.*1 \/ 50/ });
+  // Booked, not paid: the seat is held while it's being paid.
+  const adult = page.getByRole('row', { name: /Adult.*0 paid · 1 being paid · 49 free of 50/ });
   await expect(adult.getByRole('button', { name: 'Remove' })).toHaveCount(0);
 
   await adult.getByRole('button', { name: 'Change' }).click();
@@ -51,7 +52,7 @@ test('an administrator edits a published event and its tickets, then cancels it'
   await page.getByLabel('Label').fill('Adult (early bird)');
   await page.getByLabel('Seats').fill('40');
   await page.getByRole('button', { name: 'Save the category' }).click();
-  await expect(page.getByRole('row', { name: /Adult \(early bird\).*1 \/ 40/ })).toBeVisible();
+  await expect(page.getByRole('row', { name: /Adult \(early bird\).*39 free of 40/ })).toBeVisible();
 
   // Nobody booked Child: it can go.
   await page.getByRole('row', { name: /Child/ }).getByRole('button', { name: 'Remove' }).click();

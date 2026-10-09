@@ -24,6 +24,22 @@ const LIFECYCLE_ERRORS: Record<string, string> = {
   TICKET_IN_USE: 'manage.ticketInUse',
 };
 
+export interface Seats {
+  paid: number;
+  pending: number;
+  free: number;
+}
+
+// A category's seats, for the people running the event: paid, held by a booking still being paid (freed if it
+// isn't paid in time), and free. The taken seats count both of the first two.
+export function seatsOf(ticket: Pick<ManagedTicket, 'totalSeats' | 'soldSeats' | 'pendingSeats'>): Seats {
+  return {
+    paid: ticket.soldSeats - ticket.pendingSeats,
+    pending: ticket.pendingSeats,
+    free: ticket.totalSeats - ticket.soldSeats,
+  };
+}
+
 // One event in the back office: details, ticket sales, and — for administrators — its lifecycle: ticket categories
 // (add, change, remove), publishing, cancelling a published event, deleting a draft. Every change returns the updated
 // event, which simply replaces the one on screen. The API enforces every rule; the page only offers what makes sense.
@@ -35,6 +51,7 @@ const LIFECYCLE_ERRORS: Record<string, string> = {
     MatButtonModule, MatFormFieldModule, MatInputModule, MatProgressSpinnerModule, MatTableModule,
   ],
   templateUrl: './managed-event.html',
+  styles: '.seats { white-space: nowrap; } .seats .pending { color: #92600a; font-weight: 600; }',
 })
 export class ManagedEventPage {
   private api = inject(EventManagementService);
@@ -81,6 +98,10 @@ export class ManagedEventPage {
   }
 
   // Started (or over): its tickets can't be booked any more.
+  seatsOf(ticket: ManagedTicket): Seats {
+    return seatsOf(ticket);
+  }
+
   over(event: ManagedEvent): boolean {
     return new Date(event.startsAt).getTime() <= Date.now();
   }

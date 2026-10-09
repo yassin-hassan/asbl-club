@@ -53,6 +53,9 @@ public final class ManagedEvents {
             @Schema(requiredMode = REQUIRED) String label,
             @Schema(requiredMode = REQUIRED, description = "Price in euros") BigDecimal price,
             @Schema(requiredMode = REQUIRED) int totalSeats,
-            @Schema(requiredMode = REQUIRED) int soldSeats) {
+            @Schema(requiredMode = REQUIRED, description = "Seats taken: paid, or held while being paid")
+            int soldSeats,
+            @Schema(requiredMode = REQUIRED, description = "Of the seats taken, those held by bookings still being "
+                    + "paid (freed if not paid in time)") int pendingSeats) {
     }
 }
