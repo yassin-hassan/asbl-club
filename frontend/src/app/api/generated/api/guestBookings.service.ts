@@ -109,7 +109,7 @@ export class GuestBookingsService extends BaseService {
     }
 
     /**
-     * Cancel a guest\&#39;s paid ticket and be refunded
+     * Cancel a guest\&#39;s booking: an unpaid one frees its seat, a paid one is refunded
      * @endpoint post /api/v1/guest-bookings/{token}/cancel
      * @param token 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.

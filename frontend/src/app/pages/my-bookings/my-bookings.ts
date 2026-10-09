@@ -35,8 +35,17 @@ export function cancellationErrorKey(err: HttpErrorResponse): string {
   return errorMessageKey(err);
 }
 
+// What the confirmation says: giving up an unpaid booking frees its seat; cancelling a paid ticket refunds it.
+export function cancelDialog(unpaid: boolean, event: string): ConfirmDialogData {
+  return unpaid
+    ? { title: 'bookings.cancelUnpaidTitle', message: 'bookings.cancelUnpaidConfirm', confirm: 'bookings.cancelUnpaid',
+        cancel: 'bookings.keepBooking', params: { event } }
+    : { title: 'bookings.cancelTitle', message: 'bookings.cancelConfirm', confirm: 'bookings.cancel', cancel: 'bookings.keep',
+        params: { event } };
+}
+
 // The logged-in person's bookings: a paid one is a ticket with its QR code; an unpaid one links to paying. A paid
-// ticket can be cancelled (and refunded) until its event's cancellation delay.
+// ticket can be cancelled (and refunded) until its event's cancellation delay; an unpaid one can be given up any time.
 @Component({
   selector: 'app-my-bookings',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -55,10 +64,7 @@ export class MyBookings {
   readonly split = computed(() => splitByDate(this.bookings.value() ?? [], new Date()));
 
   cancel(booking: MyBooking): void {
-    const data: ConfirmDialogData = {
-      title: 'bookings.cancelTitle', message: 'bookings.cancelConfirm', confirm: 'bookings.cancel', cancel: 'bookings.keep',
-      params: { event: booking.eventTitle },
-    };
+    const data = cancelDialog(booking.status === 'RESERVED', booking.eventTitle);
     this.dialog.open(ConfirmDialog, { data }).afterClosed().pipe(
       filter((confirmed) => confirmed === true),
       switchMap(() => {

@@ -459,7 +459,11 @@
     "keep": "Garder mon billet",
     "cancellationClosed": "Ce billet ne peut plus être annulé.",
     "notCancellable": "Ce billet ne peut pas être annulé.",
-    "refundRefused": "Le remboursement a été refusé par le service de paiement. Votre billet reste valable ; contactez l’association."
+    "refundRefused": "Le remboursement a été refusé par le service de paiement. Votre billet reste valable ; contactez l’association.",
+    "cancelUnpaid": "Annuler la réservation",
+    "cancelUnpaidTitle": "Annuler votre réservation ?",
+    "cancelUnpaidConfirm": "Votre réservation pour « {{ event }} » sera annulée et la place libérée. Vous n’avez rien payé : rien n’est à rembourser.",
+    "keepBooking": "Garder ma réservation"
   },
   "checkIn": {
     "title": "Entrées",
@@ -535,7 +539,7 @@
     "pay": "Payer",
     "keepLink": "Gardez ce lien : c'est votre accès à la réservation (il vous a aussi été envoyé par e-mail). Sans paiement rapide, la place est remise en vente.",
     "showAtDoor": "Montrez ce QR code à l'entrée. Il est aussi joint à l'e-mail de confirmation.",
-    "cancelled": "L'événement a été annulé : cette réservation n'est plus valable.",
+    "cancelled": "Cette réservation a été annulée : elle n’est plus valable.",
     "notFound": "Ce lien de réservation est inconnu.",
     "refunded": "Cette réservation a été remboursée. Le remboursement arrive en général sous 5 à 10 jours."
   },

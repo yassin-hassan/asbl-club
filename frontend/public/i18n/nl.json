@@ -459,7 +459,11 @@
     "keep": "Mijn ticket houden",
     "cancellationClosed": "Dit ticket kan niet meer geannuleerd worden.",
     "notCancellable": "Dit ticket kan niet geannuleerd worden.",
-    "refundRefused": "De terugbetaling werd geweigerd door de betaaldienst. Uw ticket blijft geldig; neem contact op met de vereniging."
+    "refundRefused": "De terugbetaling werd geweigerd door de betaaldienst. Uw ticket blijft geldig; neem contact op met de vereniging.",
+    "cancelUnpaid": "Reservering annuleren",
+    "cancelUnpaidTitle": "Uw reservering annuleren?",
+    "cancelUnpaidConfirm": "Uw reservering voor « {{ event }} » wordt geannuleerd en de plaats vrijgegeven. U hebt niets betaald: er valt niets terug te betalen.",
+    "keepBooking": "Mijn reservering behouden"
   },
   "checkIn": {
     "title": "Toegang",
@@ -535,7 +539,7 @@
     "pay": "Betalen",
     "keepLink": "Bewaar deze link: hij geeft toegang tot je reservering (je kreeg hem ook per e-mail). Zonder snelle betaling komt de plaats weer vrij.",
     "showAtDoor": "Toon deze QR-code aan de ingang. Hij zit ook als bijlage bij de bevestigingsmail.",
-    "cancelled": "Het evenement is geannuleerd: deze reservering is niet meer geldig.",
+    "cancelled": "Deze reservering werd geannuleerd: ze is niet meer geldig.",
     "notFound": "Deze reserveringslink is onbekend.",
     "refunded": "Deze reservering is terugbetaald. De terugbetaling staat meestal binnen 5 tot 10 dagen op je rekening."
   },

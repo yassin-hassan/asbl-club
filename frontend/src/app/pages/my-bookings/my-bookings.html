@@ -45,7 +45,13 @@
         }
       </p>
       @if (booking.status === 'RESERVED') {
-        <a mat-flat-button [routerLink]="['/pay', booking.id]">{{ 'bookings.pay' | transloco }}</a>
+        <div class="actions">
+          <a mat-flat-button [routerLink]="['/pay', booking.id]">{{ 'bookings.pay' | transloco }}</a>
+          <button mat-stroked-button type="button" (click)="cancel(booking)" [disabled]="cancelling() === booking.id"
+                  [attr.aria-label]="('bookings.cancelUnpaid' | transloco) + ' · ' + booking.eventTitle">
+            {{ 'bookings.cancelUnpaid' | transloco }}
+          </button>
+        </div>
       }
       @if (booking.cancellableUntil) {
         <p class="muted">{{ 'bookings.cancellableUntil' | transloco: { date: (booking.cancellableUntil | date: 'longDate' : undefined : lang()) } }}</p>

@@ -459,7 +459,11 @@
     "keep": "Keep my ticket",
     "cancellationClosed": "This ticket can no longer be cancelled.",
     "notCancellable": "This ticket can’t be cancelled.",
-    "refundRefused": "The payment service refused the refund. Your ticket is still valid; please contact the association."
+    "refundRefused": "The payment service refused the refund. Your ticket is still valid; please contact the association.",
+    "cancelUnpaid": "Cancel the booking",
+    "cancelUnpaidTitle": "Cancel your booking?",
+    "cancelUnpaidConfirm": "Your booking for “{{ event }}” will be cancelled and the seat freed. You haven’t paid anything: there is nothing to refund.",
+    "keepBooking": "Keep my booking"
   },
   "checkIn": {
     "title": "Check-in",
@@ -535,7 +539,7 @@
     "pay": "Pay",
     "keepLink": "Keep this link: it opens your booking (it was also emailed to you). Without a quick payment, the seat goes back on sale.",
     "showAtDoor": "Show this QR code at the entrance. It is also attached to the confirmation email.",
-    "cancelled": "The event was cancelled: this booking is no longer valid.",
+    "cancelled": "This booking was cancelled: it is no longer valid.",
     "notFound": "This booking link is unknown.",
     "refunded": "This booking was refunded. The refund usually reaches your account within 5 to 10 days."
   },

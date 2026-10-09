@@ -152,9 +152,9 @@ class RegistrationApiController {
 
     // The buyer cancels their paid ticket, within the event's cancellation delay: refunded (the platform keeps its
     // commission), the seat back on sale.
-    @Operation(operationId = "cancelMyBooking", summary = "Cancel one of my paid tickets and be refunded",
+    @Operation(operationId = "cancelMyBooking", summary = "Cancel one of my bookings: an unpaid one frees its seat, a paid one is refunded",
             security = @SecurityRequirement(name = "bearer"))
-    @ApiResponse(responseCode = "200", description = "Cancelled and refunded",
+    @ApiResponse(responseCode = "200", description = "Cancelled (and refunded, if it was paid)",
             content = @Content(schema = @Schema(implementation = Booking.class)))
     @ApiResponse(responseCode = "409", description = "The delay has passed or tickets aren't refundable (CANCELLATION_CLOSED), or not a paid unused ticket of an event still on (NOT_CANCELLABLE)",
             content = @Content(mediaType = "application/problem+json"))

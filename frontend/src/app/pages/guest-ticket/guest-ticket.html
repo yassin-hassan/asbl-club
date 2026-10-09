@@ -26,7 +26,15 @@
           } @else if (backFromPaying) {
             <p role="status">{{ 'payment.stillProcessing' | transloco }}</p>
           }
-          <a mat-flat-button [routerLink]="['/tickets', token, 'pay']">{{ 'guestTicket.pay' | transloco }}</a>
+          <div class="actions">
+            <a mat-flat-button [routerLink]="['/tickets', token, 'pay']">{{ 'guestTicket.pay' | transloco }}</a>
+            <button mat-stroked-button type="button" (click)="cancel(booking)" [disabled]="cancelling()">
+              {{ 'bookings.cancelUnpaid' | transloco }}
+            </button>
+          </div>
+          @if (cancelError(); as error) {
+            <p class="error" role="alert">{{ error | transloco }}</p>
+          }
           <p class="hint">{{ 'guestTicket.keepLink' | transloco }}</p>
         }
         @case ('EXPIRED') {
