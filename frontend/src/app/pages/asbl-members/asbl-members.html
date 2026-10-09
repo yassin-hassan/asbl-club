@@ -71,72 +71,81 @@
       <div><button mat-button type="button" class="danger-text" (click)="leave()" [disabled]="busy()">{{ 'members.leave' | transloco }}</button></div>
     </ng-template>
 
-    @if (isAdmin()) {
-      <!-- Administrators: one tab per job, instead of one long page. The open tab is kept in the address (?tab=). -->
+    @if (tabs().length > 0) {
+      <!-- Administrators and treasurers: one tab per job, instead of one long page. The open tab is kept in the
+           address (?tab=). -->
       <mat-tab-group mat-stretch-tabs="false" animationDuration="0ms" [selectedIndex]="tabIndex()"
                      (selectedIndexChange)="selectTab($event)">
         <mat-tab [label]="'members.tabs.members' | transloco: { count: activeCount() }">
           <ng-container *ngTemplateOutlet="membersTab" />
         </mat-tab>
-        <mat-tab [label]="'members.tabs.requests' | transloco: { count: requests().length }">
-          <section class="tab-body" aria-labelledby="requests-title">
-            <h2 id="requests-title" class="visually-hidden">{{ 'requests.title' | transloco }}</h2>
-            @if (requests().length > 0) {
-                <ul class="requests">
-                  @for (request of requests(); track request.id) {
-                    <li>
-                      <span class="who">
-                        <b>{{ request.name }}</b>
-                        <span class="muted">{{ request.email }}</span>
-                      </span>
-                      <span class="toolbar">
-                        <button mat-flat-button type="button" (click)="approve(request)" [disabled]="busy()"
-                                [attr.aria-label]="('requests.approve' | transloco) + ' ' + request.name">{{ 'requests.approve' | transloco }}</button>
-                        <button mat-stroked-button type="button" (click)="decline(request)" [disabled]="busy()"
-                                [attr.aria-label]="('requests.decline' | transloco) + ' ' + request.name">{{ 'requests.decline' | transloco }}</button>
-                      </span>
-                    </li>
-                  }
-                </ul>
-            } @else {
-              <p class="empty">{{ 'requests.none' | transloco }}</p>
-            }
-          </section>
-        </mat-tab>
-        <mat-tab [label]="'members.tabs.invitations' | transloco">
-          <div class="tab-body">
-            <section class="box" aria-labelledby="invite-title">
-              <h2 id="invite-title">{{ 'invite.title' | transloco }}</h2>
-              @if (joinUrl(); as url) {
-                <p>{{ 'invite.intro' | transloco }}</p>
-                <div class="invite-link">
-                  <code class="link" data-testid="join-link">{{ url }}</code>
-                  <button mat-flat-button type="button" (click)="copy()">
-                    {{ (copied() ? 'invite.copied' : 'invite.copy') | transloco }}
-                  </button>
-                </div>
-                <p class="hint">{{ 'invite.renewHint' | transloco }}</p>
-                <div class="toolbar">
-                  <button mat-stroked-button type="button" (click)="newLink()" [disabled]="busy()">{{ 'invite.renew' | transloco }}</button>
-                  <button mat-button type="button" (click)="disableLink()" [disabled]="busy()">{{ 'invite.disable' | transloco }}</button>
-                </div>
+        @if (isAdmin()) {
+          <mat-tab [label]="'members.tabs.requests' | transloco: { count: requests().length }">
+            <section class="tab-body" aria-labelledby="requests-title">
+              <h2 id="requests-title" class="visually-hidden">{{ 'requests.title' | transloco }}</h2>
+              @if (requests().length > 0) {
+                  <ul class="requests">
+                    @for (request of requests(); track request.id) {
+                      <li>
+                        <span class="who">
+                          <b>{{ request.name }}</b>
+                          <span class="muted">{{ request.email }}</span>
+                        </span>
+                        <span class="toolbar">
+                          <button mat-flat-button type="button" (click)="approve(request)" [disabled]="busy()"
+                                  [attr.aria-label]="('requests.approve' | transloco) + ' ' + request.name">{{ 'requests.approve' | transloco }}</button>
+                          <button mat-stroked-button type="button" (click)="decline(request)" [disabled]="busy()"
+                                  [attr.aria-label]="('requests.decline' | transloco) + ' ' + request.name">{{ 'requests.decline' | transloco }}</button>
+                        </span>
+                      </li>
+                    }
+                  </ul>
               } @else {
-                <p>{{ 'invite.off' | transloco }}</p>
-                <div><button mat-flat-button type="button" (click)="newLink()" [disabled]="busy()">{{ 'invite.create' | transloco }}</button></div>
+                <p class="empty">{{ 'requests.none' | transloco }}</p>
               }
-              <app-invite-by-email [slug]="slug" />
             </section>
+          </mat-tab>
+          <mat-tab [label]="'members.tabs.invitations' | transloco">
+            <div class="tab-body">
+              <section class="box" aria-labelledby="invite-title">
+                <h2 id="invite-title">{{ 'invite.title' | transloco }}</h2>
+                @if (joinUrl(); as url) {
+                  <p>{{ 'invite.intro' | transloco }}</p>
+                  <div class="invite-link">
+                    <code class="link" data-testid="join-link">{{ url }}</code>
+                    <button mat-flat-button type="button" (click)="copy()">
+                      {{ (copied() ? 'invite.copied' : 'invite.copy') | transloco }}
+                    </button>
+                  </div>
+                  <p class="hint">{{ 'invite.renewHint' | transloco }}</p>
+                  <div class="toolbar">
+                    <button mat-stroked-button type="button" (click)="newLink()" [disabled]="busy()">{{ 'invite.renew' | transloco }}</button>
+                    <button mat-button type="button" (click)="disableLink()" [disabled]="busy()">{{ 'invite.disable' | transloco }}</button>
+                  </div>
+                } @else {
+                  <p>{{ 'invite.off' | transloco }}</p>
+                  <div><button mat-flat-button type="button" (click)="newLink()" [disabled]="busy()">{{ 'invite.create' | transloco }}</button></div>
+                }
+                <app-invite-by-email [slug]="slug" />
+              </section>
 
-          </div>
-        </mat-tab>
-        <mat-tab [label]="'members.tabs.dues' | transloco">
-          <div class="tab-body">
-            <section class="box" aria-labelledby="dues-title">
-              <h2 id="dues-title">{{ 'dues.adminTitle' | transloco }}</h2>
-              <app-dues-fee [slug]="slug" />
-            </section>
+            </div>
+          </mat-tab>
+          <mat-tab [label]="'members.tabs.dues' | transloco">
+            <div class="tab-body">
+              <section class="box" aria-labelledby="dues-title">
+                <h2 id="dues-title">{{ 'dues.adminTitle' | transloco }}</h2>
+                <app-dues-fee [slug]="slug" />
+              </section>
 
-          </div>
+            </div>
+          </mat-tab>
+        }
+        <mat-tab [label]="'members.tabs.finances' | transloco">
+          <section class="tab-body" aria-labelledby="finances-title">
+            <h2 id="finances-title" class="visually-hidden">{{ 'finances.title' | transloco }}</h2>
+            <app-finances [slug]="slug" />
+          </section>
         </mat-tab>
       </mat-tab-group>
     } @else {

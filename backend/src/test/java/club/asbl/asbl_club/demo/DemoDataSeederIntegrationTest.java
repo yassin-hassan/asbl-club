@@ -114,6 +114,18 @@ class DemoDataSeederIntegrationTest {
         assertThat(refunded).isPositive();
     }
 
+    // As the application records a refund: when, and whether the commission went back (not when the buyer cancelled).
+    @Test
+    void refundsSayWhen_andWhetherTheCommissionWentBack() {
+        assertThat(jdbc.queryForObject("""
+                SELECT count(*) FROM payments p
+                WHERE p.status = 'REFUNDED' AND (p.refunded_at IS NULL OR p.refunded_at < p.paid_at
+                    OR p.commission_refunded <> NOT EXISTS (SELECT 1 FROM audit_logs a WHERE a.action = 'BOOKING_CANCELLED'
+                        AND a.entity_id = p.payable_id))""", Integer.class)).isZero();
+        assertThat(jdbc.queryForObject("SELECT count(*) FROM payments WHERE status = 'REFUNDED' AND NOT commission_refunded",
+                Integer.class)).as("a buyer's cancellation").isPositive();
+    }
+
     @Test
     void enterpriseNumbersAreValid() {
         for (String bce : jdbc.queryForList("SELECT bce_number FROM asbls", String.class)) {

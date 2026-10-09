@@ -46,6 +46,13 @@ test('an administrator changes a member’s role, can’t leave as the only admi
   await member.goto('/');
   await expect(member.getByRole('link', { name: new RegExp(`${club}.*Treasurer`) })).toBeVisible();
 
+  // A treasurer follows the money: the members and the finances, nothing of the administrators' tabs.
+  await member.getByRole('link', { name: new RegExp(`${club}.*Treasurer`) }).click();
+  await expect(member.getByRole('tab')).toHaveText([/^Members/, 'Finances']);
+  await member.getByRole('tab', { name: 'Finances' }).click();
+  await expect(member.getByText(`No payments in ${new Date().getFullYear()}.`)).toBeVisible();
+  await member.goto('/');
+
   // The only administrator can't leave: someone must keep running the association.
   await admin.getByRole('button', { name: 'Leave the association' }).click();
   await admin.getByRole('dialog').getByRole('button', { name: 'Leave the association' }).click();

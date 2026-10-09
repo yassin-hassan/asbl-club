@@ -242,7 +242,8 @@
       "members": "Leden ({{ count }})",
       "requests": "Aanvragen ({{ count }})",
       "invitations": "Uitnodigingen",
-      "dues": "Lidgeld"
+      "dues": "Lidgeld",
+      "finances": "Financiën"
     }
   },
   "statuses": {
@@ -358,7 +359,7 @@
     "stripeDown": "Stripe is momenteel niet bereikbaar. Probeer het zo meteen opnieuw.",
     "adminsOnly": "Alleen beheerders van de vereniging beheren de betalingen.",
     "back": "Terug naar de vereniging",
-    "link": "Betalingen"
+    "link": "Stripe-account"
   },
   "audit": {
     "title": "Auditlogboek",
@@ -541,5 +542,31 @@
     "intro": "Concerten, avonden, workshops, toernooien… georganiseerd door de verenigingen op asbl.club. Reserveer online, met of zonder account.",
     "none": "Nog geen komende evenementen.",
     "loadError": "De evenementen konden niet geladen worden."
+  },
+  "finances": {
+    "title": "Financiën",
+    "year": "Jaar",
+    "collected": "Ontvangen",
+    "collectedDetail": "Tickets {{ tickets }} · lidgeld {{ dues }}",
+    "refunded": "Terugbetaald",
+    "commission": "Commissie platform",
+    "net": "Netto voor de vereniging",
+    "stripeFees": "Bedragen vóór de kosten van Stripe, die Stripe van uw account afhoudt en in uw Stripe-account toont.",
+    "count": "{{ count }} betaling(en) in {{ year }}",
+    "none": "Geen betalingen in {{ year }}.",
+    "download": "Het jaar downloaden (CSV)",
+    "listLabel": "Betalingen van het jaar",
+    "date": "Datum",
+    "payer": "Betaler",
+    "what": "Omschrijving",
+    "amount": "Bedrag",
+    "status": "Status",
+    "dues": "Lidgeld {{ year }}",
+    "paid": "Betaald",
+    "refundedOn": "Terugbetaald op {{ date }}",
+    "commissionBack": "commissie teruggegeven",
+    "previous": "Vorige",
+    "next": "Volgende",
+    "page": "Pagina {{ page }} van {{ total }}"
   }
 }

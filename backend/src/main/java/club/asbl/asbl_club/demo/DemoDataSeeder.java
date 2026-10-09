@@ -649,10 +649,10 @@ class DemoDataSeeder implements ApplicationRunner {
                 Map.of("event", event.id(), "ticket", category.label()), booked);
 
         String paymentStatus = switch (outcome) {
-            case PAID, ATTENDED -> "SUCCEEDED";
+            // A refunded one is recorded as paid first, then refunded (see refunded()).
+            case PAID, ATTENDED, REFUNDED, CANCELLED_BY_BUYER -> "SUCCEEDED";
             case DECLINED_THEN_EXPIRED -> "FAILED";
             case EXPIRED, CANCELLED -> "INITIATED";
-            case REFUNDED, CANCELLED_BY_BUYER -> "REFUNDED";
         };
         long payment = payment(club, buyer, payable, category.price(), paymentStatus,
                 paid || outcome == Outcome.REFUNDED ? paidAt : null);
@@ -680,6 +680,7 @@ class DemoDataSeeder implements ApplicationRunner {
                     auditSystem(club, "PAYMENT_REFUNDED", "Payment", payment,
                             Map.of("paymentIntentId", intent, "amount", category.price(),
                                     "reason", "cancelled by buyer", "commissionKept", true), cancelled);
+                    refunded(payment, cancelled, false);
                     sentEmail(buyer.person().email(), subject("email.bookingCancelled.subject",
                             buyer.person().language(), buyer.person().name(), event.title()), cancelled);
                 }
@@ -695,6 +696,7 @@ class DemoDataSeeder implements ApplicationRunner {
             }
             case REFUNDED -> {
                 // Paid while the event was being cancelled: refunded at once, commission included.
+                refunded(payment, paidAt, true);
                 auditSystem(club, "PAYMENT_REFUNDED", "Payment", payment,
                         Map.of("paymentIntentId", intent, "amount", category.price(), "booking", "CANCELLED"),
                         paidAt);
@@ -718,7 +720,7 @@ class DemoDataSeeder implements ApplicationRunner {
         for (Map<String, Object> ticket : tickets) {
             Instant refunded = cancelled.plus(Duration.ofSeconds(20 + random.nextInt(40)));
             jdbc.update("UPDATE registrations SET status = 'REFUNDED' WHERE id = ?", ticket.get("ticket"));
-            jdbc.update("UPDATE payments SET status = 'REFUNDED' WHERE id = ?", ticket.get("payment"));
+            refunded((Long) ticket.get("payment"), refunded, true);
             auditSystem(event.club(), "PAYMENT_REFUNDED", "Payment", (Long) ticket.get("payment"),
                     Map.of("paymentIntentId", ticket.get("intent"), "amount", ticket.get("amount"),
                             "reason", "event cancelled"), refunded);
@@ -756,6 +758,12 @@ class DemoDataSeeder implements ApplicationRunner {
                 club.id(), payer.id(), payer.person().name(), payer.person().email(), payable,
                 "pi_3" + stripeId(20), "payable-" + payable, amount, commission, status,
                 paidAt == null ? null : ts(paidAt));
+    }
+
+    // The payment went back to the payer, the platform's commission too when withCommission.
+    private void refunded(long payment, Instant when, boolean withCommission) {
+        jdbc.update("UPDATE payments SET status = 'REFUNDED', refunded_at = ?, commission_refunded = ? WHERE id = ?",
+                ts(when), withCommission, payment);
     }
 
     // Stripe's messages are kept 30 days (to recognise a repeat), then pruned: only recent ones remain.

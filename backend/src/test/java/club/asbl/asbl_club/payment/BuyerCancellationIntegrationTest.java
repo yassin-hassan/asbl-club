@@ -121,6 +121,9 @@ class BuyerCancellationIntegrationTest {
         assertThat(statusOf("registrations", ticket.getId())).isEqualTo("REFUNDED");
         assertThat(jdbcTemplate.queryForObject("SELECT status FROM payments WHERE payable_id = ?", String.class,
                 ticket.getId())).isEqualTo("REFUNDED");
+        assertThat(jdbcTemplate.queryForObject("SELECT refunded_at IS NOT NULL AND NOT commission_refunded "
+                + "FROM payments WHERE payable_id = ?", Boolean.class, ticket.getId()))
+                .as("refunded now, the platform keeping its commission").isTrue();
         assertThat(soldSeats()).as("the seat is back on sale").isZero();
         assertThat(jdbcTemplate.queryForObject("SELECT count(*) FROM audit_logs WHERE action = 'BOOKING_CANCELLED' "
                 + "AND user_id = ?", Integer.class, bob.getId())).isEqualTo(1);

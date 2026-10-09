@@ -17,16 +17,18 @@ import { AuthService } from '../../services/auth';
 import { ConfirmDialog, ConfirmDialogData } from '../../components/confirm-dialog/confirm-dialog';
 import { InviteByEmail } from './invite-by-email';
 import { DuesFee } from './dues-fee';
+import { Finances } from './finances';
 
 // An association's member area (members only; the API enforces it). Administrators also manage who joins (the
 // invitation link and the requests it produces) and the members themselves (roles, exclusion). Anyone may leave.
 // The API enforces every rule, including "at least one active administrator"; the page only offers what makes sense.
-// Administrators get one tab per job (members, join requests, invitations, dues) rather than one long page.
+// Administrators get one tab per job (members, join requests, invitations, dues, finances) rather than one long page;
+// treasurers get the members and the finances.
 @Component({
   selector: 'app-asbl-members',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    InviteByEmail, DuesFee, NgTemplateOutlet, RouterLink, TranslocoPipe, MatButtonModule, MatFormFieldModule, MatInputModule,
+    InviteByEmail, DuesFee, Finances, NgTemplateOutlet, RouterLink, TranslocoPipe, MatButtonModule, MatFormFieldModule, MatInputModule,
     MatProgressSpinnerModule, MatTableModule, MatTabsModule,
   ],
   templateUrl: './asbl-members.html',
@@ -59,8 +61,9 @@ export class AsblMembersPage {
   readonly shownMembers = computed(() => this.members().filter((m) => matchesSearch(`${m.name} ${m.email}`, this.query())));
 
   // The open tab, kept in the address (?tab=dues) so a reload or a shared link opens the same one.
-  readonly tabs = ['members', 'requests', 'invitations', 'dues'] as const;
-  readonly tabIndex = signal(Math.max(0, this.tabs.indexOf(this.route.snapshot.queryParamMap.get('tab') as never)));
+  readonly tabs = computed(() => tabsFor(this.asbl()?.myRole));
+  readonly tab = signal(this.route.snapshot.queryParamMap.get('tab') ?? 'members');
+  readonly tabIndex = computed(() => Math.max(0, this.tabs().indexOf(this.tab() as MemberTab)));
   readonly joinToken = signal<string | null>(null);
   readonly joinUrl = computed(() => {
     const token = this.joinToken();
@@ -74,9 +77,10 @@ export class AsblMembersPage {
   }
 
   selectTab(index: number): void {
-    this.tabIndex.set(index);
+    const tab = this.tabs()[index] ?? 'members';
+    this.tab.set(tab);
     this.router.navigate([], {
-      relativeTo: this.route, queryParams: { tab: index === 0 ? null : this.tabs[index] },
+      relativeTo: this.route, queryParams: { tab: tab === 'members' ? null : tab },
       queryParamsHandling: 'merge', replaceUrl: true,
     });
   }
@@ -179,6 +183,21 @@ export class AsblMembersPage {
       default:
         return errorMessageKey(err);
     }
+  }
+}
+
+export type MemberTab = 'members' | 'requests' | 'invitations' | 'dues' | 'finances';
+
+// The tabs a role sees: administrators run everything; treasurers follow the money; the others only see the members
+// (no tabs at all). The API enforces each of these on its own.
+export function tabsFor(role: string | undefined): MemberTab[] {
+  switch (role) {
+    case 'ADMIN':
+      return ['members', 'requests', 'invitations', 'dues', 'finances'];
+    case 'TREASURER':
+      return ['members', 'finances'];
+    default:
+      return [];
   }
 }
 

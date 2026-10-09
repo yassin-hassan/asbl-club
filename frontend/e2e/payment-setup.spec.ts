@@ -19,7 +19,7 @@ test('an administrator sees their new association is not connected to Stripe, an
   await page.getByRole('button', { name: 'Create ASBL' }).click();
 
   // The status comes from the real API: a new association has no Stripe account yet.
-  await page.getByRole('link', { name: 'Payments' }).click();
+  await page.getByRole('link', { name: 'Stripe account' }).click();
   await expect(page.getByText("Not connected to Stripe yet: the association can't receive payments.")).toBeVisible();
 
   // Stripe itself is outside the test: the onboarding link and Stripe's page are stand-ins
