@@ -80,11 +80,16 @@ class AsblApiController {
         Asbl asbl = asblService.findBySlug(slug).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         String myRole = membershipService.roleOf(viewer, asbl)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN));
-        // Pending join requests are the administrators' business: other members only see who is in.
+        // Pending join requests are the administrators' business: other members only see who is in. Emails go
+        // only to those who need to reach members (administrators, the treasurer for the dues): every member may
+        // know who belongs to the association (the register of members the law lets them consult), not how to
+        // reach them (GDPR minimisation).
         boolean admin = "ADMIN".equals(myRole);
+        boolean seesEmails = admin || "TREASURER".equals(myRole);
         var members = membershipService.membersOf(asbl).stream()
                 .filter(m -> admin || "ACTIVE".equals(m.status()))
-                .map(m -> new AsblMembers.Member(m.id(), m.name(), m.email(), m.role(), m.status()))
+                .map(m -> new AsblMembers.Member(m.id(), m.name(), seesEmails ? m.email() : null, m.role(),
+                        m.status()))
                 .toList();
         return new AsblMembers(asbl.getSlug(), asbl.getDenomination(), myRole, asbl.getStripeAccountId() != null,
                 members);

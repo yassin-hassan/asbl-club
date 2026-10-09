@@ -49,17 +49,21 @@ export class AsblMembersPage {
   readonly roles = ['ADMIN', 'TREASURER', 'VIEWER', 'MEMBER'] as const;
 
   readonly isAdmin = computed(() => this.asbl()?.myRole === 'ADMIN');
-  readonly columns = computed(() =>
-    this.isAdmin() ? ['name', 'email', 'role', 'status', 'actions'] : ['name', 'email', 'role', 'status'],
-  );
+  // Emails come only to administrators and the treasurer (the API leaves them out for everyone else).
+  readonly seesEmails = computed(() => this.isAdmin() || this.asbl()?.myRole === 'TREASURER');
+  readonly columns = computed(() => [
+    'name', ...(this.seesEmails() ? ['email'] : []), 'role', 'status', ...(this.isAdmin() ? ['actions'] : []),
+  ]);
   readonly myId = computed(() => this.auth.user()?.id);
   readonly members = computed(() => (this.asbl()?.members ?? []).filter((m) => m.status !== 'PENDING'));
   readonly requests = computed(() => (this.asbl()?.members ?? []).filter((m) => m.status === 'PENDING'));
   readonly activeCount = computed(() => this.members().filter((m) => m.status === 'ACTIVE').length);
 
-  // The members list, narrowed by the search (name or email, accents and case ignored).
+  // The members list, narrowed by the search (name, and email for those who see it; accents and case ignored).
   readonly query = signal('');
-  readonly shownMembers = computed(() => this.members().filter((m) => matchesSearch(`${m.name} ${m.email}`, this.query())));
+  readonly shownMembers = computed(() =>
+    this.members().filter((m) => matchesSearch(`${m.name} ${m.email ?? ''}`, this.query())),
+  );
 
   // The open tab, kept in the address (?tab=dues) so a reload or a shared link opens the same one.
   readonly tabs = computed(() => tabsFor(this.asbl()?.myRole));

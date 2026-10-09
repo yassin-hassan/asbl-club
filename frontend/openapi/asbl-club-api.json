@@ -3414,7 +3414,7 @@
         }
       },
       "AsblMember" : {
-        "required" : [ "email", "id", "name", "role", "status" ],
+        "required" : [ "id", "name", "role", "status" ],
         "type" : "object",
         "properties" : {
           "id" : {
@@ -3426,7 +3426,8 @@
             "type" : "string"
           },
           "email" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "Only for administrators and treasurers: the other members see who is in, not how to reach them (GDPR minimisation)"
           },
           "role" : {
             "type" : "string",

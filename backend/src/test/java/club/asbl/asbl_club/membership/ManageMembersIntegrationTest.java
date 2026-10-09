@@ -72,6 +72,27 @@ class ManageMembersIntegrationTest {
         assertThat(audited("MEMBER_ROLE_CHANGED")).isEqualTo(1);
     }
 
+    // Every member sees who is in; only administrators and the treasurer see how to reach them.
+    @Test
+    void onlyAdminsAndTheTreasurer_seeTheMembersEmails() throws Exception {
+        call(get("/api/v1/asbls/mon-club/members"), memberToken).andExpect(status().isOk())
+                .andExpect(jsonPath("$.members[*].name").value(org.hamcrest.Matchers.contains("Admin", "Member")))
+                .andExpect(jsonPath("$.members[*].email").value(org.hamcrest.Matchers.everyItem(
+                        org.hamcrest.Matchers.nullValue())));
+        assertThat(call(get("/api/v1/asbls/mon-club/members"), memberToken).andReturn().getResponse()
+                .getContentAsString()).doesNotContain("@club.test");
+
+        role(member, "VIEWER", adminToken);
+        assertThat(call(get("/api/v1/asbls/mon-club/members"), memberToken).andReturn().getResponse()
+                .getContentAsString()).doesNotContain("@club.test");
+
+        role(member, "TREASURER", adminToken);
+        call(get("/api/v1/asbls/mon-club/members"), memberToken)
+                .andExpect(jsonPath("$.members[0].email").value("admin@club.test"));
+        call(get("/api/v1/asbls/mon-club/members"), adminToken)
+                .andExpect(jsonPath("$.members[1].email").value("member@club.test"));
+    }
+
     @Test
     void theLastActiveAdmin_cannotBeDemoted_excludedOrLeave() throws Exception {
         role(admin, "MEMBER", adminToken)

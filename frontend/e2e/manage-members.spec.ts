@@ -41,6 +41,13 @@ test('an administrator changes a member’s role, can’t leave as the only admi
   await admin.getByRole('tab', { name: /^Members/ }).click();
   await expect(admin.getByRole('row', { name: /Treasurer To Be/ })).toBeVisible();
 
+  // A plain member sees who is in, not how to reach them (only administrators and the treasurer see emails).
+  await member.goto('/');
+  await member.getByRole('link', { name: new RegExp(club) }).click();
+  await expect(member.getByRole('row', { name: /Chair/ })).toBeVisible();
+  await expect(member.getByRole('columnheader', { name: 'Email' })).toHaveCount(0);
+  await expect(member.getByText(`e2e-chair-${stamp}@club.test`)).toHaveCount(0);
+
   // A new role, seen by the member.
   await admin.getByLabel('Role of Treasurer To Be').selectOption('TREASURER');
   await member.goto('/');
@@ -49,6 +56,7 @@ test('an administrator changes a member’s role, can’t leave as the only admi
   // A treasurer follows the money: the members, who paid their dues (read-only) and the finances.
   await member.getByRole('link', { name: new RegExp(`${club}.*Treasurer`) }).click();
   await expect(member.getByRole('tab')).toHaveText([/^Members/, 'Dues', 'Finances']);
+  await expect(member.getByText(`e2e-chair-${stamp}@club.test`)).toBeVisible();
   await member.getByRole('tab', { name: 'Dues' }).click();
   await expect(member.getByText("The association doesn't collect dues yet.")).toBeVisible();
   await expect(member.getByLabel('Yearly fee')).toHaveCount(0);

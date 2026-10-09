@@ -18,7 +18,7 @@
     <ng-template #membersTab>
       <!-- 30, 40 members and more: a search narrows the list. -->
       <mat-form-field appearance="outline" class="search" subscriptSizing="dynamic">
-        <mat-label>{{ 'members.search' | transloco }}</mat-label>
+        <mat-label>{{ (seesEmails() ? 'members.search' : 'members.searchByName') | transloco }}</mat-label>
         <input matInput type="search" [value]="query()" (input)="query.set($any($event.target).value)" />
       </mat-form-field>
       <div class="data-table">

@@ -15,7 +15,10 @@ export interface AsblMember {
      */
     id: string;
     name: string;
-    email: string;
+    /**
+     * Only for administrators and treasurers: the other members see who is in, not how to reach them (GDPR minimisation)
+     */
+    email?: string;
     role: AsblMemberRoleEnum;
     status: AsblMemberStatusEnum;
 }
