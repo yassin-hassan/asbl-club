@@ -53,7 +53,7 @@ class PaymentAuditRegressionTest {
         User alice = userService.register("Alice", "alice@club.test", "password123");
         Asbl club = asblService.createAsbl(alice, "Club A", "0111.111.111", "club-a", "fr");
         Event event = eventService.createEvent(club, "Concert", "Une soirée",
-                Instant.parse("2026-09-01T18:00:00Z"), "Salle A", "PUBLIC");
+                Instant.parse("2030-09-01T18:00:00Z"), "Salle A", "PUBLIC");
         eventService.addTicketCategory(event, "Normal", new BigDecimal("15.00"), 100);
         Long categoryId = eventService.ticketCategoriesOf(event).get(0).id();
         Registration registration = reservationService.reserve(event, categoryId, alice);

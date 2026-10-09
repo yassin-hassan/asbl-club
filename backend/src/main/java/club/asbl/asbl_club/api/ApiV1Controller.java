@@ -37,6 +37,16 @@ class ApiV1Controller {
         return new AsblResource(asbl.getSlug(), asbl.getDenomination());
     }
 
+    @Operation(operationId = "listUpcomingEvents",
+            summary = "The catalogue: every association's public events still to come, soonest first")
+    @GetMapping("/events")
+    List<CatalogueEvent> upcomingEvents() {
+        return eventService.upcomingPublicEvents().stream()
+                .map(e -> new CatalogueEvent(e.getId(), e.getTitle(), e.getStartsAt(), e.getLocation(),
+                        new AsblResource(e.getAsbl().getSlug(), e.getAsbl().getDenomination())))
+                .toList();
+    }
+
     @Operation(operationId = "listAsblEvents", summary = "List an association's public events")
     @GetMapping("/asbls/{slug}/events")
     List<EventFeedItem> events(@PathVariable String slug) {

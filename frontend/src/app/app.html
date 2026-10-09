@@ -17,6 +17,7 @@
       }
     </div>
 
+    <a class="text-link" routerLink="/events">{{ 'nav.events' | transloco }}</a>
     @if (auth.user(); as user) {
       <a class="text-link" routerLink="/bookings">{{ 'nav.bookings' | transloco }}</a>
       <a class="text-link" routerLink="/account" [title]="user.email">{{ 'nav.account' | transloco }}</a>

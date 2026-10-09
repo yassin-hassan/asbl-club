@@ -38,7 +38,7 @@ class EventServiceTest {
     void createEvent_savesADraftEvent() {
         Asbl asbl = mock(Asbl.class);
         when(eventRepository.save(any(Event.class))).thenAnswer(invocation -> invocation.getArgument(0));
-        Instant startsAt = Instant.parse("2026-09-01T18:00:00Z");
+        Instant startsAt = Instant.parse("2030-09-01T18:00:00Z");
 
         Event created = eventService.createEvent(asbl, "Concert", "Une soirée", startsAt, "Salle A", "PUBLIC");
 

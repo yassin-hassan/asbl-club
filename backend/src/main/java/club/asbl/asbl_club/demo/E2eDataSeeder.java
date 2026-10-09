@@ -70,7 +70,7 @@ class E2eDataSeeder implements ApplicationRunner {
         asblService.linkStripeAccount(club, DEMO_STRIPE_ACCOUNT);
 
         Event event = eventService.createEvent(club, "Concert de gala", "Une soirée de démonstration",
-                Instant.parse("2026-12-01T19:00:00Z"), "Bruxelles", "PUBLIC");
+                Instant.parse("2030-12-01T19:00:00Z"), "Bruxelles", "PUBLIC");
         eventService.addTicketCategory(event, "Place standard", new BigDecimal("12.00"), 50);
         eventService.publish(event);
 

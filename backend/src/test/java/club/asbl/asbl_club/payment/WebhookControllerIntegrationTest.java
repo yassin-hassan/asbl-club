@@ -218,7 +218,7 @@ class WebhookControllerIntegrationTest {
         User admin = userService.register("Admin", email, "password123");
         Asbl club = asblService.createAsbl(admin, "Club " + slug, bce, slug, "fr");
         Event event = eventService.createEvent(club, "Soirée", "desc",
-                Instant.parse("2026-09-01T18:00:00Z"), "Bruxelles", "PUBLIC");
+                Instant.parse("2030-09-01T18:00:00Z"), "Bruxelles", "PUBLIC");
         eventService.addTicketCategory(event, "Standard", new BigDecimal("12.00"), 50);
         eventService.publish(event);
         jdbcTemplate.update("UPDATE asbls SET stripe_account_id = ? WHERE id = ?", "acct_" + slug, club.getId());

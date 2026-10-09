@@ -18,7 +18,7 @@ test('an administrator sees who booked and downloads the list for Excel', async 
   await page.getByRole('link', { name: 'Events' }).click();
   await page.getByRole('link', { name: 'Create an event' }).click();
   await page.getByLabel('Title').fill('Quiz night');
-  await page.getByLabel('Start').fill('2026-12-01T20:00');
+  await page.getByLabel('Start').fill('2030-12-01T20:00');
   await page.getByRole('button', { name: 'Create event' }).click();
   await page.getByLabel('Label').fill('Team seat');
   await page.getByLabel('Price').fill('8');

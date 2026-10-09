@@ -42,6 +42,11 @@ export class EventDetail {
   readonly event = signal<PublicEvent | null>(null);
   readonly error = signal<string | null>(null);
   readonly loading = computed(() => this.event() === null && this.error() === null);
+  // Started (or over): no more bookings, the page stays as a record.
+  readonly over = computed(() => {
+    const event = this.event();
+    return event !== null && new Date(event.startsAt).getTime() <= Date.now();
+  });
 
   // The event arrives with its tickets and remaining seats; after that, seats are polled every 5 s.
   // switchMap drops a slow response when the next tick fires, so an old count never overwrites a newer one.
@@ -120,7 +125,10 @@ export class EventDetail {
     this.saving.set(false);
     const code = problemOf(err)?.code;
     this.bookError.set(
-      code === 'SOLD_OUT' ? 'event.soldOut' : code === 'PAYMENTS_DISABLED' ? 'payment.paymentsDisabled' : errorMessageKey(err),
+      code === 'SOLD_OUT' ? 'event.soldOut'
+        : code === 'PAYMENTS_DISABLED' ? 'payment.paymentsDisabled'
+          : code === 'EVENT_OVER' ? 'event.overError'
+            : errorMessageKey(err),
     );
   }
 

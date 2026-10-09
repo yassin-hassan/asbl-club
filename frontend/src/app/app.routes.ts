@@ -65,6 +65,11 @@ export const routes: Routes = [
     path: 'asbls/:slug/events',
     loadComponent: () => import('./pages/event-list/event-list').then((m) => m.EventList),
   },
+  // The catalogue: every association's upcoming public events.
+  {
+    path: 'events',
+    loadComponent: () => import('./pages/catalogue/catalogue').then((m) => m.Catalogue),
+  },
   {
     path: 'events/:id',
     loadComponent: () => import('./pages/event-detail/event-detail').then((m) => m.EventDetail),

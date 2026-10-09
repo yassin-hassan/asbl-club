@@ -25,13 +25,20 @@ export class EventList {
 
   // Three explicit UI states, driven by signals.
   readonly events = signal<EventFeedItem[] | null>(null);
+  // The association's name for the title (its URL identifier until it arrives).
+  readonly name = signal<string>(this.slug);
   readonly error = signal<string | null>(null);
   readonly loading = computed(() => this.events() === null && this.error() === null);
 
   constructor() {
+    this.api.getAsbl(this.slug).subscribe({ next: (asbl) => this.name.set(asbl.denomination), error: () => {} });
     this.api.listAsblEvents(this.slug).subscribe({
       next: (list) => this.events.set(list),
       error: (err) => this.error.set(errorMessageKey(err, 'events.loadError')),
     });
+  }
+
+  isPast(startsAt: string): boolean {
+    return new Date(startsAt).getTime() <= Date.now();
   }
 }

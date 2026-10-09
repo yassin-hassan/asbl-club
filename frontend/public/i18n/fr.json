@@ -11,7 +11,8 @@
     "account": "Mon compte",
     "logout": "Se déconnecter",
     "createAsbl": "Créer mon ASBL",
-    "bookings": "Mes réservations"
+    "bookings": "Mes réservations",
+    "events": "Agenda"
   },
   "login": {
     "title": "Connexion",
@@ -46,9 +47,10 @@
   },
   "events": {
     "back": "Accueil",
-    "title": "Événements de « {{ slug }} »",
+    "title": "Événements de « {{ name }} »",
     "none": "Aucun événement public.",
-    "loadError": "Impossible de charger les événements."
+    "loadError": "Impossible de charger les événements.",
+    "past": "terminé"
   },
   "event": {
     "loadError": "Impossible de charger cet événement.",
@@ -77,7 +79,9 @@
     "haveAccount": "Vous avez un compte ?",
     "login": "Se connecter",
     "cancellableUntil": "Billets annulables et remboursables jusqu'au {{ date }}.",
-    "notRefundable": "Billets non remboursables."
+    "notRefundable": "Billets non remboursables.",
+    "over": "Terminé",
+    "overError": "Cet événement a commencé ou a eu lieu : il ne peut plus être réservé."
   },
   "errors": {
     "generic": "Une erreur est survenue. Réessayez.",
@@ -119,7 +123,8 @@
       "lead": "Registre des membres, cotisations en ligne, événements et billetterie, depuis un back-office sécurisé en français, néerlandais et anglais.",
       "ctaPrimary": "Créer mon ASBL gratuitement",
       "ctaSecondary": "Se connecter",
-      "trust": "Paiements via Stripe et Bancontact, directement sur votre compte"
+      "trust": "Paiements via Stripe et Bancontact, directement sur votre compte",
+      "browseEvents": "Voir les événements à venir"
     },
     "panel": {
       "title": "Cotisations 2026",
@@ -229,7 +234,8 @@
     "leaveConfirm": "Vous perdez l’accès à l’association. Vous pourrez redemander à la rejoindre par son lien d’invitation.",
     "lastAdmin": "Une association a besoin d’au moins un administrateur : nommez-en un autre d’abord.",
     "notOnYourself": "Vous ne pouvez pas vous exclure vous-même : quittez l’association.",
-    "cancel": "Annuler"
+    "cancel": "Annuler",
+    "publicPage": "Page publique"
   },
   "statuses": {
     "PENDING": "En attente",
@@ -520,5 +526,11 @@
     "cancelled": "L'événement a été annulé : cette réservation n'est plus valable.",
     "notFound": "Ce lien de réservation est inconnu.",
     "refunded": "Cette réservation a été remboursée. Le remboursement arrive en général sous 5 à 10 jours."
+  },
+  "catalogue": {
+    "title": "Événements à venir",
+    "intro": "Concerts, soirées, ateliers, tournois… organisés par les associations d'asbl.club. Réservez en ligne, avec ou sans compte.",
+    "none": "Aucun événement à venir pour l'instant.",
+    "loadError": "Impossible de charger les événements."
   }
 }

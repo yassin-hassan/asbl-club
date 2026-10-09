@@ -70,7 +70,7 @@ class TicketsIntegrationTest {
         club = asblService.createAsbl(alice, "Mon Club", "0123.456.789", "mon-club", "fr");
         bob = userService.register("Bob Buyer", "bob@club.test", "password123");
         member(bob, "MEMBER");
-        concert = eventService.createEvent(club, "Concert", null, Instant.parse("2026-12-01T19:00:00Z"), "Hall", "PUBLIC");
+        concert = eventService.createEvent(club, "Concert", null, Instant.parse("2030-12-01T19:00:00Z"), "Hall", "PUBLIC");
         eventService.addTicketCategory(concert, "Standard", new BigDecimal("12.50"), 10);
         standard = eventService.ticketCategoriesOf(concert).get(0).id();
         eventService.publish(concert);
@@ -141,7 +141,7 @@ class TicketsIntegrationTest {
     void anUnknownCode_orOneFromAnotherEvent_isNotFound() throws Exception {
         checkIn("ffffffffffffffffffffffffffffffff", "alice@club.test").andExpect(status().isNotFound());
 
-        Event other = eventService.createEvent(club, "Other", null, Instant.parse("2026-12-02T19:00:00Z"), null, "PUBLIC");
+        Event other = eventService.createEvent(club, "Other", null, Instant.parse("2030-12-02T19:00:00Z"), null, "PUBLIC");
         eventService.publish(other);
         call(post("/api/v1/asbls/mon-club/manage/events/" + other.getId() + "/check-ins")
                 .contentType(MediaType.APPLICATION_JSON).content("{\"code\": \"" + CODE + "\"}"), "alice@club.test")

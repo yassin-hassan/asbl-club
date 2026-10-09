@@ -74,7 +74,7 @@ class CancelledEventRefundsIntegrationTest {
         User admin = userService.register("Alice", "alice@club.test", "password123");
         club = asblService.createAsbl(admin, "Mon Club", "0123.456.789", "mon-club", "fr");
         asblService.linkStripeAccount(club, "acct_test");
-        concert = eventService.createEvent(club, "Concert", null, Instant.parse("2026-12-01T19:00:00Z"), "Hall",
+        concert = eventService.createEvent(club, "Concert", null, Instant.parse("2030-12-01T19:00:00Z"), "Hall",
                 "PUBLIC");
         eventService.addTicketCategory(concert, "Standard", new BigDecimal("12.50"), 10);
         eventService.publish(concert);

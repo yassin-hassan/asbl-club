@@ -1,12 +1,13 @@
 <div class="page">
-  <h1>{{ 'events.title' | transloco: { name: name() } }}</h1>
+  <h1>{{ 'catalogue.title' | transloco }}</h1>
+  <p class="muted">{{ 'catalogue.intro' | transloco }}</p>
 
   @if (loading()) {
     <mat-spinner diameter="40" />
   } @else if (error(); as error) {
     <p class="error" role="alert">{{ error | transloco }}</p>
   } @else if (events()!.length === 0) {
-    <p class="empty">{{ 'events.none' | transloco }}</p>
+    <p class="empty">{{ 'catalogue.none' | transloco }}</p>
   } @else {
     <div class="row-list">
       @for (ev of events(); track ev.id) {
@@ -15,7 +16,7 @@
             <span class="title">{{ ev.title }}</span>
             <span class="meta">
               {{ ev.startsAt | date: 'fullDate' : undefined : lang() }} · {{ ev.startsAt | date: 'shortTime' : undefined : lang() }}
-              @if (isPast(ev.startsAt)) { · {{ 'events.past' | transloco }} }
+              · {{ ev.asbl.denomination }}@if (ev.location) { · {{ ev.location }}}
             </span>
           </span>
           <mat-icon class="go">arrow_forward</mat-icon>
@@ -23,5 +24,4 @@
       }
     </div>
   }
-  <a class="back" routerLink="/">{{ 'events.back' | transloco }}</a>
 </div>

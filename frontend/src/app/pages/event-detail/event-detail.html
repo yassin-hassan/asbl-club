@@ -39,7 +39,9 @@
           <ng-container matColumnDef="book">
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let ticket">
-              @if (ticket.remaining > 0) {
+              @if (over()) {
+                <span class="tag">{{ 'event.over' | transloco }}</span>
+              } @else if (ticket.remaining > 0) {
                 <button mat-flat-button type="button" (click)="book(ticket)" [disabled]="saving()">{{ 'event.book' | transloco }}</button>
               } @else {
                 <span class="tag">{{ 'event.full' | transloco }}</span>

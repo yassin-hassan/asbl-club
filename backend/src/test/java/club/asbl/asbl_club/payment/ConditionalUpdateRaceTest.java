@@ -58,7 +58,7 @@ class ConditionalUpdateRaceTest {
         User member = userService.register("Payer", "payer-" + unique + "@race.test", "password123");
         Asbl club = asblService.createAsbl(member, "Race Club", "0" + unique.substring(0, 3) + "."
                 + unique.substring(3, 6) + "." + unique.substring(6, 9), "race-" + unique, "fr");
-        event = eventService.createEvent(club, "Gala", null, Instant.parse("2026-12-01T19:00:00Z"), null, "PUBLIC");
+        event = eventService.createEvent(club, "Gala", null, Instant.parse("2030-12-01T19:00:00Z"), null, "PUBLIC");
         eventService.addTicketCategory(event, "Standard", new BigDecimal("10.00"), 10);
         eventService.publish(event);
         booking = reservationService.reserve(event, eventService.ticketCategoriesOf(event).get(0).id(), member);

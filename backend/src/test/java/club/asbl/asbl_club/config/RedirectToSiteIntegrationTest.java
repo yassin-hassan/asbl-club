@@ -85,7 +85,7 @@ class RedirectToSiteIntegrationTest {
     void requestsRelayedByTheCdn_areServedHere() throws Exception {
         var admin = userService.register("Admin", "admin@club.test", "password123");
         var club = asblService.createAsbl(admin, "Mon Club", "0123.456.789", "mon-club", "fr");
-        Event gala = eventService.createEvent(club, "Gala", null, Instant.parse("2026-12-01T19:00:00Z"), null, "PUBLIC");
+        Event gala = eventService.createEvent(club, "Gala", null, Instant.parse("2030-12-01T19:00:00Z"), null, "PUBLIC");
         eventService.publish(gala);
 
         mockMvc.perform(get("/asbls/mon-club/events/rss")

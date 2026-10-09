@@ -10,6 +10,7 @@ export * from './attendees';
 export * from './auditEntry';
 export * from './auditJournal';
 export * from './bookRequest';
+export * from './catalogueEvent';
 export * from './checkIn';
 export * from './checkInRequest';
 export * from './checkout';

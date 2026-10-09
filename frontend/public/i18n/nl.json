@@ -11,7 +11,8 @@
     "account": "Mijn account",
     "logout": "Afmelden",
     "createAsbl": "Mijn VZW aanmaken",
-    "bookings": "Mijn boekingen"
+    "bookings": "Mijn boekingen",
+    "events": "Agenda"
   },
   "login": {
     "title": "Aanmelden",
@@ -46,9 +47,10 @@
   },
   "events": {
     "back": "Home",
-    "title": "Evenementen van \"{{ slug }}\"",
+    "title": "Evenementen van \"{{ name }}\"",
     "none": "Geen openbare evenementen.",
-    "loadError": "De evenementen konden niet geladen worden."
+    "loadError": "De evenementen konden niet geladen worden.",
+    "past": "afgelopen"
   },
   "event": {
     "loadError": "Dit evenement kon niet geladen worden.",
@@ -77,7 +79,9 @@
     "haveAccount": "Heb je een account?",
     "login": "Aanmelden",
     "cancellableUntil": "Tickets annuleerbaar en terugbetaalbaar tot {{ date }}.",
-    "notRefundable": "Tickets niet terugbetaalbaar."
+    "notRefundable": "Tickets niet terugbetaalbaar.",
+    "over": "Afgelopen",
+    "overError": "Dit evenement is begonnen of voorbij: het kan niet meer geboekt worden."
   },
   "errors": {
     "generic": "Er ging iets mis. Probeer het opnieuw.",
@@ -119,7 +123,8 @@
       "lead": "Ledenregister, online lidgelden, evenementen en ticketverkoop, vanuit een beveiligde back-office in het Frans, Nederlands en Engels.",
       "ctaPrimary": "Mijn vzw gratis aanmaken",
       "ctaSecondary": "Inloggen",
-      "trust": "Betalingen via Stripe en Bancontact, rechtstreeks op uw rekening"
+      "trust": "Betalingen via Stripe en Bancontact, rechtstreeks op uw rekening",
+      "browseEvents": "Bekijk de komende evenementen"
     },
     "panel": {
       "title": "Lidgelden 2026",
@@ -229,7 +234,8 @@
     "leaveConfirm": "U verliest de toegang tot de vereniging. U kunt later opnieuw lid worden via de uitnodigingslink.",
     "lastAdmin": "Een vereniging heeft minstens één beheerder nodig: stel eerst iemand anders aan.",
     "notOnYourself": "U kunt uzelf niet uitsluiten: verlaat de vereniging.",
-    "cancel": "Annuleren"
+    "cancel": "Annuleren",
+    "publicPage": "Openbare pagina"
   },
   "statuses": {
     "PENDING": "In afwachting",
@@ -520,5 +526,11 @@
     "cancelled": "Het evenement is geannuleerd: deze reservering is niet meer geldig.",
     "notFound": "Deze reserveringslink is onbekend.",
     "refunded": "Deze reservering is terugbetaald. De terugbetaling staat meestal binnen 5 tot 10 dagen op je rekening."
+  },
+  "catalogue": {
+    "title": "Komende evenementen",
+    "intro": "Concerten, avonden, workshops, toernooien… georganiseerd door de verenigingen op asbl.club. Reserveer online, met of zonder account.",
+    "none": "Nog geen komende evenementen.",
+    "loadError": "De evenementen konden niet geladen worden."
   }
 }

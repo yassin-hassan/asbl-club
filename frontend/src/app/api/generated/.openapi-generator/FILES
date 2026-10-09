@@ -29,6 +29,7 @@ model/attendees.ts
 model/auditEntry.ts
 model/auditJournal.ts
 model/bookRequest.ts
+model/catalogueEvent.ts
 model/checkIn.ts
 model/checkInRequest.ts
 model/checkout.ts
