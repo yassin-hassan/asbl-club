@@ -15,5 +15,9 @@ export interface CreateEventRequest {
     startsAt: string;
     location?: string;
     visibility: string;
+    /**
+     * Until how many days before the start buyers may cancel their ticket and be refunded; 0: not refundable. Optional: 0 when creating, unchanged when editing. Once a ticket is sold, it can only grow.
+     */
+    cancellationDays?: number;
 }
 

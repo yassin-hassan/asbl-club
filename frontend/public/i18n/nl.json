@@ -75,7 +75,9 @@
     "continue": "Verder naar betalen",
     "cancel": "Annuleren",
     "haveAccount": "Heb je een account?",
-    "login": "Aanmelden"
+    "login": "Aanmelden",
+    "cancellableUntil": "Tickets annuleerbaar en terugbetaalbaar tot {{ date }}.",
+    "notRefundable": "Tickets niet terugbetaalbaar."
   },
   "errors": {
     "generic": "Er ging iets mis. Probeer het opnieuw.",
@@ -297,7 +299,14 @@
     "priceHint": "Een nieuwe prijs geldt alleen voor nieuwe boekingen.",
     "notEditable": "Dit evenement kan niet meer gewijzigd worden.",
     "seatsBelowSold": "Er kunnen niet minder plaatsen zijn dan er al geboekt zijn.",
-    "ticketInUse": "Deze categorie heeft boekingen en kan dus niet verwijderd worden."
+    "ticketInUse": "Deze categorie heeft boekingen en kan dus niet verwijderd worden.",
+    "cancellationDays": "Annulering door de koper (dagen voor het evenement)",
+    "cancellationDaysHint": "Tot hoeveel dagen voor de start een koper zijn ticket kan annuleren en terugbetaald krijgen. 0: tickets niet terugbetaalbaar. Na een verkoop kan deze termijn verlengd worden, niet meer ingekort.",
+    "cancellationDaysInvalid": "Tussen 0 en 365 dagen.",
+    "cancellationLocked": "Er zijn al tickets verkocht: de annuleringstermijn kan verlengd worden, maar niet meer ingekort.",
+    "cancellation": "Annulering",
+    "notRefundable": "Tickets niet terugbetaalbaar",
+    "refundableDays": "Terugbetaalbaar tot {{ days }} dag(en) voor de start"
   },
   "payment": {
     "title": "Betaling",
@@ -425,7 +434,14 @@
     "past": "Voorbij",
     "pay": "Betalen",
     "checkedInAt": "binnen om {{ time }}",
-    "qrLabel": "QR-code van het ticket voor {{ event }}"
+    "qrLabel": "QR-code van het ticket voor {{ event }}",
+    "cancellableUntil": "Annuleerbaar tot {{ date }}",
+    "cancel": "Annuleren en terugbetaald worden",
+    "cancelTitle": "Je ticket annuleren?",
+    "cancelConfirm": "Je ticket voor “{{ event }}” wordt geannuleerd en je krijgt de prijs terug (binnen 5 tot 10 dagen). Dit kan niet ongedaan gemaakt worden.",
+    "keep": "Mijn ticket houden",
+    "cancellationClosed": "Dit ticket kan niet meer geannuleerd worden.",
+    "notCancellable": "Dit ticket kan niet geannuleerd worden."
   },
   "checkIn": {
     "title": "Toegang",
@@ -502,6 +518,7 @@
     "keepLink": "Bewaar deze link: hij geeft toegang tot je reservering (je kreeg hem ook per e-mail). Zonder snelle betaling komt de plaats weer vrij.",
     "showAtDoor": "Toon deze QR-code aan de ingang. Hij zit ook als bijlage bij de bevestigingsmail.",
     "cancelled": "Het evenement is geannuleerd: deze reservering is niet meer geldig.",
-    "notFound": "Deze reserveringslink is onbekend."
+    "notFound": "Deze reserveringslink is onbekend.",
+    "refunded": "Deze reservering is terugbetaald. De terugbetaling staat meestal binnen 5 tot 10 dagen op je rekening."
   }
 }

@@ -3,13 +3,16 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { Observable, switchMap, take, takeWhile, timer } from 'rxjs';
+import { filter, Observable, switchMap, take, takeWhile, timer } from 'rxjs';
 import { GuestBooking, GuestBookingsService } from '../../api/generated';
+import { ConfirmDialog, ConfirmDialogData } from '../../components/confirm-dialog/confirm-dialog';
 import { TicketQr } from '../../components/ticket-qr/ticket-qr';
 import { LanguageService } from '../../i18n/language';
 import { errorMessageKey } from '../../services/problem';
+import { cancellationErrorKey } from '../my-bookings/my-bookings';
 import { WAITING } from '../payment-complete/payment-complete';
 
 // A guest's booking (bought without an account), opened through its secret link: /tickets/:token. From here they
@@ -28,7 +31,11 @@ export class GuestTicket {
   readonly token = this.route.snapshot.paramMap.get('token') ?? '';
   private readonly redirect = this.route.snapshot.queryParamMap.get('redirect_status');
 
+  private api = inject(GuestBookingsService);
+  private dialog = inject(MatDialog);
   readonly booking = signal<GuestBooking | null>(null);
+  readonly cancelling = signal(false);
+  readonly cancelError = signal<string | null>(null);
   readonly error = signal<string | null>(null);
   readonly checking = signal(false);
   // Stripe said the payment failed (a declined card): the booking stays reserved, they can try again.
@@ -37,7 +44,7 @@ export class GuestTicket {
   readonly backFromPaying = this.redirect !== null && !this.failed;
 
   constructor() {
-    const api = inject(GuestBookingsService);
+    const api = this.api;
     const backFromPaying = this.backFromPaying;
     const load: Observable<GuestBooking> = backFromPaying
       ? timer(0, 2000).pipe(
@@ -55,6 +62,31 @@ export class GuestTicket {
       error: (err: HttpErrorResponse) =>
         this.error.set(err.status === 404 ? 'guestTicket.notFound' : errorMessageKey(err)),
       complete: () => this.checking.set(false),
+    });
+  }
+
+  // Cancel the paid ticket (within the event's cancellation delay) and be refunded.
+  cancel(booking: GuestBooking): void {
+    const data: ConfirmDialogData = {
+      title: 'bookings.cancelTitle', message: 'bookings.cancelConfirm', confirm: 'bookings.cancel', cancel: 'bookings.keep',
+      params: { event: booking.eventTitle },
+    };
+    this.dialog.open(ConfirmDialog, { data }).afterClosed().pipe(
+      filter((confirmed) => confirmed === true),
+      switchMap(() => {
+        this.cancelling.set(true);
+        this.cancelError.set(null);
+        return this.api.cancelGuestBooking(this.token);
+      }),
+    ).subscribe({
+      next: (cancelled) => {
+        this.cancelling.set(false);
+        this.booking.set(cancelled);
+      },
+      error: (err: HttpErrorResponse) => {
+        this.cancelling.set(false);
+        this.cancelError.set(cancellationErrorKey(err));
+      },
     });
   }
 }

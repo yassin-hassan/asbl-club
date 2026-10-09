@@ -18,6 +18,10 @@ export interface PublicEvent {
     startsAt: string;
     location?: string;
     asbl: AsblResource;
+    /**
+     * Until when buyers may cancel their ticket and be refunded; absent: not refundable on request
+     */
+    cancellableUntil?: string;
     tickets: Array<PublicTicket>;
 }
 

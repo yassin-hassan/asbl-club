@@ -1,5 +1,8 @@
 <div class="page">
   <h1>{{ 'bookings.title' | transloco }}</h1>
+  @if (cancelError(); as error) {
+    <p class="error" role="alert">{{ error | transloco }}</p>
+  }
   @if (bookings.value(); as all) {
     @if (all.length === 0) {
       <p class="empty">{{ 'bookings.none' | transloco }}</p>
@@ -43,6 +46,12 @@
       </p>
       @if (booking.status === 'RESERVED') {
         <a mat-flat-button [routerLink]="['/pay', booking.id]">{{ 'bookings.pay' | transloco }}</a>
+      }
+      @if (booking.cancellableUntil) {
+        <p class="muted">{{ 'bookings.cancellableUntil' | transloco: { date: (booking.cancellableUntil | date: 'longDate' : undefined : lang()) } }}</p>
+        <button mat-stroked-button type="button" (click)="cancel(booking)" [disabled]="cancelling() === booking.id">
+          {{ 'bookings.cancel' | transloco }}
+        </button>
       }
     </div>
     @if (booking.ticketCode && booking.status !== 'ATTENDED') {

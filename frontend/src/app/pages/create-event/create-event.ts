@@ -32,6 +32,8 @@ export class CreateEvent {
     startsAt: ['', Validators.required], // local date and time, as typed ("2026-12-01T20:00")
     location: ['', Validators.maxLength(255)],
     visibility: ['PUBLIC', Validators.required],
+    // Until how many days before the start buyers may cancel and be refunded; 0: never. A week by default.
+    cancellationDays: [7, [Validators.required, Validators.min(0), Validators.max(365)]],
   });
 
   readonly submitting = signal(false);
@@ -46,6 +48,7 @@ export class CreateEvent {
           startsAt: localDateTime(event.startsAt),
           location: event.location ?? '',
           visibility: event.visibility,
+          cancellationDays: event.cancellationDays,
         }),
         error: (err) => this.error.set(errorMessageKey(err)),
       });
@@ -67,6 +70,7 @@ export class CreateEvent {
       startsAt: new Date(value.startsAt).toISOString(),
       location: value.location.trim() || undefined,
       visibility: value.visibility,
+      cancellationDays: value.cancellationDays,
     };
     const request = this.eventId === null
       ? this.api.createEvent(this.slug, event)
@@ -75,7 +79,12 @@ export class CreateEvent {
       next: (saved) => this.router.navigate(['/asbls', this.slug, 'manage', 'events', saved.id]),
       error: (err) => {
         this.submitting.set(false);
-        this.error.set(problemOf(err)?.code === 'EVENT_NOT_EDITABLE' ? 'manage.notEditable' : errorMessageKey(err));
+        const code = problemOf(err)?.code;
+        this.error.set(
+          code === 'EVENT_NOT_EDITABLE' ? 'manage.notEditable'
+            : code === 'CANCELLATION_DAYS_LOCKED' ? 'manage.cancellationLocked'
+              : errorMessageKey(err),
+        );
       },
     });
   }

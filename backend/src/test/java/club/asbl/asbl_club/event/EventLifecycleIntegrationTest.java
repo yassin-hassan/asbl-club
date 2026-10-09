@@ -106,6 +106,50 @@ class EventLifecycleIntegrationTest {
         assertThat(payload).contains("title", "startsAt", "location").doesNotContain("visibility");
     }
 
+    // The cancellation delay is the association's refund policy: free to set while nothing is sold; once a ticket is
+    // sold it can only grow (buyers paid under the policy shown to them).
+    @Test
+    void theCancellationDelay_isFreeBeforeAnySale_thenCanOnlyGrow() throws Exception {
+        send(put(BASE + "/" + concert.getId()), adminToken, editWithDelay(7)).andExpect(status().isOk())
+                .andExpect(jsonPath("$.cancellationDays").value(7));
+        send(put(BASE + "/" + concert.getId()), adminToken, editWithDelay(3)).andExpect(status().isOk())
+                .andExpect(jsonPath("$.cancellationDays").value(3));
+
+        book();
+
+        send(put(BASE + "/" + concert.getId()), adminToken, editWithDelay(1)).andExpect(status().isConflict())
+                .andExpect(jsonPath("$.code").value("CANCELLATION_DAYS_LOCKED"));
+        send(put(BASE + "/" + concert.getId()), adminToken, editWithDelay(10)).andExpect(status().isOk())
+                .andExpect(jsonPath("$.cancellationDays").value(10));
+        // Left out of an edit, the delay stays as it was.
+        send(put(BASE + "/" + concert.getId()), adminToken, EDIT).andExpect(status().isOk())
+                .andExpect(jsonPath("$.cancellationDays").value(10));
+        assertThat(jdbcTemplate.queryForObject("SELECT count(*) FROM audit_logs WHERE action = 'EVENT_UPDATED' "
+                + "AND payload ->> 'cancellationDays' IS NOT NULL", Integer.class)).isEqualTo(3);
+    }
+
+    // Shown before buying: until when tickets can be cancelled, or nothing when they can't.
+    @Test
+    void thePublicPage_tellsTheRefundPolicy() throws Exception {
+        mockMvc.perform(get("/api/v1/events/" + concert.getId()))
+                .andExpect(jsonPath("$.cancellableUntil").doesNotExist()); // created without a delay: 0
+        send(put(BASE + "/" + concert.getId()), adminToken, editWithDelay(7)).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/events/" + concert.getId()))
+                .andExpect(jsonPath("$.cancellableUntil").value("2026-11-24T19:00:00Z")); // 7 days before
+        send(post(BASE), adminToken, """
+                {"title": "Quiz", "startsAt": "2026-12-05T19:00:00Z", "visibility": "PUBLIC", "cancellationDays": 2}""")
+                .andExpect(status().isCreated()).andExpect(jsonPath("$.cancellationDays").value(2));
+        send(post(BASE), adminToken, """
+                {"title": "Quiz", "startsAt": "2026-12-05T19:00:00Z", "visibility": "PUBLIC", "cancellationDays": -1}""")
+                .andExpect(status().isBadRequest());
+    }
+
+    private static String editWithDelay(int days) {
+        return """
+                {"title": "Concert", "startsAt": "2026-12-01T19:00:00Z", "visibility": "PUBLIC", "cancellationDays": %d}"""
+                .formatted(days);
+    }
+
     @Test
     void seats_cannotGoBelowThoseAlreadyTaken() throws Exception {
         book();

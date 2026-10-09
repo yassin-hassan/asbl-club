@@ -34,7 +34,7 @@
           <a mat-button [routerLink]="['/events', booking.eventId]">{{ 'payment.backToEvent' | transloco }}</a>
         }
         @case ('REFUNDED') {
-          <p role="status">{{ 'payment.refunded' | transloco }}</p>
+          <p role="status">{{ 'guestTicket.refunded' | transloco }}</p>
         }
         @case ('CANCELLED') {
           <p role="status">{{ 'guestTicket.cancelled' | transloco }}</p>
@@ -48,6 +48,13 @@
           }
           @if (booking.checkedInAt) {
             <p>{{ 'bookings.checkedInAt' | transloco: { time: (booking.checkedInAt | date: 'short' : undefined : lang()) } }}</p>
+          }
+          @if (booking.cancellableUntil) {
+            <p class="muted">{{ 'bookings.cancellableUntil' | transloco: { date: (booking.cancellableUntil | date: 'longDate' : undefined : lang()) } }}</p>
+            <button mat-stroked-button type="button" (click)="cancel(booking)" [disabled]="cancelling()">{{ 'bookings.cancel' | transloco }}</button>
+          }
+          @if (cancelError(); as error) {
+            <p class="error" role="alert">{{ error | transloco }}</p>
           }
         }
       }

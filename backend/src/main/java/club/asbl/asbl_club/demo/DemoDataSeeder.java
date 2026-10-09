@@ -99,7 +99,7 @@ class DemoDataSeeder implements ApplicationRunner {
     }
 
     /** What became of a booking. */
-    enum Outcome { PAID, ATTENDED, EXPIRED, DECLINED_THEN_EXPIRED, CANCELLED, REFUNDED }
+    enum Outcome { PAID, ATTENDED, EXPIRED, DECLINED_THEN_EXPIRED, CANCELLED, REFUNDED, CANCELLED_BY_BUYER }
 
     @Override
     @Transactional
@@ -234,6 +234,7 @@ class DemoDataSeeder implements ApplicationRunner {
                         + "Jeux fournis, boissons et petite restauration au bar.",
                 at(-75, 19, 0), "Maison des Associations, Place Colignon 1, 1030 Schaerbeek", "PUBLIC", daysAgo(110));
         Category gamesEntry = category(games, sophie, "Entrée", "5.00", 40);
+        cancellationDays(games, 0);
         publish(games, sophie, daysAgo(108));
         sell(games, gamesEntry, pick(buyers, 28, thomas, julie, kevin), daysAgo(100), at(-76, 12, 0),
                 List.of(Outcome.ATTENDED, Outcome.ATTENDED, Outcome.ATTENDED, Outcome.ATTENDED, Outcome.ATTENDED,
@@ -244,6 +245,7 @@ class DemoDataSeeder implements ApplicationRunner {
                         + "suivie d'un verre dans le quartier.",
                 at(-30, 14, 0), "Chaussée de Haecht 266, 1030 Schaerbeek", "MEMBERS", daysAgo(60));
         Category visitTicket = category(visit, sophie, "Membre", "8.00", 25);
+        cancellationDays(visit, 3);
         publish(visit, sophie, daysAgo(59));
         sell(visit, visitTicket, pick(memberList, 18, julie), daysAgo(55), at(-31, 12, 0),
                 List.of(Outcome.ATTENDED, Outcome.ATTENDED, Outcome.ATTENDED, Outcome.ATTENDED, Outcome.ATTENDED,
@@ -256,10 +258,13 @@ class DemoDataSeeder implements ApplicationRunner {
                 daysAgo(30));
         Category presale = category(concert, sophie, "Prévente", "12.00", 80);
         Category student = category(concert, sophie, "Étudiant", "8.00", 20);
+        cancellationDays(concert, 7);
         publish(concert, sophie, daysAgo(29));
-        List<Account> concertBuyers = pick(buyers, 34, julie);
+        List<Account> concertBuyers = pick(buyers, 35, julie);
         concertBuyers.remove(thomas); // he buys his ticket live, in the demo
         sell(concert, presale, concertBuyers.subList(0, 27), daysAgo(27), daysAgo(1), List.of(Outcome.PAID), 2, null);
+        sell(concert, presale, concertBuyers.subList(33, 34), daysAgo(25), daysAgo(20),
+                List.of(Outcome.CANCELLED_BY_BUYER), 0, null);
         sell(concert, student, concertBuyers.subList(27, 33), daysAgo(20), daysAgo(2), List.of(Outcome.PAID), 0, null);
 
         Event watercolour = event(club, sophie, "Atelier aquarelle pour débutants",
@@ -267,6 +272,7 @@ class DemoDataSeeder implements ApplicationRunner {
                         + "Matériel compris, aucune expérience requise.",
                 at(18, 10, 0), "Local du Cercle, Avenue Louis Bertrand 35, 1030 Schaerbeek", "MEMBERS", daysAgo(21));
         Category workshop = category(watercolour, sophie, "Participation", "15.00", 12);
+        cancellationDays(watercolour, 2);
         publish(watercolour, sophie, daysAgo(20));
         sell(watercolour, workshop, pick(memberList, 11, julie), daysAgo(19), daysAgo(3), List.of(Outcome.PAID), 0,
                 null);
@@ -275,6 +281,7 @@ class DemoDataSeeder implements ApplicationRunner {
                 "Brocante annuelle dans les allées du parc. Un emplacement de 3 mètres par réservation.",
                 at(9, 8, 0), "Parc Josaphat (allée centrale), 1030 Schaerbeek", "PUBLIC", daysAgo(40));
         Category pitch = category(fleaMarket, sophie, "Emplacement", "10.00", 30);
+        cancellationDays(fleaMarket, 7);
         publish(fleaMarket, sophie, daysAgo(39));
         sell(fleaMarket, pitch, pick(buyers, 6), daysAgo(35), daysAgo(8),
                 List.of(Outcome.PAID, Outcome.PAID, Outcome.PAID, Outcome.CANCELLED, Outcome.CANCELLED,
@@ -290,6 +297,7 @@ class DemoDataSeeder implements ApplicationRunner {
                 at(230, 12, 0), "Jardin de la Maison des Associations, 1030 Schaerbeek", "MEMBERS", daysAgo(6));
         category(barbecue, sophie, "Adulte", "15.00", 60);
         category(barbecue, sophie, "Enfant (moins de 12 ans)", "7.00", 30);
+        cancellationDays(barbecue, 14);
 
         audit(marc, club, "ATTENDEES_EXPORTED", "Event", games.id(), Map.of("rows", 26), at(-74, 10, 0));
         audit(marc, club, "DUES_EXPORTED", "Asbl", club.id(), Map.of("rows", memberList.size(), "year", year),
@@ -356,6 +364,7 @@ class DemoDataSeeder implements ApplicationRunner {
                         at(25, 19, 30), "Cafétéria du club, Rue Stroobants 51, 1140 Evere", "PUBLIC", daysAgo(26));
                 Category adult = category(dinner, admin, "Adulte", "28.00", 100);
                 Category child = category(dinner, admin, "Enfant (moins de 12 ans)", "14.00", 30);
+                cancellationDays(dinner, 5);
                 publish(dinner, admin, daysAgo(25));
                 List<Account> diners = pick(buyers, 32);
                 sell(dinner, adult, diners.subList(0, 25), daysAgo(24), daysAgo(1), List.of(Outcome.PAID), 1, null);
@@ -373,6 +382,7 @@ class DemoDataSeeder implements ApplicationRunner {
                         "Het jaarlijkse clubfeest met dj, bar en tombola ten voordele van de jeugdwerking.",
                         at(32, 20, 0), "Sporthal Ridderstraat, 3000 Leuven", "PUBLIC", daysAgo(18));
                 Category entry = category(party, admin, "Toegang", "10.00", 120);
+                cancellationDays(party, 3);
                 publish(party, admin, daysAgo(17));
                 sell(party, entry, pick(buyers, 24), daysAgo(16), daysAgo(1), List.of(Outcome.PAID), 1, null);
             }
@@ -576,6 +586,11 @@ class DemoDataSeeder implements ApplicationRunner {
         return new Category(id, label, amount);
     }
 
+    // Until how many days before the start buyers may cancel (set with the event, before it's published).
+    private void cancellationDays(Event event, int days) {
+        jdbc.update("UPDATE events SET cancellation_days = ? WHERE id = ?", days, event.id());
+    }
+
     private void publish(Event event, Account by, Instant when) {
         jdbc.update("UPDATE events SET status = 'PUBLISHED', updated_at = ? WHERE id = ?", ts(when), event.id());
         audit(by, event.club(), "EVENT_PUBLISHED", "Event", event.id(), null, when);
@@ -610,7 +625,8 @@ class DemoDataSeeder implements ApplicationRunner {
         Club club = event.club();
         long payable = insert("INSERT INTO payables (type, amount, currency) VALUES ('REGISTRATION', ?, 'EUR')",
                 category.price());
-        boolean paid = outcome == Outcome.PAID || outcome == Outcome.ATTENDED;
+        boolean paid = outcome == Outcome.PAID || outcome == Outcome.ATTENDED
+                || outcome == Outcome.CANCELLED_BY_BUYER;
         Instant paidAt = booked.plus(Duration.ofSeconds(40 + random.nextInt(200)));
         // Scanned at the door, from a quarter of an hour before the start.
         Instant checkin = outcome == Outcome.ATTENDED
@@ -621,7 +637,7 @@ class DemoDataSeeder implements ApplicationRunner {
             case ATTENDED -> "ATTENDED";
             case EXPIRED, DECLINED_THEN_EXPIRED -> "EXPIRED";
             case CANCELLED -> "CANCELLED";
-            case REFUNDED -> "REFUNDED";
+            case REFUNDED, CANCELLED_BY_BUYER -> "REFUNDED";
         };
         jdbc.update("""
                 INSERT INTO registrations (id, event_id, ticket_category_id, user_id, status, qr_token, registered_at,
@@ -636,7 +652,7 @@ class DemoDataSeeder implements ApplicationRunner {
             case PAID, ATTENDED -> "SUCCEEDED";
             case DECLINED_THEN_EXPIRED -> "FAILED";
             case EXPIRED, CANCELLED -> "INITIATED";
-            case REFUNDED -> "REFUNDED";
+            case REFUNDED, CANCELLED_BY_BUYER -> "REFUNDED";
         };
         long payment = payment(club, buyer, payable, category.price(), paymentStatus,
                 paid || outcome == Outcome.REFUNDED ? paidAt : null);
@@ -644,7 +660,7 @@ class DemoDataSeeder implements ApplicationRunner {
                 String.class, payment);
 
         switch (outcome) {
-            case PAID, ATTENDED -> {
+            case PAID, ATTENDED, CANCELLED_BY_BUYER -> {
                 auditSystem(club, "PAYMENT_SUCCEEDED", "Payment", payment,
                         Map.of("paymentIntentId", intent, "amount", category.price()), paidAt);
                 webhook("payment_intent.succeeded", paidAt);
@@ -654,6 +670,18 @@ class DemoDataSeeder implements ApplicationRunner {
                 if (checkin != null && doorkeeper != null) {
                     audit(doorkeeper, club, "TICKET_CHECKED_IN", "Registration", payable,
                             Map.of("ticket", category.label()), checkin);
+                }
+                if (outcome == Outcome.CANCELLED_BY_BUYER) {
+                    // Changed their mind a few days later, within the event's cancellation delay: refunded, the
+                    // platform keeping its commission.
+                    Instant cancelled = later(paidAt.plus(Duration.ofDays(2)), now.minus(Duration.ofHours(2)));
+                    audit(buyer, club, "BOOKING_CANCELLED", "Registration", payable,
+                            Map.of("event", event.id(), "ticket", category.label()), cancelled);
+                    auditSystem(club, "PAYMENT_REFUNDED", "Payment", payment,
+                            Map.of("paymentIntentId", intent, "amount", category.price(),
+                                    "reason", "cancelled by buyer", "commissionKept", true), cancelled);
+                    sentEmail(buyer.person().email(), subject("email.bookingCancelled.subject",
+                            buyer.person().language(), buyer.person().name(), event.title()), cancelled);
                 }
             }
             case DECLINED_THEN_EXPIRED, EXPIRED -> {

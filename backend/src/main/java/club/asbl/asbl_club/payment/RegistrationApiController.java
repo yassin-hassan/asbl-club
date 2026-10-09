@@ -22,6 +22,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
+import java.time.Instant;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -146,6 +147,23 @@ class RegistrationApiController {
         return bookingCheckout.start(own(id, user), user.getName(), user.getEmail(), user);
     }
 
+    // The buyer cancels their paid ticket, within the event's cancellation delay: refunded (the platform keeps its
+    // commission), the seat back on sale.
+    @Operation(operationId = "cancelMyBooking", summary = "Cancel one of my paid tickets and be refunded",
+            security = @SecurityRequirement(name = "bearer"))
+    @ApiResponse(responseCode = "200", description = "Cancelled and refunded",
+            content = @Content(schema = @Schema(implementation = Booking.class)))
+    @ApiResponse(responseCode = "409", description = "The delay has passed or tickets aren't refundable (CANCELLATION_CLOSED), or not a paid unused ticket of an event still on (NOT_CANCELLABLE)",
+            content = @Content(mediaType = "application/problem+json"))
+    @ApiResponse(responseCode = "502", description = "The payment provider couldn't be reached",
+            content = @Content(mediaType = "application/problem+json"))
+    @PostMapping("/api/v1/registrations/{id}/cancel")
+    Booking cancel(@PathVariable Long id, Authentication authentication) {
+        User user = userService.getAuthenticated(authentication);
+        bookingCheckout.cancel(own(id, user));
+        return booking(own(id, user));
+    }
+
     private static ErrorResponseException conflict(String code, String detail) {
         return BookingCheckout.conflict(code, detail);
     }
@@ -165,7 +183,8 @@ class RegistrationApiController {
         return new Booking(r.getId(), r.getStatus().name(), r.getAmount(), r.getCurrency(), r.getEvent().getId(),
                 r.getEvent().getTitle(), r.getEvent().getStartsAt(), r.getEvent().getLocation(),
                 r.getEvent().getAsbl().getDenomination(), r.getEvent().getAsbl().getSlug(),
-                r.getTicketCategory().getLabel(), ticket ? r.getQrToken() : null, r.getCheckinAt());
+                r.getTicketCategory().getLabel(), ticket ? r.getQrToken() : null, r.getCheckinAt(),
+                r.cancellableUntil(Instant.now()).orElse(null));
     }
 
     private static Mine mine(Registration r) {

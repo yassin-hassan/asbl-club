@@ -42,7 +42,8 @@ public class SecurityConfig {
                                 "/api/v1/events/*", "/api/v1/events/*/availability",
                                 "/api/v1/guest-bookings/*").permitAll()
                         // Buying a ticket without an account: the booking is then reached through its secret link.
-                        .requestMatchers(HttpMethod.POST, "/api/v1/guest-bookings", "/api/v1/guest-bookings/*/checkout")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/guest-bookings", "/api/v1/guest-bookings/*/checkout",
+                                "/api/v1/guest-bookings/*/cancel")
                         .permitAll()
                         .requestMatchers(HttpMethod.POST,
                                 "/api/v1/auth/login", "/api/v1/auth/register", "/api/v1/auth/refresh", "/api/v1/auth/logout",

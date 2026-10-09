@@ -48,6 +48,20 @@ class BookingCheckout {
         }
     }
 
+    // The buyer cancels their paid ticket (account holder or guest): refunded, or a stable reason why not.
+    void cancel(Registration registration) {
+        try {
+            paymentService.cancelByBuyer(registration.getId());
+        } catch (NotCancellableException e) {
+            throw conflict("NOT_CANCELLABLE", "Only a paid, unused ticket of an event still on can be cancelled.");
+        } catch (CancellationClosedException e) {
+            throw conflict("CANCELLATION_CLOSED", "This ticket can't be cancelled any more (or never could).");
+        } catch (RefundFailedException e) {
+            log.warn("Refund of cancelled ticket {} failed: {}", registration.getId(), e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "The payment provider couldn't be reached.");
+        }
+    }
+
     static void requirePayments(Asbl asbl) {
         if (asbl.getStripeAccountId() == null) {
             throw conflict("PAYMENTS_DISABLED", "This association can't receive payments yet.");

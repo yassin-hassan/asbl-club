@@ -75,7 +75,9 @@
     "continue": "Continuer vers le paiement",
     "cancel": "Annuler",
     "haveAccount": "Vous avez un compte ?",
-    "login": "Se connecter"
+    "login": "Se connecter",
+    "cancellableUntil": "Billets annulables et remboursables jusqu'au {{ date }}.",
+    "notRefundable": "Billets non remboursables."
   },
   "errors": {
     "generic": "Une erreur est survenue. Réessayez.",
@@ -297,7 +299,14 @@
     "priceHint": "Un nouveau prix ne s'applique qu'aux nouvelles réservations.",
     "notEditable": "Cet événement ne peut plus être modifié.",
     "seatsBelowSold": "Il ne peut pas y avoir moins de places que celles déjà réservées.",
-    "ticketInUse": "Cette catégorie a des réservations : elle ne peut pas être retirée."
+    "ticketInUse": "Cette catégorie a des réservations : elle ne peut pas être retirée.",
+    "cancellationDays": "Annulation par l'acheteur (jours avant l'événement)",
+    "cancellationDaysHint": "Jusqu'à combien de jours avant le début un acheteur peut annuler son billet et être remboursé. 0 : billets non remboursables. Après une vente, ce délai peut être allongé, plus raccourci.",
+    "cancellationDaysInvalid": "Entre 0 et 365 jours.",
+    "cancellationLocked": "Des billets sont déjà vendus : le délai d'annulation peut être allongé, mais plus raccourci.",
+    "cancellation": "Annulation",
+    "notRefundable": "Billets non remboursables",
+    "refundableDays": "Remboursable jusqu'à {{ days }} jour(s) avant le début"
   },
   "payment": {
     "title": "Paiement",
@@ -425,7 +434,14 @@
     "past": "Passées",
     "pay": "Payer",
     "checkedInAt": "entrée le {{ time }}",
-    "qrLabel": "QR code du billet pour {{ event }}"
+    "qrLabel": "QR code du billet pour {{ event }}",
+    "cancellableUntil": "Annulable jusqu'au {{ date }}",
+    "cancel": "Annuler et me faire rembourser",
+    "cancelTitle": "Annuler votre billet ?",
+    "cancelConfirm": "Votre billet pour « {{ event }} » sera annulé et vous serez remboursé de son prix (sous 5 à 10 jours). Cette action est définitive.",
+    "keep": "Garder mon billet",
+    "cancellationClosed": "Ce billet ne peut plus être annulé.",
+    "notCancellable": "Ce billet ne peut pas être annulé."
   },
   "checkIn": {
     "title": "Entrées",
@@ -502,6 +518,7 @@
     "keepLink": "Gardez ce lien : c'est votre accès à la réservation (il vous a aussi été envoyé par e-mail). Sans paiement rapide, la place est remise en vente.",
     "showAtDoor": "Montrez ce QR code à l'entrée. Il est aussi joint à l'e-mail de confirmation.",
     "cancelled": "L'événement a été annulé : cette réservation n'est plus valable.",
-    "notFound": "Ce lien de réservation est inconnu."
+    "notFound": "Ce lien de réservation est inconnu.",
+    "refunded": "Cette réservation a été remboursée. Le remboursement arrive en général sous 5 à 10 jours."
   }
 }

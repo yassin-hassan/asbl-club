@@ -55,7 +55,8 @@ class ApiV1Controller {
                 .toList();
         Asbl asbl = event.getAsbl();
         return new PublicEvent(event.getId(), event.getTitle(), event.getDescription(), event.getStartsAt(),
-                event.getLocation(), new AsblResource(asbl.getSlug(), asbl.getDenomination()), tickets);
+                event.getLocation(), new AsblResource(asbl.getSlug(), asbl.getDenomination()),
+                event.cancellableUntil().orElse(null), tickets);
     }
 
     @Operation(operationId = "getEventAvailability", summary = "Remaining seats per ticket category of a public event")

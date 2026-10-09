@@ -166,7 +166,7 @@ public class PaymentService {
     // fails, nothing here changes, the webhook answers 5xx and Stripe sends it again. The idempotency key makes that
     // retried refund return the first one instead of refunding twice.
     private void refundUnwanted(Payment payment, Registration registration, String paymentIntentId) {
-        refundAtStripe(payment);
+        refundAtStripe(payment, true);
         RegistrationStatus bookingWas = registration.getStatus();
         String bookingStatus = bookingWas.name();
         payment.setStatus(PaymentStatus.REFUNDED);
@@ -194,7 +194,7 @@ public class PaymentService {
         Payment payment = paymentRepository.findByPayableId(ticket.getId())
                 .filter(p -> p.getStatus() == PaymentStatus.SUCCEEDED)
                 .orElseThrow(() -> new IllegalStateException("Paid ticket " + registrationId + " has no payment"));
-        refundAtStripe(payment);
+        refundAtStripe(payment, true);
         payment.setStatus(PaymentStatus.REFUNDED);
         ticket.setStatus(RegistrationStatus.REFUNDED);
         auditService.recordSystem("PAYMENT_REFUNDED", payment.getAsbl(), "Payment", payment.getId(),
@@ -204,21 +204,51 @@ public class PaymentService {
         return true;
     }
 
-    // The whole payment back to the payer, the platform's commission included. The idempotency key makes a retried
-    // call return the first refund instead of making a second one.
-    private void refundAtStripe(Payment payment) {
+    // The buyer cancels their ticket within the event's cancellation delay: the seat goes back on sale and the whole
+    // price goes back to them. The platform keeps its commission: the association chose to offer cancellations, so
+    // it bears that cost (Stripe keeps its own fee on a refund either way). Same order as above: lock, check, Stripe
+    // first; if Stripe fails, nothing changes and the person can simply try again.
+    @Transactional
+    public void cancelByBuyer(Long registrationId) {
+        Registration ticket = registrationRepository.findById(registrationId).orElseThrow();
+        entityManager.refresh(ticket, LockModeType.PESSIMISTIC_WRITE);
+        if (ticket.getStatus() != RegistrationStatus.PAID
+                || ticket.getEvent().getStatus() != EventStatus.PUBLISHED) {
+            throw new NotCancellableException();
+        }
+        if (ticket.getEvent().cancellableUntil().filter(until -> !Instant.now().isAfter(until)).isEmpty()) {
+            throw new CancellationClosedException();
+        }
+        Payment payment = paymentRepository.findByPayableId(ticket.getId())
+                .filter(p -> p.getStatus() == PaymentStatus.SUCCEEDED)
+                .orElseThrow(() -> new IllegalStateException("Paid ticket " + registrationId + " has no payment"));
+        refundAtStripe(payment, false);
+        payment.setStatus(PaymentStatus.REFUNDED);
+        ticket.setStatus(RegistrationStatus.REFUNDED);
+        eventService.releaseSeat(ticket.getTicketCategory().getId());
+        auditService.record("BOOKING_CANCELLED", ticket.getEvent().getAsbl(), "Registration", ticket.getId(),
+                Map.of("event", ticket.getEvent().getId(), "ticket", ticket.getTicketCategory().getLabel()));
+        auditService.recordSystem("PAYMENT_REFUNDED", payment.getAsbl(), "Payment", payment.getId(),
+                Map.of("paymentIntentId", payment.getStripePaymentIntentId(), "amount", payment.getAmount(),
+                        "reason", "cancelled by buyer", "commissionKept", true));
+        bookingEmails.cancelledByBuyer(ticket);
+    }
+
+    // The whole payment back to the payer; with the platform's commission too when withCommission. The idempotency
+    // key makes a retried call return the first refund instead of making a second one.
+    private void refundAtStripe(Payment payment, boolean withCommission) {
         RequestOptions options = RequestOptions.builder()
                 .setStripeAccount(payment.getAsbl().getStripeAccountId())
                 .setIdempotencyKey("refund-" + payment.getId())
                 .build();
         RefundCreateParams params = RefundCreateParams.builder()
                 .setPaymentIntent(payment.getStripePaymentIntentId())
-                .setRefundApplicationFee(true)
+                .setRefundApplicationFee(withCommission)
                 .build();
         try {
             stripe.refunds().create(params, options);
         } catch (StripeException e) {
-            throw new IllegalStateException("Stripe refused to refund " + payment.getStripePaymentIntentId(), e);
+            throw new RefundFailedException("Stripe refused to refund " + payment.getStripePaymentIntentId(), e);
         }
     }
 

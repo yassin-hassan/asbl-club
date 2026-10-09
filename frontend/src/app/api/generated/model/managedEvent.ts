@@ -18,6 +18,10 @@ export interface ManagedEvent {
     location?: string;
     status: ManagedEventStatusEnum;
     visibility: ManagedEventVisibilityEnum;
+    /**
+     * Until how many days before the start buyers may cancel; 0: never
+     */
+    cancellationDays: number;
     canManage: boolean;
     /**
      * Administrators and treasurers see who booked

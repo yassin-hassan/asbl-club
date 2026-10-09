@@ -83,7 +83,8 @@ class EventManagementController {
             Authentication authentication) {
         Access access = asAdmin(slug, authentication);
         Event event = eventService.createEvent(access.asbl(), request.title(), request.description(),
-                request.startsAt(), request.location(), request.visibility());
+                request.startsAt(), request.location(), request.visibility(),
+                request.cancellationDays() == null ? 0 : request.cancellationDays());
         return ResponseEntity.created(URI.create("/api/v1/asbls/" + slug + "/manage/events/" + event.getId()))
                 .body(detail(event, true));
     }
@@ -123,14 +124,14 @@ class EventManagementController {
     @Operation(operationId = "updateEvent", summary = "Edit a draft or published event (administrators)",
             security = @SecurityRequirement(name = "bearer"))
     @ApiResponse(responseCode = "200", description = "The updated event", content = @Content(schema = @Schema(implementation = Detail.class)))
-    @ApiResponse(responseCode = "409", description = "Cancelled or past event (EVENT_NOT_EDITABLE)",
+    @ApiResponse(responseCode = "409", description = "Cancelled or past event (EVENT_NOT_EDITABLE), or a shorter cancellation delay once tickets are sold (CANCELLATION_DAYS_LOCKED)",
             content = @Content(mediaType = "application/problem+json"))
     @PutMapping("/{eventId}")
     Detail update(@PathVariable String slug, @PathVariable Long eventId, @Valid @RequestBody CreateEventRequest request,
             Authentication authentication) {
         Event event = eventOf(asAdmin(slug, authentication), eventId);
         lifecycle(() -> eventService.update(event, request.title(), request.description(), request.startsAt(),
-                request.location(), request.visibility()));
+                request.location(), request.visibility(), request.cancellationDays()));
         return detail(event, true);
     }
 
@@ -198,6 +199,9 @@ class EventManagementController {
             throw conflict("SEATS_BELOW_SOLD", "There can't be fewer seats than those already taken.");
         } catch (TicketInUseException e) {
             throw conflict("TICKET_IN_USE", "This ticket category has bookings and can't be removed.");
+        } catch (CancellationDaysLockedException e) {
+            throw conflict("CANCELLATION_DAYS_LOCKED",
+                    "Tickets are sold: the cancellation delay can be made longer, not shorter.");
         }
     }
 
@@ -217,7 +221,8 @@ class EventManagementController {
                 .map(t -> new Ticket(t.id(), t.label(), t.price(), t.totalSeats(), t.soldSeats()))
                 .toList();
         return new Detail(event.getId(), event.getTitle(), event.getDescription(), event.getStartsAt(),
-                event.getLocation(), event.getStatus().name(), event.getVisibility().name(), canManage, canSeeAttendees, tickets);
+                event.getLocation(), event.getStatus().name(), event.getVisibility().name(), event.getCancellationDays(),
+                canManage, canSeeAttendees, tickets);
     }
 
     // The event must belong to this association: an ID from another association is simply not found here.

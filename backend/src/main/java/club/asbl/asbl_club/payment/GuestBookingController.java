@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.time.Instant;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -95,6 +96,19 @@ class GuestBookingController {
         return bookingCheckout.start(registration, registration.getGuestName(), registration.getGuestEmail(), null);
     }
 
+    @Operation(operationId = "cancelGuestBooking", summary = "Cancel a guest's paid ticket and be refunded")
+    @ApiResponse(responseCode = "200", description = "Cancelled and refunded",
+            content = @Content(schema = @Schema(implementation = GuestBooking.class)))
+    @ApiResponse(responseCode = "409", description = "The delay has passed or tickets aren't refundable (CANCELLATION_CLOSED), or not a paid unused ticket of an event still on (NOT_CANCELLABLE)",
+            content = @Content(mediaType = "application/problem+json"))
+    @ApiResponse(responseCode = "502", description = "The payment provider couldn't be reached",
+            content = @Content(mediaType = "application/problem+json"))
+    @PostMapping("/api/v1/guest-bookings/{token}/cancel")
+    GuestBooking cancel(@PathVariable String token) {
+        bookingCheckout.cancel(byToken(token));
+        return view(byToken(token));
+    }
+
     // An unknown or malformed link is simply "not found" (and a link never opens an account holder's booking).
     private Registration byToken(String token) {
         if (token == null || token.length() > 64) {
@@ -113,6 +127,6 @@ class GuestBookingController {
         return new GuestBooking(r.getStatus().name(), r.getGuestName(), r.getGuestEmail(), r.getAmount(),
                 r.getCurrency(), event.getId(), event.getTitle(), event.getStartsAt(), event.getLocation(),
                 event.getAsbl().getDenomination(), r.getTicketCategory().getLabel(), ticket ? r.getQrToken() : null,
-                r.getCheckinAt());
+                r.getCheckinAt(), r.cancellableUntil(Instant.now()).orElse(null));
     }
 }

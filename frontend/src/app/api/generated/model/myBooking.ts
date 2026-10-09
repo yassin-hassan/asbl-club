@@ -29,6 +29,10 @@ export interface MyBooking {
      */
     ticketCode?: string;
     checkedInAt?: string;
+    /**
+     * Until when this ticket can still be cancelled and refunded; absent: it can\'t
+     */
+    cancellableUntil?: string;
 }
 export enum MyBookingStatusEnum {
     Reserved = 'RESERVED',

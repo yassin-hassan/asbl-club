@@ -51,6 +51,14 @@
         </table>
       </div>
       <p class="hint">{{ 'event.refreshHint' | transloco }}</p>
+      <!-- The refund policy, shown before buying. -->
+      <p>
+        @if (event.cancellableUntil) {
+          {{ 'event.cancellableUntil' | transloco: { date: (event.cancellableUntil | date: 'longDate' : undefined : lang()) } }}
+        } @else {
+          {{ 'event.notRefundable' | transloco }}
+        }
+      </p>
 
       @if (bookError(); as error) {
         <p class="error" role="alert">{{ error | transloco }}</p>
