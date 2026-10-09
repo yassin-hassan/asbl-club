@@ -17,6 +17,13 @@ export interface ManagedTicket {
      */
     price: number;
     totalSeats: number;
+    /**
+     * Seats taken: paid, or held while being paid
+     */
     soldSeats: number;
+    /**
+     * Of the seats taken, those held by bookings still being paid (freed if not paid in time)
+     */
+    pendingSeats: number;
 }
 

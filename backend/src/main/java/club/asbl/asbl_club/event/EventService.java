@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -273,5 +274,12 @@ public class EventService {
                 .map(c -> new TicketCategorySummary(c.getId(), c.getLabel(), c.getPrice(),
                         c.getTotalSeats(), c.getSoldSeats()))
                 .toList();
+    }
+
+    // Per category: the seats held by bookings still being paid (counted in the category's sold seats).
+    @Transactional(readOnly = true)
+    public Map<Long, Integer> pendingSeatsOf(Event event) {
+        return ticketCategoryRepository.countPendingByCategory(event.getId()).stream()
+                .collect(Collectors.toMap(row -> ((Number) row[0]).longValue(), row -> ((Number) row[1]).intValue()));
     }
 }

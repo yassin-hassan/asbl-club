@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
+import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -217,8 +218,10 @@ class EventManagementController {
     }
 
     private Detail detail(Event event, boolean canManage, boolean canSeeAttendees) {
+        Map<Long, Integer> pending = eventService.pendingSeatsOf(event);
         var tickets = eventService.ticketCategoriesOf(event).stream()
-                .map(t -> new Ticket(t.id(), t.label(), t.price(), t.totalSeats(), t.soldSeats()))
+                .map(t -> new Ticket(t.id(), t.label(), t.price(), t.totalSeats(), t.soldSeats(),
+                        pending.getOrDefault(t.id(), 0)))
                 .toList();
         return new Detail(event.getId(), event.getTitle(), event.getDescription(), event.getStartsAt(),
                 event.getLocation(), event.getStatus().name(), event.getVisibility().name(), event.getCancellationDays(),

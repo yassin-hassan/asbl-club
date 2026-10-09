@@ -276,7 +276,7 @@
     "ticketLabel": "Label",
     "price": "Price",
     "seats": "Seats",
-    "sold": "Sold",
+    "sold": "Seats",
     "draftHint": "Draft: hidden from the public until published.",
     "submitting": "Saving…",
     "required": "This field is required.",
@@ -322,7 +322,10 @@
     "cancellationLocked": "Tickets are already sold: the cancellation delay can be made longer, but not shorter.",
     "cancellation": "Cancellation",
     "notRefundable": "Tickets not refundable",
-    "refundableDays": "Refundable until {{ days }} day(s) before the start"
+    "refundableDays": "Refundable until {{ days }} day(s) before the start",
+    "seatsPaid": "{{ count }} paid",
+    "seatsPending": "{{ count }} being paid",
+    "seatsFree": "{{ count }} free of {{ total }}"
   },
   "payment": {
     "title": "Payment",
