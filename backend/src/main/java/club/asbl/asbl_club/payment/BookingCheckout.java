@@ -57,7 +57,14 @@ class BookingCheckout {
         } catch (CancellationClosedException e) {
             throw conflict("CANCELLATION_CLOSED", "This ticket can't be cancelled any more (or never could).");
         } catch (RefundFailedException e) {
-            log.warn("Refund of cancelled ticket {} failed: {}", registration.getId(), e.getMessage());
+            log.warn("Refund of cancelled ticket {} failed: {}", registration.getId(), e.getCause().getMessage());
+            if (e.isRefused()) {
+                // Stripe answered no: trying again won't help; the association has to look at its Stripe account.
+                ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_GATEWAY,
+                        "The payment provider refused the refund.");
+                problem.setProperty("code", "REFUND_REFUSED");
+                throw new ErrorResponseException(HttpStatus.BAD_GATEWAY, problem, null);
+            }
             throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "The payment provider couldn't be reached.");
         }
     }

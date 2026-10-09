@@ -457,7 +457,8 @@
     "cancelConfirm": "Votre billet pour « {{ event }} » sera annulé et vous serez remboursé de son prix (sous 5 à 10 jours). Cette action est définitive.",
     "keep": "Garder mon billet",
     "cancellationClosed": "Ce billet ne peut plus être annulé.",
-    "notCancellable": "Ce billet ne peut pas être annulé."
+    "notCancellable": "Ce billet ne peut pas être annulé.",
+    "refundRefused": "Le remboursement a été refusé par le service de paiement. Votre billet reste valable ; contactez l’association."
   },
   "checkIn": {
     "title": "Entrées",

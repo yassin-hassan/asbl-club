@@ -104,7 +104,8 @@ class GuestBookingController {
             content = @Content(schema = @Schema(implementation = GuestBooking.class)))
     @ApiResponse(responseCode = "409", description = "The delay has passed or tickets aren't refundable (CANCELLATION_CLOSED), or not a paid unused ticket of an event still on (NOT_CANCELLABLE)",
             content = @Content(mediaType = "application/problem+json"))
-    @ApiResponse(responseCode = "502", description = "The payment provider couldn't be reached",
+    @ApiResponse(responseCode = "502", description = "The payment provider couldn't be reached (try again), or "
+            + "refused the refund (REFUND_REFUSED: trying again won't help)",
             content = @Content(mediaType = "application/problem+json"))
     @PostMapping("/api/v1/guest-bookings/{token}/cancel")
     GuestBooking cancel(@PathVariable String token) {

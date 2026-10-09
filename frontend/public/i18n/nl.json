@@ -457,7 +457,8 @@
     "cancelConfirm": "Je ticket voor “{{ event }}” wordt geannuleerd en je krijgt de prijs terug (binnen 5 tot 10 dagen). Dit kan niet ongedaan gemaakt worden.",
     "keep": "Mijn ticket houden",
     "cancellationClosed": "Dit ticket kan niet meer geannuleerd worden.",
-    "notCancellable": "Dit ticket kan niet geannuleerd worden."
+    "notCancellable": "Dit ticket kan niet geannuleerd worden.",
+    "refundRefused": "De terugbetaling werd geweigerd door de betaaldienst. Uw ticket blijft geldig; neem contact op met de vereniging."
   },
   "checkIn": {
     "title": "Toegang",

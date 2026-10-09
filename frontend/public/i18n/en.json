@@ -457,7 +457,8 @@
     "cancelConfirm": "Your ticket for “{{ event }}” will be cancelled and its price refunded to you (within 5 to 10 days). This can’t be undone.",
     "keep": "Keep my ticket",
     "cancellationClosed": "This ticket can no longer be cancelled.",
-    "notCancellable": "This ticket can’t be cancelled."
+    "notCancellable": "This ticket can’t be cancelled.",
+    "refundRefused": "The payment service refused the refund. Your ticket is still valid; please contact the association."
   },
   "checkIn": {
     "title": "Check-in",

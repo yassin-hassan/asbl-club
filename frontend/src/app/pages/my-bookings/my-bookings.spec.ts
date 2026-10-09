@@ -36,4 +36,8 @@ describe('cancellationErrorKey', () => {
   it('says when the payment provider is unreachable (nothing was changed: try again)', () => {
     expect(cancellationErrorKey(refused(502))).toBe('payment.providerDown');
   });
+
+  it('says when the payment provider refused the refund (trying again won\'t help)', () => {
+    expect(cancellationErrorKey(refused(502, 'REFUND_REFUSED'))).toBe('bookings.refundRefused');
+  });
 });
