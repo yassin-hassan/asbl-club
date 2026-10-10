@@ -56,14 +56,16 @@
             <td mat-cell *matCellDef="let ticket">{{ ticket.price | currency: 'EUR' : 'symbol' : '1.2-2' : lang() }}</td>
           </ng-container>
           <ng-container matColumnDef="sold">
-            <th mat-header-cell *matHeaderCellDef>{{ (event.canSeeAttendees ? 'manage.sold' : 'manage.availability') | transloco }}</th>
+            <th mat-header-cell *matHeaderCellDef>{{ (event.canSeeSales ? 'manage.sold' : 'manage.availability') | transloco }}</th>
             <td mat-cell *matCellDef="let ticket" class="seats">
               @let seats = seatsOf(ticket);
-              @if (event.canSeeAttendees) {
-                <!-- Those who follow the sales: paid, being paid, free. -->
+              @if (event.canSeeSales) {
+                <!-- Those who follow the activity: paid, being paid, free. -->
                 {{ 'manage.seatsPaid' | transloco: { count: seats.paid } }} ·
                 <span [class.pending]="seats.pending > 0">{{ 'manage.seatsPending' | transloco: { count: seats.pending } }}</span> ·
                 {{ 'manage.seatsFree' | transloco: { count: seats.free, total: ticket.totalSeats } }}
+              } @else if (over(event)) {
+                <span class="tag">{{ 'event.over' | transloco }}</span>
               } @else if (seats.free > 0) {
                 <span class="tag ok">{{ 'manage.available' | transloco }}</span>
               } @else {
@@ -78,7 +80,7 @@
                 <span class="tag">{{ 'event.over' | transloco }}</span>
               } @else if (ticket.soldSeats < ticket.totalSeats) {
                 <button mat-flat-button type="button" (click)="book(ticket)" [disabled]="saving()">{{ 'manage.book' | transloco }}</button>
-              } @else if (event.canSeeAttendees) {
+              } @else if (event.canSeeSales) {
                 <!-- Members already see a red « Complet » in the availability column. -->
                 <span class="tag">{{ 'manage.full' | transloco }}</span>
               }

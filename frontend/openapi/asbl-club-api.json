@@ -1380,7 +1380,7 @@
     "/api/v1/asbls/{slug}/manage/events" : {
       "get" : {
         "tags" : [ "Event management" ],
-        "summary" : "All the association's events, drafts included (members)",
+        "summary" : "The association's events: all of them (drafts, past and cancelled included) for administrators, treasurers and readers; the published ones still to come for plain members",
         "operationId" : "listManagedEvents",
         "parameters" : [ {
           "name" : "slug",
@@ -2586,7 +2586,7 @@
         }
       },
       "ManagedEvent" : {
-        "required" : [ "canManage", "canSeeAttendees", "cancellationDays", "id", "startsAt", "status", "tickets", "title", "visibility" ],
+        "required" : [ "canManage", "canSeeAttendees", "canSeeSales", "cancellationDays", "id", "startsAt", "status", "tickets", "title", "visibility" ],
         "type" : "object",
         "properties" : {
           "id" : {
@@ -2625,6 +2625,10 @@
           "canSeeAttendees" : {
             "type" : "boolean",
             "description" : "Administrators and treasurers see who booked"
+          },
+          "canSeeSales" : {
+            "type" : "boolean",
+            "description" : "Administrators, treasurers and readers see how the sales stand (paid / being paid / free); plain members see whether seats are left"
           },
           "tickets" : {
             "type" : "array",

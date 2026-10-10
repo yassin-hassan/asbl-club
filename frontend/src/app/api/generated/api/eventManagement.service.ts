@@ -583,7 +583,7 @@ export class EventManagementService extends BaseService {
     }
 
     /**
-     * All the association\&#39;s events, drafts included (members)
+     * The association\&#39;s events: all of them (drafts, past and cancelled included) for administrators, treasurers and readers; the published ones still to come for plain members
      * @endpoint get /api/v1/asbls/{slug}/manage/events
      * @param slug 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.

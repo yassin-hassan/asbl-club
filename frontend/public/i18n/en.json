@@ -327,7 +327,13 @@
     "seatsPending": "{{ count }} being paid",
     "seatsFree": "{{ count }} free of {{ total }}",
     "available": "Available",
-    "availability": "Availability"
+    "availability": "Availability",
+    "sections": {
+      "upcoming": "Upcoming",
+      "drafts": "Drafts",
+      "past": "Past",
+      "cancelled": "Cancelled"
+    }
   },
   "payment": {
     "title": "Payment",

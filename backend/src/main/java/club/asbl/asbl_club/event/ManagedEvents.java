@@ -44,6 +44,9 @@ public final class ManagedEvents {
             @Schema(requiredMode = REQUIRED) boolean canManage,
             @Schema(requiredMode = REQUIRED, description = "Administrators and treasurers see who booked")
             boolean canSeeAttendees,
+            @Schema(requiredMode = REQUIRED, description = "Administrators, treasurers and readers see how the sales "
+                    + "stand (paid / being paid / free); plain members see whether seats are left")
+            boolean canSeeSales,
             @Schema(requiredMode = REQUIRED) List<Ticket> tickets) {
     }
 

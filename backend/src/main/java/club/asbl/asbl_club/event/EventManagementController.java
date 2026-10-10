@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
+import java.time.Instant;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -62,14 +63,27 @@ class EventManagementController {
         boolean seesAttendees() {
             return admin() || "TREASURER".equals(role);
         }
+
+        // Those who follow the association's activity (administrators, the treasurer, readers) see every event and
+        // how its sales stand. A plain member sees what they can go to: published events still to come.
+        boolean followsActivity() {
+            return seesAttendees() || "VIEWER".equals(role);
+        }
     }
 
-    @Operation(operationId = "listManagedEvents", summary = "All the association's events, drafts included (members)",
-            security = @SecurityRequirement(name = "bearer"))
+    // What a plain member may see: a published event that hasn't started.
+    private static boolean upcoming(String status, Instant startsAt) {
+        return "PUBLISHED".equals(status) && startsAt.isAfter(Instant.now());
+    }
+
+    @Operation(operationId = "listManagedEvents", summary = "The association's events: all of them (drafts, past and "
+            + "cancelled included) for administrators, treasurers and readers; the published ones still to come for "
+            + "plain members", security = @SecurityRequirement(name = "bearer"))
     @GetMapping
     EventList list(@PathVariable String slug, Authentication authentication) {
         Access access = asMember(slug, authentication);
         var events = eventService.eventsOf(access.asbl()).stream()
+                .filter(e -> access.followsActivity() || upcoming(e.status(), e.startsAt()))
                 .map(e -> new Item(e.id(), e.title(), e.startsAt(), e.status(), e.visibility()))
                 .toList();
         return new EventList(access.asbl().getSlug(), access.asbl().getDenomination(), access.admin(), events);
@@ -95,7 +109,12 @@ class EventManagementController {
     @GetMapping("/{eventId}")
     Detail get(@PathVariable String slug, @PathVariable Long eventId, Authentication authentication) {
         Access access = asMember(slug, authentication);
-        return detail(eventOf(access, eventId), access.admin(), access.seesAttendees());
+        Event event = eventOf(access, eventId);
+        // A draft, a past or a cancelled event is "not found" for a plain member, as it isn't in their list.
+        if (!access.followsActivity() && !upcoming(event.getStatus().name(), event.getStartsAt())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        return detail(event, access.admin(), access.seesAttendees(), access.followsActivity());
     }
 
     @Operation(operationId = "addTicketCategory", summary = "Add a ticket category to an event (administrators)",
@@ -214,19 +233,20 @@ class EventManagementController {
 
     // Every caller but the read endpoint is an administrator.
     private Detail detail(Event event, boolean canManage) {
-        return detail(event, canManage, canManage);
+        return detail(event, canManage, canManage, canManage);
     }
 
-    private Detail detail(Event event, boolean canManage, boolean canSeeAttendees) {
-        // How the sales stand (paid / being paid) is for those who follow them; other members see what's left.
-        Map<Long, Integer> pending = canSeeAttendees ? eventService.pendingSeatsOf(event) : Map.of();
+    private Detail detail(Event event, boolean canManage, boolean canSeeAttendees, boolean canSeeSales) {
+        // How the sales stand (paid / being paid) is for those who follow the activity; other members see what's
+        // left.
+        Map<Long, Integer> pending = canSeeSales ? eventService.pendingSeatsOf(event) : Map.of();
         var tickets = eventService.ticketCategoriesOf(event).stream()
                 .map(t -> new Ticket(t.id(), t.label(), t.price(), t.totalSeats(), t.soldSeats(),
-                        canSeeAttendees ? pending.getOrDefault(t.id(), 0) : null))
+                        canSeeSales ? pending.getOrDefault(t.id(), 0) : null))
                 .toList();
         return new Detail(event.getId(), event.getTitle(), event.getDescription(), event.getStartsAt(),
                 event.getLocation(), event.getStatus().name(), event.getVisibility().name(), event.getCancellationDays(),
-                canManage, canSeeAttendees, tickets);
+                canManage, canSeeAttendees, canSeeSales, tickets);
     }
 
     // The event must belong to this association: an ID from another association is simply not found here.

@@ -14,15 +14,19 @@
 
     @if (list.events.length === 0) {
       <p class="empty">{{ 'manage.none' | transloco }}</p>
-    } @else {
+    }
+    <!-- Upcoming, drafts, past, cancelled: a plain member only ever gets the first (the API sends nothing else). -->
+    @for (section of sections(); track section.key) {
+      <h2 class="section">{{ 'manage.sections.' + section.key | transloco }}</h2>
       <div class="row-list">
-        @for (event of list.events; track event.id) {
+        @for (event of section.events; track event.id) {
           <a class="row-link" [routerLink]="['/asbls', slug, 'manage', 'events', event.id]">
             <span>
               <span class="title">{{ event.title }}</span>
               <span class="meta">
                 {{ event.startsAt | date: 'medium' : undefined : lang() }}
-                <span class="tag" [class.ok]="event.status === 'PUBLISHED'">{{ 'manage.statuses.' + event.status | transloco }}</span>
+                <!-- A published event that is over reads « Terminé », not « Publié ». -->
+                <span class="tag" [class.ok]="section.key === 'upcoming'">{{ 'manage.statuses.' + (section.key === 'past' ? 'ENDED' : event.status) | transloco }}</span>
                 <span class="tag warm">{{ 'manage.visibilities.' + event.visibility | transloco }}</span>
               </span>
             </span>

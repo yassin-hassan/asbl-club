@@ -327,7 +327,13 @@
     "seatsPending": "{{ count }} in betaling",
     "seatsFree": "{{ count }} vrij van {{ total }}",
     "available": "Beschikbaar",
-    "availability": "Beschikbaarheid"
+    "availability": "Beschikbaarheid",
+    "sections": {
+      "upcoming": "Gepland",
+      "drafts": "Concepten",
+      "past": "Voorbij",
+      "cancelled": "Geannuleerd"
+    }
   },
   "payment": {
     "title": "Betaling",
