@@ -2635,7 +2635,7 @@
         }
       },
       "ManagedTicket" : {
-        "required" : [ "id", "label", "pendingSeats", "price", "soldSeats", "totalSeats" ],
+        "required" : [ "id", "label", "price", "soldSeats", "totalSeats" ],
         "type" : "object",
         "properties" : {
           "id" : {
@@ -2660,7 +2660,7 @@
           },
           "pendingSeats" : {
             "type" : "integer",
-            "description" : "Of the seats taken, those held by bookings still being paid (freed if not paid in time)",
+            "description" : "Of the seats taken, those held by bookings still being paid (freed if not paid in time). Only for administrators and treasurers: the other members see whether seats are left",
             "format" : "int32"
           }
         }

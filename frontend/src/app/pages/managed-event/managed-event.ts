@@ -33,9 +33,11 @@ export interface Seats {
 // A category's seats, for the people running the event: paid, held by a booking still being paid (freed if it
 // isn't paid in time), and free. The taken seats count both of the first two.
 export function seatsOf(ticket: Pick<ManagedTicket, 'totalSeats' | 'soldSeats' | 'pendingSeats'>): Seats {
+  // Absent for members who don't follow the sales: they only see whether seats are free.
+  const pending = ticket.pendingSeats ?? 0;
   return {
-    paid: ticket.soldSeats - ticket.pendingSeats,
-    pending: ticket.pendingSeats,
+    paid: ticket.soldSeats - pending,
+    pending,
     free: ticket.totalSeats - ticket.soldSeats,
   };
 }

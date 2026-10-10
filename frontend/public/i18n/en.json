@@ -325,7 +325,9 @@
     "refundableDays": "Refundable until {{ days }} day(s) before the start",
     "seatsPaid": "{{ count }} paid",
     "seatsPending": "{{ count }} being paid",
-    "seatsFree": "{{ count }} free of {{ total }}"
+    "seatsFree": "{{ count }} free of {{ total }}",
+    "available": "Available",
+    "availability": "Availability"
   },
   "payment": {
     "title": "Payment",
