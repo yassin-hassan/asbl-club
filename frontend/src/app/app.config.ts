@@ -4,6 +4,7 @@ import localeFr from '@angular/common/locales/fr';
 import localeNl from '@angular/common/locales/nl';
 import { provideRouter, withNavigationErrorHandler } from '@angular/router';
 import { MatIconRegistry } from '@angular/material/icon';
+import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } from '@angular/material/core';
 import { provideHttpClient, withInterceptors, withXhr } from '@angular/common/http';
 
 import { routes } from './app.routes';
@@ -24,6 +25,9 @@ registerLocaleData(localeNl);
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
+    // A field shows its error once the person has typed something wrong, or tried to send the form: not as soon as
+    // they click into an empty required field and out again (Material's default, which reads as a reproach).
+    { provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher },
     // A tab left open during a deploy can't load the new pages' code: reload once to get the new version.
     provideRouter(
       routes,
