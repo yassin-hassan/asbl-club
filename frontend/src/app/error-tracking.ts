@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorHandler } from '@angular/core';
 import type { Breadcrumb, BrowserOptions, ErrorEvent, EventHint } from '@sentry/angular';
+import { isReloadingForNewVersion } from './services/new-version';
 
 // Error tracking in the browser (Sentry, EU region): an Angular crash becomes an issue in Sentry, which emails an
 // alert. The backend reports its own errors (with the request ID), so API errors aren't reported again from here.
@@ -40,9 +41,19 @@ export function withoutFragment(url: string): string {
   return hash === -1 ? url : url.slice(0, hash);
 }
 
-export function withoutApiErrorsOrFragments(event: ErrorEvent, hint: EventHint): ErrorEvent | null {
+export function withoutApiErrorsOrFragments(
+  event: ErrorEvent,
+  hint: EventHint,
+  reloadingForNewVersion = isReloadingForNewVersion(),
+): ErrorEvent | null {
   if (hint.originalException instanceof HttpErrorResponse) {
     return null; // the server's to report (or not a bug: offline, 401, 404…)
+  }
+  if (reloadingForNewVersion) {
+    // A tab left open during a deploy asked for code that is gone, and the page is already reloading into the
+    // new version (services/new-version.ts): nothing broken. When the reload doesn't fix it (twice in a row, a
+    // really broken file), the page doesn't reload, and the error is reported.
+    return null;
   }
   if (event.request?.url) {
     event.request.url = withoutFragment(event.request.url);

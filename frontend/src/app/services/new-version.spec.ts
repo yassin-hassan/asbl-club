@@ -1,5 +1,5 @@
 import { NavigationError } from '@angular/router';
-import { reloadForNewVersion } from './new-version';
+import { isReloadingForNewVersion, reloadForNewVersion } from './new-version';
 
 describe('reloadForNewVersion', () => {
   const missingChunk = (url: string) =>
@@ -10,8 +10,10 @@ describe('reloadForNewVersion', () => {
   it('reloads the page the user was going to when its code is missing (a deploy happened)', () => {
     const reloads: string[] = [];
 
+    expect(isReloadingForNewVersion()).toBe(false);
     expect(reloadForNewVersion(missingChunk('/asbls/club-demo/members'), (url) => reloads.push(url), 100_000)).toBe(true);
     expect(reloads).toEqual(['/asbls/club-demo/members']);
+    expect(isReloadingForNewVersion()).toBe(true); // so error tracking leaves this error out
   });
 
   it('does not reload again straight away, so a really broken file cannot cause a reload loop', () => {

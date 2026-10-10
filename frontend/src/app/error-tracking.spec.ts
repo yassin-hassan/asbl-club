@@ -42,6 +42,13 @@ describe('Error tracking', () => {
     expect(navigation?.data).toEqual({ from: '/verify-email', to: '/' });
   });
 
+  it('leaves out the missing-code error of a tab reloading into a new version, but not a really broken file', () => {
+    const missing = { exception: { values: [{ value: 'Failed to fetch dynamically imported module' }] } } as ErrorEvent;
+    const hint = { originalException: new TypeError('Failed to fetch dynamically imported module') };
+    expect(withoutApiErrorsOrFragments(missing, hint, true)).toBeNull();
+    expect(withoutApiErrorsOrFragments(missing, hint, false)).toBe(missing);
+  });
+
   it('leaves API errors to the server, and console messages out', () => {
     const apiError = new HttpErrorResponse({ status: 500, url: '/api/v1/me' });
     expect(withoutApiErrorsOrFragments({} as ErrorEvent, { originalException: apiError })).toBeNull();
