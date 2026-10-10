@@ -6,6 +6,9 @@ import { NavigationError } from '@angular/router';
 // Twice within a few seconds means the file is really broken: then the error is left alone (no reload loop).
 
 const LAST_RELOAD_KEY = 'asbl.reloadedForNewVersion';
+// True once this page has started reloading into the new version: the error that caused it is dealt with, and
+// isn't worth an error report (error tracking asks).
+let reloading = false;
 const LOOP_GUARD_MS = 10_000;
 
 // The browsers' wordings for "a lazily loaded page's code couldn't be fetched".
@@ -25,6 +28,11 @@ export function reloadForNewVersion(error: NavigationError, reloadAt: (url: stri
   } catch {
     return false; // storage unavailable: no way to guard against a loop, so don't reload
   }
+  reloading = true;
   reloadAt(error.url);
   return true;
+}
+
+export function isReloadingForNewVersion(): boolean {
+  return reloading;
 }
