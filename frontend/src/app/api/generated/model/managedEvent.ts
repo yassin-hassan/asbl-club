@@ -27,6 +27,10 @@ export interface ManagedEvent {
      * Administrators and treasurers see who booked
      */
     canSeeAttendees: boolean;
+    /**
+     * Administrators, treasurers and readers see how the sales stand (paid / being paid / free); plain members see whether seats are left
+     */
+    canSeeSales: boolean;
     tickets: Array<ManagedTicket>;
 }
 export enum ManagedEventStatusEnum {

@@ -115,19 +115,54 @@ class EventManagementIntegrationTest {
                 .andExpect(jsonPath("$.tickets[0].pendingSeats").value(0));
     }
 
+    // A plain member sees what they can go to: published events still to come. Drafts (the administrators' work in
+    // progress), past and cancelled events are "not found" for them, in the list and by their address.
     @Test
-    void aMember_readsEverythingIncludingDrafts_butCannotChangeAnything() throws Exception {
-        Integer id = JsonPath.read(createEvent(adminToken).andReturn().getResponse().getContentAsString(), "$.id");
+    void aPlainMember_seesOnlyPublishedEventsStillToCome() throws Exception {
+        Integer upcoming = publishedEvent("Concert", "2030-12-01T19:00:00Z");
+        Integer draft = JsonPath.read(createEvent(adminToken).andReturn().getResponse().getContentAsString(), "$.id");
+        Integer past = publishedEvent("Last year's party", "2030-11-01T19:00:00Z");
+        jdbcTemplate.update("UPDATE events SET starts_at = now() - interval '30 days' WHERE id = ?", past);
+        Integer cancelled = publishedEvent("Cancelled fair", "2030-10-01T19:00:00Z");
+        send(post(BASE + "/" + cancelled + "/cancel"), adminToken, "").andExpect(status().isOk());
 
         mockMvc.perform(get(BASE).header("Authorization", "Bearer " + memberToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.canManage").value(false))
-                .andExpect(jsonPath("$.events[0].status").value("DRAFT"));
-        mockMvc.perform(get(BASE + "/" + id).header("Authorization", "Bearer " + memberToken))
-                .andExpect(status().isOk());
+                .andExpect(jsonPath("$.events[*].id").value(org.hamcrest.Matchers.contains(upcoming)));
+        mockMvc.perform(get(BASE + "/" + upcoming).header("Authorization", "Bearer " + memberToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.canSeeSales").value(false));
+        for (Integer hidden : new Integer[] {draft, past, cancelled}) {
+            mockMvc.perform(get(BASE + "/" + hidden).header("Authorization", "Bearer " + memberToken))
+                    .andExpect(status().isNotFound());
+        }
 
         createEvent(memberToken).andExpect(status().isForbidden());
-        send(post(BASE + "/" + id + "/publish"), memberToken, "").andExpect(status().isForbidden());
+        send(post(BASE + "/" + draft + "/publish"), memberToken, "").andExpect(status().isForbidden());
+    }
+
+    // A reader follows the activity like an administrator (every event, how the sales stand), without changing
+    // anything, and without the attendee list (personal data).
+    @Test
+    void aReader_seesEveryEvent_andHowTheSalesStand_butChangesNothing() throws Exception {
+        Integer draft = JsonPath.read(createEvent(adminToken).andReturn().getResponse().getContentAsString(), "$.id");
+        Integer past = publishedEvent("Last year's party", "2030-11-01T19:00:00Z");
+        jdbcTemplate.update("UPDATE events SET starts_at = now() - interval '30 days' WHERE id = ?", past);
+        jdbcTemplate.update("UPDATE memberships SET role = 'VIEWER' WHERE user_id = "
+                + "(SELECT id FROM users WHERE email = 'member@club.test')");
+
+        mockMvc.perform(get(BASE).header("Authorization", "Bearer " + memberToken))
+                .andExpect(jsonPath("$.events.length()").value(2))
+                .andExpect(jsonPath("$.canManage").value(false));
+        mockMvc.perform(get(BASE + "/" + past).header("Authorization", "Bearer " + memberToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.canSeeSales").value(true))
+                .andExpect(jsonPath("$.canSeeAttendees").value(false))
+                .andExpect(jsonPath("$.tickets[0].pendingSeats").value(0));
+        mockMvc.perform(get(BASE + "/" + draft).header("Authorization", "Bearer " + memberToken))
+                .andExpect(status().isOk());
+        send(post(BASE + "/" + draft + "/publish"), memberToken, "").andExpect(status().isForbidden());
     }
 
     @Test
@@ -162,6 +197,17 @@ class EventManagementIntegrationTest {
     private Event eventServiceCreate(Asbl asbl) {
         return eventService.createEvent(asbl, "Foreign", null, Instant.parse("2030-12-01T19:00:00Z"),
                 null, "PUBLIC");
+    }
+
+    // A published event with one ticket category, by the administrator; its id.
+    private Integer publishedEvent(String title, String startsAt) throws Exception {
+        Integer id = JsonPath.read(send(post(BASE), adminToken, """
+                {"title": "%s", "startsAt": "%s", "visibility": "PUBLIC"}
+                """.formatted(title, startsAt)).andReturn().getResponse().getContentAsString(), "$.id");
+        send(post(BASE + "/" + id + "/tickets"), adminToken,
+                "{\"label\": \"Standard\", \"price\": 10, \"totalSeats\": 10}").andExpect(status().isCreated());
+        send(post(BASE + "/" + id + "/publish"), adminToken, "").andExpect(status().isOk());
+        return id;
     }
 
     private ResultActions createEvent(String token) throws Exception {

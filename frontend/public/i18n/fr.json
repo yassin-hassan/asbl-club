@@ -327,7 +327,13 @@
     "seatsPending": "{{ count }} en cours de paiement",
     "seatsFree": "{{ count }} libre(s) sur {{ total }}",
     "available": "Disponible",
-    "availability": "Disponibilité"
+    "availability": "Disponibilité",
+    "sections": {
+      "upcoming": "À venir",
+      "drafts": "Brouillons",
+      "past": "Passés",
+      "cancelled": "Annulés"
+    }
   },
   "payment": {
     "title": "Paiement",
