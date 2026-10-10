@@ -22,8 +22,8 @@ export interface ManagedTicket {
      */
     soldSeats: number;
     /**
-     * Of the seats taken, those held by bookings still being paid (freed if not paid in time)
+     * Of the seats taken, those held by bookings still being paid (freed if not paid in time). Only for administrators and treasurers: the other members see whether seats are left
      */
-    pendingSeats: number;
+    pendingSeats?: number;
 }
 

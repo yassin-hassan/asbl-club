@@ -325,7 +325,9 @@
     "refundableDays": "Terugbetaalbaar tot {{ days }} dag(en) voor de start",
     "seatsPaid": "{{ count }} betaald",
     "seatsPending": "{{ count }} in betaling",
-    "seatsFree": "{{ count }} vrij van {{ total }}"
+    "seatsFree": "{{ count }} vrij van {{ total }}",
+    "available": "Beschikbaar",
+    "availability": "Beschikbaarheid"
   },
   "payment": {
     "title": "Betaling",

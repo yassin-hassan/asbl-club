@@ -218,10 +218,11 @@ class EventManagementController {
     }
 
     private Detail detail(Event event, boolean canManage, boolean canSeeAttendees) {
-        Map<Long, Integer> pending = eventService.pendingSeatsOf(event);
+        // How the sales stand (paid / being paid) is for those who follow them; other members see what's left.
+        Map<Long, Integer> pending = canSeeAttendees ? eventService.pendingSeatsOf(event) : Map.of();
         var tickets = eventService.ticketCategoriesOf(event).stream()
                 .map(t -> new Ticket(t.id(), t.label(), t.price(), t.totalSeats(), t.soldSeats(),
-                        pending.getOrDefault(t.id(), 0)))
+                        canSeeAttendees ? pending.getOrDefault(t.id(), 0) : null))
                 .toList();
         return new Detail(event.getId(), event.getTitle(), event.getDescription(), event.getStartsAt(),
                 event.getLocation(), event.getStatus().name(), event.getVisibility().name(), event.getCancellationDays(),

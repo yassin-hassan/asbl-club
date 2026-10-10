@@ -8,4 +8,9 @@ describe('seatsOf', () => {
   it('shows a sold-out category with nothing pending', () => {
     expect(seatsOf({ totalSeats: 50, soldSeats: 50, pendingSeats: 0 })).toEqual({ paid: 50, pending: 0, free: 0 });
   });
+
+  it('still counts the free seats when the split isn\'t sent (members who don\'t follow the sales)', () => {
+    expect(seatsOf({ totalSeats: 20, soldSeats: 20 }).free).toBe(0);
+    expect(seatsOf({ totalSeats: 20, soldSeats: 6 }).free).toBe(14);
+  });
 });

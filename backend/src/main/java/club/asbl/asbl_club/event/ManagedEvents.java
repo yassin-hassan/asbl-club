@@ -55,7 +55,8 @@ public final class ManagedEvents {
             @Schema(requiredMode = REQUIRED) int totalSeats,
             @Schema(requiredMode = REQUIRED, description = "Seats taken: paid, or held while being paid")
             int soldSeats,
-            @Schema(requiredMode = REQUIRED, description = "Of the seats taken, those held by bookings still being "
-                    + "paid (freed if not paid in time)") int pendingSeats) {
+            @Schema(description = "Of the seats taken, those held by bookings still being paid (freed if not paid in "
+                    + "time). Only for administrators and treasurers: the other members see whether seats are left")
+            Integer pendingSeats) {
     }
 }

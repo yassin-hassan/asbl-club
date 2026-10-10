@@ -105,6 +105,10 @@ class EventManagementIntegrationTest {
         mockMvc.perform(get(BASE + "/" + id).header("Authorization", "Bearer " + adminToken))
                 .andExpect(jsonPath("$.tickets[0].soldSeats").value(1))
                 .andExpect(jsonPath("$.tickets[0].pendingSeats").value(1));
+        // A plain member sees what's left, not how the sales stand.
+        mockMvc.perform(get(BASE + "/" + id).header("Authorization", "Bearer " + memberToken))
+                .andExpect(jsonPath("$.tickets[0].soldSeats").value(1))
+                .andExpect(jsonPath("$.tickets[0].pendingSeats").doesNotExist());
         jdbcTemplate.update("UPDATE registrations SET status = 'PAID' WHERE ticket_category_id = ?", ticket);
         mockMvc.perform(get(BASE + "/" + id).header("Authorization", "Bearer " + adminToken))
                 .andExpect(jsonPath("$.tickets[0].soldSeats").value(1))

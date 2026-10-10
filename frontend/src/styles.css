@@ -125,6 +125,10 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   background: var(--asbl-amber-100);
   color: #92600a;
 }
+.tag.danger {
+  background: #fee2e2;
+  color: var(--asbl-red-700);
+}
 .tag.ok {
   background: #dcfce7;
   color: var(--asbl-green-700);
