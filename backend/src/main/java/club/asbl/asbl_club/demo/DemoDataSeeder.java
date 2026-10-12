@@ -651,8 +651,8 @@ class DemoDataSeeder implements ApplicationRunner {
         String paymentStatus = switch (outcome) {
             // A refunded one is recorded as paid first, then refunded (see refunded()).
             case PAID, ATTENDED, REFUNDED, CANCELLED_BY_BUYER -> "SUCCEEDED";
-            case DECLINED_THEN_EXPIRED -> "FAILED";
-            case EXPIRED, CANCELLED -> "INITIATED";
+            // Expired or cancelled before being paid: cancelled at Stripe too (AbandonedPayments).
+            case DECLINED_THEN_EXPIRED, EXPIRED, CANCELLED -> "CANCELLED";
         };
         long payment = payment(club, buyer, payable, category.price(), paymentStatus,
                 paid || outcome == Outcome.REFUNDED ? paidAt : null);
