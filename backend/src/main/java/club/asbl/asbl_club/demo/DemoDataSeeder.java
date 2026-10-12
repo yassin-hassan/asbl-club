@@ -692,7 +692,7 @@ class DemoDataSeeder implements ApplicationRunner {
                     webhook("payment_intent.payment_failed", paidAt);
                 }
                 auditSystem(club, "BOOKING_EXPIRED", "Registration", payable,
-                        Map.of("event", event.id(), "ticket", category.label()), booked.plus(Duration.ofMinutes(31)));
+                        Map.of("event", event.id(), "ticket", category.label()), booked.plus(Duration.ofMinutes(16)));
             }
             case REFUNDED -> {
                 // Paid while the event was being cancelled: refunded at once, commission included.

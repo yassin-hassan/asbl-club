@@ -23,7 +23,7 @@ system needs. It runs entirely on free tiers.
 - **Events and ticketing:** drafts, publishing, editing, cancelling; ticket categories with prices and seat
   limits; a public page with live seat availability, link previews and an RSS feed.
 - **Online payments:** members book a seat and pay online through **Stripe Connect**: the money goes
-  straight to the association's own Stripe account. Unpaid bookings give their seat back after 30 minutes.
+  straight to the association's own Stripe account. Unpaid bookings give their seat back after 15 minutes.
 - **Attendee list** for administrators and treasurers, with a CSV export ready for Excel.
 - **Audit log** of every sensitive action, readable by the association's administrators.
 - **Accounts:** registration, login, personal-data export and account closure (GDPR).

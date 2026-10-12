@@ -30,14 +30,14 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-// An unpaid booking gives its seat back after a while (30 minutes in production).
+// An unpaid booking gives its seat back after a while (15 minutes in production, as in the analysis).
 @SpringBootTest(properties = "spring.docker.compose.enabled=false")
 @AutoConfigureMockMvc
 @Import(TestcontainersConfiguration.class)
 @Transactional
 class BookingExpiryIntegrationTest {
 
-    private static final Duration WINDOW = Duration.ofMinutes(30);
+    private static final Duration WINDOW = Duration.ofMinutes(15);
 
     @Autowired
     MockMvc mockMvc;
@@ -75,7 +75,7 @@ class BookingExpiryIntegrationTest {
 
     @Test
     void anOverdueUnpaidBooking_expires_andGivesItsSeatBack() {
-        Registration overdue = bookedMinutesAgo(31);
+        Registration overdue = bookedMinutesAgo(16);
         Registration recent = bookedMinutesAgo(5);
         Registration paid = bookedMinutesAgo(45);
         jdbcTemplate.update("UPDATE registrations SET status = 'PAID' WHERE id = ?", paid.getId());
@@ -107,7 +107,7 @@ class BookingExpiryIntegrationTest {
 
     @Test
     void anExpiredBooking_cannotBePaid() throws Exception {
-        Registration expired = bookedMinutesAgo(31);
+        Registration expired = bookedMinutesAgo(16);
         bookingExpiry.expireReservedBefore(Instant.now().minus(WINDOW));
 
         mockMvc.perform(post("/api/v1/registrations/" + expired.getId() + "/checkout")
@@ -118,7 +118,7 @@ class BookingExpiryIntegrationTest {
 
     @Test
     void runningTwice_expiresOnce() {
-        Registration overdue = bookedMinutesAgo(31);
+        Registration overdue = bookedMinutesAgo(16);
 
         bookingExpiry.expireReservedBefore(Instant.now().minus(WINDOW));
         bookingExpiry.expireReservedBefore(Instant.now().minus(WINDOW));
