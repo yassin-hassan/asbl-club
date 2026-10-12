@@ -9,6 +9,7 @@ import com.stripe.StripeClient;
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
 import com.stripe.net.RequestOptions;
+import com.stripe.param.PaymentIntentCancelParams;
 import com.stripe.param.PaymentIntentCreateParams;
 import com.stripe.param.RefundCreateParams;
 import jakarta.persistence.EntityManager;
@@ -233,6 +234,39 @@ public class PaymentService {
                 Map.of("paymentIntentId", payment.getStripePaymentIntentId(), "amount", payment.getAmount(),
                         "reason", "cancelled by buyer", "commissionKept", true));
         bookingEmails.cancelledByBuyer(ticket);
+    }
+
+    // A booking that expired or was cancelled before being paid: its payment is cancelled at Stripe too, so nobody can
+    // pay it any more (annulerPaiement() in the analysis). Unless Stripe is already processing it: then it is left
+    // alone, and its outcome arrives by webhook like any other (the seat is taken back, or the money refunded).
+    // Locked first, so two runs can't both cancel it; Stripe is called inside the transaction, as for refunds.
+    @Transactional
+    public boolean cancelAbandoned(Long paymentId) throws StripeException {
+        Payment payment = paymentRepository.findById(paymentId).orElseThrow();
+        entityManager.refresh(payment, LockModeType.PESSIMISTIC_WRITE);
+        if (payment.getStatus() != PaymentStatus.INITIATED && payment.getStatus() != PaymentStatus.FAILED) {
+            return false; // settled since the list was read
+        }
+        RequestOptions options = RequestOptions.builder()
+                .setStripeAccount(payment.getAsbl().getStripeAccountId())
+                .setIdempotencyKey("cancel-" + payment.getId())
+                .build();
+        PaymentIntent intent = stripe.paymentIntents().retrieve(payment.getStripePaymentIntentId(), options);
+        switch (intent.getStatus()) {
+            case "canceled" -> { } // already cancelled (at Stripe's dashboard, say): just record it
+            case "requires_payment_method", "requires_confirmation", "requires_action" ->
+                    stripe.paymentIntents().cancel(payment.getStripePaymentIntentId(),
+                            PaymentIntentCancelParams.builder()
+                                    .setCancellationReason(PaymentIntentCancelParams.CancellationReason.ABANDONED)
+                                    .build(), options);
+            default -> {
+                return false; // processing or succeeded: the webhook settles it
+            }
+        }
+        payment.setStatus(PaymentStatus.CANCELLED);
+        auditService.recordSystem("PAYMENT_CANCELLED", payment.getAsbl(), "Payment", payment.getId(),
+                Map.of("paymentIntentId", payment.getStripePaymentIntentId()));
+        return true;
     }
 
     // The whole payment back to the payer; with the platform's commission too when withCommission. The idempotency
