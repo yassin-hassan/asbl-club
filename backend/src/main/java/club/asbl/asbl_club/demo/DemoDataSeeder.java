@@ -53,7 +53,7 @@ class DemoDataSeeder implements ApplicationRunner {
 
     private static final Logger log = LoggerFactory.getLogger(DemoDataSeeder.class);
 
-    static final String PASSWORD = "demo-asbl-2026";
+    static final String PASSWORD = "demo-asbl-club-2026";
 
     // A test connected account that is already onboarded and can accept charges, so the payment flow works end to
     // end without any Stripe onboarding.

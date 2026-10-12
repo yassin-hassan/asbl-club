@@ -4,7 +4,7 @@ import { createAccount } from './mail';
 async function signUp(page: Page, name: string, email: string) {
   await page.getByLabel('Name').fill(name);
   await page.getByLabel('Email address').fill(email);
-  await page.getByLabel('Password').fill('password123');
+  await page.getByLabel('Password').fill('password-1234567');
   await createAccount(page);
 }
 
@@ -65,7 +65,7 @@ test('someone joins an association through its invitation link, once an administ
 test('a replaced invitation link no longer works', async ({ page }) => {
   await page.goto('/login');
   await page.getByLabel('Email address').fill('demo@asbl.club');
-  await page.getByLabel('Password').fill('password123');
+  await page.getByLabel('Password').fill('password-1234567');
   await page.getByRole('button', { name: 'Log in' }).click();
   await expect(page.getByRole('heading', { name: 'Your associations' })).toBeVisible();
 

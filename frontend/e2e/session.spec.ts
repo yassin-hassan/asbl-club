@@ -1,6 +1,6 @@
 import { expect, Page, test } from '@playwright/test';
 
-async function logIn(page: Page, password = 'password123') {
+async function logIn(page: Page, password = 'password-1234567') {
   await page.getByLabel('Email address').fill('demo@asbl.club');
   await page.getByLabel('Password').fill(password);
   await page.getByRole('button', { name: 'Log in' }).click();

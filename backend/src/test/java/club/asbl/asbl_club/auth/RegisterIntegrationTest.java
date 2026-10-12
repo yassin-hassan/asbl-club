@@ -63,7 +63,7 @@ class RegisterIntegrationTest {
 
     @Test
     void signingUp_sendsALink_whichConfirmsTheAddressAndLogsIn() throws Exception {
-        register("Alice", "alice@club.test", "password123").andExpect(status().isAccepted())
+        register("Alice", "alice@club.test", "password-1234567").andExpect(status().isAccepted())
                 .andExpect(content().string(""));
 
         String body = verify(linkFromTheEmailTo("alice@club.test"))
@@ -75,14 +75,14 @@ class RegisterIntegrationTest {
         String subject = jwtDecoder.decode(JsonPath.read(body, "$.accessToken")).getSubject();
         assertThat(subject).isEqualTo(userService.getByEmail("alice@club.test").getPublicId().toString());
         assertThat(audited("EMAIL_VERIFIED")).isEqualTo(1);
-        login("alice@club.test", "password123").andExpect(status().isOk()); // and the password works from now on
+        login("alice@club.test", "password-1234567").andExpect(status().isOk()); // and the password works from now on
     }
 
     @Test
     void beforeConfirming_theRightPasswordIsRefusedWithAReason_theWrongOneLearnsNothing() throws Exception {
-        register("Alice", "alice@club.test", "password123");
+        register("Alice", "alice@club.test", "password-1234567");
 
-        login("alice@club.test", "password123")
+        login("alice@club.test", "password-1234567")
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.code").value("EMAIL_NOT_VERIFIED"));
         login("alice@club.test", "wrong-password").andExpect(status().isUnauthorized()); // same as any bad login
@@ -110,7 +110,7 @@ class RegisterIntegrationTest {
     // only the latest link works.
     @Test
     void signingUpAgainBeforeConfirming_replacesTheDetails_andOnlyTheLatestLinkWorks() throws Exception {
-        register("Alice", "alice@club.test", "first-password");
+        register("Alice", "alice@club.test", "the-first-password");
         String first = linkFromTheEmailTo("alice@club.test");
         register("Alice B.", "alice@club.test", "second-password");
         String second = linkFromTheEmailTo("alice@club.test");
@@ -123,12 +123,12 @@ class RegisterIntegrationTest {
 
     @Test
     void theLinkWorksOnce_andExpires() throws Exception {
-        register("Alice", "alice@club.test", "password123");
+        register("Alice", "alice@club.test", "password-1234567");
         String token = linkFromTheEmailTo("alice@club.test");
         verify(token).andExpect(status().isOk());
         verify(token).andExpect(status().isBadRequest());
 
-        register("Carol", "carol@club.test", "password123");
+        register("Carol", "carol@club.test", "password-1234567");
         String expired = linkFromTheEmailTo("carol@club.test");
         jdbcTemplate.update("UPDATE email_verification_tokens SET expires_at = now() - interval '1 minute' "
                 + "WHERE used_at IS NULL");
@@ -137,7 +137,7 @@ class RegisterIntegrationTest {
 
     @Test
     void theLinkCanBeSentAgain_forAnAccountWaitingForIt_only() throws Exception {
-        register("Alice", "alice@club.test", "password123");
+        register("Alice", "alice@club.test", "password-1234567");
         linkFromTheEmailTo("alice@club.test");
 
         resend("alice@club.test").andExpect(status().isAccepted());
@@ -170,9 +170,17 @@ class RegisterIntegrationTest {
                 .andExpect(jsonPath("$.errors.password").exists());
     }
 
+    // At least 15 characters (NIST SP 800-63B, 2024): 14 is refused, 15 accepted.
+    @Test
+    void passwordLength_15IsTheMinimum() throws Exception {
+        register("Alice", "alice@club.test", "fourteen-chars").andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors.password").exists());
+        register("Alice", "alice@club.test", "exactly-fifteen").andExpect(status().isAccepted());
+    }
+
     @Test
     void invalidEmail_isRejectedWithTheFieldNamed() throws Exception {
-        register("Alice", "not-an-email", "password123")
+        register("Alice", "not-an-email", "password-1234567")
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors.email").exists());
     }

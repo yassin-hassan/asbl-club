@@ -6,7 +6,7 @@ test('an administrator opens the finances: the year, its totals, and the tab kep
   const year = new Date().getFullYear();
   await page.goto('/login');
   await page.getByLabel('Email address').fill('demo@asbl.club');
-  await page.getByLabel('Password').fill('password123');
+  await page.getByLabel('Password').fill('password-1234567');
   await page.getByRole('button', { name: 'Log in' }).click();
   await expect(page.getByRole('heading', { name: 'Your associations' })).toBeVisible();
 

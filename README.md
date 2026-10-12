@@ -135,7 +135,7 @@ npm install --legacy-peer-deps
 npm start
 ```
 
-Open http://localhost:4200 and log in with password `demo-asbl-2026`. The demo profile fills an empty database with a
+Open http://localhost:4200 and log in with password `demo-asbl-club-2026`. The demo profile fills an empty database with a
 year of realistic history (every table has rows) around the association `cercle-josaphat`:
 `sophie.lambert@demo.asbl.club` (its administrator), `thomas.dubois@demo.asbl.club` (a member who hasn't bought a
 ticket for the coming concert nor paid this year's dues), `julie.peeters@demo.asbl.club` (a member with payments, to

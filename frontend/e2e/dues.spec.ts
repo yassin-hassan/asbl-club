@@ -7,7 +7,7 @@ import { expect, Page, test } from '@playwright/test';
 async function logInAsDemoAdmin(page: Page) {
   await page.goto('/login');
   await page.getByLabel('Email address').fill('demo@asbl.club');
-  await page.getByLabel('Password').fill('password123');
+  await page.getByLabel('Password').fill('password-1234567');
   await page.getByRole('button', { name: 'Log in' }).click();
   await expect(page.getByRole('heading', { name: 'Your associations' })).toBeVisible();
 }

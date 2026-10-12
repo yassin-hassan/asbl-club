@@ -9,7 +9,7 @@ test('an administrator sees who booked and downloads the list for Excel', async 
   await page.goto('/register');
   await page.getByLabel('Name').fill('Olivia Organiser');
   await page.getByLabel('Email address').fill(`e2e-attendees-${stamp}@club.test`);
-  await page.getByLabel('Password').fill('password123');
+  await page.getByLabel('Password').fill('password-1234567');
   await createAccount(page);
   await page.getByRole('link', { name: 'Create an ASBL' }).click();
   await page.getByLabel('Name').fill(`Attendees Club ${stamp}`);

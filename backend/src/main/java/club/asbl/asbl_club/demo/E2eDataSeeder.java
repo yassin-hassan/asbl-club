@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
- * The fixed data the Playwright end-to-end tests rely on (demo@asbl.club / password123, association club-demo, a
+ * The fixed data the Playwright end-to-end tests rely on (demo@asbl.club / password-1234567, association club-demo, a
  * published event with a ticket). It runs only under the "e2e" profile, and only on an empty database. The realistic
  * data shown at the defence is {@link DemoDataSeeder}'s, under the "demo" profile.
  */
@@ -48,10 +48,10 @@ class E2eDataSeeder implements ApplicationRunner {
             return;
         }
         log.info("Seeding {} demo users, associations and memberships", COUNT);
-        userService.registerSuperAdmin("Super Admin", "admin@demo.asbl.club", "password123");
+        userService.registerSuperAdmin("Super Admin", "admin@demo.asbl.club", "password-1234567");
         log.info("Seeded a super administrator, admin@demo.asbl.club");
         for (int i = 1; i <= COUNT; i++) {
-            User founder = userService.register("Membre " + i, "membre" + i + "@demo.asbl.club", "password123");
+            User founder = userService.register("Membre " + i, "membre" + i + "@demo.asbl.club", "password-1234567");
             asblService.createAsbl(founder, "Association " + i, String.format("0%03d.000.000", i),
                     "association-" + i, "fr");
         }
@@ -65,7 +65,7 @@ class E2eDataSeeder implements ApplicationRunner {
      * whole payment flow can be demonstrated without any manual setup.
      */
     private void seedStripeReadyAssociation() {
-        User admin = userService.register("Demo Admin", "demo@asbl.club", "password123");
+        User admin = userService.register("Demo Admin", "demo@asbl.club", "password-1234567");
         Asbl club = asblService.createAsbl(admin, "Club Démo", "0999.999.999", "club-demo", "fr");
         asblService.linkStripeAccount(club, DEMO_STRIPE_ACCOUNT);
 
@@ -74,6 +74,6 @@ class E2eDataSeeder implements ApplicationRunner {
         eventService.addTicketCategory(event, "Place standard", new BigDecimal("12.00"), 50);
         eventService.publish(event);
 
-        log.info("Seeded a Stripe-ready association, log in as demo@asbl.club / password123 (club-demo)");
+        log.info("Seeded a Stripe-ready association, log in as demo@asbl.club / password-1234567 (club-demo)");
     }
 }

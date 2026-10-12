@@ -11,7 +11,7 @@ test('the cancellation policy is set per event, shown before buying, and can onl
   await page.goto('/register');
   await page.getByLabel('Name').fill('Paula Policy');
   await page.getByLabel('Email address').fill(`e2e-policy-${stamp}@club.test`);
-  await page.getByLabel('Password').fill('password123');
+  await page.getByLabel('Password').fill('password-1234567');
   await createAccount(page);
   await page.getByRole('link', { name: 'Create an ASBL' }).click();
   await page.getByLabel('Name').fill(`Policy Club ${stamp}`);
