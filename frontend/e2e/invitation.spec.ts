@@ -16,7 +16,7 @@ test('an administrator invites someone by email, who signs up and joins without 
   await admin.goto('/register');
   await admin.getByLabel('Name').fill('Chair');
   await admin.getByLabel('Email address').fill(`e2e-inviter-${stamp}@club.test`);
-  await admin.getByLabel('Password').fill('password123');
+  await admin.getByLabel('Password').fill('password-1234567');
   await createAccount(admin);
   await admin.getByRole('link', { name: 'Create an ASBL' }).click();
   await admin.getByLabel('Name').fill(club);
@@ -38,7 +38,7 @@ test('an administrator invites someone by email, who signs up and joins without 
   await guest.getByRole('link', { name: 'Create an account' }).click();
   await guest.getByLabel('Name').fill('New Member');
   await guest.getByLabel('Email address').fill(invitee);
-  await guest.getByLabel('Password').fill('password123');
+  await guest.getByLabel('Password').fill('password-1234567');
   await createAccount(guest); // confirms the address through its own email, then back to the invitation
 
   await expect(guest).toHaveURL(/\/invitation$/);

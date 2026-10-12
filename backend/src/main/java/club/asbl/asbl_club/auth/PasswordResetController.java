@@ -32,7 +32,7 @@ class PasswordResetController {
     }
 
     // Same password rules as registration (8 to 100 characters).
-    record NewPassword(@NotBlank @Size(max = 100) String token, @NotBlank @Size(min = 8, max = 100) String password) {
+    record NewPassword(@NotBlank @Size(max = 100) String token, @NotBlank @Size(min = 15, max = 100) String password) {
     }
 
     @Operation(operationId = "requestPasswordReset",

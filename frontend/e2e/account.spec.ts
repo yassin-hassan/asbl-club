@@ -1,7 +1,7 @@
 import { expect, Page, test } from '@playwright/test';
 import { createAccount } from './mail';
 
-async function logIn(page: Page, email: string, password = 'password123') {
+async function logIn(page: Page, email: string, password = 'password-1234567') {
   await page.goto('/login');
   await page.getByLabel('Email address').fill(email);
   await page.getByLabel('Password').fill(password);
@@ -19,7 +19,7 @@ test('a user changes their name on the account page', async ({ page }) => {
   await page.goto('/register');
   await page.getByLabel('Name').fill('Autofilled Wrong Name');
   await page.getByLabel('Email address').fill(`e2e-rename-${Date.now()}@club.test`);
-  await page.getByLabel('Password').fill('password123');
+  await page.getByLabel('Password').fill('password-1234567');
   await createAccount(page);
 
   await page.getByRole('link', { name: 'My account' }).click();
@@ -38,7 +38,7 @@ test('a user closes their account: confirmation, logged out, and the password no
   await page.goto('/register');
   await page.getByLabel('Name').fill('To Be Deleted');
   await page.getByLabel('Email address').fill(email);
-  await page.getByLabel('Password').fill('password123');
+  await page.getByLabel('Password').fill('password-1234567');
   await createAccount(page);
   await expect(page.getByRole('heading', { name: 'Your associations' })).toBeVisible();
 

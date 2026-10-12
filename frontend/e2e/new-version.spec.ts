@@ -17,7 +17,7 @@ test('a tab left open during a deploy recovers when the next page needs code tha
   });
 
   await page.getByLabel('Email address').fill('demo@asbl.club');
-  await page.getByLabel('Password').fill('password123');
+  await page.getByLabel('Password').fill('password-1234567');
   await page.getByRole('button', { name: 'Log in' }).click();
 
   await expect(page.getByRole('heading', { name: 'Your associations' })).toBeVisible();

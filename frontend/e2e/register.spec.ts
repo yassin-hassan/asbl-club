@@ -10,7 +10,7 @@ test('a visitor signs up from the landing page, confirms their email, and is log
 
   await page.getByLabel('Name').fill('E2E Visitor');
   await page.getByLabel('Email address').fill(email);
-  await page.getByLabel('Password').fill('password123');
+  await page.getByLabel('Password').fill('password-1234567');
   await createAccount(page); // "Check your inbox", then the link from the email
 
   // Logged in by the link, on the dashboard: a brand-new account belongs to no association yet.
@@ -26,13 +26,13 @@ test('logging in before confirming says so, and can send the link again', async 
   await page.goto('/register');
   await page.getByLabel('Name').fill('Not Yet');
   await page.getByLabel('Email address').fill(email);
-  await page.getByLabel('Password').fill('password123');
+  await page.getByLabel('Password').fill('password-1234567');
   await page.getByRole('button', { name: 'Create account' }).click();
   await expect(page.getByText('Check your inbox')).toBeVisible();
 
   await page.goto('/login');
   await page.getByLabel('Email address').fill(email);
-  await page.getByLabel('Password').fill('password123');
+  await page.getByLabel('Password').fill('password-1234567');
   await page.getByRole('button', { name: 'Log in' }).click();
   await expect(page.getByRole('alert')).toHaveText('Confirm your email address first: open the link we sent you.');
   await page.getByRole('button', { name: 'Send the link again' }).click();
@@ -45,7 +45,7 @@ test('an address that already has an account gets the same answer', async ({ pag
   await page.goto('/register');
   await page.getByLabel('Name').fill('Someone');
   await page.getByLabel('Email address').fill('demo@asbl.club');
-  await page.getByLabel('Password').fill('password123');
+  await page.getByLabel('Password').fill('password-1234567');
   await page.getByRole('button', { name: 'Create account' }).click();
 
   await expect(page.getByText('Check your inbox')).toBeVisible();

@@ -11,7 +11,7 @@ test('an administrator sees their new association is not connected to Stripe, an
   await page.goto('/register');
   await page.getByLabel('Name').fill('Treasurer');
   await page.getByLabel('Email address').fill(`e2e-payments-${stamp}@club.test`);
-  await page.getByLabel('Password').fill('password123');
+  await page.getByLabel('Password').fill('password-1234567');
   await createAccount(page);
   await page.getByRole('link', { name: 'Create an ASBL' }).click();
   await page.getByLabel('Name').fill(`Paying Club ${stamp}`);

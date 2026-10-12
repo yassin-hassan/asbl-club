@@ -33,7 +33,7 @@ export class ResetPassword {
 
   readonly form = inject(NonNullableFormBuilder).group(
     {
-      password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(100)]],
+      password: ['', [Validators.required, Validators.minLength(15), Validators.maxLength(100)]],
       repeat: ['', Validators.required],
     },
     { validators: sameAsPassword },

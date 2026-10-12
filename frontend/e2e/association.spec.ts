@@ -6,7 +6,7 @@ test('a new user creates an association, becomes its administrator and sees its 
   await page.goto('/register');
   await page.getByLabel('Name').fill('Founder');
   await page.getByLabel('Email address').fill(`e2e-founder-${stamp}@club.test`);
-  await page.getByLabel('Password').fill('password123');
+  await page.getByLabel('Password').fill('password-1234567');
   await createAccount(page);
 
   await page.getByRole('link', { name: 'Create an ASBL' }).click();
@@ -30,7 +30,7 @@ test('a new user creates an association, becomes its administrator and sees its 
 test('a taken URL identifier is flagged on its field', async ({ page }) => {
   await page.goto('/login');
   await page.getByLabel('Email address').fill('demo@asbl.club');
-  await page.getByLabel('Password').fill('password123');
+  await page.getByLabel('Password').fill('password-1234567');
   await page.getByRole('button', { name: 'Log in' }).click();
   await page.getByRole('link', { name: 'Create an ASBL' }).click();
 
@@ -47,7 +47,7 @@ test("the members page is closed to people who aren't members", async ({ page })
   await page.goto('/register');
   await page.getByLabel('Name').fill('Outsider');
   await page.getByLabel('Email address').fill(`e2e-outsider-${stamp}@club.test`);
-  await page.getByLabel('Password').fill('password123');
+  await page.getByLabel('Password').fill('password-1234567');
   await createAccount(page);
   await expect(page.getByRole('heading', { name: 'Your associations' })).toBeVisible();
 

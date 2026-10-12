@@ -10,7 +10,7 @@ test('my bookings lists an unpaid booking with a way to pay or to give it up, an
   await page.goto('/register');
   await page.getByLabel('Name').fill('Tess Ticket');
   await page.getByLabel('Email address').fill(`e2e-tickets-${stamp}@club.test`);
-  await page.getByLabel('Password').fill('password123');
+  await page.getByLabel('Password').fill('password-1234567');
   await createAccount(page);
   await page.getByRole('link', { name: 'Create an ASBL' }).click();
   await page.getByLabel('Name').fill(`Tickets Club ${stamp}`);
