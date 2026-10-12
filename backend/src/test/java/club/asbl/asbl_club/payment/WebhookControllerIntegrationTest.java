@@ -153,9 +153,9 @@ class WebhookControllerIntegrationTest {
     private Long expire(Payment payment) {
         Long booking = payment.getPayable().getId();
         entityManager.flush();
-        jdbcTemplate.update("UPDATE registrations SET registered_at = now() - interval '31 minutes' WHERE id = ?",
+        jdbcTemplate.update("UPDATE registrations SET registered_at = now() - interval '16 minutes' WHERE id = ?",
                 booking);
-        bookingExpiry.expireReservedBefore(Instant.now().minus(Duration.ofMinutes(30)));
+        bookingExpiry.expireReservedBefore(Instant.now().minus(Duration.ofMinutes(15)));
         assertThat(soldSeatsOf(booking)).isZero();
         return booking;
     }

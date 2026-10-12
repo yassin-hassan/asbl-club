@@ -51,7 +51,7 @@ test('my bookings lists an unpaid booking with a way to pay or to give it up, an
   await expect(code).toHaveValue('');
   await expect(code).toBeFocused();
 
-  // Giving up the unpaid booking: confirmed first, then cancelled, its seat freed at once (not 30 minutes later).
+  // Giving up the unpaid booking: confirmed first, then cancelled, its seat freed at once (not 15 minutes later).
   await page.getByRole('link', { name: 'My bookings' }).click();
   await booking.getByRole('button', { name: /Cancel the booking/ }).click();
   await expect(page.getByRole('dialog')).toContainText('there is nothing to refund');

@@ -175,7 +175,7 @@ class WebhookIdempotencyTest {
         for (int round = 0; round < 10; round++) {
             Payment racing = seedPayment();
             Long booking = racing.getPayable().getId();
-            jdbcTemplate.update("UPDATE registrations SET registered_at = now() - interval '31 minutes' WHERE id = ?",
+            jdbcTemplate.update("UPDATE registrations SET registered_at = now() - interval '16 minutes' WHERE id = ?",
                     booking);
 
             CountDownLatch start = new CountDownLatch(1);
@@ -184,7 +184,7 @@ class WebhookIdempotencyTest {
             Future<Integer> webhook = pool.submit(() -> deliver(start, eventId));
             Future<Integer> expiry = pool.submit(() -> {
                 start.await();
-                return bookingExpiry.expireReservedBefore(Instant.now().minus(Duration.ofMinutes(30)));
+                return bookingExpiry.expireReservedBefore(Instant.now().minus(Duration.ofMinutes(15)));
             });
             start.countDown();
             assertThat(webhook.get(30, TimeUnit.SECONDS)).isEqualTo(200);

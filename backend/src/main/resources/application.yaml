@@ -99,7 +99,7 @@ email:
 
 bookings:
   # An unpaid booking gives its seat back after this long (Stripe's form, 3-D Secure included, takes a few minutes).
-  expire-after: ${BOOKINGS_EXPIRE_AFTER:30m}
+  expire-after: ${BOOKINGS_EXPIRE_AFTER:15m}
 
 jwt:
   # PKCS#8 PEM private key (a secret: SSM Parameter Store in production). Empty = temporary key (dev/tests).
