@@ -2,7 +2,7 @@
   <h1>{{ 'checkIn.title' | transloco }}</h1>
   <p class="hint">{{ 'checkIn.hint' | transloco }}</p>
 
-  <form [formGroup]="form" (ngSubmit)="submit()" class="scan" novalidate>
+  <form [formGroup]="form" #formDirective="ngForm" (ngSubmit)="submit(formDirective)" class="scan" novalidate>
     <mat-form-field appearance="outline">
       <mat-label>{{ 'checkIn.code' | transloco }}</mat-label>
       <input matInput #field formControlName="code" autocomplete="off" autocapitalize="off" spellcheck="false" />
