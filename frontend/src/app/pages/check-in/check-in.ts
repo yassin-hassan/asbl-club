@@ -1,7 +1,7 @@
 import { afterNextRender, Component, ElementRef, inject, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormGroupDirective, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -42,24 +42,26 @@ export class CheckInPage {
     afterNextRender(() => this.field().nativeElement.focus());
   }
 
-  submit(): void {
+  submit(formDirective: FormGroupDirective): void {
     const code = this.form.getRawValue().code.trim();
     if (!code || this.checking()) {
       return;
     }
     this.checking.set(true);
     this.api.checkIn(this.slug, this.eventId, { code }).subscribe({
-      next: (result) => this.show(result.outcome === 'CHECKED_IN'
+      next: (result) => this.show(formDirective, result.outcome === 'CHECKED_IN'
         ? { kind: 'in', name: result.name, ticket: result.ticketLabel }
         : { kind: 'again', name: result.name, ticket: result.ticketLabel, at: result.checkedInAt }),
-      error: (err: HttpErrorResponse) => this.show({ kind: 'refused', messageKey: refusal(err) }),
+      error: (err: HttpErrorResponse) => this.show(formDirective, { kind: 'refused', messageKey: refusal(err) }),
     });
   }
 
-  private show(scan: Scan): void {
+  // Takes the form directive, not just the form: resetForm() empties the field AND clears the "submitted" state.
+  // form.reset() alone keeps "submitted", so the emptied required field would show as an error after every scan.
+  private show(formDirective: FormGroupDirective, scan: Scan): void {
     this.scans.update((scans) => [scan, ...scans].slice(0, 8));
     this.checking.set(false);
-    this.form.reset();
+    formDirective.resetForm();
     this.field().nativeElement.focus(); // ready for the next person
   }
 }
